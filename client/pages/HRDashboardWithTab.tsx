@@ -13,5 +13,5 @@ export default function HRDashboardWithTab({
     // For now, it just renders the main HR Dashboard
   }, [defaultTab]);
 
-  return <HRDashboard />;
+  return <EnhancedHRDashboard />;
 }
