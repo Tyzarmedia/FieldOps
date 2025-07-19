@@ -15,6 +15,8 @@ import {
   Settings,
   LogOut,
   UserCheck,
+  AlertCircle,
+  Activity,
 } from "lucide-react";
 
 interface LayoutProps {
