@@ -15,6 +15,9 @@ import ManagerDashboard from "./pages/ManagerDashboard";
 import CoordinatorDashboard from "./pages/CoordinatorDashboard";
 import AssistantTechnicianDashboard from "./pages/AssistantTechnicianDashboard";
 import FleetManagerDashboard from "./pages/FleetManagerDashboard";
+import HRDashboard from "./pages/HRDashboard";
+import PayrollDashboard from "./pages/PayrollDashboard";
+import ITDashboard from "./pages/ITDashboard";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
@@ -96,6 +99,12 @@ function DashboardRouter() {
           description="Safety compliance, incident management, and H&S task assignment."
         />
       );
+    case "HR":
+      return <HRDashboard />;
+    case "Payroll":
+      return <PayrollDashboard />;
+    case "IT":
+      return <ITDashboard />;
     default:
       return <Dashboard />;
   }
