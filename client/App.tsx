@@ -13,6 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import CeoDashboard from "./pages/CeoDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import CoordinatorDashboard from "./pages/CoordinatorDashboard";
+import AssistantTechnicianDashboard from "./pages/AssistantTechnicianDashboard";
+import FleetManagerDashboard from "./pages/FleetManagerDashboard";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
@@ -74,19 +76,9 @@ function DashboardRouter() {
     case "Technician":
       return <Dashboard />;
     case "AssistantTechnician":
-      return (
-        <PlaceholderPage
-          title="Assistant Technician Dashboard"
-          description="Limited technician view with job assistance capabilities."
-        />
-      );
+      return <AssistantTechnicianDashboard />;
     case "FleetManager":
-      return (
-        <PlaceholderPage
-          title="Fleet Manager Dashboard"
-          description="Vehicle management, inspections, and fleet compliance tracking."
-        />
-      );
+      return <FleetManagerDashboard />;
     case "StockManager":
       return (
         <PlaceholderPage
