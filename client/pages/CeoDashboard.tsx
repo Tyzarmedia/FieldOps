@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,9 +24,20 @@ import {
   Eye,
   UserPlus,
   FileText,
+  Download,
+  RefreshCw,
+  Plus,
+  Search,
 } from "lucide-react";
 
 export default function CeoDashboard() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedAlert, setSelectedAlert] = useState<any>(null);
+  const [showAddUserForm, setShowAddUserForm] = useState(false);
+  const [showReports, setShowReports] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [systemData, setSystemData] = useState<any>(null);
+
   const systemStats = {
     totalJobs: 1247,
     completedJobs: 1089,
@@ -88,6 +100,51 @@ export default function CeoDashboard() {
       severity: "info",
     },
   ];
+
+  // Load system data
+  useEffect(() => {
+    loadSystemData();
+  }, []);
+
+  const loadSystemData = async () => {
+    try {
+      const response = await fetch("/data/database.json");
+      const data = await response.json();
+      setSystemData(data);
+    } catch (error) {
+      console.error("Failed to load system data:", error);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await loadSystemData();
+    setTimeout(() => setIsRefreshing(false), 1000);
+  };
+
+  const handleViewAlert = (alert: any) => {
+    setSelectedAlert(alert);
+  };
+
+  const handleAddUser = () => {
+    setShowAddUserForm(true);
+  };
+
+  const handleGenerateReport = (type: string) => {
+    alert(`Generating ${type} report...`);
+  };
+
+  const handleSystemConfiguration = (action: string) => {
+    alert(`Opening ${action}...`);
+  };
+
+  const handleViewDepartmentDetails = (department: any) => {
+    alert(`Viewing details for ${department.name} department`);
+  };
+
+  const handleViewPerformerProfile = (performer: any) => {
+    alert(`Viewing profile for ${performer.name}`);
+  };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
@@ -314,7 +371,11 @@ export default function CeoDashboard() {
                         </Badge>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleViewAlert(alert)}
+                    >
                       <Eye className="h-4 w-4" />
                     </Button>
                   </div>
@@ -359,7 +420,11 @@ export default function CeoDashboard() {
                           {dept.efficiency}%
                         </p>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewDepartmentDetails(dept)}
+                      >
                         <Eye className="h-4 w-4 mr-2" />
                         View Details
                       </Button>
@@ -409,7 +474,11 @@ export default function CeoDashboard() {
                           {performer.efficiency}%
                         </p>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewPerformerProfile(performer)}
+                      >
                         View Profile
                       </Button>
                     </div>
@@ -436,7 +505,11 @@ export default function CeoDashboard() {
                 <p className="text-sm text-muted-foreground">
                   Overall compliance score
                 </p>
-                <Button className="w-full mt-4" variant="outline">
+                <Button
+                  className="w-full mt-4"
+                  variant="outline"
+                  onClick={() => handleGenerateReport("H&S")}
+                >
                   View H&S Reports
                 </Button>
               </CardContent>
@@ -456,7 +529,11 @@ export default function CeoDashboard() {
                 <p className="text-sm text-muted-foreground">
                   Fleet utilization
                 </p>
-                <Button className="w-full mt-4" variant="outline">
+                <Button
+                  className="w-full mt-4"
+                  variant="outline"
+                  onClick={() => handleGenerateReport("Fleet")}
+                >
                   Fleet Overview
                 </Button>
               </CardContent>
@@ -476,7 +553,11 @@ export default function CeoDashboard() {
                 <p className="text-sm text-muted-foreground">
                   Total inventory value
                 </p>
-                <Button className="w-full mt-4" variant="outline">
+                <Button
+                  className="w-full mt-4"
+                  variant="outline"
+                  onClick={() => handleGenerateReport("Stock")}
+                >
                   Stock Reports
                 </Button>
               </CardContent>
@@ -494,19 +575,38 @@ export default function CeoDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full justify-start">
+                <Button
+                  className="w-full justify-start"
+                  onClick={() =>
+                    handleSystemConfiguration("Dashboard Customization")
+                  }
+                >
                   <Building className="h-4 w-4 mr-2" />
                   Dashboard Customization
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button
+                  className="w-full justify-start"
+                  variant="outline"
+                  onClick={() =>
+                    handleSystemConfiguration("User & Role Management")
+                  }
+                >
                   <Users className="h-4 w-4 mr-2" />
                   User & Role Management
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button
+                  className="w-full justify-start"
+                  variant="outline"
+                  onClick={() => handleSystemConfiguration("Feature Controls")}
+                >
                   <Activity className="h-4 w-4 mr-2" />
                   Feature Controls
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button
+                  className="w-full justify-start"
+                  variant="outline"
+                  onClick={() => handleSystemConfiguration("System Logs")}
+                >
                   <FileText className="h-4 w-4 mr-2" />
                   View System Logs
                 </Button>
@@ -521,19 +621,34 @@ export default function CeoDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full justify-start">
+                <Button
+                  className="w-full justify-start"
+                  onClick={handleAddUser}
+                >
                   <UserPlus className="h-4 w-4 mr-2" />
                   Add New User
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button
+                  className="w-full justify-start"
+                  variant="outline"
+                  onClick={() => handleSystemConfiguration("Manager Changes")}
+                >
                   <Settings className="h-4 w-4 mr-2" />
                   Approve Manager Changes
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button
+                  className="w-full justify-start"
+                  variant="outline"
+                  onClick={() => handleGenerateReport("System")}
+                >
                   <BarChart3 className="h-4 w-4 mr-2" />
                   Generate System Report
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button
+                  className="w-full justify-start"
+                  variant="outline"
+                  onClick={() => handleSystemConfiguration("Overtime Claims")}
+                >
                   <Timer className="h-4 w-4 mr-2" />
                   Review Overtime Claims
                 </Button>
