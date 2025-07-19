@@ -70,12 +70,7 @@ function DashboardRouter() {
     case "Manager":
       return <ManagerDashboard />;
     case "Coordinator":
-      return (
-        <PlaceholderPage
-          title="Coordinator Dashboard"
-          description="Job assignment, progress monitoring, and team coordination tools."
-        />
-      );
+      return <CoordinatorDashboard />;
     case "Technician":
       return <Dashboard />;
     case "AssistantTechnician":
