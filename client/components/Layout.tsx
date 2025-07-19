@@ -124,6 +124,7 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
             <Button
               variant="ghost"
               className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+              onClick={handleLogout}
             >
               <LogOut className="h-4 w-4 mr-3" />
               Sign Out
