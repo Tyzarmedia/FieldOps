@@ -18,6 +18,7 @@ import FleetManagerDashboard from "./pages/FleetManagerDashboard";
 import HRDashboard from "./pages/HRDashboard";
 import PayrollDashboard from "./pages/PayrollDashboard";
 import ITDashboard from "./pages/ITDashboard";
+import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
