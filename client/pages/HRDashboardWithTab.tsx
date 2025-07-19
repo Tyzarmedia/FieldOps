@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import HRDashboard from "./HRDashboard";
+import EnhancedHRDashboard from "./EnhancedHRDashboard";
 
 interface HRDashboardWithTabProps {
   defaultTab: string;
