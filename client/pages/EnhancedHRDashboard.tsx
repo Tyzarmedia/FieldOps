@@ -173,7 +173,7 @@ export default function EnhancedHRDashboard() {
       branch: "",
       contractType: "",
       manager: "",
-      salary: 0,
+      salary: "",
     },
   });
 
@@ -286,7 +286,7 @@ export default function EnhancedHRDashboard() {
         branch: "",
         contractType: "",
         manager: "",
-        salary: 0,
+        salary: "",
       },
     });
   };
@@ -716,7 +716,7 @@ export default function EnhancedHRDashboard() {
                               ...newEmployee,
                               employment: {
                                 ...newEmployee.employment,
-                                salary: parseInt(e.target.value),
+                                salary: e.target.value,
                               },
                             })
                           }
