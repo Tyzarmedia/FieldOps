@@ -27,7 +27,10 @@ interface LayoutProps {
     | "AssistantTechnician"
     | "FleetManager"
     | "StockManager"
-    | "HSManager";
+    | "HSManager"
+    | "HR"
+    | "Payroll"
+    | "IT";
 }
 
 export function Layout({ children, userRole = "Technician" }: LayoutProps) {
