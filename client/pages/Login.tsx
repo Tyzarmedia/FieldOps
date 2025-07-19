@@ -57,6 +57,24 @@ const userRoles = [
     icon: Shield,
     color: "text-red-600",
   },
+  {
+    value: "HR",
+    label: "HR Manager",
+    icon: Users,
+    color: "text-emerald-600",
+  },
+  {
+    value: "Payroll",
+    label: "Payroll Manager",
+    icon: Building,
+    color: "text-amber-600",
+  },
+  {
+    value: "IT",
+    label: "IT Manager",
+    icon: UserCheck,
+    color: "text-slate-600",
+  },
 ];
 
 export default function Login() {
