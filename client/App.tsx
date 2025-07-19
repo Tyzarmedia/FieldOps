@@ -388,6 +388,129 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          {/* HR Routes */}
+          <Route
+            path="/employees"
+            element={
+              <ProtectedRoute>
+                <HRDashboardWithTab defaultTab="employees" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/leave-requests"
+            element={
+              <ProtectedRoute>
+                <HRDashboardWithTab defaultTab="leave" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute>
+                <HRDashboardWithTab defaultTab="onboarding" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/disciplinary"
+            element={
+              <ProtectedRoute>
+                <HRDashboardWithTab defaultTab="disciplinary" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/hr-reports"
+            element={
+              <ProtectedRoute>
+                <HRDashboardWithTab defaultTab="reports" />
+              </ProtectedRoute>
+            }
+          />
+          {/* Payroll Routes */}
+          <Route
+            path="/payroll"
+            element={
+              <ProtectedRoute>
+                <PayrollDashboardWithTab defaultTab="payroll" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/overtime"
+            element={
+              <ProtectedRoute>
+                <PayrollDashboardWithTab defaultTab="overtime" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/bonuses"
+            element={
+              <ProtectedRoute>
+                <PayrollDashboardWithTab defaultTab="bonuses" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payslips"
+            element={
+              <ProtectedRoute>
+                <PayrollDashboardWithTab defaultTab="payslips" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payroll-reports"
+            element={
+              <ProtectedRoute>
+                <PayrollDashboardWithTab defaultTab="reports" />
+              </ProtectedRoute>
+            }
+          />
+          {/* IT Routes */}
+          <Route
+            path="/assets"
+            element={
+              <ProtectedRoute>
+                <ITDashboardWithTab defaultTab="assets" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/support-tickets"
+            element={
+              <ProtectedRoute>
+                <ITDashboardWithTab defaultTab="tickets" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/system-access"
+            element={
+              <ProtectedRoute>
+                <ITDashboardWithTab defaultTab="access" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/audit-logs"
+            element={
+              <ProtectedRoute>
+                <ITDashboardWithTab defaultTab="audit" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/it-reports"
+            element={
+              <ProtectedRoute>
+                <ITDashboardWithTab defaultTab="reports" />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
