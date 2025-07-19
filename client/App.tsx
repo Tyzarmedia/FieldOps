@@ -105,7 +105,7 @@ function DashboardRouter() {
         />
       );
     case "HR":
-      return <HRDashboard />;
+      return <EnhancedHRDashboard />;
     case "Payroll":
       return <PayrollDashboard />;
     case "IT":
