@@ -249,6 +249,7 @@ export default function EnhancedHRDashboard() {
       },
       employment: {
         ...newEmployee.employment,
+        salary: parseInt(newEmployee.employment.salary) || 0,
         startDate: new Date().toISOString().split("T")[0],
         status: "active",
         lastReview: "",
