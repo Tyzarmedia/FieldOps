@@ -12,6 +12,7 @@ import { PlaceholderPage } from "./components/PlaceholderPage";
 import Dashboard from "./pages/Dashboard";
 import CeoDashboard from "./pages/CeoDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
+import CoordinatorDashboard from "./pages/CoordinatorDashboard";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
