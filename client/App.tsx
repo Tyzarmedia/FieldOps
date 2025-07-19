@@ -10,8 +10,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { PlaceholderPage } from "./components/PlaceholderPage";
 import Dashboard from "./pages/Dashboard";
+import CeoDashboard from "./pages/CeoDashboard";
+import ManagerDashboard from "./pages/ManagerDashboard";
 import Login from "./pages/Login";
-
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,61 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return <Layout userRole={userRole}>{children}</Layout>;
+}
+
+function DashboardRouter() {
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("userRole") as UserRole;
+    setUserRole(storedRole);
+  }, []);
+
+  switch (userRole) {
+    case "CEO":
+      return <CeoDashboard />;
+    case "Manager":
+      return <ManagerDashboard />;
+    case "Coordinator":
+      return (
+        <PlaceholderPage
+          title="Coordinator Dashboard"
+          description="Job assignment, progress monitoring, and team coordination tools."
+        />
+      );
+    case "Technician":
+      return <Dashboard />;
+    case "AssistantTechnician":
+      return (
+        <PlaceholderPage
+          title="Assistant Technician Dashboard"
+          description="Limited technician view with job assistance capabilities."
+        />
+      );
+    case "FleetManager":
+      return (
+        <PlaceholderPage
+          title="Fleet Manager Dashboard"
+          description="Vehicle management, inspections, and fleet compliance tracking."
+        />
+      );
+    case "StockManager":
+      return (
+        <PlaceholderPage
+          title="Stock Manager Dashboard"
+          description="Inventory management, stock allocation, and usage tracking."
+        />
+      );
+    case "HSManager":
+      return (
+        <PlaceholderPage
+          title="Health & Safety Manager Dashboard"
+          description="Safety compliance, incident management, and H&S task assignment."
+        />
+      );
+    default:
+      return <Dashboard />;
+  }
 }
 
 const App = () => (
