@@ -33,8 +33,15 @@ interface LayoutProps {
 export function Layout({ children, userRole = "Technician" }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navigation = getNavigationForRole(userRole);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-background">
