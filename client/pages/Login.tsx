@@ -80,7 +80,7 @@ const userRoles = [
 export default function Login() {
   const [email, setEmail] = useState("demo@fieldops.com");
   const [password, setPassword] = useState("demo123");
-  const [selectedRole, setSelectedRole] = useState("Technician");
+  const [selectedRole, setSelectedRole] = useState("HR");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
