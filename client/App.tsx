@@ -11,6 +11,7 @@ import { Layout } from "./components/Layout";
 import { PlaceholderPage } from "./components/PlaceholderPage";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import TestDashboard from "./pages/TestDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,6 +62,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/test" element={<TestDashboard />} />
           <Route
             path="/"
             element={
