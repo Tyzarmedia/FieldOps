@@ -262,6 +262,40 @@ function getNavigationForRole(role: string) {
         { name: "Incident Logs", href: "/incident-logs", icon: Shield },
       ];
 
+    case "HR":
+      return [
+        ...baseNavigation,
+        { name: "Employees", href: "/employees", icon: Users },
+        { name: "Leave Requests", href: "/leave-requests", icon: Clock },
+        { name: "Onboarding", href: "/onboarding", icon: UserCheck },
+        { name: "Disciplinary", href: "/disciplinary", icon: AlertCircle },
+        { name: "HR Reports", href: "/hr-reports", icon: ClipboardList },
+      ];
+
+    case "Payroll":
+      return [
+        ...baseNavigation,
+        { name: "Payroll", href: "/payroll", icon: Users },
+        { name: "Overtime", href: "/overtime", icon: Clock },
+        { name: "Bonuses", href: "/bonuses", icon: Users },
+        { name: "Payslips", href: "/payslips", icon: ClipboardList },
+        { name: "Reports", href: "/payroll-reports", icon: ClipboardList },
+      ];
+
+    case "IT":
+      return [
+        ...baseNavigation,
+        { name: "Assets", href: "/assets", icon: Settings },
+        {
+          name: "Support Tickets",
+          href: "/support-tickets",
+          icon: ClipboardList,
+        },
+        { name: "System Access", href: "/system-access", icon: Shield },
+        { name: "Audit Logs", href: "/audit-logs", icon: Activity },
+        { name: "IT Reports", href: "/it-reports", icon: ClipboardList },
+      ];
+
     default:
       return baseNavigation;
   }
