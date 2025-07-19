@@ -28,7 +28,10 @@ type UserRole =
   | "AssistantTechnician"
   | "FleetManager"
   | "StockManager"
-  | "HSManager";
+  | "HSManager"
+  | "HR"
+  | "Payroll"
+  | "IT";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
