@@ -28,6 +28,9 @@ import {
   Navigation,
   Network,
   Wifi,
+  Package,
+  PenTool,
+  Settings,
 } from "lucide-react";
 import { teamJobs, updateJobStatus, type Job } from "../data/sharedJobs";
 
@@ -172,7 +175,7 @@ export default function TechnicianJobsScreen() {
         </div>
 
         {/* Job Details Content */}
-        <div className="p-4 pb-20">
+        <div className="p-4 pb-20 space-y-6">
           {/* Client Address with Map */}
           <Card className="mb-4">
             <CardContent className="p-4">
