@@ -101,7 +101,7 @@ export default function TechnicianSafetyScreen() {
     {
       id: "harness-check",
       title: "Harness Checklist",
-      icon: Hardhats,
+      icon: HardHat,
       color: "bg-green-500",
       description: "Personal fall protection equipment",
       status: "pending",
