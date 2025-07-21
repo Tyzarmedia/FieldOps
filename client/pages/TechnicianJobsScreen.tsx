@@ -394,55 +394,43 @@ export default function TechnicianJobsScreen() {
           </Card>
         </div>
 
-        {/* Sticky Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-green-600 text-white">
-          <div className="flex items-center justify-between p-4">
-            <span className="font-semibold text-lg">{selectedJob.appointment.facility}</span>
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+          <div className="flex justify-around py-2">
             <Button
               variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/20"
+              className="flex flex-col items-center space-y-1 p-3 text-blue-600"
             >
-              <Edit3 className="h-5 w-5" />
-            </Button>
-          </div>
-          
-          {/* Bottom Action Buttons */}
-          <div className="flex bg-white text-gray-600 border-t">
-            <Button
-              variant="ghost"
-              className="flex-1 py-3 flex flex-col items-center space-y-1"
-            >
-              <FileText className="h-5 w-5" />
-              <span className="text-xs">Details</span>
+              <FileText className="h-6 w-6" />
+              <span className="text-xs font-medium">Details</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex-1 py-3 flex flex-col items-center space-y-1"
+              className="flex flex-col items-center space-y-1 p-3 text-gray-600"
             >
-              <Briefcase className="h-5 w-5" />
-              <span className="text-xs">Job List</span>
+              <Settings className="h-6 w-6" />
+              <span className="text-xs font-medium">Udf</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex-1 py-3 flex flex-col items-center space-y-1"
+              className="flex flex-col items-center space-y-1 p-3 text-gray-600"
             >
-              <Camera className="h-5 w-5" />
-              <span className="text-xs">Pictures</span>
+              <Camera className="h-6 w-6" />
+              <span className="text-xs font-medium">Gallery</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex-1 py-3 flex flex-col items-center space-y-1"
+              className="flex flex-col items-center space-y-1 p-3 text-gray-600"
             >
-              <QrCode className="h-5 w-5" />
-              <span className="text-xs">Actions</span>
+              <Package className="h-6 w-6" />
+              <span className="text-xs font-medium">Stocks</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex-1 py-3 flex flex-col items-center space-y-1"
+              className="flex flex-col items-center space-y-1 p-3 text-orange-600"
             >
-              <Camera className="h-5 w-5" />
-              <span className="text-xs">Apps PRT</span>
+              <PenTool className="h-6 w-6" />
+              <span className="text-xs font-medium">Sign Off</span>
             </Button>
           </div>
         </div>
