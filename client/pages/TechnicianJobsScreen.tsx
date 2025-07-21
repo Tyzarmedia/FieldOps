@@ -31,6 +31,7 @@ import {
   Package,
   PenTool,
   Settings,
+  Play,
 } from "lucide-react";
 import { teamJobs, updateJobStatus, type Job } from "../data/sharedJobs";
 
@@ -39,6 +40,7 @@ export default function TechnicianJobsScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showJobDetail, setShowJobDetail] = useState(false);
+  const [isJobPaused, setIsJobPaused] = useState(false);
   const navigate = useNavigate();
 
   const tabs = [
@@ -130,14 +132,24 @@ export default function TechnicianJobsScreen() {
           </div>
 
           {/* Job Status Bar */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-center mb-4">
             <div className="flex space-x-4">
               <Button
                 size="sm"
                 className="bg-white/20 text-white hover:bg-white/30"
+                onClick={() => setIsJobPaused(!isJobPaused)}
               >
-                <Pause className="h-4 w-4 mr-2" />
-                Pause
+                {isJobPaused ? (
+                  <>
+                    <Play className="h-4 w-4 mr-2" />
+                    Start
+                  </>
+                ) : (
+                  <>
+                    <Pause className="h-4 w-4 mr-2" />
+                    Pause
+                  </>
+                )}
               </Button>
               <Button
                 size="sm"
