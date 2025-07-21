@@ -17,6 +17,10 @@ import {
   UserCheck,
   AlertCircle,
   Activity,
+  Calendar,
+  Package2,
+  Network,
+  Timer,
 } from "lucide-react";
 
 interface LayoutProps {
@@ -216,12 +220,11 @@ function getNavigationForRole(role: string) {
     case "Technician":
     case "AssistantTechnician":
       return [
-        ...baseNavigation,
-        { name: "Clock In/Out", href: "/clock", icon: Clock },
-        { name: "My Jobs", href: "/jobs", icon: ClipboardList },
-        { name: "Fleet Tasks", href: "/fleet", icon: Truck },
-        { name: "Safety Tasks", href: "/safety", icon: Shield },
-        { name: "Stock", href: "/stock", icon: Package },
+        { name: "Apply Leave", href: "/apply-leave", icon: Calendar },
+        { name: "Stock on Hand", href: "/stock-on-hand", icon: Package2 },
+        { name: "Network Assessment", href: "/network-assessment", icon: Network },
+        { name: "Overtime List", href: "/overtime-list", icon: Timer },
+        { name: "Settings", href: "/technician-settings", icon: Settings },
       ];
 
     case "FleetManager":
