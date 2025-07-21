@@ -411,7 +411,7 @@ export default function TechnicianSafetyScreen() {
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20"
-            onClick={() => navigate('/technician')}
+            onClick={() => navigate('/')}
           >
             <X className="h-6 w-6" />
           </Button>
