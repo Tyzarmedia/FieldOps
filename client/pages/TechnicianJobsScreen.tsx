@@ -419,6 +419,7 @@ export default function TechnicianJobsScreen() {
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-gray-600"
+              onClick={() => navigate('/technician/udf')}
             >
               <Settings className="h-6 w-6" />
               <span className="text-xs font-medium">Udf</span>
@@ -426,6 +427,7 @@ export default function TechnicianJobsScreen() {
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-gray-600"
+              onClick={() => navigate('/technician/gallery')}
             >
               <Camera className="h-6 w-6" />
               <span className="text-xs font-medium">Gallery</span>
@@ -433,6 +435,7 @@ export default function TechnicianJobsScreen() {
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-gray-600"
+              onClick={() => navigate('/technician/stock')}
             >
               <Package className="h-6 w-6" />
               <span className="text-xs font-medium">Stocks</span>
@@ -440,6 +443,7 @@ export default function TechnicianJobsScreen() {
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-orange-600"
+              onClick={() => navigate('/technician/signoff')}
             >
               <PenTool className="h-6 w-6" />
               <span className="text-xs font-medium">Sign Off</span>
