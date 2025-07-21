@@ -9,7 +9,7 @@ import {
   Flame,
   Zap,
   Mountain,
-  Hardhats,
+  HardHat,
   ClipboardList,
   AlertTriangle,
   CheckCircle,
