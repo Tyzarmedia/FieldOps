@@ -81,8 +81,7 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Navigate to dashboard
-    const dashboardRoute = userRole === 'Technician' ? '/technician' : '/assistant-technician';
-    navigate(dashboardRoute);
+    navigate('/');
   };
 
   const handleClose = () => {
