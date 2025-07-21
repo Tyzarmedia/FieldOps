@@ -1,9 +1,6 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Truck,
   Fuel,
@@ -12,16 +9,16 @@ import {
   CheckCircle,
   Calendar,
   MapPin,
-  User,
-  Clock,
-  FileText,
-  Plus,
-  Eye,
   Wrench,
   Activity,
+  FileText,
+  Plus,
+  BarChart3,
 } from "lucide-react";
 
 export default function FleetManagerDashboard() {
+  const [systemData, setSystemData] = useState<any>(null);
+
   const fleetStats = {
     totalVehicles: 24,
     activeVehicles: 20,
@@ -33,476 +30,286 @@ export default function FleetManagerDashboard() {
     pendingInspections: 3,
   };
 
-  const vehicles = [
+  const dashboardCards = [
     {
-      id: "V001",
-      name: "Van #247",
-      type: "Service Van",
-      assignedTo: "John Smith",
-      status: "active",
-      location: "Downtown Office",
-      mileage: 45230,
-      fuelLevel: 85,
-      lastInspection: "2024-01-10",
-      nextMaintenance: "2024-02-15",
-      compliance: "good",
+      id: "fleet-overview",
+      title: "Fleet Overview",
+      icon: Truck,
+      color: "bg-blue-500",
+      description: `${fleetStats.activeVehicles}/${fleetStats.totalVehicles} vehicles active`,
+      action: () => handleCardAction("fleet-overview"),
     },
     {
-      id: "V002",
-      name: "Truck #156",
-      type: "Equipment Truck",
-      assignedTo: "Sarah Johnson",
-      status: "maintenance",
-      location: "Workshop",
-      mileage: 67890,
-      fuelLevel: 60,
-      lastInspection: "2024-01-05",
-      nextMaintenance: "2024-01-20",
-      compliance: "needs-attention",
+      id: "inspections",
+      title: "Inspections",
+      icon: CheckCircle,
+      color: "bg-green-500",
+      description: `${fleetStats.pendingInspections} pending inspections`,
+      action: () => handleCardAction("inspections"),
     },
     {
-      id: "V003",
-      name: "Van #312",
-      type: "Service Van",
-      assignedTo: null,
-      status: "available",
-      location: "Base Yard",
-      mileage: 32100,
-      fuelLevel: 95,
-      lastInspection: "2024-01-12",
-      nextMaintenance: "2024-03-01",
-      compliance: "excellent",
+      id: "maintenance",
+      title: "Maintenance",
+      icon: Wrench,
+      color: "bg-orange-500",
+      description: `${fleetStats.inMaintenance} vehicles in maintenance`,
+      action: () => handleCardAction("maintenance"),
+    },
+    {
+      id: "compliance",
+      title: "Compliance",
+      icon: Settings,
+      color: "bg-purple-500",
+      description: `${fleetStats.complianceRate}% compliance rate`,
+      action: () => handleCardAction("compliance"),
+    },
+    {
+      id: "fuel-efficiency",
+      title: "Fuel Efficiency",
+      icon: Fuel,
+      color: "bg-cyan-500",
+      description: `${fleetStats.fuelEfficiency} MPG average`,
+      action: () => handleCardAction("fuel-efficiency"),
+    },
+    {
+      id: "mileage",
+      title: "Mileage Tracking",
+      icon: MapPin,
+      color: "bg-indigo-500",
+      description: `${fleetStats.totalMileage.toLocaleString()} total miles`,
+      action: () => handleCardAction("mileage"),
+    },
+    {
+      id: "alerts",
+      title: "Fleet Alerts",
+      icon: AlertTriangle,
+      color: "bg-red-500",
+      description: "Monitor vehicle alerts and issues",
+      action: () => handleCardAction("alerts"),
+    },
+    {
+      id: "reports",
+      title: "Fleet Reports",
+      icon: FileText,
+      color: "bg-slate-500",
+      description: "Generate fleet performance reports",
+      action: () => handleCardAction("reports"),
+    },
+    {
+      id: "schedule",
+      title: "Schedule",
+      icon: Calendar,
+      color: "bg-emerald-500",
+      description: "Manage inspection and maintenance schedules",
+      action: () => handleCardAction("schedule"),
+    },
+    {
+      id: "add-vehicle",
+      title: "Add Vehicle",
+      icon: Plus,
+      color: "bg-pink-500",
+      description: "Register new vehicle to fleet",
+      action: () => handleCardAction("add-vehicle"),
+    },
+    {
+      id: "analytics",
+      title: "Fleet Analytics",
+      icon: BarChart3,
+      color: "bg-teal-500",
+      description: "Detailed fleet performance analytics",
+      action: () => handleCardAction("analytics"),
+    },
+    {
+      id: "activity",
+      title: "Fleet Activity",
+      icon: Activity,
+      color: "bg-yellow-500",
+      description: "Real-time fleet activity monitoring",
+      action: () => handleCardAction("activity"),
     },
   ];
 
-  const inspectionJobs = [
-    {
-      id: "FJ001",
-      vehicle: "Van #247",
-      type: "Daily Safety Check",
-      assignedTo: "John Smith",
-      status: "pending",
-      dueDate: "2024-01-16",
-      priority: "normal",
-    },
-    {
-      id: "FJ002",
-      vehicle: "Truck #156",
-      type: "Monthly Inspection",
-      assignedTo: "Mike Chen",
-      status: "overdue",
-      dueDate: "2024-01-15",
-      priority: "high",
-    },
-    {
-      id: "FJ003",
-      vehicle: "Van #312",
-      type: "Equipment Check",
-      assignedTo: "Emma Wilson",
-      status: "completed",
-      dueDate: "2024-01-14",
-      priority: "normal",
-    },
-  ];
+  useEffect(() => {
+    loadSystemData();
+  }, []);
 
-  const maintenanceAlerts = [
-    {
-      vehicle: "Truck #156",
-      issue: "Oil change due",
-      severity: "medium",
-      dueDate: "2024-01-20",
-    },
-    {
-      vehicle: "Van #189",
-      issue: "Brake inspection required",
-      severity: "high",
-      dueDate: "2024-01-18",
-    },
-    {
-      vehicle: "Van #247",
-      issue: "Tire rotation scheduled",
-      severity: "low",
-      dueDate: "2024-01-25",
-    },
-  ];
+  const loadSystemData = async () => {
+    try {
+      const response = await fetch("/data/database.json");
+      const data = await response.json();
+      setSystemData(data);
+    } catch (error) {
+      console.error("Failed to load system data:", error);
+    }
+  };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-success text-success-foreground";
+  const handleCardAction = (cardId: string) => {
+    switch (cardId) {
+      case "fleet-overview":
+        alert("Opening Fleet Overview...");
+        break;
+      case "inspections":
+        alert("Opening Fleet Inspections...");
+        break;
       case "maintenance":
-        return "bg-warning text-warning-foreground";
-      case "available":
-        return "bg-info text-info-foreground";
-      case "completed":
-        return "bg-success text-success-foreground";
-      case "pending":
-        return "bg-warning text-warning-foreground";
-      case "overdue":
-        return "bg-destructive text-destructive-foreground";
+        alert("Opening Maintenance Management...");
+        break;
+      case "compliance":
+        alert("Opening Compliance Dashboard...");
+        break;
+      case "fuel-efficiency":
+        alert("Opening Fuel Efficiency Reports...");
+        break;
+      case "mileage":
+        alert("Opening Mileage Tracking...");
+        break;
+      case "alerts":
+        alert("Opening Fleet Alerts...");
+        break;
+      case "reports":
+        alert("Opening Fleet Reports...");
+        break;
+      case "schedule":
+        alert("Opening Scheduling System...");
+        break;
+      case "add-vehicle":
+        alert("Opening Add Vehicle Form...");
+        break;
+      case "analytics":
+        alert("Opening Fleet Analytics...");
+        break;
+      case "activity":
+        alert("Opening Fleet Activity Monitor...");
+        break;
       default:
-        return "bg-secondary text-secondary-foreground";
-    }
-  };
-
-  const getComplianceColor = (compliance: string) => {
-    switch (compliance) {
-      case "excellent":
-        return "bg-success text-success-foreground";
-      case "good":
-        return "bg-info text-info-foreground";
-      case "needs-attention":
-        return "bg-warning text-warning-foreground";
-      case "critical":
-        return "bg-destructive text-destructive-foreground";
-      default:
-        return "bg-secondary text-secondary-foreground";
-    }
-  };
-
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case "high":
-        return "text-destructive";
-      case "medium":
-        return "text-warning";
-      case "low":
-        return "text-info";
-      default:
-        return "text-muted-foreground";
+        alert(`Opening ${cardId}...`);
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* Fleet Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Fleet Status</CardTitle>
-            <Truck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {fleetStats.activeVehicles}/{fleetStats.totalVehicles}
-            </div>
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-              <Activity className="h-3 w-3 text-success" />
-              <span>
-                {Math.round(
-                  (fleetStats.activeVehicles / fleetStats.totalVehicles) * 100,
-                )}
-                % operational
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Compliance</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {fleetStats.complianceRate}%
-            </div>
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-              <CheckCircle className="h-3 w-3 text-success" />
-              <span>Above target (90%)</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Fuel Efficiency
-            </CardTitle>
-            <Fuel className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {fleetStats.fuelEfficiency} MPG
-            </div>
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-              <Activity className="h-3 w-3 text-success" />
-              <span>+2.1 from last month</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Tasks</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {fleetStats.pendingInspections}
-            </div>
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-              <Calendar className="h-3 w-3 text-warning" />
-              <span>Inspections due</span>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen bg-gray-100 p-6">
+      {/* Welcome Section */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          Fleet Manager Dashboard
+        </h1>
+        <p className="text-gray-600">
+          Complete fleet management and vehicle tracking
+        </p>
       </div>
 
-      {/* Main Content Tabs */}
-      <Tabs defaultValue="fleet" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="fleet">Fleet Overview</TabsTrigger>
-          <TabsTrigger value="inspections">Inspections</TabsTrigger>
-          <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="fleet" className="space-y-4">
+      {/* Key Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white rounded-xl p-4 shadow-md">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Vehicle Fleet</h3>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Vehicle
-            </Button>
+            <div>
+              <p className="text-sm text-gray-600">Active Vehicles</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {fleetStats.activeVehicles}/{fleetStats.totalVehicles}
+              </p>
+            </div>
+            <Truck className="h-8 w-8 text-blue-500" />
           </div>
-
-          <div className="space-y-4">
-            {vehicles.map((vehicle) => (
-              <Card
-                key={vehicle.id}
-                className="hover:shadow-md transition-shadow"
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Badge variant="outline">{vehicle.id}</Badge>
-                        <Badge className={getStatusColor(vehicle.status)}>
-                          {vehicle.status}
-                        </Badge>
-                        <Badge
-                          className={getComplianceColor(vehicle.compliance)}
-                        >
-                          {vehicle.compliance}
-                        </Badge>
-                      </div>
-                      <h4 className="font-semibold text-foreground mb-2">
-                        {vehicle.name} ({vehicle.type})
-                      </h4>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <User className="h-3 w-3 mr-1" />
-                          {vehicle.assignedTo || "Unassigned"}
-                        </div>
-                        <div className="flex items-center">
-                          <MapPin className="h-3 w-3 mr-1" />
-                          {vehicle.location}
-                        </div>
-                        <div className="flex items-center">
-                          <Activity className="h-3 w-3 mr-1" />
-                          {vehicle.mileage.toLocaleString()} miles
-                        </div>
-                        <div className="flex items-center">
-                          <Fuel className="h-3 w-3 mr-1" />
-                          {vehicle.fuelLevel}% fuel
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">
-                        Fuel Level
-                      </p>
-                      <Progress value={vehicle.fuelLevel} className="h-2" />
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-muted-foreground">
-                        Next Maintenance
-                      </p>
-                      <p className="font-medium">{vehicle.nextMaintenance}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Details
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      Schedule Inspection
-                    </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Wrench className="h-4 w-4 mr-2" />
-                      Maintenance
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="inspections" className="space-y-4">
+        </div>
+        <div className="bg-white rounded-xl p-4 shadow-md">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Fleet Inspection Jobs</h3>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Inspection
-            </Button>
+            <div>
+              <p className="text-sm text-gray-600">Compliance</p>
+              <p className="text-2xl font-bold text-green-600">
+                {fleetStats.complianceRate}%
+              </p>
+            </div>
+            <CheckCircle className="h-8 w-8 text-green-500" />
           </div>
-
-          <div className="space-y-4">
-            {inspectionJobs.map((job) => (
-              <Card key={job.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Badge variant="outline">{job.id}</Badge>
-                        <Badge className={getStatusColor(job.status)}>
-                          {job.status}
-                        </Badge>
-                        {job.status === "overdue" && (
-                          <Badge className="bg-destructive text-destructive-foreground">
-                            OVERDUE
-                          </Badge>
-                        )}
-                      </div>
-                      <h4 className="font-semibold">{job.type}</h4>
-                      <div className="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <Truck className="h-3 w-3 mr-1" />
-                          {job.vehicle}
-                        </div>
-                        <div className="flex items-center">
-                          <User className="h-3 w-3 mr-1" />
-                          {job.assignedTo}
-                        </div>
-                        <div className="flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          Due: {job.dueDate}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      {job.status === "pending" && (
-                        <Button size="sm">Assign Technician</Button>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="maintenance" className="space-y-4">
+        </div>
+        <div className="bg-white rounded-xl p-4 shadow-md">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Maintenance Alerts</h3>
-            <Button size="sm" variant="outline">
-              <Settings className="h-4 w-4 mr-2" />
-              Schedule Maintenance
-            </Button>
+            <div>
+              <p className="text-sm text-gray-600">Fuel Efficiency</p>
+              <p className="text-2xl font-bold text-cyan-600">
+                {fleetStats.fuelEfficiency} MPG
+              </p>
+            </div>
+            <Fuel className="h-8 w-8 text-cyan-500" />
           </div>
+        </div>
+        <div className="bg-white rounded-xl p-4 shadow-md">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Pending Tasks</p>
+              <p className="text-2xl font-bold text-orange-600">
+                {fleetStats.pendingInspections}
+              </p>
+            </div>
+            <AlertTriangle className="h-8 w-8 text-orange-500" />
+          </div>
+        </div>
+      </div>
 
-          <div className="space-y-4">
-            {maintenanceAlerts.map((alert, index) => (
-              <Card key={index}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className={getSeverityColor(alert.severity)}>
-                        <AlertTriangle className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold">{alert.issue}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {alert.vehicle} • Due: {alert.dueDate}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge
-                        className={
-                          alert.severity === "high"
-                            ? "bg-destructive text-destructive-foreground"
-                            : alert.severity === "medium"
-                              ? "bg-warning text-warning-foreground"
-                              : "bg-info text-info-foreground"
-                        }
-                      >
-                        {alert.severity}
-                      </Badge>
-                      <Button variant="outline" size="sm">
-                        Schedule
-                      </Button>
-                    </div>
+      {/* Dashboard Cards Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {dashboardCards.map((card) => {
+          const IconComponent = card.icon;
+          return (
+            <Card
+              key={card.id}
+              className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
+              onClick={card.action}
+            >
+              <CardContent className="p-6 text-center">
+                <div className="flex justify-center mb-4">
+                  <div className={`${card.color} p-4 rounded-2xl`}>
+                    <IconComponent className="h-8 w-8 text-white" />
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="reports" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Fleet Reports</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full justify-start" variant="outline">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Fleet Utilization Report
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Activity className="h-4 w-4 mr-2" />
-                  Mileage Summary
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Fuel className="h-4 w-4 mr-2" />
-                  Fuel Efficiency Report
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Compliance Report
-                </Button>
+                </div>
+                <h3 className="font-semibold text-gray-800 mb-2">
+                  {card.title}
+                </h3>
+                <p className="text-sm text-gray-600">{card.description}</p>
               </CardContent>
             </Card>
+          );
+        })}
+      </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full justify-start">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Schedule Fleet Inspection
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  View Inspection Calendar
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Wrench className="h-4 w-4 mr-2" />
-                  Maintenance Schedule
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Generate Fleet Report
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+      {/* Quick Actions */}
+      <div className="mt-8 bg-white rounded-2xl p-6 shadow-md">
+        <h3 className="font-semibold text-gray-800 mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Scheduling fleet inspection...")}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Schedule Inspection
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Opening inspection calendar...")}
+          >
+            <Calendar className="h-4 w-4 mr-2" />
+            View Calendar
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Opening maintenance schedule...")}
+          >
+            <Wrench className="h-4 w-4 mr-2" />
+            Maintenance
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Generating fleet report...")}
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            Generate Report
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
