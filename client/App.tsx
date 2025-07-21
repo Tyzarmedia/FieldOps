@@ -16,6 +16,10 @@ import TechnicianJobsScreen from "./pages/TechnicianJobsScreen";
 import TechnicianSafetyScreen from "./pages/TechnicianSafetyScreen";
 import TechnicianFleetScreen from "./pages/TechnicianFleetScreen";
 import TechnicianOvertimeScreen from "./pages/TechnicianOvertimeScreen";
+import UDFieldsScreen from "./pages/UDFieldsScreen";
+import StockScreen from "./pages/StockScreen";
+import SignOffScreen from "./pages/SignOffScreen";
+import GalleryScreen from "./pages/GalleryScreen";
 import CeoDashboard from "./pages/CeoDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import CoordinatorDashboard from "./pages/CoordinatorDashboard";
@@ -191,6 +195,38 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <TechnicianOvertimeScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/udf"
+            element={
+              <ProtectedRoute>
+                <UDFieldsScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/stock"
+            element={
+              <ProtectedRoute>
+                <StockScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/gallery"
+            element={
+              <ProtectedRoute>
+                <GalleryScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/signoff"
+            element={
+              <ProtectedRoute>
+                <SignOffScreen />
               </ProtectedRoute>
             }
           />
@@ -507,6 +543,62 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <PayrollDashboardWithTab defaultTab="reports" />
+              </ProtectedRoute>
+            }
+          />
+          {/* New Technician Navigation Routes */}
+          <Route
+            path="/apply-leave"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage
+                  title="Apply Leave"
+                  description="Submit leave requests and view leave balance."
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/stock-on-hand"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage
+                  title="Stock on Hand"
+                  description="View current stock levels and available equipment."
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/network-assessment"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage
+                  title="Network Assessment"
+                  description="Perform network diagnostics and assessments."
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/overtime-list"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage
+                  title="Overtime List"
+                  description="View and manage overtime records."
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician-settings"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage
+                  title="Technician Settings"
+                  description="Configure technician-specific settings and preferences."
+                />
               </ProtectedRoute>
             }
           />
