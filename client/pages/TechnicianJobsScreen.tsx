@@ -177,7 +177,7 @@ export default function TechnicianJobsScreen() {
         {/* Job Details Content */}
         <div className="p-4 pb-20 space-y-6">
           {/* Client Address with Map */}
-          <Card className="mb-4">
+          <Card>
             <CardContent className="p-4">
               <h3 className="font-semibold mb-2">Client Address</h3>
               <div className="bg-gray-200 h-32 rounded-lg mb-2 flex items-center justify-center">
@@ -188,7 +188,7 @@ export default function TechnicianJobsScreen() {
           </Card>
 
           {/* Job Details */}
-          <Card className="mb-4">
+          <Card>
             <CardContent className="p-4 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
