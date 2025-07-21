@@ -10,6 +10,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { PlaceholderPage } from "./components/PlaceholderPage";
 import Dashboard from "./pages/Dashboard";
+import TechnicianDashboard from "./pages/TechnicianDashboard";
+import ClockInScreen from "./pages/ClockInScreen";
+import TechnicianJobsScreen from "./pages/TechnicianJobsScreen";
+import TechnicianSafetyScreen from "./pages/TechnicianSafetyScreen";
+import TechnicianFleetScreen from "./pages/TechnicianFleetScreen";
+import TechnicianOvertimeScreen from "./pages/TechnicianOvertimeScreen";
 import CeoDashboard from "./pages/CeoDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import CoordinatorDashboard from "./pages/CoordinatorDashboard";
@@ -85,7 +91,7 @@ function DashboardRouter() {
     case "Coordinator":
       return <CoordinatorDashboard />;
     case "Technician":
-      return <Dashboard />;
+      return <TechnicianDashboard />;
     case "AssistantTechnician":
       return <AssistantTechnicianDashboard />;
     case "FleetManager":
@@ -124,6 +130,7 @@ const App = () => (
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/demo-hr" element={<AutoLogin />} />
+          <Route path="/clock-in" element={<ClockInScreen />} />
 
           <Route
             path="/"
@@ -152,6 +159,38 @@ const App = () => (
                   title="Job Management"
                   description="Detailed job management interface with filtering, sorting, and status updates."
                 />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/jobs"
+            element={
+              <ProtectedRoute>
+                <TechnicianJobsScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/safety"
+            element={
+              <ProtectedRoute>
+                <TechnicianSafetyScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/fleet"
+            element={
+              <ProtectedRoute>
+                <TechnicianFleetScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/overtime"
+            element={
+              <ProtectedRoute>
+                <TechnicianOvertimeScreen />
               </ProtectedRoute>
             }
           />
