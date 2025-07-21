@@ -23,6 +23,7 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
 
   // Get user initials
   const getInitials = (name: string) => {
+    if (!name) return "JD";
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
