@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,38 +10,22 @@ import {
   X,
   Briefcase,
   Shield,
-  Calendar,
-  Database,
+  Truck,
   Clock,
-  MapPin,
-  Phone,
-  Camera,
-  FileText,
-  BookOpen,
-  MessageSquare,
-  Target,
-  Award,
+  Timer,
 } from "lucide-react";
+import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
 
 export default function TechnicianDashboard() {
-  const [clockedIn, setClockedIn] = useState(true);
   const [workingHours, setWorkingHours] = useState("12:31");
   const [distanceTraveled, setDistanceTraveled] = useState("42.7");
-  const [systemData, setSystemData] = useState<any>(null);
+  const navigate = useNavigate();
 
-  const technicianStats = {
-    todayJobs: 3,
-    completedJobs: 2,
-    activeJobs: 1,
-    pendingJobs: 0,
-    efficiency: 89.7,
-    customerRating: 4.3,
-    certificationLevel: "Level 2",
-    yearsExperience: 3,
-    specializations: ["Network", "General Maintenance"],
-    monthlyTarget: 65,
-    monthlyCompleted: 58,
-    trainingProgress: 75,
+  const stats = {
+    assignedJobs: getJobsByStatus('assigned').length,
+    acceptedJobs: getJobsByStatus('accepted').length,
+    inProgressJobs: getJobsByStatus('in-progress').length,
+    completedJobs: getJobsByStatus('completed').length,
   };
 
   const dashboardCards = [
@@ -49,91 +34,44 @@ export default function TechnicianDashboard() {
       title: "Jobs",
       icon: Briefcase,
       color: "bg-orange-500",
-      description: `${technicianStats.todayJobs} active jobs today`,
-      action: () => handleCardAction("jobs"),
+      description: `${stats.assignedJobs + stats.acceptedJobs + stats.inProgressJobs} active jobs`,
+      action: () => navigate('/technician/jobs'),
     },
     {
       id: "safety",
       title: "Health & Safety",
       icon: Shield,
       color: "bg-orange-500",
-      description: "Safety protocols and checklists",
-      action: () => handleCardAction("safety"),
+      description: "Safety checklists and incident reports",
+      action: () => navigate('/technician/safety'),
+    },
+    {
+      id: "fleet",
+      title: "Fleet",
+      icon: Truck,
+      color: "bg-orange-500",
+      description: "Vehicle and tool inspections",
+      action: () => navigate('/technician/fleet'),
     },
     {
       id: "overtime",
       title: "Capture Overtime",
-      icon: Calendar,
+      icon: Timer,
       color: "bg-orange-500",
-      description: "Log overtime hours",
-      action: () => handleCardAction("overtime"),
-    },
-    {
-      id: "overtime-list",
-      title: "Overtime List",
-      icon: Database,
-      color: "bg-orange-500",
-      description: "View overtime records",
-      action: () => handleCardAction("overtime-list"),
-    },
-    {
-      id: "tools",
-      title: "Tools & Equipment",
-      icon: Target,
-      color: "bg-orange-500",
-      description: "Equipment management",
-      action: () => handleCardAction("tools"),
-    },
-    {
-      id: "training",
-      title: "Training",
-      icon: BookOpen,
-      color: "bg-orange-500",
-      description: `${technicianStats.trainingProgress}% completed`,
-      action: () => handleCardAction("training"),
-    },
-    {
-      id: "messages",
-      title: "Messages",
-      icon: MessageSquare,
-      color: "bg-orange-500",
-      description: "Supervisor messages",
-      action: () => handleCardAction("messages"),
-    },
-    {
-      id: "reports",
-      title: "Reports",
-      icon: FileText,
-      color: "bg-orange-500",
-      description: "Work performance reports",
-      action: () => handleCardAction("reports"),
+      description: "Log overtime hours worked",
+      action: () => navigate('/technician/overtime'),
     },
   ];
 
   useEffect(() => {
-    loadSystemData();
     // Update working hours every minute
     const interval = setInterval(() => {
-      if (clockedIn) {
-        updateWorkingHours();
-      }
+      updateWorkingHours();
     }, 60000);
     return () => clearInterval(interval);
-  }, [clockedIn]);
-
-  const loadSystemData = async () => {
-    try {
-      const response = await fetch("/data/database.json");
-      const data = await response.json();
-      setSystemData(data);
-    } catch (error) {
-      console.error("Failed to load system data:", error);
-    }
-  };
+  }, []);
 
   const updateWorkingHours = () => {
-    // This would typically calculate actual working hours
-    // For demo purposes, we'll just increment
     const [hours, minutes] = workingHours.split(":").map(Number);
     const totalMinutes = hours * 60 + minutes + 1;
     const newHours = Math.floor(totalMinutes / 60);
@@ -141,60 +79,25 @@ export default function TechnicianDashboard() {
     setWorkingHours(`${newHours}:${newMinutes.toString().padStart(2, "0")}`);
   };
 
-  const handleClockInOut = () => {
-    setClockedIn(!clockedIn);
-    if (!clockedIn) {
-      setWorkingHours("0:00");
-      setDistanceTraveled("0.0");
-    }
-  };
-
-  const handleCardAction = (cardId: string) => {
-    switch (cardId) {
-      case "jobs":
-        alert("Opening Jobs management...");
-        break;
-      case "safety":
-        alert("Opening Health & Safety protocols...");
-        break;
-      case "overtime":
-        alert("Opening Overtime capture form...");
-        break;
-      case "overtime-list":
-        alert("Opening Overtime records...");
-        break;
-      case "tools":
-        alert("Opening Tools & Equipment management...");
-        break;
-      case "training":
-        alert("Opening Training modules...");
-        break;
-      case "messages":
-        alert("Opening Messages from supervisor...");
-        break;
-      case "reports":
-        alert("Opening Performance reports...");
-        break;
-      default:
-        alert(`Opening ${cardId}...`);
-    }
-  };
-
   const handleMenuAction = (action: string) => {
     switch (action) {
       case "menu":
-        alert("Opening navigation menu...");
+        // Open navigation menu
         break;
       case "analytics":
-        alert("Opening analytics dashboard...");
+        navigate('/technician/analytics');
         break;
       case "sync":
-        alert("Syncing data with server...");
+        // Sync data
         break;
       case "close":
-        alert("Closing application...");
+        navigate('/login');
         break;
     }
+  };
+
+  const handleClockOut = () => {
+    navigate('/clock-in');
   };
 
   return (
@@ -261,26 +164,22 @@ export default function TechnicianDashboard() {
           </div>
         </div>
 
-        {/* Clock In/Out Button */}
+        {/* Clock Out Button */}
         <div className="mt-6 text-center">
           <Button
-            onClick={handleClockInOut}
-            className={`w-full max-w-xs ${
-              clockedIn
-                ? "bg-white/20 text-white border-white/30"
-                : "bg-white text-orange-600"
-            } hover:bg-white/30 transition-all duration-300`}
+            onClick={handleClockOut}
+            className="w-full max-w-xs bg-white/20 text-white border-white/30 hover:bg-white/30 transition-all duration-300"
             variant="outline"
           >
             <Clock className="h-4 w-4 mr-2" />
-            {clockedIn ? "Clock Out" : "Clock In"}
+            Clock Out
           </Button>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="p-6">
-        {/* Dashboard Cards Grid */}
+        {/* Dashboard Cards Grid - Only 4 cards */}
         <div className="grid grid-cols-2 gap-4">
           {dashboardCards.map((card) => {
             const IconComponent = card.icon;
@@ -306,60 +205,67 @@ export default function TechnicianDashboard() {
           })}
         </div>
 
-        {/* Quick Stats */}
+        {/* Job Status Summary */}
         <div className="mt-8 bg-white rounded-2xl p-6 shadow-md">
-          <h3 className="font-semibold text-gray-800 mb-4">Today's Summary</h3>
+          <h3 className="font-semibold text-gray-800 mb-4">Today's Job Status</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">
-                {technicianStats.completedJobs}
+              <div className="text-2xl font-bold text-blue-600">
+                {stats.assignedJobs}
               </div>
-              <div className="text-sm text-gray-600">Jobs Completed</div>
+              <div className="text-sm text-gray-600">Assigned</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {technicianStats.efficiency}%
+              <div className="text-2xl font-bold text-orange-600">
+                {stats.acceptedJobs}
               </div>
-              <div className="text-sm text-gray-600">Efficiency</div>
+              <div className="text-sm text-gray-600">Accepted</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {technicianStats.customerRating}
+                {stats.inProgressJobs}
               </div>
-              <div className="text-sm text-gray-600">Customer Rating</div>
+              <div className="text-sm text-gray-600">In Progress</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">
-                {technicianStats.trainingProgress}%
+                {stats.completedJobs}
               </div>
-              <div className="text-sm text-gray-600">Training Progress</div>
+              <div className="text-sm text-gray-600">Completed</div>
             </div>
           </div>
         </div>
 
-        {/* Emergency Contact */}
-        <div className="mt-6">
-          <Card className="bg-red-50 border-red-200">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-semibold text-red-800">
-                    Emergency Contact
-                  </h4>
-                  <p className="text-sm text-red-600">24/7 Support Available</p>
+        {/* Latest Job */}
+        {teamJobs.length > 0 && (
+          <div className="mt-6">
+            <Card className="bg-blue-50 border-blue-200">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-semibold text-blue-800">
+                      Latest Job: {teamJobs[0].title}
+                    </h4>
+                    <p className="text-sm text-blue-600">
+                      {teamJobs[0].client.name}
+                    </p>
+                    <p className="text-xs text-blue-500 mt-1">
+                      Status: {teamJobs[0].status.toUpperCase()}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => navigate('/technician/jobs')}
+                  >
+                    <Briefcase className="h-4 w-4 mr-2" />
+                    View
+                  </Button>
                 </div>
-                <Button
-                  size="sm"
-                  className="bg-red-600 hover:bg-red-700 text-white"
-                  onClick={() => alert("Calling emergency support...")}
-                >
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
