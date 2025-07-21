@@ -5,11 +5,14 @@ import { Button } from "@/components/ui/button";
 import { X, Edit3 } from "lucide-react";
 
 interface ClockInScreenProps {
-  userRole: string;
-  userName: string;
+  userRole?: string;
+  userName?: string;
 }
 
-export default function ClockInScreen({ userRole, userName }: ClockInScreenProps) {
+export default function ClockInScreen({ userRole: propUserRole, userName: propUserName }: ClockInScreenProps = {}) {
+  // Get user info from localStorage if not provided as props
+  const userRole = propUserRole || localStorage.getItem("userRole") || "Technician";
+  const userName = propUserName || localStorage.getItem("userName") || "John Doe";
   const [isClockingIn, setIsClockingIn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [workingHours, setWorkingHours] = useState("0:00");
