@@ -309,6 +309,11 @@ function getNavigationForRole(role: string) {
 function getPageTitle(pathname: string, role: string) {
   const pathMap: Record<string, string> = {
     "/": "Dashboard",
+    "/apply-leave": "Apply Leave",
+    "/stock-on-hand": "Stock on Hand",
+    "/network-assessment": "Network Assessment",
+    "/overtime-list": "Overtime List",
+    "/technician-settings": "Settings",
     "/clock": "Clock In/Out",
     "/jobs": "My Jobs",
     "/fleet": "Fleet Tasks",
