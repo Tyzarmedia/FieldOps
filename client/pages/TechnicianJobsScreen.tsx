@@ -26,6 +26,8 @@ import {
   Camera,
   FileText,
   Navigation,
+  Network,
+  Wifi,
 } from "lucide-react";
 import { teamJobs, updateJobStatus, type Job } from "../data/sharedJobs";
 
@@ -304,6 +306,85 @@ export default function TechnicianJobsScreen() {
                 <div>
                   <p className="text-sm text-gray-600">Service Territory</p>
                   <p className="font-medium">{selectedJob.serviceTerritory}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Network Status */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-3 mb-4">
+                <Network className="h-5 w-5 text-blue-500" />
+                <h3 className="font-semibold text-gray-800">Network Status</h3>
+              </div>
+
+              <div className="space-y-3 text-sm">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-gray-600">Network Identifier</p>
+                    <p className="font-medium">4857544371700FAA</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Port Number</p>
+                    <p className="font-medium">0-15-11</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-gray-600">Switch Number</p>
+                    <p className="font-medium">VT-SOSHANGUVE</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Selected Service</p>
+                    <p className="font-medium">10/20</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-gray-600">NMS Service Status</p>
+                    <p className="font-medium text-green-600">Active</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">CPE_rx</p>
+                    <p className="font-medium">-19.79</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-gray-600">CPE_tx</p>
+                    <p className="font-medium">2.32</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">POP_rx</p>
+                    <p className="font-medium">-24.09</p>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t">
+                  <div className="mb-2">
+                    <p className="text-gray-600">Alert Message from NMS</p>
+                    <p className="font-medium text-green-600">Link Is Up</p>
+                  </div>
+                  <div className="mb-2">
+                    <p className="text-gray-600">POP Status</p>
+                    <p className="font-medium text-gray-500">Unknown</p>
+                  </div>
+                  <div className="mb-2">
+                    <p className="text-gray-600">Device Last seen</p>
+                    <p className="font-medium">2025-07-21T17:48:40.000Z</p>
+                  </div>
+                  <div className="mb-2">
+                    <p className="text-gray-600">PPPOE Connection</p>
+                    <p className="font-medium">445009</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Mac Address</p>
+                    <p className="font-medium text-blue-600">14-AB-02-CA-9B-FF</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
