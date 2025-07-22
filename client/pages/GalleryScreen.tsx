@@ -26,26 +26,27 @@ interface Photo {
 export default function GalleryScreen() {
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState("gallery");
-  const [selectedCategory, setSelectedCategory] = useState<'before' | 'fault-finding' | 'after-fix'>('before');
+  const [selectedCategory, setSelectedCategory] = useState<'before-light-readings' | 'image-fault' | 'image-after-work' | 'light-readings-after-work'>('before-light-readings');
   const [photos, setPhotos] = useState<Photo[]>([
     {
       id: '1',
-      category: 'before',
+      category: 'before-light-readings',
       url: '/placeholder.svg',
       timestamp: new Date('2024-01-15T10:30:00')
     },
     {
       id: '2',
-      category: 'fault-finding',
-      url: '/placeholder.svg', 
+      category: 'image-fault',
+      url: '/placeholder.svg',
       timestamp: new Date('2024-01-15T11:15:00')
     },
   ]);
 
   const categories = [
-    { id: 'before', label: 'Before', color: 'bg-blue-500' },
-    { id: 'fault-finding', label: 'Fault Finding', color: 'bg-orange-500' },
-    { id: 'after-fix', label: 'After Fix', color: 'bg-green-500' },
+    { id: 'before-light-readings', label: 'Before Light Readings', color: 'bg-blue-500' },
+    { id: 'image-fault', label: 'Image Fault', color: 'bg-red-500' },
+    { id: 'image-after-work', label: 'Image After Work', color: 'bg-green-500' },
+    { id: 'light-readings-after-work', label: 'Light Readings After Work', color: 'bg-purple-500' },
   ];
 
   const handleTabChange = (tab: string) => {
