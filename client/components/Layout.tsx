@@ -165,9 +165,6 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
             </div>
 
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         </header>
