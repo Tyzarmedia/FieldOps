@@ -213,6 +213,57 @@ export default function TechnicianSettingsScreen() {
       <div className="p-4">
         {activeTab === "profile" && (
           <>
+            {/* Profile Image */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Camera className="h-5 w-5" />
+                  <span>Profile Picture</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center space-y-4">
+                <div className="relative inline-block">
+                  {profileImage ? (
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className="w-32 h-32 rounded-full border-4 border-gray-200 object-cover"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 rounded-full border-4 border-gray-200 bg-gray-100 flex items-center justify-center">
+                      <span className="text-4xl font-bold text-gray-500">
+                        {name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <Button
+                    size="sm"
+                    className="absolute bottom-0 right-0 rounded-full h-10 w-10 p-0"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Camera className="h-4 w-4" />
+                  </Button>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfileImageUpload}
+                  className="hidden"
+                />
+                <div>
+                  <Button
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full max-w-xs"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload New Picture
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Profile Information */}
             <Card className="mb-6">
               <CardHeader>
@@ -229,7 +280,7 @@ export default function TechnicianSettingsScreen() {
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-2">Email</label>
                   <Input
@@ -238,7 +289,7 @@ export default function TechnicianSettingsScreen() {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-2">Phone Number</label>
                   <Input
@@ -246,7 +297,7 @@ export default function TechnicianSettingsScreen() {
                     onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-2">Employee ID</label>
                   <Input
