@@ -93,6 +93,64 @@ export default function StockScreen() {
 
       {/* Content */}
       <div className="p-4 pb-24 space-y-6">
+        {/* Allocate Stock Button */}
+        <div className="mb-6">
+          <Button
+            onClick={() => setShowAllocation(!showAllocation)}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 text-lg font-semibold"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Allocate Stock
+          </Button>
+        </div>
+
+        {/* Allocated Stock List */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Stock Allocated on This Job</h3>
+          <div className="space-y-3">
+            {allocatedStock.map((stock) => (
+              <Card key={stock.id} className="border-l-4 border-l-blue-500">
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <span className="font-semibold text-blue-600">{stock.code}</span>
+                        <Badge variant="outline" className="text-xs">
+                          {stock.container}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-2">{stock.description}</p>
+                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                        <span>Allocated: {stock.allocatedQty}</span>
+                        <span>Remaining: {stock.remainingQty}</span>
+                        <span>{stock.allocatedDate.toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-500 hover:bg-red-50"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            {allocatedStock.length === 0 && (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Package className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-500">No stock allocated to this job yet</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+
+        <hr className="my-6" />
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Add Used Stock</h3>
+
         {/* Code Search */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
