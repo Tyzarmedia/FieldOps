@@ -107,25 +107,19 @@ function DashboardRouter() {
     case "FleetManager":
       return <FleetManagerDashboard />;
     case "StockManager":
-      return (
-        <PlaceholderPage
-          title="Stock Manager Dashboard"
-          description="Inventory management, stock allocation, and usage tracking."
-        />
-      );
+      return <StockManagerDashboard />;
     case "HSManager":
-      return (
-        <PlaceholderPage
-          title="Health & Safety Manager Dashboard"
-          description="Safety compliance, incident management, and H&S task assignment."
-        />
-      );
+      return <HSManagerDashboard />;
     case "HR":
       return <EnhancedHRDashboard />;
     case "Payroll":
       return <PayrollDashboard />;
+    case "PayrollManager":
+      return <PayrollManagerDashboard />;
     case "IT":
       return <ITDashboard />;
+    case "ITManager":
+      return <ITManagerDashboard />;
     default:
       return <Dashboard />;
   }
