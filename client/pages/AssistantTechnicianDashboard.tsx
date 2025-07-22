@@ -311,10 +311,15 @@ export default function AssistantTechnicianDashboard() {
         <div className="grid grid-cols-2 gap-4">
           {dashboardCards.map((card) => {
             const IconComponent = card.icon;
+            const isDisabled = card.disabled || false;
             return (
               <Card
                 key={card.id}
-                className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
+                className={`bg-white transition-all duration-300 border-0 shadow-md ${
+                  isDisabled
+                    ? "opacity-60 cursor-not-allowed"
+                    : "hover:shadow-lg cursor-pointer"
+                }`}
                 onClick={card.action}
               >
                 <CardContent className="p-6 text-center">
@@ -323,10 +328,12 @@ export default function AssistantTechnicianDashboard() {
                       <IconComponent className="h-8 w-8 text-white" />
                     </div>
                   </div>
-                  <h3 className="font-semibold text-gray-800 mb-2">
+                  <h3 className={`font-semibold mb-2 ${isDisabled ? "text-gray-500" : "text-gray-800"}`}>
                     {card.title}
                   </h3>
-                  <p className="text-sm text-gray-600">{card.description}</p>
+                  <p className={`text-sm ${isDisabled ? "text-gray-400" : "text-gray-600"}`}>
+                    {card.description}
+                  </p>
                 </CardContent>
               </Card>
             );
