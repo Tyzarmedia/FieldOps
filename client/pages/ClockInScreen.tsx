@@ -358,7 +358,7 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
         {/* Footer */}
         <div className="flex items-center justify-between w-full max-w-sm">
           <div className="text-sm opacity-75">
-            Britelink MCT Time • Overtime 1.5
+            Britelink MCT Time • Overtime {getOvertimeRate()}
           </div>
           <Button
             variant="ghost"
