@@ -730,17 +730,134 @@ export default function ManagerDashboard() {
     </div>
   );
 
+  const renderMainDashboard = () => (
+    <>
+      {/* Quick Metrics Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        {quickMetrics.map((metric, index) => {
+          const IconComponent = metric.icon;
+          return (
+            <Card key={index} className="border-0 shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 rounded-lg ${metric.bgColor}`}>
+                    <IconComponent className={`h-5 w-5 ${metric.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      {metric.title}
+                    </p>
+                    <p className="text-lg font-bold">{metric.value}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Main Dashboard Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        {dashboardCards.map((card) => {
+          const IconComponent = card.icon;
+          return (
+            <Card
+              key={card.id}
+              className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 shadow-md overflow-hidden"
+              onClick={() => handleCardAction(card.id)}
+            >
+              <CardContent className="p-0">
+                {/* Header with Icon */}
+                <div className={`${card.color} p-4 text-white`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-lg">{card.title}</h3>
+                      <p className="text-sm opacity-90">{card.description}</p>
+                    </div>
+                    <IconComponent className="h-8 w-8 opacity-80" />
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
+                  <div className="flex items-end justify-between mb-3">
+                    <div>
+                      <p className="text-2xl font-bold text-foreground">
+                        {card.mainMetric}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {card.subMetric}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p
+                        className={`text-sm font-semibold ${
+                          card.trendPositive
+                            ? "text-success"
+                            : "text-destructive"
+                        }`}
+                      >
+                        {card.trend}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCardAction(card.id);
+                    }}
+                  >
+                    Open Dashboard
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+    </>
+  );
+
+  const renderSection = () => {
+    switch (activeSection) {
+      case "network-assessment":
+        return renderNetworkAssessment();
+      case "overtime-management":
+        return renderOvertimeManagement();
+      default:
+        return renderMainDashboard();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Manager Dashboard
-        </h1>
-        <p className="text-muted-foreground">
-          Comprehensive management overview with key performance indicators
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Manager Dashboard
+            </h1>
+            <p className="text-muted-foreground">
+              Comprehensive management overview with key performance indicators
+            </p>
+          </div>
+          {activeSection !== "main" && (
+            <Button
+              variant="outline"
+              onClick={() => setActiveSection("main")}
+            >
+              ← Back to Dashboard
+            </Button>
+          )}
+        </div>
       </div>
+
+      {renderSection()}
 
       {/* Quick Metrics Overview */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
