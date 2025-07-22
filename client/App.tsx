@@ -181,6 +181,7 @@ const App = () => (
           <Route path="/technician/stock" element={<StockScreen />} />
           <Route path="/technician/gallery" element={<GalleryScreen />} />
           <Route path="/technician/signoff" element={<SignOffScreen />} />
+          <Route path="/team-chat" element={<TeamChatScreen />} />
           <Route
             path="/fleet"
             element={
