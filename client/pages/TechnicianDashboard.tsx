@@ -35,6 +35,14 @@ export default function TechnicianDashboard() {
     completedJobs: getJobsByStatus('completed').length,
   };
 
+  const sideNavItems = [
+    { name: "Apply Leave", href: "/apply-leave", icon: Calendar },
+    { name: "Stock on Hand", href: "/stock-on-hand", icon: Package2 },
+    { name: "Network Assessment", href: "/network-assessment", icon: Network },
+    { name: "Overtime List", href: "/overtime-list", icon: Timer },
+    { name: "Settings", href: "/technician-settings", icon: Settings },
+  ];
+
   const dashboardCards = [
     {
       id: "jobs",
@@ -89,7 +97,7 @@ export default function TechnicianDashboard() {
   const handleMenuAction = (action: string) => {
     switch (action) {
       case "menu":
-        // Open navigation menu
+        setSidebarOpen(true);
         break;
       case "analytics":
         navigate('/technician/analytics');
@@ -101,6 +109,12 @@ export default function TechnicianDashboard() {
         navigate('/login');
         break;
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
+    navigate("/login");
   };
 
   const handleClockOut = () => {
