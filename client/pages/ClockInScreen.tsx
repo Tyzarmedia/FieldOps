@@ -257,7 +257,40 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
           </div>
         </div>
 
-        {/* Clock In Slider */}
+        {/* Assistant Selection */}
+        {!isClockedIn && (
+          <div className="w-full max-w-sm mb-6">
+            <Select value={selectedAssistant} onValueChange={setSelectedAssistant}>
+              <SelectTrigger className="bg-white/20 border-white/30 text-white">
+                <SelectValue placeholder="Choose Assistant or Working Alone" />
+                <ChevronDown className="h-4 w-4 text-white" />
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectItem value="working-alone">Working Alone</SelectItem>
+                {assistants
+                  .filter(assistant => assistant.available)
+                  .map(assistant => (
+                    <SelectItem key={assistant.id} value={assistant.name}>
+                      {assistant.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* Selected Assistant Display */}
+        {isClockedIn && selectedAssistant && (
+          <div className="w-full max-w-sm mb-6 text-center">
+            <div className="bg-white/20 px-4 py-2 rounded-full">
+              <span className="text-white font-medium">
+                {selectedAssistant === "working-alone" ? "Working Alone" : `Working with: ${selectedAssistant}`}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Clock In/Out Slider */}
         <div className="w-full max-w-sm mb-8">
           <div
             className="relative h-16 bg-white/20 rounded-2xl cursor-pointer overflow-hidden"
