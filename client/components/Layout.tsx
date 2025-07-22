@@ -145,7 +145,7 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Page content */}
-        <main className="p-4 sm:p-6">{children}</main>
+        <main className="p-4 sm:p-6 sm:pt-px">{children}</main>
       </div>
     </div>
   );
