@@ -19,6 +19,7 @@ import {
   Settings,
   LogOut,
   UserCheck,
+  MessageCircle,
 } from "lucide-react";
 import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
 
