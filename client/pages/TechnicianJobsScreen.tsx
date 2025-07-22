@@ -270,7 +270,7 @@ export default function TechnicianJobsScreen() {
         </div>
 
         {/* Job Details Content */}
-        <div className="p-4 pb-20 space-y-6">
+        <div className="p-4 pb-32 space-y-6">
           {/* Client Address with Map */}
           <Card>
             <CardContent className="p-4">
