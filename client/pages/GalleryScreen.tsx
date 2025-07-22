@@ -18,7 +18,7 @@ import {
 
 interface Photo {
   id: string;
-  category: 'before' | 'fault-finding' | 'after-fix';
+  category: 'before-light-readings' | 'image-fault' | 'image-after-work' | 'light-readings-after-work';
   url: string;
   timestamp: Date;
 }
