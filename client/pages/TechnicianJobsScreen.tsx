@@ -32,6 +32,7 @@ import {
   PenTool,
   Settings,
   ArrowUpDown,
+  MessageCircle,
 } from "lucide-react";
 import { teamJobs, updateJobStatus, type Job } from "../data/sharedJobs";
 
