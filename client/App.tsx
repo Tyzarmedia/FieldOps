@@ -168,67 +168,35 @@ const App = () => (
           />
           <Route
             path="/technician/jobs"
-            element={
-              <ProtectedRoute>
-                <TechnicianJobsScreen />
-              </ProtectedRoute>
-            }
+            element={<TechnicianJobsScreen />}
           />
           <Route
             path="/technician/safety"
-            element={
-              <ProtectedRoute>
-                <TechnicianSafetyScreen />
-              </ProtectedRoute>
-            }
+            element={<TechnicianSafetyScreen />}
           />
           <Route
             path="/technician/fleet"
-            element={
-              <ProtectedRoute>
-                <TechnicianFleetScreen />
-              </ProtectedRoute>
-            }
+            element={<TechnicianFleetScreen />}
           />
           <Route
             path="/technician/overtime"
-            element={
-              <ProtectedRoute>
-                <TechnicianOvertimeScreen />
-              </ProtectedRoute>
-            }
+            element={<TechnicianOvertimeScreen />}
           />
           <Route
             path="/technician/udf"
-            element={
-              <ProtectedRoute>
-                <UDFieldsScreen />
-              </ProtectedRoute>
-            }
+            element={<UDFieldsScreen />}
           />
           <Route
             path="/technician/stock"
-            element={
-              <ProtectedRoute>
-                <StockScreen />
-              </ProtectedRoute>
-            }
+            element={<StockScreen />}
           />
           <Route
             path="/technician/gallery"
-            element={
-              <ProtectedRoute>
-                <GalleryScreen />
-              </ProtectedRoute>
-            }
+            element={<GalleryScreen />}
           />
           <Route
             path="/technician/signoff"
-            element={
-              <ProtectedRoute>
-                <SignOffScreen />
-              </ProtectedRoute>
-            }
+            element={<SignOffScreen />}
           />
           <Route
             path="/fleet"
