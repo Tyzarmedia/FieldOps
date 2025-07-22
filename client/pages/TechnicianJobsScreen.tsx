@@ -483,6 +483,17 @@ export default function TechnicianJobsScreen() {
           </Card>
         </div>
 
+        {/* Chat Button - Fixed to bottom right */}
+        <div className="fixed bottom-20 right-6 z-50">
+          <Button
+            size="lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-full h-14 w-14 shadow-lg"
+            onClick={() => navigate("/team-chat")}
+          >
+            <MessageCircle className="h-6 w-6" />
+          </Button>
+        </div>
+
         {/* Bottom Navigation */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
           <div className="flex justify-around py-2">
