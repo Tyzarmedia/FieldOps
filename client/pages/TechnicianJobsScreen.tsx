@@ -45,6 +45,7 @@ export default function TechnicianJobsScreen() {
   const [sortOrder, setSortOrder] = useState<"new-to-old" | "old-to-new">("new-to-old");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const navigate = useNavigate();
 
   const tabs = [
