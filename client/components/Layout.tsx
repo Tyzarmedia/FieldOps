@@ -144,31 +144,6 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
 
       {/* Main content */}
       <div className="lg:pl-64">
-        {/* Top header */}
-        <header className="sticky top-0 z-30 h-16 bg-background border-b border-border">
-          <div className="flex h-full items-center justify-between px-4 sm:px-6">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="lg:hidden"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-
-            <div className="flex items-center space-x-4">
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-semibold text-foreground">
-                  {getPageTitle(location.pathname, userRole)}
-                </h1>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-            </div>
-          </div>
-        </header>
-
         {/* Page content */}
         <main className="p-4 sm:p-6">{children}</main>
       </div>
