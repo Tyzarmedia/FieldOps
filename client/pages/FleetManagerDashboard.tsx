@@ -206,7 +206,7 @@ export default function FleetManagerDashboard() {
       vehicleName: "Toyota Hilux",
       date: "2024-01-19",
       litres: 55.0,
-      cost: 82.50,
+      cost: 82.5,
       mileage: 67890,
       efficiency: 14.2,
       technician: "Mike Chen",
@@ -294,7 +294,9 @@ export default function FleetManagerDashboard() {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{fleetStats.utilizationRate}%</div>
+            <div className="text-2xl font-bold">
+              {fleetStats.utilizationRate}%
+            </div>
             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
               <TrendingUp className="h-3 w-3 text-success" />
               <span>Above target</span>
@@ -308,7 +310,9 @@ export default function FleetManagerDashboard() {
             <Wrench className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{fleetStats.pendingMaintenance}</div>
+            <div className="text-2xl font-bold">
+              {fleetStats.pendingMaintenance}
+            </div>
             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
               <AlertTriangle className="h-3 w-3 text-warning" />
               <span>{fleetStats.overdueMainternance} overdue</span>
@@ -322,7 +326,9 @@ export default function FleetManagerDashboard() {
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{fleetStats.complianceRate}%</div>
+            <div className="text-2xl font-bold">
+              {fleetStats.complianceRate}%
+            </div>
             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
               <CheckCircle className="h-3 w-3 text-success" />
               <span>{fleetStats.expiringSoon} expiring soon</span>
@@ -333,7 +339,7 @@ export default function FleetManagerDashboard() {
 
       {/* Main Action Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("overview")}
         >
@@ -344,11 +350,13 @@ export default function FleetManagerDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Fleet Overview</h3>
-            <p className="text-sm text-gray-600">{fleetStats.inUse} In Use | {fleetStats.idle} Idle</p>
+            <p className="text-sm text-gray-600">
+              {fleetStats.inUse} In Use | {fleetStats.idle} Idle
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("assignment")}
         >
@@ -358,12 +366,16 @@ export default function FleetManagerDashboard() {
                 <Users className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Vehicle Assignment</h3>
-            <p className="text-sm text-gray-600">{fleetStats.inUse} Assigned Today</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Vehicle Assignment
+            </h3>
+            <p className="text-sm text-gray-600">
+              {fleetStats.inUse} Assigned Today
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("maintenance")}
         >
@@ -374,11 +386,14 @@ export default function FleetManagerDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Maintenance</h3>
-            <p className="text-sm text-gray-600">{fleetStats.pendingMaintenance} Upcoming | {fleetStats.overdueMainternance} Overdue</p>
+            <p className="text-sm text-gray-600">
+              {fleetStats.pendingMaintenance} Upcoming |{" "}
+              {fleetStats.overdueMainternance} Overdue
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("incidents")}
         >
@@ -388,12 +403,17 @@ export default function FleetManagerDashboard() {
                 <AlertTriangle className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Incident Reports</h3>
-            <p className="text-sm text-gray-600">{fleetStats.openIncidents} Open | {fleetStats.resolvedIncidents} Resolved</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Incident Reports
+            </h3>
+            <p className="text-sm text-gray-600">
+              {fleetStats.openIncidents} Open | {fleetStats.resolvedIncidents}{" "}
+              Resolved
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("tracking")}
         >
@@ -403,12 +423,14 @@ export default function FleetManagerDashboard() {
                 <MapPin className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Vehicle Tracking</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Vehicle Tracking
+            </h3>
             <p className="text-sm text-gray-600">Live GPS Feed</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("fuel")}
         >
@@ -419,11 +441,13 @@ export default function FleetManagerDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Fuel Logs</h3>
-            <p className="text-sm text-gray-600">$${fleetStats.totalFuelCost.toLocaleString()} This Month</p>
+            <p className="text-sm text-gray-600">
+              $${fleetStats.totalFuelCost.toLocaleString()} This Month
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("utilization")}
         >
@@ -433,12 +457,16 @@ export default function FleetManagerDashboard() {
                 <BarChart3 className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Fleet Utilization</h3>
-            <p className="text-sm text-gray-600">{fleetStats.utilizationRate}% Usage Rate</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Fleet Utilization
+            </h3>
+            <p className="text-sm text-gray-600">
+              {fleetStats.utilizationRate}% Usage Rate
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("compliance")}
         >
@@ -448,12 +476,17 @@ export default function FleetManagerDashboard() {
                 <Shield className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Vehicle Compliance</h3>
-            <p className="text-sm text-gray-600">{fleetStats.validDocuments} Valid | {fleetStats.expiringSoon} Expiring</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Vehicle Compliance
+            </h3>
+            <p className="text-sm text-gray-600">
+              {fleetStats.validDocuments} Valid | {fleetStats.expiringSoon}{" "}
+              Expiring
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("tools")}
         >
@@ -463,12 +496,17 @@ export default function FleetManagerDashboard() {
                 <Package className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Tools Inventory</h3>
-            <p className="text-sm text-gray-600">{fleetStats.toolsAssigned} Assigned | {fleetStats.toolsMissing} Missing</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Tools Inventory
+            </h3>
+            <p className="text-sm text-gray-600">
+              {fleetStats.toolsAssigned} Assigned | {fleetStats.toolsMissing}{" "}
+              Missing
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("reports")}
         >
@@ -478,7 +516,9 @@ export default function FleetManagerDashboard() {
                 <FileText className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Reports & Insights</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Reports & Insights
+            </h3>
             <p className="text-sm text-gray-600">Fleet Performance Reports</p>
           </CardContent>
         </Card>
@@ -598,7 +638,10 @@ export default function FleetManagerDashboard() {
 
       <div className="space-y-4">
         {maintenanceSchedule.map((maintenance) => (
-          <Card key={maintenance.id} className="hover:shadow-md transition-shadow">
+          <Card
+            key={maintenance.id}
+            className="hover:shadow-md transition-shadow"
+          >
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
@@ -611,7 +654,9 @@ export default function FleetManagerDashboard() {
                       {maintenance.priority}
                     </Badge>
                   </div>
-                  <h3 className="font-semibold text-lg">{maintenance.vehicleName}</h3>
+                  <h3 className="font-semibold text-lg">
+                    {maintenance.vehicleName}
+                  </h3>
                   <p className="text-muted-foreground">{maintenance.type}</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm text-muted-foreground">
                     <div>
@@ -688,7 +733,9 @@ export default function FleetManagerDashboard() {
                       {incident.priority}
                     </Badge>
                   </div>
-                  <h3 className="font-semibold text-lg">{incident.vehicleName}</h3>
+                  <h3 className="font-semibold text-lg">
+                    {incident.vehicleName}
+                  </h3>
                   <p className="text-muted-foreground">{incident.type}</p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-3 text-sm text-muted-foreground">
                     <div>
@@ -765,11 +812,15 @@ export default function FleetManagerDashboard() {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span>Total Cost:</span>
-                <span className="font-bold">${fleetStats.totalFuelCost.toLocaleString()}</span>
+                <span className="font-bold">
+                  ${fleetStats.totalFuelCost.toLocaleString()}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Average Efficiency:</span>
-                <span className="font-bold">{fleetStats.fuelEfficiency} L/100km</span>
+                <span className="font-bold">
+                  {fleetStats.fuelEfficiency} L/100km
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Total Litres:</span>
@@ -887,42 +938,54 @@ export default function FleetManagerDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Vehicle Assignment Manager</h2>
-            <p className="text-muted-foreground">Vehicle assignment functionality coming soon...</p>
+            <p className="text-muted-foreground">
+              Vehicle assignment functionality coming soon...
+            </p>
           </div>
         );
       case "tracking":
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Fleet Location Map</h2>
-            <p className="text-muted-foreground">Live GPS tracking functionality coming soon...</p>
+            <p className="text-muted-foreground">
+              Live GPS tracking functionality coming soon...
+            </p>
           </div>
         );
       case "utilization":
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Utilization Analysis</h2>
-            <p className="text-muted-foreground">Fleet utilization analytics coming soon...</p>
+            <p className="text-muted-foreground">
+              Fleet utilization analytics coming soon...
+            </p>
           </div>
         );
       case "compliance":
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Fleet Compliance</h2>
-            <p className="text-muted-foreground">Compliance management functionality coming soon...</p>
+            <p className="text-muted-foreground">
+              Compliance management functionality coming soon...
+            </p>
           </div>
         );
       case "tools":
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Fleet Tool Manager</h2>
-            <p className="text-muted-foreground">Tool inventory management coming soon...</p>
+            <p className="text-muted-foreground">
+              Tool inventory management coming soon...
+            </p>
           </div>
         );
       case "reports":
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Reports Center</h2>
-            <p className="text-muted-foreground">Fleet reporting functionality coming soon...</p>
+            <p className="text-muted-foreground">
+              Fleet reporting functionality coming soon...
+            </p>
           </div>
         );
       default:
@@ -944,10 +1007,7 @@ export default function FleetManagerDashboard() {
             </p>
           </div>
           {activeSection !== "main" && (
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSection("main")}
-            >
+            <Button variant="outline" onClick={() => setActiveSection("main")}>
               ← Back to Dashboard
             </Button>
           )}

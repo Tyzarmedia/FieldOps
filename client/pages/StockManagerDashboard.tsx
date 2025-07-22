@@ -79,7 +79,7 @@ export default function StockManagerDashboard() {
       totalAvailable: 45,
       inWarehouse: 30,
       assignedToTechs: 15,
-      unitCost: 250.00,
+      unitCost: 250.0,
       reorderLevel: 10,
       status: "In Stock",
     },
@@ -93,7 +93,7 @@ export default function StockManagerDashboard() {
       totalAvailable: 5,
       inWarehouse: 3,
       assignedToTechs: 2,
-      unitCost: 180.00,
+      unitCost: 180.0,
       reorderLevel: 15,
       status: "Low Stock",
     },
@@ -107,7 +107,7 @@ export default function StockManagerDashboard() {
       totalAvailable: 200,
       inWarehouse: 150,
       assignedToTechs: 50,
-      unitCost: 15.00,
+      unitCost: 15.0,
       reorderLevel: 50,
       status: "In Stock",
     },
@@ -121,7 +121,7 @@ export default function StockManagerDashboard() {
       totalAvailable: 2,
       inWarehouse: 0,
       assignedToTechs: 2,
-      unitCost: 25.00,
+      unitCost: 25.0,
       reorderLevel: 20,
       status: "Critical",
     },
@@ -135,7 +135,7 @@ export default function StockManagerDashboard() {
       totalAvailable: 12,
       inWarehouse: 8,
       assignedToTechs: 4,
-      unitCost: 450.00,
+      unitCost: 450.0,
       reorderLevel: 5,
       status: "In Stock",
     },
@@ -146,11 +146,11 @@ export default function StockManagerDashboard() {
       id: 1,
       name: "John Smith",
       department: "Network Maintenance",
-      totalValue: 2450.00,
+      totalValue: 2450.0,
       items: [
-        { name: "Ethernet Router", quantity: 2, value: 500.00 },
-        { name: "Network Cable", quantity: 10, value: 150.00 },
-        { name: "Testing Equipment", quantity: 1, value: 450.00 },
+        { name: "Ethernet Router", quantity: 2, value: 500.0 },
+        { name: "Network Cable", quantity: 10, value: 150.0 },
+        { name: "Testing Equipment", quantity: 1, value: 450.0 },
       ],
       lastIssued: "2024-01-20",
       requestStatus: "Pending",
@@ -160,11 +160,11 @@ export default function StockManagerDashboard() {
       id: 2,
       name: "Sarah Johnson",
       department: "Installation Team",
-      totalValue: 1890.00,
+      totalValue: 1890.0,
       items: [
-        { name: "ONT Device", quantity: 3, value: 540.00 },
-        { name: "Fiber Cable", quantity: 20, value: 300.00 },
-        { name: "Connectors", quantity: 50, value: 125.00 },
+        { name: "ONT Device", quantity: 3, value: 540.0 },
+        { name: "Fiber Cable", quantity: 20, value: 300.0 },
+        { name: "Connectors", quantity: 50, value: 125.0 },
       ],
       lastIssued: "2024-01-19",
       requestStatus: "Approved",
@@ -174,11 +174,11 @@ export default function StockManagerDashboard() {
       id: 3,
       name: "Mike Chen",
       department: "Repair Services",
-      totalValue: 1200.00,
+      totalValue: 1200.0,
       items: [
-        { name: "Testing Tool", quantity: 1, value: 450.00 },
-        { name: "Spare Parts Kit", quantity: 1, value: 180.00 },
-        { name: "Safety Equipment", quantity: 1, value: 95.00 },
+        { name: "Testing Tool", quantity: 1, value: 450.0 },
+        { name: "Spare Parts Kit", quantity: 1, value: 180.0 },
+        { name: "Safety Equipment", quantity: 1, value: 95.0 },
       ],
       lastIssued: "2024-01-18",
       requestStatus: "None",
@@ -265,7 +265,7 @@ export default function StockManagerDashboard() {
       activeOrders: 2,
     },
     {
-      id: "SUP002", 
+      id: "SUP002",
       name: "FiberTech Corp",
       contactPerson: "Lisa Anderson",
       phone: "+27-11-555-0102",
@@ -328,7 +328,7 @@ export default function StockManagerDashboard() {
       date: "2024-01-15",
       description: "Testing equipment missing from vehicle",
       status: "Under Investigation",
-      value: 450.00,
+      value: 450.0,
     },
     {
       id: "INC002",
@@ -337,9 +337,10 @@ export default function StockManagerDashboard() {
       technician: "Sarah Johnson",
       reportedBy: "Sarah Johnson",
       date: "2024-01-14",
-      description: "Cable damaged during installation due to unexpected obstacle",
+      description:
+        "Cable damaged during installation due to unexpected obstacle",
       status: "Resolved",
-      value: 75.00,
+      value: 75.0,
     },
   ];
 
@@ -401,7 +402,9 @@ export default function StockManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Items</p>
-                <p className="text-2xl font-bold text-primary">{stockStats.totalItems.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-primary">
+                  {stockStats.totalItems.toLocaleString()}
+                </p>
               </div>
               <Package className="h-8 w-8 text-primary" />
             </div>
@@ -413,7 +416,9 @@ export default function StockManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Low Stock</p>
-                <p className="text-2xl font-bold text-warning">{stockStats.lowStockAlerts}</p>
+                <p className="text-2xl font-bold text-warning">
+                  {stockStats.lowStockAlerts}
+                </p>
               </div>
               <AlertTriangle className="h-8 w-8 text-warning" />
             </div>
@@ -424,8 +429,12 @@ export default function StockManagerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Issued This Week</p>
-                <p className="text-2xl font-bold text-info">{stockStats.issuedThisWeek}</p>
+                <p className="text-sm text-muted-foreground">
+                  Issued This Week
+                </p>
+                <p className="text-2xl font-bold text-info">
+                  {stockStats.issuedThisWeek}
+                </p>
               </div>
               <TrendingDown className="h-8 w-8 text-info" />
             </div>
@@ -437,7 +446,9 @@ export default function StockManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Returns</p>
-                <p className="text-2xl font-bold text-success">{stockStats.returnsLogged}</p>
+                <p className="text-2xl font-bold text-success">
+                  {stockStats.returnsLogged}
+                </p>
               </div>
               <RotateCcw className="h-8 w-8 text-success" />
             </div>
@@ -449,7 +460,9 @@ export default function StockManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Techs Assigned</p>
-                <p className="text-2xl font-bold text-purple-600">{stockStats.technicianAssignments}</p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {stockStats.technicianAssignments}
+                </p>
               </div>
               <Users className="h-8 w-8 text-purple-600" />
             </div>
@@ -461,7 +474,9 @@ export default function StockManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Stock Value</p>
-                <p className="text-2xl font-bold text-success">R{stockStats.stockValue.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-success">
+                  R{stockStats.stockValue.toLocaleString()}
+                </p>
               </div>
               <DollarSign className="h-8 w-8 text-success" />
             </div>
@@ -471,7 +486,7 @@ export default function StockManagerDashboard() {
 
       {/* Main Dashboard Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("inventory")}
         >
@@ -481,12 +496,16 @@ export default function StockManagerDashboard() {
                 <Package className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Inventory Management</h3>
-            <p className="text-sm text-gray-600">{stockStats.totalItems} total items</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Inventory Management
+            </h3>
+            <p className="text-sm text-gray-600">
+              {stockStats.totalItems} total items
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("alerts")}
         >
@@ -496,12 +515,16 @@ export default function StockManagerDashboard() {
                 <AlertTriangle className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Low Stock Alerts</h3>
-            <p className="text-sm text-gray-600">{stockStats.lowStockAlerts} items need reorder</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Low Stock Alerts
+            </h3>
+            <p className="text-sm text-gray-600">
+              {stockStats.lowStockAlerts} items need reorder
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("assignment")}
         >
@@ -511,12 +534,14 @@ export default function StockManagerDashboard() {
                 <UserCheck className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Technician Assignment</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Technician Assignment
+            </h3>
             <p className="text-sm text-gray-600">Issue stock to technicians</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("status")}
         >
@@ -526,12 +551,16 @@ export default function StockManagerDashboard() {
                 <Users className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Technician Status</h3>
-            <p className="text-sm text-gray-600">{stockStats.technicianAssignments} technicians tracked</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Technician Status
+            </h3>
+            <p className="text-sm text-gray-600">
+              {stockStats.technicianAssignments} technicians tracked
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("returns")}
         >
@@ -541,12 +570,16 @@ export default function StockManagerDashboard() {
                 <RotateCcw className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Returns Management</h3>
-            <p className="text-sm text-gray-600">{stockStats.returnsLogged} returns this month</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Returns Management
+            </h3>
+            <p className="text-sm text-gray-600">
+              {stockStats.returnsLogged} returns this month
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("usage")}
         >
@@ -561,7 +594,7 @@ export default function StockManagerDashboard() {
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("delivery")}
         >
@@ -571,12 +604,14 @@ export default function StockManagerDashboard() {
                 <Truck className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Delivery & Transfers</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Delivery & Transfers
+            </h3>
             <p className="text-sm text-gray-600">Monitor stock in transit</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("incidents")}
         >
@@ -586,12 +621,14 @@ export default function StockManagerDashboard() {
                 <AlertTriangle className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Incident Reports</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Incident Reports
+            </h3>
             <p className="text-sm text-gray-600">Log theft, damage, losses</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("reports")}
         >
@@ -601,12 +638,14 @@ export default function StockManagerDashboard() {
                 <FileText className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Reports & Export</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Reports & Export
+            </h3>
             <p className="text-sm text-gray-600">Generate detailed reports</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("suppliers")}
         >
@@ -616,12 +655,16 @@ export default function StockManagerDashboard() {
                 <Building className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Supplier Management</h3>
-            <p className="text-sm text-gray-600">{stockStats.activeSuppliers} active suppliers</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Supplier Management
+            </h3>
+            <p className="text-sm text-gray-600">
+              {stockStats.activeSuppliers} active suppliers
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("settings")}
         >
@@ -631,7 +674,9 @@ export default function StockManagerDashboard() {
                 <Settings className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Settings & Config</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Settings & Config
+            </h3>
             <p className="text-sm text-gray-600">Stock limits and thresholds</p>
           </CardContent>
         </Card>
@@ -650,7 +695,9 @@ export default function StockManagerDashboard() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">All Categories</SelectItem>
-              <SelectItem value="Network Equipment">Network Equipment</SelectItem>
+              <SelectItem value="Network Equipment">
+                Network Equipment
+              </SelectItem>
               <SelectItem value="Cables">Cables</SelectItem>
               <SelectItem value="Connectors">Connectors</SelectItem>
               <SelectItem value="Tools">Tools</SelectItem>
@@ -777,7 +824,9 @@ export default function StockManagerDashboard() {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-3 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Current Stock:</p>
-                      <p className="text-destructive font-bold">{item.currentStock}</p>
+                      <p className="text-destructive font-bold">
+                        {item.currentStock}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Reorder Level:</p>
@@ -785,7 +834,9 @@ export default function StockManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Suggested Order:</p>
-                      <p className="text-success font-bold">{item.suggestedOrder}</p>
+                      <p className="text-success font-bold">
+                        {item.suggestedOrder}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Supplier:</p>
@@ -797,7 +848,9 @@ export default function StockManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Shortage:</p>
-                      <p className="text-destructive font-bold">{item.reorderLevel - item.currentStock} units</p>
+                      <p className="text-destructive font-bold">
+                        {item.reorderLevel - item.currentStock} units
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -829,12 +882,15 @@ export default function StockManagerDashboard() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Technician Stock Assignment</h2>
         <div className="flex space-x-2">
-          <Select value={selectedTechnician} onValueChange={setSelectedTechnician}>
+          <Select
+            value={selectedTechnician}
+            onValueChange={setSelectedTechnician}
+          >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Select technician" />
             </SelectTrigger>
             <SelectContent>
-              {technicianStock.map(tech => (
+              {technicianStock.map((tech) => (
                 <SelectItem key={tech.id} value={tech.name}>
                   {tech.name}
                 </SelectItem>
@@ -862,7 +918,7 @@ export default function StockManagerDashboard() {
                   <SelectValue placeholder="Choose technician" />
                 </SelectTrigger>
                 <SelectContent>
-                  {technicianStock.map(tech => (
+                  {technicianStock.map((tech) => (
                     <SelectItem key={tech.id} value={tech.name}>
                       {tech.name} - {tech.department}
                     </SelectItem>
@@ -878,7 +934,7 @@ export default function StockManagerDashboard() {
                   <SelectValue placeholder="Choose item" />
                 </SelectTrigger>
                 <SelectContent>
-                  {inventoryItems.map(item => (
+                  {inventoryItems.map((item) => (
                     <SelectItem key={item.id} value={item.name}>
                       {item.name} - Available: {item.inWarehouse}
                     </SelectItem>
@@ -923,14 +979,25 @@ export default function StockManagerDashboard() {
           <CardContent>
             <div className="space-y-4">
               {stockMovements.map((movement) => (
-                <div key={movement.id} className="border border-border rounded-lg p-4">
+                <div
+                  key={movement.id}
+                  className="border border-border rounded-lg p-4"
+                >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
-                        <Badge variant={movement.type === "Issue" ? "destructive" : "default"}>
+                        <Badge
+                          variant={
+                            movement.type === "Issue"
+                              ? "destructive"
+                              : "default"
+                          }
+                        >
                           {movement.type}
                         </Badge>
-                        <span className="text-sm text-muted-foreground">{movement.date}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {movement.date}
+                        </span>
                       </div>
                       <h4 className="font-semibold">{movement.item}</h4>
                       <div className="text-sm text-muted-foreground">
@@ -978,16 +1045,21 @@ export default function StockManagerDashboard() {
                     </Badge>
                     {tech.alerts.length > 0 && (
                       <Badge className="bg-destructive text-destructive-foreground">
-                        {tech.alerts.length} Alert{tech.alerts.length > 1 ? 's' : ''}
+                        {tech.alerts.length} Alert
+                        {tech.alerts.length > 1 ? "s" : ""}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-muted-foreground mb-3">{tech.department}</p>
-                  
+                  <p className="text-muted-foreground mb-3">
+                    {tech.department}
+                  </p>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                       <p className="font-medium">Total Stock Value:</p>
-                      <p className="text-lg font-bold text-success">R{tech.totalValue.toFixed(2)}</p>
+                      <p className="text-lg font-bold text-success">
+                        R{tech.totalValue.toFixed(2)}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Last Issued:</p>
@@ -999,9 +1071,15 @@ export default function StockManagerDashboard() {
                     <p className="font-medium">Current Stock Items:</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {tech.items.map((item, index) => (
-                        <div key={index} className="bg-muted rounded p-2 text-sm">
+                        <div
+                          key={index}
+                          className="bg-muted rounded p-2 text-sm"
+                        >
                           <p className="font-medium">{item.name}</p>
-                          <p>Qty: {item.quantity} | Value: R{item.value.toFixed(2)}</p>
+                          <p>
+                            Qty: {item.quantity} | Value: R
+                            {item.value.toFixed(2)}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -1155,9 +1233,7 @@ export default function StockManagerDashboard() {
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
                     <h3 className="font-semibold text-lg">{supplier.name}</h3>
-                    <Badge variant="secondary">
-                      ⭐ {supplier.rating}
-                    </Badge>
+                    <Badge variant="secondary">⭐ {supplier.rating}</Badge>
                     {supplier.activeOrders > 0 && (
                       <Badge className="bg-primary text-primary-foreground">
                         {supplier.activeOrders} Active Orders
@@ -1230,14 +1306,18 @@ export default function StockManagerDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Stock Usage Logs</h2>
-            <p className="text-muted-foreground">Usage tracking and analytics coming soon...</p>
+            <p className="text-muted-foreground">
+              Usage tracking and analytics coming soon...
+            </p>
           </div>
         );
       case "delivery":
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Delivery & Transfers</h2>
-            <p className="text-muted-foreground">Delivery tracking functionality coming soon...</p>
+            <p className="text-muted-foreground">
+              Delivery tracking functionality coming soon...
+            </p>
           </div>
         );
       case "incidents":
@@ -1251,7 +1331,10 @@ export default function StockManagerDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {incidents.map((incident) => (
-                    <div key={incident.id} className="border border-border rounded-lg p-4">
+                    <div
+                      key={incident.id}
+                      className="border border-border rounded-lg p-4"
+                    >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
@@ -1282,7 +1365,9 @@ export default function StockManagerDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Reports & Export</h2>
-            <p className="text-muted-foreground">Report generation functionality coming soon...</p>
+            <p className="text-muted-foreground">
+              Report generation functionality coming soon...
+            </p>
           </div>
         );
       case "suppliers":
@@ -1291,7 +1376,9 @@ export default function StockManagerDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Settings & Configuration</h2>
-            <p className="text-muted-foreground">Settings configuration coming soon...</p>
+            <p className="text-muted-foreground">
+              Settings configuration coming soon...
+            </p>
           </div>
         );
       default:
@@ -1313,10 +1400,7 @@ export default function StockManagerDashboard() {
             </p>
           </div>
           {activeSection !== "main" && (
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSection("main")}
-            >
+            <Button variant="outline" onClick={() => setActiveSection("main")}>
               ← Back to Dashboard
             </Button>
           )}

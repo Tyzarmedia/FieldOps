@@ -211,8 +211,8 @@ export default function ITManagerDashboard() {
       totalLicenses: 74,
       usedLicenses: 72,
       expiryDate: "2024-12-31",
-      costPerLicense: 15.00,
-      totalCost: 1110.00,
+      costPerLicense: 15.0,
+      totalCost: 1110.0,
       vendor: "Microsoft",
       renewalRequired: false,
       status: "Active",
@@ -224,8 +224,8 @@ export default function ITManagerDashboard() {
       totalLicenses: 5,
       usedLicenses: 4,
       expiryDate: "2024-03-15",
-      costPerLicense: 200.00,
-      totalCost: 1000.00,
+      costPerLicense: 200.0,
+      totalCost: 1000.0,
       vendor: "Autodesk",
       renewalRequired: true,
       status: "Expiring Soon",
@@ -237,8 +237,8 @@ export default function ITManagerDashboard() {
       totalLicenses: 80,
       usedLicenses: 74,
       expiryDate: "2024-06-30",
-      costPerLicense: 8.00,
-      totalCost: 640.00,
+      costPerLicense: 8.0,
+      totalCost: 640.0,
       vendor: "Symantec",
       renewalRequired: false,
       status: "Active",
@@ -250,8 +250,8 @@ export default function ITManagerDashboard() {
       totalLicenses: 10,
       usedLicenses: 8,
       expiryDate: "2024-02-28",
-      costPerLicense: 25.00,
-      totalCost: 250.00,
+      costPerLicense: 25.0,
+      totalCost: 250.0,
       vendor: "Atlassian",
       renewalRequired: true,
       status: "Expiring Soon",
@@ -514,7 +514,9 @@ export default function ITManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Active Devices</p>
-                <p className="text-2xl font-bold text-primary">{itStats.activeDevices}</p>
+                <p className="text-2xl font-bold text-primary">
+                  {itStats.activeDevices}
+                </p>
               </div>
               <Monitor className="h-8 w-8 text-primary" />
             </div>
@@ -526,7 +528,9 @@ export default function ITManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Open Tickets</p>
-                <p className="text-2xl font-bold text-warning">{itStats.openTickets}</p>
+                <p className="text-2xl font-bold text-warning">
+                  {itStats.openTickets}
+                </p>
               </div>
               <Ticket className="h-8 w-8 text-warning" />
             </div>
@@ -538,7 +542,9 @@ export default function ITManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Avg Resolution</p>
-                <p className="text-2xl font-bold text-success">{itStats.avgResolutionTime}h</p>
+                <p className="text-2xl font-bold text-success">
+                  {itStats.avgResolutionTime}h
+                </p>
               </div>
               <Clock className="h-8 w-8 text-success" />
             </div>
@@ -550,7 +556,9 @@ export default function ITManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Security Alerts</p>
-                <p className="text-2xl font-bold text-destructive">{itStats.securityAlerts}</p>
+                <p className="text-2xl font-bold text-destructive">
+                  {itStats.securityAlerts}
+                </p>
               </div>
               <Shield className="h-8 w-8 text-destructive" />
             </div>
@@ -562,7 +570,9 @@ export default function ITManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Network Health</p>
-                <p className="text-2xl font-bold text-success">{itStats.networkHealth}</p>
+                <p className="text-2xl font-bold text-success">
+                  {itStats.networkHealth}
+                </p>
               </div>
               <Wifi className="h-8 w-8 text-success" />
             </div>
@@ -574,7 +584,9 @@ export default function ITManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Backup Success</p>
-                <p className="text-2xl font-bold text-success">{itStats.backupSuccess}%</p>
+                <p className="text-2xl font-bold text-success">
+                  {itStats.backupSuccess}%
+                </p>
               </div>
               <HardDrive className="h-8 w-8 text-success" />
             </div>
@@ -584,7 +596,7 @@ export default function ITManagerDashboard() {
 
       {/* Main Dashboard Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("tickets")}
         >
@@ -594,12 +606,16 @@ export default function ITManagerDashboard() {
                 <Ticket className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Support Tickets</h3>
-            <p className="text-sm text-gray-600">{itStats.openTickets} open tickets</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Support Tickets
+            </h3>
+            <p className="text-sm text-gray-600">
+              {itStats.openTickets} open tickets
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("devices")}
         >
@@ -609,12 +625,16 @@ export default function ITManagerDashboard() {
                 <Laptop className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Device Inventory</h3>
-            <p className="text-sm text-gray-600">{itStats.activeDevices} devices managed</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Device Inventory
+            </h3>
+            <p className="text-sm text-gray-600">
+              {itStats.activeDevices} devices managed
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("software")}
         >
@@ -624,12 +644,16 @@ export default function ITManagerDashboard() {
                 <Database className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Software & Licenses</h3>
-            <p className="text-sm text-gray-600">{itStats.softwareLicenses} licenses tracked</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Software & Licenses
+            </h3>
+            <p className="text-sm text-gray-600">
+              {itStats.softwareLicenses} licenses tracked
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("network")}
         >
@@ -639,12 +663,16 @@ export default function ITManagerDashboard() {
                 <Wifi className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Network Monitoring</h3>
-            <p className="text-sm text-gray-600">{itStats.networkHealth} network status</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Network Monitoring
+            </h3>
+            <p className="text-sm text-gray-600">
+              {itStats.networkHealth} network status
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("security")}
         >
@@ -654,12 +682,16 @@ export default function ITManagerDashboard() {
                 <Shield className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Security Monitoring</h3>
-            <p className="text-sm text-gray-600">{itStats.securityAlerts} active alerts</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Security Monitoring
+            </h3>
+            <p className="text-sm text-gray-600">
+              {itStats.securityAlerts} active alerts
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("users")}
         >
@@ -669,12 +701,16 @@ export default function ITManagerDashboard() {
                 <Users className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">User Management</h3>
-            <p className="text-sm text-gray-600">{itStats.totalUsers} user accounts</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              User Management
+            </h3>
+            <p className="text-sm text-gray-600">
+              {itStats.totalUsers} user accounts
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("backup")}
         >
@@ -684,12 +720,16 @@ export default function ITManagerDashboard() {
                 <HardDrive className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Backup & Recovery</h3>
-            <p className="text-sm text-gray-600">{itStats.backupSuccess}% success rate</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Backup & Recovery
+            </h3>
+            <p className="text-sm text-gray-600">
+              {itStats.backupSuccess}% success rate
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("reports")}
         >
@@ -699,12 +739,14 @@ export default function ITManagerDashboard() {
                 <FileText className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">IT Reports & Logs</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              IT Reports & Logs
+            </h3>
             <p className="text-sm text-gray-600">System diagnostics</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("alerts")}
         >
@@ -715,7 +757,9 @@ export default function ITManagerDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">IT Alerts</h3>
-            <p className="text-sm text-gray-600">Critical system notifications</p>
+            <p className="text-sm text-gray-600">
+              Critical system notifications
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -774,8 +818,10 @@ export default function ITManagerDashboard() {
                     <Badge variant="secondary">{ticket.category}</Badge>
                   </div>
                   <h3 className="font-semibold text-lg">{ticket.title}</h3>
-                  <p className="text-muted-foreground mb-3">{ticket.description}</p>
-                  
+                  <p className="text-muted-foreground mb-3">
+                    {ticket.description}
+                  </p>
+
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Submitted By:</p>
@@ -861,8 +907,10 @@ export default function ITManagerDashboard() {
                     </Badge>
                     <Badge variant="secondary">{device.deviceType}</Badge>
                   </div>
-                  <h3 className="font-semibold text-lg">{device.brand} {device.model}</h3>
-                  
+                  <h3 className="font-semibold text-lg">
+                    {device.brand} {device.model}
+                  </h3>
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Assigned To:</p>
@@ -958,15 +1006,25 @@ export default function ITManagerDashboard() {
                     )}
                   </div>
                   <h3 className="font-semibold text-lg">{license.software}</h3>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Licenses Used:</p>
-                      <p className="font-bold">{license.usedLicenses}/{license.totalLicenses}</p>
+                      <p className="font-bold">
+                        {license.usedLicenses}/{license.totalLicenses}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Expiry Date:</p>
-                      <p className={license.renewalRequired ? 'text-warning font-bold' : ''}>{license.expiryDate}</p>
+                      <p
+                        className={
+                          license.renewalRequired
+                            ? "text-warning font-bold"
+                            : ""
+                        }
+                      >
+                        {license.expiryDate}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Vendor:</p>
@@ -974,7 +1032,9 @@ export default function ITManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Total Cost:</p>
-                      <p className="font-bold">R{license.totalCost.toFixed(2)}</p>
+                      <p className="font-bold">
+                        R{license.totalCost.toFixed(2)}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Cost Per License:</p>
@@ -982,7 +1042,9 @@ export default function ITManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Available:</p>
-                      <p className="font-bold text-success">{license.totalLicenses - license.usedLicenses}</p>
+                      <p className="font-bold text-success">
+                        {license.totalLicenses - license.usedLicenses}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1042,17 +1104,33 @@ export default function ITManagerDashboard() {
                     <Badge className={getStatusColor(network.status)}>
                       {network.status}
                     </Badge>
-                    {network.status === "Online" && <Wifi className="h-4 w-4 text-success" />}
-                    {network.status === "Warning" && <AlertTriangle className="h-4 w-4 text-warning" />}
-                    {network.status === "Offline" && <WifiOff className="h-4 w-4 text-destructive" />}
+                    {network.status === "Online" && (
+                      <Wifi className="h-4 w-4 text-success" />
+                    )}
+                    {network.status === "Warning" && (
+                      <AlertTriangle className="h-4 w-4 text-warning" />
+                    )}
+                    {network.status === "Offline" && (
+                      <WifiOff className="h-4 w-4 text-destructive" />
+                    )}
                   </div>
                   <h3 className="font-semibold text-lg">{network.device}</h3>
-                  <p className="text-muted-foreground mb-3">{network.location}</p>
-                  
+                  <p className="text-muted-foreground mb-3">
+                    {network.location}
+                  </p>
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Uptime:</p>
-                      <p className={network.uptime === "0%" ? 'text-destructive font-bold' : 'font-bold'}>{network.uptime}</p>
+                      <p
+                        className={
+                          network.uptime === "0%"
+                            ? "text-destructive font-bold"
+                            : "font-bold"
+                        }
+                      >
+                        {network.uptime}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Last Ping:</p>
@@ -1109,7 +1187,9 @@ export default function ITManagerDashboard() {
   const renderSecurityMonitoring = () => (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Security Monitoring & Access Control</h2>
+        <h2 className="text-2xl font-bold">
+          Security Monitoring & Access Control
+        </h2>
         <div className="flex space-x-2">
           <Button variant="outline">
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -1138,7 +1218,7 @@ export default function ITManagerDashboard() {
                     </Badge>
                   </div>
                   <h3 className="font-semibold text-lg">{security.type}</h3>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-3 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">User:</p>
@@ -1212,8 +1292,10 @@ export default function ITManagerDashboard() {
                     </Badge>
                     <Badge variant="secondary">{user.role}</Badge>
                   </div>
-                  <p className="text-muted-foreground mb-3">{user.department}</p>
-                  
+                  <p className="text-muted-foreground mb-3">
+                    {user.department}
+                  </p>
+
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Username:</p>
@@ -1305,7 +1387,7 @@ export default function ITManagerDashboard() {
                     <Badge variant="secondary">{backup.type}</Badge>
                   </div>
                   <h3 className="font-semibold text-lg">{backup.system}</h3>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Last Backup:</p>
@@ -1385,7 +1467,9 @@ export default function ITManagerDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">IT Reports & Logs</h2>
-            <p className="text-muted-foreground">IT reporting functionality coming soon...</p>
+            <p className="text-muted-foreground">
+              IT reporting functionality coming soon...
+            </p>
           </div>
         );
       case "alerts":
@@ -1394,7 +1478,10 @@ export default function ITManagerDashboard() {
             <h2 className="text-2xl font-bold">IT Alerts & Notifications</h2>
             <div className="space-y-4">
               {itAlerts.map((alert) => (
-                <Card key={alert.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={alert.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
@@ -1408,7 +1495,9 @@ export default function ITManagerDashboard() {
                           </Badge>
                         </div>
                         <h3 className="font-semibold text-lg">{alert.type}</h3>
-                        <p className="text-muted-foreground mb-2">{alert.message}</p>
+                        <p className="text-muted-foreground mb-2">
+                          {alert.message}
+                        </p>
                         <div className="text-sm text-muted-foreground">
                           <p>Time: {alert.timestamp}</p>
                           <p>Affected: {alert.affected}</p>
@@ -1436,14 +1525,12 @@ export default function ITManagerDashboard() {
               IT Manager Dashboard
             </h1>
             <p className="text-muted-foreground">
-              Comprehensive IT infrastructure management, support, and system monitoring
+              Comprehensive IT infrastructure management, support, and system
+              monitoring
             </p>
           </div>
           {activeSection !== "main" && (
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSection("main")}
-            >
+            <Button variant="outline" onClick={() => setActiveSection("main")}>
               ← Back to Dashboard
             </Button>
           )}

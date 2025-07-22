@@ -298,7 +298,9 @@ export default function ManagerDashboard() {
         alert("Opening Jobs Overview dashboard with detailed job analytics...");
         break;
       case "financial-performance":
-        alert("Opening Financial Performance dashboard with revenue analytics...");
+        alert(
+          "Opening Financial Performance dashboard with revenue analytics...",
+        );
         break;
       case "hr-snapshot":
         alert("Opening HR Snapshot with staff management tools...");
@@ -331,7 +333,9 @@ export default function ManagerDashboard() {
         alert("Opening User Directory for user management...");
         break;
       case "analytics-center":
-        alert("Opening Manager Analytics Center with comprehensive insights...");
+        alert(
+          "Opening Manager Analytics Center with comprehensive insights...",
+        );
         break;
       default:
         alert(`Opening ${cardId} dashboard...`);
@@ -375,7 +379,9 @@ export default function ManagerDashboard() {
                     <IconComponent className={`h-5 w-5 ${metric.color}`} />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">{metric.title}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {metric.title}
+                    </p>
                     <p className="text-lg font-bold">{metric.value}</p>
                   </div>
                 </div>
@@ -411,13 +417,19 @@ export default function ManagerDashboard() {
                 <div className="p-4">
                   <div className="flex items-end justify-between mb-3">
                     <div>
-                      <p className="text-2xl font-bold text-foreground">{card.mainMetric}</p>
-                      <p className="text-sm text-muted-foreground">{card.subMetric}</p>
+                      <p className="text-2xl font-bold text-foreground">
+                        {card.mainMetric}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {card.subMetric}
+                      </p>
                     </div>
                     <div className="text-right">
                       <p
                         className={`text-sm font-semibold ${
-                          card.trendPositive ? "text-success" : "text-destructive"
+                          card.trendPositive
+                            ? "text-success"
+                            : "text-destructive"
                         }`}
                       >
                         {card.trend}
@@ -457,7 +469,10 @@ export default function ManagerDashboard() {
               {priorityActions.map((action, index) => {
                 const IconComponent = action.icon;
                 return (
-                  <div key={index} className="border border-border rounded-lg p-4">
+                  <div
+                    key={index}
+                    className="border border-border rounded-lg p-4"
+                  >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-start space-x-3">
                         <div className="p-2 bg-primary/10 rounded-lg">
@@ -465,7 +480,9 @@ export default function ManagerDashboard() {
                         </div>
                         <div>
                           <h4 className="font-semibold">{action.title}</h4>
-                          <p className="text-sm text-muted-foreground">{action.description}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {action.description}
+                          </p>
                         </div>
                       </div>
                       <Badge className={getUrgencyColor(action.urgency)}>
@@ -494,11 +511,13 @@ export default function ManagerDashboard() {
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">Customer Satisfaction</span>
-                  <span className="text-lg font-bold text-success">{managerStats.customerSatisfaction}%</span>
+                  <span className="text-lg font-bold text-success">
+                    {managerStats.customerSatisfaction}%
+                  </span>
                 </div>
                 <div className="bg-secondary rounded-full h-2">
-                  <div 
-                    className="bg-success h-2 rounded-full" 
+                  <div
+                    className="bg-success h-2 rounded-full"
                     style={{ width: `${managerStats.customerSatisfaction}%` }}
                   ></div>
                 </div>
@@ -507,11 +526,13 @@ export default function ManagerDashboard() {
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">On-Time Delivery</span>
-                  <span className="text-lg font-bold text-primary">{managerStats.onTimeDelivery}%</span>
+                  <span className="text-lg font-bold text-primary">
+                    {managerStats.onTimeDelivery}%
+                  </span>
                 </div>
                 <div className="bg-secondary rounded-full h-2">
-                  <div 
-                    className="bg-primary h-2 rounded-full" 
+                  <div
+                    className="bg-primary h-2 rounded-full"
                     style={{ width: `${managerStats.onTimeDelivery}%` }}
                   ></div>
                 </div>
@@ -520,11 +541,13 @@ export default function ManagerDashboard() {
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">Profit Margin</span>
-                  <span className="text-lg font-bold text-success">{managerStats.profitMargin}%</span>
+                  <span className="text-lg font-bold text-success">
+                    {managerStats.profitMargin}%
+                  </span>
                 </div>
                 <div className="bg-secondary rounded-full h-2">
-                  <div 
-                    className="bg-success h-2 rounded-full" 
+                  <div
+                    className="bg-success h-2 rounded-full"
                     style={{ width: `${managerStats.profitMargin}%` }}
                   ></div>
                 </div>
@@ -533,11 +556,13 @@ export default function ManagerDashboard() {
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">Monthly Growth</span>
-                  <span className="text-lg font-bold text-warning">+{managerStats.monthlyGrowth}%</span>
+                  <span className="text-lg font-bold text-warning">
+                    +{managerStats.monthlyGrowth}%
+                  </span>
                 </div>
                 <div className="bg-secondary rounded-full h-2">
-                  <div 
-                    className="bg-warning h-2 rounded-full" 
+                  <div
+                    className="bg-warning h-2 rounded-full"
                     style={{ width: `${managerStats.monthlyGrowth * 4}%` }}
                   ></div>
                 </div>

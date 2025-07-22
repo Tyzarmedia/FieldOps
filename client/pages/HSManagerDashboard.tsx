@@ -93,7 +93,8 @@ export default function HSManagerDashboard() {
       time: "10:15",
       severity: "Medium",
       status: "In Progress",
-      description: "Ladder slipped while working at height, no injury sustained",
+      description:
+        "Ladder slipped while working at height, no injury sustained",
       witness: "David Brown",
       bodyPart: "None",
       immediateAction: "Stopped work, checked ladder condition",
@@ -217,7 +218,10 @@ export default function HSManagerDashboard() {
       status: "Completed",
       findings: 3,
       criticalIssues: 0,
-      recommendations: ["Improve cable management", "Update emergency exits signage"],
+      recommendations: [
+        "Improve cable management",
+        "Update emergency exits signage",
+      ],
       nextAudit: "2024-04-15",
     },
     {
@@ -229,7 +233,10 @@ export default function HSManagerDashboard() {
       status: "Action Required",
       findings: 7,
       criticalIssues: 2,
-      recommendations: ["Repair damaged flooring", "Install additional lighting"],
+      recommendations: [
+        "Repair damaged flooring",
+        "Install additional lighting",
+      ],
       nextAudit: "2024-02-10",
     },
     {
@@ -297,7 +304,8 @@ export default function HSManagerDashboard() {
     {
       id: "SA001",
       title: "Extreme Heat Warning",
-      message: "Temperature expected to exceed 35°C. Increase water breaks and monitor for heat stress.",
+      message:
+        "Temperature expected to exceed 35°C. Increase water breaks and monitor for heat stress.",
       type: "Weather",
       priority: "High",
       issuedDate: "2024-01-20",
@@ -309,7 +317,8 @@ export default function HSManagerDashboard() {
     {
       id: "SA002",
       title: "PPE Equipment Recall",
-      message: "Batch #2024-A safety harnesses recalled due to defective buckles. Return immediately.",
+      message:
+        "Batch #2024-A safety harnesses recalled due to defective buckles. Return immediately.",
       type: "Equipment",
       priority: "Critical",
       issuedDate: "2024-01-18",
@@ -337,7 +346,13 @@ export default function HSManagerDashboard() {
       id: "CHK001",
       name: "PPE Checklist",
       category: "Personal Protective Equipment",
-      items: ["Hard Hat", "Safety Vest", "Gloves", "Safety Boots", "Eye Protection"],
+      items: [
+        "Hard Hat",
+        "Safety Vest",
+        "Gloves",
+        "Safety Boots",
+        "Eye Protection",
+      ],
       applicableJobs: ["Installation", "Maintenance", "Repair"],
       lastUpdated: "2024-01-15",
       version: "v2.1",
@@ -346,7 +361,13 @@ export default function HSManagerDashboard() {
       id: "CHK002",
       name: "Site Inspection",
       category: "Workplace Safety",
-      items: ["Emergency Exits", "Fire Equipment", "First Aid Kit", "Hazard Signs", "Lighting"],
+      items: [
+        "Emergency Exits",
+        "Fire Equipment",
+        "First Aid Kit",
+        "Hazard Signs",
+        "Lighting",
+      ],
       applicableJobs: ["All"],
       lastUpdated: "2024-01-10",
       version: "v1.8",
@@ -355,7 +376,12 @@ export default function HSManagerDashboard() {
       id: "CHK003",
       name: "Post-Incident Review",
       category: "Incident Management",
-      items: ["Immediate Cause", "Root Cause", "Corrective Actions", "Prevention Measures"],
+      items: [
+        "Immediate Cause",
+        "Root Cause",
+        "Corrective Actions",
+        "Prevention Measures",
+      ],
       applicableJobs: ["Incident Response"],
       lastUpdated: "2024-01-05",
       version: "v1.3",
@@ -417,8 +443,12 @@ export default function HSManagerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Active Incidents</p>
-                <p className="text-2xl font-bold text-warning">{safetyStats.activeIncidents}</p>
+                <p className="text-sm text-muted-foreground">
+                  Active Incidents
+                </p>
+                <p className="text-2xl font-bold text-warning">
+                  {safetyStats.activeIncidents}
+                </p>
               </div>
               <AlertTriangle className="h-8 w-8 text-warning" />
             </div>
@@ -429,8 +459,12 @@ export default function HSManagerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Compliance Score</p>
-                <p className="text-2xl font-bold text-success">{safetyStats.complianceScore}%</p>
+                <p className="text-sm text-muted-foreground">
+                  Compliance Score
+                </p>
+                <p className="text-2xl font-bold text-success">
+                  {safetyStats.complianceScore}%
+                </p>
               </div>
               <Shield className="h-8 w-8 text-success" />
             </div>
@@ -442,7 +476,9 @@ export default function HSManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Safety Checks</p>
-                <p className="text-2xl font-bold text-primary">{safetyStats.completedChecks}</p>
+                <p className="text-2xl font-bold text-primary">
+                  {safetyStats.completedChecks}
+                </p>
               </div>
               <CheckCircle className="h-8 w-8 text-primary" />
             </div>
@@ -454,7 +490,9 @@ export default function HSManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">PPE Compliance</p>
-                <p className="text-2xl font-bold text-success">{safetyStats.ppeCompliance}%</p>
+                <p className="text-2xl font-bold text-success">
+                  {safetyStats.ppeCompliance}%
+                </p>
               </div>
               <HardHat className="h-8 w-8 text-success" />
             </div>
@@ -466,7 +504,9 @@ export default function HSManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Safety Photos</p>
-                <p className="text-2xl font-bold text-info">{safetyStats.photosUploaded}</p>
+                <p className="text-2xl font-bold text-info">
+                  {safetyStats.photosUploaded}
+                </p>
               </div>
               <Camera className="h-8 w-8 text-info" />
             </div>
@@ -477,8 +517,12 @@ export default function HSManagerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Risk Assessments</p>
-                <p className="text-2xl font-bold text-purple-600">{safetyStats.riskAssessments}</p>
+                <p className="text-sm text-muted-foreground">
+                  Risk Assessments
+                </p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {safetyStats.riskAssessments}
+                </p>
               </div>
               <ClipboardList className="h-8 w-8 text-purple-600" />
             </div>
@@ -488,7 +532,7 @@ export default function HSManagerDashboard() {
 
       {/* Main Dashboard Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("incidents")}
         >
@@ -498,12 +542,16 @@ export default function HSManagerDashboard() {
                 <AlertTriangle className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Incident Reporting</h3>
-            <p className="text-sm text-gray-600">{safetyStats.activeIncidents} active incidents</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Incident Reporting
+            </h3>
+            <p className="text-sm text-gray-600">
+              {safetyStats.activeIncidents} active incidents
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("jra")}
         >
@@ -513,12 +561,16 @@ export default function HSManagerDashboard() {
                 <ClipboardList className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Job Risk Assessment</h3>
-            <p className="text-sm text-gray-600">{safetyStats.riskAssessments} assessments this month</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Job Risk Assessment
+            </h3>
+            <p className="text-sm text-gray-600">
+              {safetyStats.riskAssessments} assessments this month
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("ppe")}
         >
@@ -529,11 +581,13 @@ export default function HSManagerDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">PPE Compliance</h3>
-            <p className="text-sm text-gray-600">{safetyStats.ppeCompliance}% compliance rate</p>
+            <p className="text-sm text-gray-600">
+              {safetyStats.ppeCompliance}% compliance rate
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("audits")}
         >
@@ -544,11 +598,13 @@ export default function HSManagerDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Safety Audits</h3>
-            <p className="text-sm text-gray-600">{safetyStats.auditsCompleted} audits completed</p>
+            <p className="text-sm text-gray-600">
+              {safetyStats.auditsCompleted} audits completed
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("training")}
         >
@@ -558,12 +614,16 @@ export default function HSManagerDashboard() {
                 <BookOpen className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Training Records</h3>
-            <p className="text-sm text-gray-600">{safetyStats.trainingExpiries} expiring soon</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Training Records
+            </h3>
+            <p className="text-sm text-gray-600">
+              {safetyStats.trainingExpiries} expiring soon
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("alerts")}
         >
@@ -574,11 +634,13 @@ export default function HSManagerDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Safety Alerts</h3>
-            <p className="text-sm text-gray-600">{safetyStats.safetyAlerts} active alerts</p>
+            <p className="text-sm text-gray-600">
+              {safetyStats.safetyAlerts} active alerts
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("checklists")}
         >
@@ -588,12 +650,14 @@ export default function HSManagerDashboard() {
                 <FileText className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Safety Checklists</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Safety Checklists
+            </h3>
             <p className="text-sm text-gray-600">Manage safety templates</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("compliance")}
         >
@@ -603,12 +667,16 @@ export default function HSManagerDashboard() {
                 <BarChart3 className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Compliance Stats</h3>
-            <p className="text-sm text-gray-600">{safetyStats.complianceScore}% overall score</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Compliance Stats
+            </h3>
+            <p className="text-sm text-gray-600">
+              {safetyStats.complianceScore}% overall score
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("reports")}
         >
@@ -618,12 +686,14 @@ export default function HSManagerDashboard() {
                 <FileText className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Reports & Export</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Reports & Export
+            </h3>
             <p className="text-sm text-gray-600">Generate safety reports</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("settings")}
         >
@@ -633,7 +703,9 @@ export default function HSManagerDashboard() {
                 <Settings className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Settings & Notifications</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Settings & Notifications
+            </h3>
             <p className="text-sm text-gray-600">Configure safety alerts</p>
           </CardContent>
         </Card>
@@ -646,7 +718,10 @@ export default function HSManagerDashboard() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Incident Reporting & Tracking</h2>
         <div className="flex space-x-2">
-          <Select value={selectedIncidentType} onValueChange={setSelectedIncidentType}>
+          <Select
+            value={selectedIncidentType}
+            onValueChange={setSelectedIncidentType}
+          >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
@@ -685,7 +760,9 @@ export default function HSManagerDashboard() {
                     </Badge>
                     <Badge variant="secondary">{incident.type}</Badge>
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">{incident.description}</h3>
+                  <h3 className="font-semibold text-lg mb-2">
+                    {incident.description}
+                  </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Location:</p>
@@ -697,7 +774,9 @@ export default function HSManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Date & Time:</p>
-                      <p>{incident.date} at {incident.time}</p>
+                      <p>
+                        {incident.date} at {incident.time}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Reported By:</p>
@@ -830,7 +909,11 @@ export default function HSManagerDashboard() {
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approve
                     </Button>
-                    <Button variant="outline" size="sm" className="text-warning">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-warning"
+                    >
                       <Edit className="h-4 w-4 mr-2" />
                       Request Revision
                     </Button>
@@ -877,9 +960,17 @@ export default function HSManagerDashboard() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="font-semibold text-lg">{record.technician}</h3>
+                    <h3 className="font-semibold text-lg">
+                      {record.technician}
+                    </h3>
                     <Badge variant="outline">{record.jobId}</Badge>
-                    <Badge className={record.complianceScore >= 80 ? "bg-success text-success-foreground" : "bg-warning text-warning-foreground"}>
+                    <Badge
+                      className={
+                        record.complianceScore >= 80
+                          ? "bg-success text-success-foreground"
+                          : "bg-warning text-warning-foreground"
+                      }
+                    >
                       {record.complianceScore}% Compliance
                     </Badge>
                     {record.photoUploaded && (
@@ -889,40 +980,58 @@ export default function HSManagerDashboard() {
                       </Badge>
                     )}
                   </div>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-3">
                     <div className="flex items-center space-x-2">
-                      <HardHat className={`h-5 w-5 ${record.hardHat ? 'text-success' : 'text-destructive'}`} />
-                      <span className={`text-sm ${record.hardHat ? 'text-success' : 'text-destructive'}`}>
-                        Hard Hat: {record.hardHat ? '✓' : '✗'}
+                      <HardHat
+                        className={`h-5 w-5 ${record.hardHat ? "text-success" : "text-destructive"}`}
+                      />
+                      <span
+                        className={`text-sm ${record.hardHat ? "text-success" : "text-destructive"}`}
+                      >
+                        Hard Hat: {record.hardHat ? "✓" : "✗"}
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Shield className={`h-5 w-5 ${record.safetyVest ? 'text-success' : 'text-destructive'}`} />
-                      <span className={`text-sm ${record.safetyVest ? 'text-success' : 'text-destructive'}`}>
-                        Safety Vest: {record.safetyVest ? '✓' : '✗'}
+                      <Shield
+                        className={`h-5 w-5 ${record.safetyVest ? "text-success" : "text-destructive"}`}
+                      />
+                      <span
+                        className={`text-sm ${record.safetyVest ? "text-success" : "text-destructive"}`}
+                      >
+                        Safety Vest: {record.safetyVest ? "✓" : "✗"}
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className={`text-sm ${record.gloves ? 'text-success' : 'text-destructive'}`}>
-                        👥 Gloves: {record.gloves ? '✓' : '✗'}
+                      <span
+                        className={`text-sm ${record.gloves ? "text-success" : "text-destructive"}`}
+                      >
+                        👥 Gloves: {record.gloves ? "✓" : "✗"}
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className={`text-sm ${record.safetyBoots ? 'text-success' : 'text-destructive'}`}>
-                        👢 Safety Boots: {record.safetyBoots ? '✓' : '✗'}
+                      <span
+                        className={`text-sm ${record.safetyBoots ? "text-success" : "text-destructive"}`}
+                      >
+                        👢 Safety Boots: {record.safetyBoots ? "✓" : "✗"}
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className={`text-sm ${record.eyeProtection ? 'text-success' : 'text-destructive'}`}>
-                        👓 Eye Protection: {record.eyeProtection ? '✓' : '✗'}
+                      <span
+                        className={`text-sm ${record.eyeProtection ? "text-success" : "text-destructive"}`}
+                      >
+                        👓 Eye Protection: {record.eyeProtection ? "✓" : "✗"}
                       </span>
                     </div>
                   </div>
 
                   <div className="mt-3 text-sm text-muted-foreground">
-                    <p><strong>Date:</strong> {record.date}</p>
-                    <p><strong>Notes:</strong> {record.notes}</p>
+                    <p>
+                      <strong>Date:</strong> {record.date}
+                    </p>
+                    <p>
+                      <strong>Notes:</strong> {record.notes}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -973,7 +1082,9 @@ export default function HSManagerDashboard() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="font-semibold text-lg">{record.technician}</h3>
+                    <h3 className="font-semibold text-lg">
+                      {record.technician}
+                    </h3>
                     <Badge className={getStatusColor(record.status)}>
                       {record.status}
                     </Badge>
@@ -1003,10 +1114,18 @@ export default function HSManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Days to Expiry:</p>
-                      <p className={record.daysToExpiry < 0 ? 'text-destructive font-bold' : 
-                                 record.daysToExpiry <= 30 ? 'text-warning font-bold' : ''}>
-                        {record.daysToExpiry < 0 ? `Expired ${Math.abs(record.daysToExpiry)} days ago` : 
-                         `${record.daysToExpiry} days`}
+                      <p
+                        className={
+                          record.daysToExpiry < 0
+                            ? "text-destructive font-bold"
+                            : record.daysToExpiry <= 30
+                              ? "text-warning font-bold"
+                              : ""
+                        }
+                      >
+                        {record.daysToExpiry < 0
+                          ? `Expired ${Math.abs(record.daysToExpiry)} days ago`
+                          : `${record.daysToExpiry} days`}
                       </p>
                     </div>
                   </div>
@@ -1022,7 +1141,8 @@ export default function HSManagerDashboard() {
                   <Upload className="h-4 w-4 mr-2" />
                   Upload Certificate
                 </Button>
-                {(record.status === "Expired" || record.status === "Expiring Soon") && (
+                {(record.status === "Expired" ||
+                  record.status === "Expiring Soon") && (
                   <Button size="sm">
                     <Calendar className="h-4 w-4 mr-2" />
                     Schedule Renewal
@@ -1081,7 +1201,13 @@ export default function HSManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Read Status:</p>
-                      <p>{alert.readBy}/{alert.totalRecipients} ({Math.round((alert.readBy/alert.totalRecipients)*100)}%)</p>
+                      <p>
+                        {alert.readBy}/{alert.totalRecipients} (
+                        {Math.round(
+                          (alert.readBy / alert.totalRecipients) * 100,
+                        )}
+                        %)
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1128,7 +1254,10 @@ export default function HSManagerDashboard() {
             <h2 className="text-2xl font-bold">Safety Audits</h2>
             <div className="space-y-4">
               {safetyAudits.map((audit) => (
-                <Card key={audit.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={audit.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
@@ -1137,9 +1266,15 @@ export default function HSManagerDashboard() {
                           <Badge className={getStatusColor(audit.status)}>
                             {audit.status}
                           </Badge>
-                          <Badge className={audit.score >= 80 ? "bg-success text-success-foreground" : 
-                                           audit.score >= 60 ? "bg-warning text-warning-foreground" : 
-                                           "bg-destructive text-destructive-foreground"}>
+                          <Badge
+                            className={
+                              audit.score >= 80
+                                ? "bg-success text-success-foreground"
+                                : audit.score >= 60
+                                  ? "bg-warning text-warning-foreground"
+                                  : "bg-destructive text-destructive-foreground"
+                            }
+                          >
                             Score: {audit.score}%
                           </Badge>
                         </div>
@@ -1155,7 +1290,9 @@ export default function HSManagerDashboard() {
                           </div>
                           <div>
                             <p className="font-medium">Findings:</p>
-                            <p>{audit.findings} ({audit.criticalIssues} critical)</p>
+                            <p>
+                              {audit.findings} ({audit.criticalIssues} critical)
+                            </p>
                           </div>
                           <div>
                             <p className="font-medium">Next Audit:</p>
@@ -1184,16 +1321,23 @@ export default function HSManagerDashboard() {
             <h2 className="text-2xl font-bold">Safety Checklist Templates</h2>
             <div className="space-y-4">
               {checklistTemplates.map((template) => (
-                <Card key={template.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={template.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
                           <Badge variant="outline">{template.id}</Badge>
                           <Badge variant="secondary">{template.version}</Badge>
-                          <Badge className="bg-primary text-primary-foreground">{template.category}</Badge>
+                          <Badge className="bg-primary text-primary-foreground">
+                            {template.category}
+                          </Badge>
                         </div>
-                        <h3 className="font-semibold text-lg">{template.name}</h3>
+                        <h3 className="font-semibold text-lg">
+                          {template.name}
+                        </h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-3 text-sm text-muted-foreground">
                           <div>
                             <p className="font-medium">Items:</p>
@@ -1220,21 +1364,27 @@ export default function HSManagerDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Compliance & Statistics</h2>
-            <p className="text-muted-foreground">Compliance tracking and analytics coming soon...</p>
+            <p className="text-muted-foreground">
+              Compliance tracking and analytics coming soon...
+            </p>
           </div>
         );
       case "reports":
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Reports & Exports</h2>
-            <p className="text-muted-foreground">Safety report generation coming soon...</p>
+            <p className="text-muted-foreground">
+              Safety report generation coming soon...
+            </p>
           </div>
         );
       case "settings":
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Settings & Notifications</h2>
-            <p className="text-muted-foreground">Safety configuration settings coming soon...</p>
+            <p className="text-muted-foreground">
+              Safety configuration settings coming soon...
+            </p>
           </div>
         );
       default:
@@ -1252,14 +1402,12 @@ export default function HSManagerDashboard() {
               Health & Safety Manager Dashboard
             </h1>
             <p className="text-muted-foreground">
-              Comprehensive safety management, compliance tracking, and incident reporting
+              Comprehensive safety management, compliance tracking, and incident
+              reporting
             </p>
           </div>
           {activeSection !== "main" && (
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSection("main")}
-            >
+            <Button variant="outline" onClick={() => setActiveSection("main")}>
               ← Back to Dashboard
             </Button>
           )}

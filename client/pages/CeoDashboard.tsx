@@ -456,7 +456,9 @@ export default function CeoDashboard() {
             <ClipboardList className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{systemStats.totalJobs.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {systemStats.totalJobs.toLocaleString()}
+            </div>
             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
               <CheckCircle className="h-3 w-3 text-success" />
               <span>{systemStats.completedJobs} completed</span>
@@ -470,7 +472,9 @@ export default function CeoDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${systemStats.revenue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              ${systemStats.revenue.toLocaleString()}
+            </div>
             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
               <TrendingUp className="h-3 w-3 text-success" />
               <span>87% of target</span>
@@ -484,7 +488,9 @@ export default function CeoDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{systemStats.activeTechnicians}</div>
+            <div className="text-2xl font-bold">
+              {systemStats.activeTechnicians}
+            </div>
             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
               <Activity className="h-3 w-3 text-primary" />
               <span>of {systemStats.totalTechnicians} total</span>
@@ -498,7 +504,9 @@ export default function CeoDashboard() {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{systemStats.productivity}%</div>
+            <div className="text-2xl font-bold">
+              {systemStats.productivity}%
+            </div>
             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
               <TrendingUp className="h-3 w-3 text-success" />
               <span>Above target</span>
@@ -509,7 +517,7 @@ export default function CeoDashboard() {
 
       {/* Main Dashboard Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("jobs")}
         >
@@ -520,11 +528,13 @@ export default function CeoDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Jobs Overview</h3>
-            <p className="text-sm text-gray-600">{systemStats.totalJobs} total jobs</p>
+            <p className="text-sm text-gray-600">
+              {systemStats.totalJobs} total jobs
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("revenue")}
         >
@@ -534,12 +544,16 @@ export default function CeoDashboard() {
                 <DollarSign className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Financial Performance</h3>
-            <p className="text-sm text-gray-600">${systemStats.revenue.toLocaleString()} this month</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Financial Performance
+            </h3>
+            <p className="text-sm text-gray-600">
+              ${systemStats.revenue.toLocaleString()} this month
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("staff")}
         >
@@ -549,12 +563,16 @@ export default function CeoDashboard() {
                 <Users className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Human Resource Snapshot</h3>
-            <p className="text-sm text-gray-600">{systemStats.activeTechnicians} active staff</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Human Resource Snapshot
+            </h3>
+            <p className="text-sm text-gray-600">
+              {systemStats.activeTechnicians} active staff
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("productivity")}
         >
@@ -564,12 +582,16 @@ export default function CeoDashboard() {
                 <TrendingUp className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Productivity Metrics</h3>
-            <p className="text-sm text-gray-600">{systemStats.productivity}% efficiency</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Productivity Metrics
+            </h3>
+            <p className="text-sm text-gray-600">
+              {systemStats.productivity}% efficiency
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("departments")}
         >
@@ -579,12 +601,16 @@ export default function CeoDashboard() {
                 <Building className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Departmental Performance</h3>
-            <p className="text-sm text-gray-600">{systemStats.departments} departments</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Departmental Performance
+            </h3>
+            <p className="text-sm text-gray-600">
+              {systemStats.departments} departments
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("compliance")}
         >
@@ -594,12 +620,16 @@ export default function CeoDashboard() {
                 <Shield className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Compliance Center</h3>
-            <p className="text-sm text-gray-600">{systemStats.complianceScore}% compliance</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Compliance Center
+            </h3>
+            <p className="text-sm text-gray-600">
+              {systemStats.complianceScore}% compliance
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("fleet")}
         >
@@ -609,12 +639,16 @@ export default function CeoDashboard() {
                 <Truck className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Fleet Operations</h3>
-            <p className="text-sm text-gray-600">{systemStats.fleetUtilization}% utilization</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Fleet Operations
+            </h3>
+            <p className="text-sm text-gray-600">
+              {systemStats.fleetUtilization}% utilization
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("inventory")}
         >
@@ -625,11 +659,13 @@ export default function CeoDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Stock & Assets</h3>
-            <p className="text-sm text-gray-600">${systemStats.stockValue.toLocaleString()} value</p>
+            <p className="text-sm text-gray-600">
+              ${systemStats.stockValue.toLocaleString()} value
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("settings")}
         >
@@ -639,12 +675,14 @@ export default function CeoDashboard() {
                 <Settings className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">System Settings</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              System Settings
+            </h3>
             <p className="text-sm text-gray-600">Configuration & access</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("alerts")}
         >
@@ -654,12 +692,16 @@ export default function CeoDashboard() {
                 <AlertTriangle className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Critical Alerts</h3>
-            <p className="text-sm text-gray-600">{systemStats.criticalAlerts} active alerts</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Critical Alerts
+            </h3>
+            <p className="text-sm text-gray-600">
+              {systemStats.criticalAlerts} active alerts
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("reports")}
         >
@@ -670,11 +712,13 @@ export default function CeoDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Reports Hub</h3>
-            <p className="text-sm text-gray-600">{systemStats.pendingReports} pending reports</p>
+            <p className="text-sm text-gray-600">
+              {systemStats.pendingReports} pending reports
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("users")}
         >
@@ -685,11 +729,13 @@ export default function CeoDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">User Directory</h3>
-            <p className="text-sm text-gray-600">{systemStats.activeUsers} active users</p>
+            <p className="text-sm text-gray-600">
+              {systemStats.activeUsers} active users
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("analytics")}
         >
@@ -699,7 +745,9 @@ export default function CeoDashboard() {
                 <BarChart3 className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">CEO Analytics Center</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              CEO Analytics Center
+            </h3>
             <p className="text-sm text-gray-600">All KPIs in one place</p>
           </CardContent>
         </Card>
@@ -712,7 +760,10 @@ export default function CeoDashboard() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Jobs Overview</h2>
         <div className="flex space-x-2">
-          <Select value={selectedTimeFilter} onValueChange={setSelectedTimeFilter}>
+          <Select
+            value={selectedTimeFilter}
+            onValueChange={setSelectedTimeFilter}
+          >
             <SelectTrigger className="w-40">
               <SelectValue />
             </SelectTrigger>
@@ -737,7 +788,9 @@ export default function CeoDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Completed</p>
-                <p className="text-2xl font-bold text-success">{systemStats.completedJobs}</p>
+                <p className="text-2xl font-bold text-success">
+                  {systemStats.completedJobs}
+                </p>
               </div>
               <CheckCircle className="h-8 w-8 text-success" />
             </div>
@@ -748,7 +801,9 @@ export default function CeoDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">In Progress</p>
-                <p className="text-2xl font-bold text-primary">{systemStats.activeJobs}</p>
+                <p className="text-2xl font-bold text-primary">
+                  {systemStats.activeJobs}
+                </p>
               </div>
               <Activity className="h-8 w-8 text-primary" />
             </div>
@@ -770,7 +825,9 @@ export default function CeoDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Failed</p>
-                <p className="text-2xl font-bold text-destructive">{systemStats.failedJobs}</p>
+                <p className="text-2xl font-bold text-destructive">
+                  {systemStats.failedJobs}
+                </p>
               </div>
               <XCircle className="h-8 w-8 text-destructive" />
             </div>
@@ -810,7 +867,9 @@ export default function CeoDashboard() {
                         <p>Location: {job.location}</p>
                       </div>
                       <div>
-                        <p>Hours: {job.actualHours}/{job.estimatedHours}</p>
+                        <p>
+                          Hours: {job.actualHours}/{job.estimatedHours}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -856,19 +915,26 @@ export default function CeoDashboard() {
             <CardTitle>Monthly Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-success">${systemStats.revenue.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-success">
+              ${systemStats.revenue.toLocaleString()}
+            </div>
             <div className="text-sm text-muted-foreground mt-2">
               Target: ${systemStats.targetRevenue.toLocaleString()}
             </div>
             <div className="mt-4">
               <div className="bg-secondary rounded-full h-2">
-                <div 
-                  className="bg-primary h-2 rounded-full" 
-                  style={{ width: `${(systemStats.revenue / systemStats.targetRevenue) * 100}%` }}
+                <div
+                  className="bg-primary h-2 rounded-full"
+                  style={{
+                    width: `${(systemStats.revenue / systemStats.targetRevenue) * 100}%`,
+                  }}
                 ></div>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {Math.round((systemStats.revenue / systemStats.targetRevenue) * 100)}% of target
+                {Math.round(
+                  (systemStats.revenue / systemStats.targetRevenue) * 100,
+                )}
+                % of target
               </p>
             </div>
           </CardContent>
@@ -915,14 +981,21 @@ export default function CeoDashboard() {
         <CardContent>
           <div className="space-y-4">
             {departments.map((dept) => (
-              <div key={dept.id} className="flex items-center justify-between p-3 border rounded-lg">
+              <div
+                key={dept.id}
+                className="flex items-center justify-between p-3 border rounded-lg"
+              >
                 <div className="flex-1">
                   <h4 className="font-semibold">{dept.name}</h4>
-                  <p className="text-sm text-muted-foreground">Head: {dept.head}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Head: {dept.head}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold">${dept.revenue.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">{dept.tasksCompleted} jobs</p>
+                  <p className="text-sm text-muted-foreground">
+                    {dept.tasksCompleted} jobs
+                  </p>
                 </div>
               </div>
             ))}
@@ -1004,7 +1077,10 @@ export default function CeoDashboard() {
         <CardContent>
           <div className="space-y-4">
             {staffData.map((staff) => (
-              <div key={staff.id} className="border border-border rounded-lg p-4">
+              <div
+                key={staff.id}
+                className="border border-border rounded-lg p-4"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
@@ -1056,7 +1132,9 @@ export default function CeoDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Productivity Metrics</h2>
-            <p className="text-muted-foreground">Detailed productivity analytics coming soon...</p>
+            <p className="text-muted-foreground">
+              Detailed productivity analytics coming soon...
+            </p>
           </div>
         );
       case "departments":
@@ -1143,7 +1221,9 @@ export default function CeoDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Fleet Operations</h2>
-            <p className="text-muted-foreground">Fleet operations dashboard coming soon...</p>
+            <p className="text-muted-foreground">
+              Fleet operations dashboard coming soon...
+            </p>
           </div>
         );
       case "inventory":
@@ -1157,7 +1237,10 @@ export default function CeoDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {inventoryData.map((item) => (
-                    <div key={item.id} className="border border-border rounded-lg p-4">
+                    <div
+                      key={item.id}
+                      className="border border-border rounded-lg p-4"
+                    >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h4 className="font-semibold">{item.item}</h4>
@@ -1195,7 +1278,9 @@ export default function CeoDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">System Settings</h2>
-            <p className="text-muted-foreground">System configuration coming soon...</p>
+            <p className="text-muted-foreground">
+              System configuration coming soon...
+            </p>
           </div>
         );
       case "alerts":
@@ -1209,7 +1294,10 @@ export default function CeoDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {criticalAlerts.map((alert) => (
-                    <div key={alert.id} className="border border-border rounded-lg p-4">
+                    <div
+                      key={alert.id}
+                      className="border border-border rounded-lg p-4"
+                    >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
@@ -1239,7 +1327,9 @@ export default function CeoDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Reports Hub</h2>
-            <p className="text-muted-foreground">Reports generation coming soon...</p>
+            <p className="text-muted-foreground">
+              Reports generation coming soon...
+            </p>
           </div>
         );
       case "users":
@@ -1253,7 +1343,10 @@ export default function CeoDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {users.map((user) => (
-                    <div key={user.id} className="border border-border rounded-lg p-4">
+                    <div
+                      key={user.id}
+                      className="border border-border rounded-lg p-4"
+                    >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
@@ -1290,7 +1383,9 @@ export default function CeoDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">CEO Analytics Center</h2>
-            <p className="text-muted-foreground">Advanced analytics dashboard coming soon...</p>
+            <p className="text-muted-foreground">
+              Advanced analytics dashboard coming soon...
+            </p>
           </div>
         );
       default:
@@ -1312,10 +1407,7 @@ export default function CeoDashboard() {
             </p>
           </div>
           {activeSection !== "main" && (
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSection("main")}
-            >
+            <Button variant="outline" onClick={() => setActiveSection("main")}>
               ← Back to Dashboard
             </Button>
           )}

@@ -90,7 +90,8 @@ export default function CoordinatorDashboard() {
       area: "Downtown",
       type: "Repair",
       reportedBy: "Building Manager",
-      description: "Air conditioning system completely down in main office area",
+      description:
+        "Air conditioning system completely down in main office area",
     },
     {
       id: "J102",
@@ -395,7 +396,9 @@ export default function CoordinatorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Unassigned Jobs</p>
-                <p className="text-2xl font-bold text-warning">{coordinatorStats.unassignedJobs}</p>
+                <p className="text-2xl font-bold text-warning">
+                  {coordinatorStats.unassignedJobs}
+                </p>
               </div>
               <ClipboardList className="h-8 w-8 text-warning" />
             </div>
@@ -407,7 +410,9 @@ export default function CoordinatorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Active Jobs</p>
-                <p className="text-2xl font-bold text-primary">{coordinatorStats.activeJobs}</p>
+                <p className="text-2xl font-bold text-primary">
+                  {coordinatorStats.activeJobs}
+                </p>
               </div>
               <Activity className="h-8 w-8 text-primary" />
             </div>
@@ -419,7 +424,9 @@ export default function CoordinatorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Online Today</p>
-                <p className="text-2xl font-bold text-success">{coordinatorStats.onlineToday}</p>
+                <p className="text-2xl font-bold text-success">
+                  {coordinatorStats.onlineToday}
+                </p>
               </div>
               <Users className="h-8 w-8 text-success" />
             </div>
@@ -431,7 +438,9 @@ export default function CoordinatorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Productivity</p>
-                <p className="text-2xl font-bold text-success">{coordinatorStats.productivity}%</p>
+                <p className="text-2xl font-bold text-success">
+                  {coordinatorStats.productivity}%
+                </p>
               </div>
               <TrendingUp className="h-8 w-8 text-success" />
             </div>
@@ -441,7 +450,7 @@ export default function CoordinatorDashboard() {
 
       {/* Main Operational Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("dispatch")}
         >
@@ -451,12 +460,17 @@ export default function CoordinatorDashboard() {
                 <ClipboardList className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Job Dispatch Center</h3>
-            <p className="text-sm text-gray-600">{coordinatorStats.unassignedJobs} Unassigned | {coordinatorStats.activeJobs} Active</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Job Dispatch Center
+            </h3>
+            <p className="text-sm text-gray-600">
+              {coordinatorStats.unassignedJobs} Unassigned |{" "}
+              {coordinatorStats.activeJobs} Active
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("map")}
         >
@@ -466,12 +480,14 @@ export default function CoordinatorDashboard() {
                 <MapPin className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Live Technician Map</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Live Technician Map
+            </h3>
             <p className="text-sm text-gray-600">Technician Tracker</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("schedule")}
         >
@@ -486,7 +502,7 @@ export default function CoordinatorDashboard() {
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("clock")}
         >
@@ -496,12 +512,16 @@ export default function CoordinatorDashboard() {
                 <Clock className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Check-In/Out Monitor</h3>
-            <p className="text-sm text-gray-600">{coordinatorStats.clockedIn} Clocked In</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Check-In/Out Monitor
+            </h3>
+            <p className="text-sm text-gray-600">
+              {coordinatorStats.clockedIn} Clocked In
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("alerts")}
         >
@@ -511,12 +531,16 @@ export default function CoordinatorDashboard() {
                 <AlertTriangle className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Alerts & Issues</h3>
-            <p className="text-sm text-gray-600">{coordinatorStats.alerts} Escalations</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Alerts & Issues
+            </h3>
+            <p className="text-sm text-gray-600">
+              {coordinatorStats.alerts} Escalations
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("communication")}
         >
@@ -526,12 +550,16 @@ export default function CoordinatorDashboard() {
                 <MessageSquare className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Team Communication</h3>
-            <p className="text-sm text-gray-600">{coordinatorStats.teamMessages} Internal Chat</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Team Communication
+            </h3>
+            <p className="text-sm text-gray-600">
+              {coordinatorStats.teamMessages} Internal Chat
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("stock")}
         >
@@ -542,11 +570,13 @@ export default function CoordinatorDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Stock Requests</h3>
-            <p className="text-sm text-gray-600">{coordinatorStats.pendingRequests} Pending Requests</p>
+            <p className="text-sm text-gray-600">
+              {coordinatorStats.pendingRequests} Pending Requests
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("fleet")}
         >
@@ -557,11 +587,13 @@ export default function CoordinatorDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Fleet Status</h3>
-            <p className="text-sm text-gray-600">{coordinatorStats.availableVehicles} Available Vehicles</p>
+            <p className="text-sm text-gray-600">
+              {coordinatorStats.availableVehicles} Available Vehicles
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("metrics")}
         >
@@ -571,12 +603,16 @@ export default function CoordinatorDashboard() {
                 <BarChart3 className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">KPIs for the Day</h3>
-            <p className="text-sm text-gray-600">{coordinatorStats.completedToday} Today's Progress</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              KPIs for the Day
+            </h3>
+            <p className="text-sm text-gray-600">
+              {coordinatorStats.completedToday} Today's Progress
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("tools")}
         >
@@ -619,7 +655,10 @@ export default function CoordinatorDashboard() {
           <CardContent>
             <div className="space-y-4">
               {unassignedJobs.map((job) => (
-                <div key={job.id} className="border border-border rounded-lg p-4">
+                <div
+                  key={job.id}
+                  className="border border-border rounded-lg p-4"
+                >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
@@ -632,7 +671,9 @@ export default function CoordinatorDashboard() {
                         </Badge>
                       </div>
                       <h4 className="font-semibold">{job.title}</h4>
-                      <p className="text-sm text-muted-foreground mb-2">{job.description}</p>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {job.description}
+                      </p>
                       <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
                         <div>📍 {job.location}</div>
                         <div>⏱️ {job.estimatedTime}</div>
@@ -647,11 +688,16 @@ export default function CoordinatorDashboard() {
                         <SelectValue placeholder="Assign to..." />
                       </SelectTrigger>
                       <SelectContent>
-                        {activeTechnicians.filter(t => t.status === "Idle" || t.status === "Available").map(tech => (
-                          <SelectItem key={tech.id} value={tech.name}>
-                            {tech.name}
-                          </SelectItem>
-                        ))}
+                        {activeTechnicians
+                          .filter(
+                            (t) =>
+                              t.status === "Idle" || t.status === "Available",
+                          )
+                          .map((tech) => (
+                            <SelectItem key={tech.id} value={tech.name}>
+                              {tech.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <Button size="sm">
@@ -677,7 +723,10 @@ export default function CoordinatorDashboard() {
           <CardContent>
             <div className="space-y-4">
               {activeTechnicians.map((tech) => (
-                <div key={tech.id} className="border border-border rounded-lg p-4">
+                <div
+                  key={tech.id}
+                  className="border border-border rounded-lg p-4"
+                >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
@@ -692,14 +741,19 @@ export default function CoordinatorDashboard() {
                       <div className="text-sm text-muted-foreground">
                         <p>📍 {tech.location}</p>
                         <p>🔧 {tech.skills.join(", ")}</p>
-                        <p>📊 {tech.efficiency}% efficiency | {tech.jobsToday} jobs today</p>
+                        <p>
+                          📊 {tech.efficiency}% efficiency | {tech.jobsToday}{" "}
+                          jobs today
+                        </p>
                         <p>📞 {tech.phone}</p>
                       </div>
                     </div>
                     <div className="text-right text-sm">
                       <p className="font-semibold">{tech.eta}</p>
                       {tech.currentJob && (
-                        <p className="text-muted-foreground">Job: {tech.currentJob}</p>
+                        <p className="text-muted-foreground">
+                          Job: {tech.currentJob}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -809,7 +863,10 @@ export default function CoordinatorDashboard() {
         <CardContent>
           <div className="space-y-4">
             {activeAlerts.map((alert) => (
-              <div key={alert.id} className="border border-border rounded-lg p-4">
+              <div
+                key={alert.id}
+                className="border border-border rounded-lg p-4"
+              >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
@@ -817,7 +874,9 @@ export default function CoordinatorDashboard() {
                         {alert.priority}
                       </Badge>
                       <Badge variant="outline">{alert.type}</Badge>
-                      <span className="text-sm text-muted-foreground">{alert.time}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {alert.time}
+                      </span>
                     </div>
                     <h4 className="font-semibold">{alert.message}</h4>
                     <p className="text-sm text-muted-foreground">
@@ -870,7 +929,10 @@ export default function CoordinatorDashboard() {
         <CardContent>
           <div className="space-y-4">
             {stockRequests.map((request) => (
-              <div key={request.id} className="border border-border rounded-lg p-4">
+              <div
+                key={request.id}
+                className="border border-border rounded-lg p-4"
+              >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
@@ -898,7 +960,11 @@ export default function CoordinatorDashboard() {
                         <CheckCircle className="h-4 w-4 mr-2" />
                         Approve
                       </Button>
-                      <Button variant="outline" size="sm" className="text-destructive">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-destructive"
+                      >
                         <Trash2 className="h-4 w-4 mr-2" />
                         Reject
                       </Button>
@@ -946,7 +1012,10 @@ export default function CoordinatorDashboard() {
         <CardContent>
           <div className="space-y-4">
             {fleetStatus.map((vehicle) => (
-              <div key={vehicle.id} className="border border-border rounded-lg p-4">
+              <div
+                key={vehicle.id}
+                className="border border-border rounded-lg p-4"
+              >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
@@ -957,7 +1026,9 @@ export default function CoordinatorDashboard() {
                       <span className="font-semibold">{vehicle.type}</span>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      <p>👤 Assigned to: {vehicle.assignedTo || "Unassigned"}</p>
+                      <p>
+                        👤 Assigned to: {vehicle.assignedTo || "Unassigned"}
+                      </p>
                       <p>📍 Location: {vehicle.location}</p>
                       <p>⛽ Fuel: {vehicle.fuel}</p>
                       <p>🔧 Next Service: {vehicle.nextService}</p>
@@ -1002,7 +1073,9 @@ export default function CoordinatorDashboard() {
                   <div className="text-center">
                     <MapPin className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                     <p className="text-lg font-semibold">Live GPS Tracking</p>
-                    <p className="text-muted-foreground">Interactive map showing real-time technician locations</p>
+                    <p className="text-muted-foreground">
+                      Interactive map showing real-time technician locations
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -1022,7 +1095,10 @@ export default function CoordinatorDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {activeTechnicians.map((tech) => (
-                    <div key={tech.id} className="border border-border rounded-lg p-4">
+                    <div
+                      key={tech.id}
+                      className="border border-border rounded-lg p-4"
+                    >
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-semibold">{tech.name}</h4>
@@ -1065,16 +1141,27 @@ export default function CoordinatorDashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="bg-muted rounded-lg p-3">
-                      <p className="text-sm"><strong>John Smith:</strong> Heading to next site now</p>
-                      <p className="text-xs text-muted-foreground">2 minutes ago</p>
+                      <p className="text-sm">
+                        <strong>John Smith:</strong> Heading to next site now
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        2 minutes ago
+                      </p>
                     </div>
                     <div className="bg-primary/10 rounded-lg p-3">
-                      <p className="text-sm"><strong>You:</strong> Great! ETA 30 minutes?</p>
-                      <p className="text-xs text-muted-foreground">1 minute ago</p>
+                      <p className="text-sm">
+                        <strong>You:</strong> Great! ETA 30 minutes?
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        1 minute ago
+                      </p>
                     </div>
                   </div>
                   <div className="mt-4 flex space-x-2">
-                    <Input placeholder="Type your message..." className="flex-1" />
+                    <Input
+                      placeholder="Type your message..."
+                      className="flex-1"
+                    />
                     <Button>
                       <Send className="h-4 w-4" />
                     </Button>
@@ -1117,26 +1204,38 @@ export default function CoordinatorDashboard() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Card>
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-success">{coordinatorStats.completedToday}</div>
-                  <p className="text-sm text-muted-foreground">Jobs Completed Today</p>
+                  <div className="text-3xl font-bold text-success">
+                    {coordinatorStats.completedToday}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Jobs Completed Today
+                  </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-primary">{coordinatorStats.productivity}%</div>
-                  <p className="text-sm text-muted-foreground">Team Productivity</p>
+                  <div className="text-3xl font-bold text-primary">
+                    {coordinatorStats.productivity}%
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Team Productivity
+                  </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-warning">{coordinatorStats.overdueJobs}</div>
+                  <div className="text-3xl font-bold text-warning">
+                    {coordinatorStats.overdueJobs}
+                  </div>
                   <p className="text-sm text-muted-foreground">Overdue Tasks</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-6 text-center">
                   <div className="text-3xl font-bold text-info">John Smith</div>
-                  <p className="text-sm text-muted-foreground">Most Productive Tech</p>
+                  <p className="text-sm text-muted-foreground">
+                    Most Productive Tech
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -1193,10 +1292,7 @@ export default function CoordinatorDashboard() {
             </p>
           </div>
           {activeSection !== "main" && (
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSection("main")}
-            >
+            <Button variant="outline" onClick={() => setActiveSection("main")}>
               ← Back to Dashboard
             </Button>
           )}

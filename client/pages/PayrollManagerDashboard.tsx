@@ -136,7 +136,7 @@ export default function PayrollManagerDashboard() {
       date: "2024-01-20",
       hours: 4,
       rate: "1.5x",
-      amount: 450.00,
+      amount: 450.0,
       justification: "Emergency fiber repair - client deadline",
       approvedBy: null,
       status: "Pending",
@@ -149,7 +149,7 @@ export default function PayrollManagerDashboard() {
       date: "2024-01-19",
       hours: 6,
       rate: "2.0x",
-      amount: 720.00,
+      amount: 720.0,
       justification: "Weekend emergency call-out",
       approvedBy: "Manager",
       status: "Approved",
@@ -162,7 +162,7 @@ export default function PayrollManagerDashboard() {
       date: "2024-01-18",
       hours: 2,
       rate: "1.5x",
-      amount: 150.00,
+      amount: 150.0,
       justification: "Equipment repair overran",
       approvedBy: "Supervisor",
       status: "Approved",
@@ -176,16 +176,16 @@ export default function PayrollManagerDashboard() {
       employee: "John Smith",
       employeeId: "EMP001",
       department: "Network Maintenance",
-      basicSalary: 18500.00,
-      overtime: 1200.00,
-      allowances: 800.00,
-      grossPay: 20500.00,
-      taxDeduction: 3485.00,
-      uifDeduction: 205.00,
-      medicalAid: 1250.00,
-      loanDeduction: 500.00,
-      totalDeductions: 5440.00,
-      netPay: 15060.00,
+      basicSalary: 18500.0,
+      overtime: 1200.0,
+      allowances: 800.0,
+      grossPay: 20500.0,
+      taxDeduction: 3485.0,
+      uifDeduction: 205.0,
+      medicalAid: 1250.0,
+      loanDeduction: 500.0,
+      totalDeductions: 5440.0,
+      netPay: 15060.0,
       payslipGenerated: true,
       bankDetails: "FNB - ****4521",
       paymentStatus: "Paid",
@@ -195,16 +195,16 @@ export default function PayrollManagerDashboard() {
       employee: "Sarah Johnson",
       employeeId: "EMP002",
       department: "Installation",
-      basicSalary: 22000.00,
-      overtime: 1800.00,
-      allowances: 1200.00,
-      grossPay: 25000.00,
-      taxDeduction: 4750.00,
-      uifDeduction: 250.00,
-      medicalAid: 1250.00,
-      loanDeduction: 0.00,
-      totalDeductions: 6250.00,
-      netPay: 18750.00,
+      basicSalary: 22000.0,
+      overtime: 1800.0,
+      allowances: 1200.0,
+      grossPay: 25000.0,
+      taxDeduction: 4750.0,
+      uifDeduction: 250.0,
+      medicalAid: 1250.0,
+      loanDeduction: 0.0,
+      totalDeductions: 6250.0,
+      netPay: 18750.0,
       payslipGenerated: true,
       bankDetails: "Standard Bank - ****7892",
       paymentStatus: "Pending",
@@ -214,16 +214,16 @@ export default function PayrollManagerDashboard() {
       employee: "Mike Chen",
       employeeId: "EMP003",
       department: "Repair Services",
-      basicSalary: 16500.00,
-      overtime: 300.00,
-      allowances: 600.00,
-      grossPay: 17400.00,
-      taxDeduction: 2610.00,
-      uifDeduction: 174.00,
-      medicalAid: 850.00,
-      loanDeduction: 750.00,
-      totalDeductions: 4384.00,
-      netPay: 13016.00,
+      basicSalary: 16500.0,
+      overtime: 300.0,
+      allowances: 600.0,
+      grossPay: 17400.0,
+      taxDeduction: 2610.0,
+      uifDeduction: 174.0,
+      medicalAid: 850.0,
+      loanDeduction: 750.0,
+      totalDeductions: 4384.0,
+      netPay: 13016.0,
       payslipGenerated: false,
       bankDetails: "Missing",
       paymentStatus: "On Hold",
@@ -277,9 +277,9 @@ export default function PayrollManagerDashboard() {
       id: "LD001",
       employee: "John Smith",
       loanType: "Equipment Loan",
-      originalAmount: 2500.00,
-      remainingBalance: 500.00,
-      monthlyDeduction: 250.00,
+      originalAmount: 2500.0,
+      remainingBalance: 500.0,
+      monthlyDeduction: 250.0,
       monthsRemaining: 2,
       startDate: "2023-11-01",
       nextDeduction: "2024-02-01",
@@ -288,9 +288,9 @@ export default function PayrollManagerDashboard() {
       id: "LD002",
       employee: "Mike Chen",
       loanType: "Uniform Advance",
-      originalAmount: 1500.00,
-      remainingBalance: 750.00,
-      monthlyDeduction: 150.00,
+      originalAmount: 1500.0,
+      remainingBalance: 750.0,
+      monthlyDeduction: 150.0,
       monthsRemaining: 5,
       startDate: "2023-09-01",
       nextDeduction: "2024-02-01",
@@ -299,9 +299,9 @@ export default function PayrollManagerDashboard() {
       id: "LD003",
       employee: "Emma Wilson",
       loanType: "Training Fee",
-      originalAmount: 3000.00,
-      remainingBalance: 1200.00,
-      monthlyDeduction: 300.00,
+      originalAmount: 3000.0,
+      remainingBalance: 1200.0,
+      monthlyDeduction: 300.0,
       monthsRemaining: 4,
       startDate: "2023-10-01",
       nextDeduction: "2024-02-01",
@@ -400,7 +400,9 @@ export default function PayrollManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Staff</p>
-                <p className="text-2xl font-bold text-primary">{payrollStats.totalStaff}</p>
+                <p className="text-2xl font-bold text-primary">
+                  {payrollStats.totalStaff}
+                </p>
               </div>
               <Users className="h-8 w-8 text-primary" />
             </div>
@@ -412,7 +414,9 @@ export default function PayrollManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Timesheets</p>
-                <p className="text-2xl font-bold text-success">{payrollStats.timesheetsSubmitted}/{payrollStats.totalStaff}</p>
+                <p className="text-2xl font-bold text-success">
+                  {payrollStats.timesheetsSubmitted}/{payrollStats.totalStaff}
+                </p>
               </div>
               <Clock className="h-8 w-8 text-success" />
             </div>
@@ -424,7 +428,9 @@ export default function PayrollManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Payroll Amount</p>
-                <p className="text-2xl font-bold text-success">R{payrollStats.payrollAmount.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-success">
+                  R{payrollStats.payrollAmount.toLocaleString()}
+                </p>
               </div>
               <DollarSign className="h-8 w-8 text-success" />
             </div>
@@ -436,7 +442,9 @@ export default function PayrollManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Overtime</p>
-                <p className="text-2xl font-bold text-warning">R{payrollStats.overtimeClaims.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-warning">
+                  R{payrollStats.overtimeClaims.toLocaleString()}
+                </p>
               </div>
               <Timer className="h-8 w-8 text-warning" />
             </div>
@@ -448,7 +456,9 @@ export default function PayrollManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Unapproved</p>
-                <p className="text-2xl font-bold text-warning">{payrollStats.unapprovedTimesheets}</p>
+                <p className="text-2xl font-bold text-warning">
+                  {payrollStats.unapprovedTimesheets}
+                </p>
               </div>
               <AlertTriangle className="h-8 w-8 text-warning" />
             </div>
@@ -460,7 +470,9 @@ export default function PayrollManagerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Issues</p>
-                <p className="text-2xl font-bold text-destructive">{payrollStats.payrollIssues}</p>
+                <p className="text-2xl font-bold text-destructive">
+                  {payrollStats.payrollIssues}
+                </p>
               </div>
               <XCircle className="h-8 w-8 text-destructive" />
             </div>
@@ -470,7 +482,7 @@ export default function PayrollManagerDashboard() {
 
       {/* Main Dashboard Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("timesheets")}
         >
@@ -480,12 +492,17 @@ export default function PayrollManagerDashboard() {
                 <Clock className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Timesheet Management</h3>
-            <p className="text-sm text-gray-600">{payrollStats.timesheetsSubmitted} of {payrollStats.totalStaff} submitted</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Timesheet Management
+            </h3>
+            <p className="text-sm text-gray-600">
+              {payrollStats.timesheetsSubmitted} of {payrollStats.totalStaff}{" "}
+              submitted
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("overtime")}
         >
@@ -495,12 +512,16 @@ export default function PayrollManagerDashboard() {
                 <Timer className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Overtime & Allowances</h3>
-            <p className="text-sm text-gray-600">R{payrollStats.overtimeClaims.toLocaleString()} in claims</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Overtime & Allowances
+            </h3>
+            <p className="text-sm text-gray-600">
+              R{payrollStats.overtimeClaims.toLocaleString()} in claims
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("payslips")}
         >
@@ -510,12 +531,16 @@ export default function PayrollManagerDashboard() {
                 <Receipt className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Salary & Payslips</h3>
-            <p className="text-sm text-gray-600">{payrollStats.completedPayslips} payslips generated</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Salary & Payslips
+            </h3>
+            <p className="text-sm text-gray-600">
+              {payrollStats.completedPayslips} payslips generated
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("leave")}
         >
@@ -525,12 +550,16 @@ export default function PayrollManagerDashboard() {
                 <Calendar className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Leave Management</h3>
-            <p className="text-sm text-gray-600">{payrollStats.pendingLeave} pending requests</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Leave Management
+            </h3>
+            <p className="text-sm text-gray-600">
+              {payrollStats.pendingLeave} pending requests
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("reports")}
         >
@@ -540,12 +569,14 @@ export default function PayrollManagerDashboard() {
                 <FileText className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Payroll Reports</h3>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Payroll Reports
+            </h3>
             <p className="text-sm text-gray-600">Generate detailed reports</p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("banking")}
         >
@@ -555,12 +586,16 @@ export default function PayrollManagerDashboard() {
                 <CreditCard className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Banking & Payments</h3>
-            <p className="text-sm text-gray-600">{payrollStats.bankingErrors} banking error</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Banking & Payments
+            </h3>
+            <p className="text-sm text-gray-600">
+              {payrollStats.bankingErrors} banking error
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("deductions")}
         >
@@ -570,12 +605,16 @@ export default function PayrollManagerDashboard() {
                 <Calculator className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Loans & Deductions</h3>
-            <p className="text-sm text-gray-600">R{payrollStats.totalDeductions.toLocaleString()} total deductions</p>
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Loans & Deductions
+            </h3>
+            <p className="text-sm text-gray-600">
+              R{payrollStats.totalDeductions.toLocaleString()} total deductions
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("alerts")}
         >
@@ -586,11 +625,13 @@ export default function PayrollManagerDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Payroll Alerts</h3>
-            <p className="text-sm text-gray-600">{payrollStats.payrollIssues} issues flagged</p>
+            <p className="text-sm text-gray-600">
+              {payrollStats.payrollIssues} issues flagged
+            </p>
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer hover:shadow-lg transition-all duration-300"
           onClick={() => setActiveSection("configuration")}
         >
@@ -601,7 +642,9 @@ export default function PayrollManagerDashboard() {
               </div>
             </div>
             <h3 className="font-semibold text-gray-800 mb-2">Configuration</h3>
-            <p className="text-sm text-gray-600">Payroll settings & templates</p>
+            <p className="text-sm text-gray-600">
+              Payroll settings & templates
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -613,16 +656,23 @@ export default function PayrollManagerDashboard() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Timesheet Management</h2>
         <div className="flex space-x-2">
-          <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+          <Select
+            value={selectedDepartment}
+            onValueChange={setSelectedDepartment}
+          >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Filter by department" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">All Departments</SelectItem>
-              <SelectItem value="Network Maintenance">Network Maintenance</SelectItem>
+              <SelectItem value="Network Maintenance">
+                Network Maintenance
+              </SelectItem>
               <SelectItem value="Installation">Installation</SelectItem>
               <SelectItem value="Repair Services">Repair Services</SelectItem>
-              <SelectItem value="Emergency Services">Emergency Services</SelectItem>
+              <SelectItem value="Emergency Services">
+                Emergency Services
+              </SelectItem>
             </SelectContent>
           </Select>
           <Button variant="outline">
@@ -638,26 +688,36 @@ export default function PayrollManagerDashboard() {
 
       <div className="space-y-4">
         {timesheetData.map((timesheet) => (
-          <Card key={timesheet.id} className="hover:shadow-md transition-shadow">
+          <Card
+            key={timesheet.id}
+            className="hover:shadow-md transition-shadow"
+          >
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="font-semibold text-lg">{timesheet.employee}</h3>
+                    <h3 className="font-semibold text-lg">
+                      {timesheet.employee}
+                    </h3>
                     <Badge className={getStatusColor(timesheet.status)}>
                       {timesheet.status}
                     </Badge>
-                    <Badge className={getStatusColor(timesheet.clockInConsistency)}>
+                    <Badge
+                      className={getStatusColor(timesheet.clockInConsistency)}
+                    >
                       Clock: {timesheet.clockInConsistency}
                     </Badge>
                     {timesheet.issues.length > 0 && (
                       <Badge className="bg-warning text-warning-foreground">
-                        {timesheet.issues.length} Issue{timesheet.issues.length > 1 ? 's' : ''}
+                        {timesheet.issues.length} Issue
+                        {timesheet.issues.length > 1 ? "s" : ""}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-muted-foreground mb-3">{timesheet.department} - {timesheet.role}</p>
-                  
+                  <p className="text-muted-foreground mb-3">
+                    {timesheet.department} - {timesheet.role}
+                  </p>
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Week Ending:</p>
@@ -669,7 +729,15 @@ export default function PayrollManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Overtime Hours:</p>
-                      <p className={timesheet.overtimeHours > 12 ? 'text-warning font-bold' : ''}>{timesheet.overtimeHours}h</p>
+                      <p
+                        className={
+                          timesheet.overtimeHours > 12
+                            ? "text-warning font-bold"
+                            : ""
+                        }
+                      >
+                        {timesheet.overtimeHours}h
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Total Hours:</p>
@@ -711,7 +779,11 @@ export default function PayrollManagerDashboard() {
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approve
                     </Button>
-                    <Button variant="outline" size="sm" className="text-warning">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-warning"
+                    >
                       <Edit className="h-4 w-4 mr-2" />
                       Request Changes
                     </Button>
@@ -765,8 +837,10 @@ export default function PayrollManagerDashboard() {
                     <Badge variant="secondary">{overtime.rate} Rate</Badge>
                   </div>
                   <h3 className="font-semibold text-lg">{overtime.employee}</h3>
-                  <p className="text-muted-foreground mb-3">{overtime.department}</p>
-                  
+                  <p className="text-muted-foreground mb-3">
+                    {overtime.department}
+                  </p>
+
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Date:</p>
@@ -778,7 +852,9 @@ export default function PayrollManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Amount:</p>
-                      <p className="font-bold text-success">R{overtime.amount.toFixed(2)}</p>
+                      <p className="font-bold text-success">
+                        R{overtime.amount.toFixed(2)}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Job Reference:</p>
@@ -803,7 +879,11 @@ export default function PayrollManagerDashboard() {
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approve
                     </Button>
-                    <Button variant="outline" size="sm" className="text-destructive">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive"
+                    >
                       <XCircle className="h-4 w-4 mr-2" />
                       Reject
                     </Button>
@@ -830,7 +910,10 @@ export default function PayrollManagerDashboard() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Salary Breakdown & Payslips</h2>
         <div className="flex space-x-2">
-          <Select value={selectedPayPeriod} onValueChange={setSelectedPayPeriod}>
+          <Select
+            value={selectedPayPeriod}
+            onValueChange={setSelectedPayPeriod}
+          >
             <SelectTrigger className="w-40">
               <SelectValue />
             </SelectTrigger>
@@ -869,11 +952,15 @@ export default function PayrollManagerDashboard() {
                       </Badge>
                     )}
                   </div>
-                  <p className="text-muted-foreground mb-3">{salary.department}</p>
-                  
+                  <p className="text-muted-foreground mb-3">
+                    {salary.department}
+                  </p>
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div className="space-y-2">
-                      <p className="font-medium text-muted-foreground">Earnings</p>
+                      <p className="font-medium text-muted-foreground">
+                        Earnings
+                      </p>
                       <div className="space-y-1">
                         <div className="flex justify-between">
                           <span>Basic Salary:</span>
@@ -895,7 +982,9 @@ export default function PayrollManagerDashboard() {
                     </div>
 
                     <div className="space-y-2">
-                      <p className="font-medium text-muted-foreground">Deductions</p>
+                      <p className="font-medium text-muted-foreground">
+                        Deductions
+                      </p>
                       <div className="space-y-1">
                         <div className="flex justify-between">
                           <span>Tax:</span>
@@ -921,7 +1010,9 @@ export default function PayrollManagerDashboard() {
                     </div>
 
                     <div className="space-y-2">
-                      <p className="font-medium text-muted-foreground">Net Pay</p>
+                      <p className="font-medium text-muted-foreground">
+                        Net Pay
+                      </p>
                       <div className="text-2xl font-bold text-success">
                         R{salary.netPay.toFixed(2)}
                       </div>
@@ -931,10 +1022,16 @@ export default function PayrollManagerDashboard() {
                     </div>
 
                     <div className="space-y-2">
-                      <p className="font-medium text-muted-foreground">Actions</p>
+                      <p className="font-medium text-muted-foreground">
+                        Actions
+                      </p>
                       <div className="space-y-2">
                         {salary.payslipGenerated ? (
-                          <Button variant="outline" size="sm" className="w-full">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Download Payslip
                           </Button>
@@ -987,7 +1084,13 @@ export default function PayrollManagerDashboard() {
                     <Badge className={getStatusColor(leave.status)}>
                       {leave.status}
                     </Badge>
-                    <Badge className={leave.isPaid ? "bg-success text-success-foreground" : "bg-warning text-warning-foreground"}>
+                    <Badge
+                      className={
+                        leave.isPaid
+                          ? "bg-success text-success-foreground"
+                          : "bg-warning text-warning-foreground"
+                      }
+                    >
                       {leave.isPaid ? "Paid" : "Unpaid"}
                     </Badge>
                     {leave.affectsPayroll && (
@@ -997,8 +1100,10 @@ export default function PayrollManagerDashboard() {
                     )}
                   </div>
                   <h3 className="font-semibold text-lg">{leave.employee}</h3>
-                  <p className="text-muted-foreground mb-3">{leave.department}</p>
-                  
+                  <p className="text-muted-foreground mb-3">
+                    {leave.department}
+                  </p>
+
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
                     <div>
                       <p className="font-medium">Leave Type:</p>
@@ -1022,8 +1127,16 @@ export default function PayrollManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Payroll Impact:</p>
-                      <p className={leave.affectsPayroll ? 'text-warning font-bold' : 'text-success'}>
-                        {leave.affectsPayroll ? 'Deduction Required' : 'No Impact'}
+                      <p
+                        className={
+                          leave.affectsPayroll
+                            ? "text-warning font-bold"
+                            : "text-success"
+                        }
+                      >
+                        {leave.affectsPayroll
+                          ? "Deduction Required"
+                          : "No Impact"}
                       </p>
                     </div>
                   </div>
@@ -1088,7 +1201,9 @@ export default function PayrollManagerDashboard() {
                     )}
                   </div>
                   <h3 className="font-semibold text-lg">{alert.employee}</h3>
-                  <p className="text-muted-foreground mb-2">{alert.department}</p>
+                  <p className="text-muted-foreground mb-2">
+                    {alert.department}
+                  </p>
                   <p className="text-foreground">{alert.message}</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     <strong>Recommended Action:</strong> {alert.action}
@@ -1131,14 +1246,20 @@ export default function PayrollManagerDashboard() {
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Payroll Reports & Exports</h2>
-            <p className="text-muted-foreground">Payroll reporting functionality coming soon...</p>
+            <p className="text-muted-foreground">
+              Payroll reporting functionality coming soon...
+            </p>
           </div>
         );
       case "banking":
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Banking & Payment Information</h2>
-            <p className="text-muted-foreground">Banking management functionality coming soon...</p>
+            <h2 className="text-2xl font-bold">
+              Banking & Payment Information
+            </h2>
+            <p className="text-muted-foreground">
+              Banking management functionality coming soon...
+            </p>
           </div>
         );
       case "deductions":
@@ -1147,13 +1268,20 @@ export default function PayrollManagerDashboard() {
             <h2 className="text-2xl font-bold">Loan & Deduction Management</h2>
             <div className="space-y-4">
               {loanDeductions.map((loan) => (
-                <Card key={loan.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={loan.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-lg">{loan.employee}</h3>
-                        <p className="text-muted-foreground mb-3">{loan.loanType}</p>
-                        
+                        <h3 className="font-semibold text-lg">
+                          {loan.employee}
+                        </h3>
+                        <p className="text-muted-foreground mb-3">
+                          {loan.loanType}
+                        </p>
+
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
                           <div>
                             <p className="font-medium">Original Amount:</p>
@@ -1161,7 +1289,9 @@ export default function PayrollManagerDashboard() {
                           </div>
                           <div>
                             <p className="font-medium">Remaining Balance:</p>
-                            <p className="font-bold text-warning">R{loan.remainingBalance.toFixed(2)}</p>
+                            <p className="font-bold text-warning">
+                              R{loan.remainingBalance.toFixed(2)}
+                            </p>
                           </div>
                           <div>
                             <p className="font-medium">Monthly Deduction:</p>
@@ -1193,8 +1323,12 @@ export default function PayrollManagerDashboard() {
       case "configuration":
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Payroll Configuration & Settings</h2>
-            <p className="text-muted-foreground">Payroll configuration functionality coming soon...</p>
+            <h2 className="text-2xl font-bold">
+              Payroll Configuration & Settings
+            </h2>
+            <p className="text-muted-foreground">
+              Payroll configuration functionality coming soon...
+            </p>
           </div>
         );
       default:
@@ -1212,14 +1346,12 @@ export default function PayrollManagerDashboard() {
               Payroll Manager Dashboard
             </h1>
             <p className="text-muted-foreground">
-              Comprehensive payroll management, timesheet processing, and salary administration
+              Comprehensive payroll management, timesheet processing, and salary
+              administration
             </p>
           </div>
           {activeSection !== "main" && (
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSection("main")}
-            >
+            <Button variant="outline" onClick={() => setActiveSection("main")}>
               ← Back to Dashboard
             </Button>
           )}
