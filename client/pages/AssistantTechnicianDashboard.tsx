@@ -25,6 +25,7 @@ import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
 export default function AssistantTechnicianDashboard() {
   const [workingHours, setWorkingHours] = useState("6:45");
   const [distanceTraveled, setDistanceTraveled] = useState("28.3");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   const stats = {
@@ -33,6 +34,14 @@ export default function AssistantTechnicianDashboard() {
     inProgressJobs: getJobsByStatus('in-progress').length,
     completedJobs: getJobsByStatus('completed').length,
   };
+
+  const sideNavItems = [
+    { name: "Apply Leave", href: "/apply-leave", icon: Calendar },
+    { name: "Stock on Hand", href: "/stock-on-hand", icon: Package2 },
+    { name: "Network Assessment", href: "/network-assessment", icon: Network },
+    { name: "Overtime List", href: "/overtime-list", icon: Timer },
+    { name: "Settings", href: "/technician-settings", icon: Settings },
+  ];
 
   const dashboardCards = [
     {
@@ -88,7 +97,7 @@ export default function AssistantTechnicianDashboard() {
   const handleMenuAction = (action: string) => {
     switch (action) {
       case "menu":
-        // Open navigation menu
+        setSidebarOpen(true);
         break;
       case "analytics":
         navigate('/technician/analytics');
@@ -100,6 +109,12 @@ export default function AssistantTechnicianDashboard() {
         navigate('/login');
         break;
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
+    navigate("/login");
   };
 
   const handleClockOut = () => {
