@@ -88,43 +88,40 @@ export default function UDFieldsScreen() {
             
             {expandedSections.faultDetails && (
               <div className="px-4 pb-4 space-y-4 border-t">
-                {/* Fault Resolved */}
+                {/* Resolution */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fault Resolved
+                    Resolution
                   </label>
-                  <Select 
-                    value={formData.faultResolved} 
-                    onValueChange={(value) => handleInputChange('faultResolved', value)}
+                  <Select
+                    value={formData.resolution}
+                    onValueChange={(value) => handleInputChange('resolution', value)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
-                      <SelectItem value="partial">Partial</SelectItem>
+                      <SelectItem value="resolved">Resolved</SelectItem>
+                      <SelectItem value="unresolved">Unresolved</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {/* Fault Solution Type */}
+                {/* Fix Type */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fault Solution Type
+                    Fix Type
                   </label>
-                  <Select 
-                    value={formData.faultSolutionType} 
-                    onValueChange={(value) => handleInputChange('faultSolutionType', value)}
+                  <Select
+                    value={formData.fixType}
+                    onValueChange={(value) => handleInputChange('fixType', value)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="replacement">Replacement</SelectItem>
-                      <SelectItem value="repair">Repair</SelectItem>
-                      <SelectItem value="configuration">Configuration</SelectItem>
-                      <SelectItem value="cleaning">Cleaning</SelectItem>
+                      <SelectItem value="permanent">Permanent</SelectItem>
+                      <SelectItem value="temporary">Temporary</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -134,57 +131,84 @@ export default function UDFieldsScreen() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Maintenance Issue Class
                   </label>
-                  <Select 
-                    value={formData.maintenanceIssueClass} 
+                  <Select
+                    value={formData.maintenanceIssueClass}
                     onValueChange={(value) => handleInputChange('maintenanceIssueClass', value)}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="critical">Critical</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="isp-exposed-cables">ISP - Exposed Cables</SelectItem>
+                      <SelectItem value="isp-drop-cable-broken">ISP - Drop Cable Broken</SelectItem>
+                      <SelectItem value="isp-drop-cable-connector-broken">ISP - Drop Cable Connector broken</SelectItem>
+                      <SelectItem value="isp-drop-cable-high-losses">ISP - Drop Cable High Losses</SelectItem>
+                      <SelectItem value="isp-incorrect-not-patched">ISP - Incorrect/Not Patched</SelectItem>
+                      <SelectItem value="isp-cpe-ont-faulty">ISP - CPE/ONT Faulty</SelectItem>
+                      <SelectItem value="isp-cpe-ont-reboot-off">ISP - CPE/ONT Reboot/Off</SelectItem>
+                      <SelectItem value="isp-cpe-sfp-faulty">ISP - CPE SFP Faulty</SelectItem>
+                      <SelectItem value="isp-cpe-move">ISP - CPE Move</SelectItem>
+                      <SelectItem value="isp-router-faulty">ISP - Router Faulty</SelectItem>
+                      <SelectItem value="isp-router-reboot-off">ISP - Router Reboot/Off</SelectItem>
+                      <SelectItem value="isp-ups-issue">ISP - UPS Issue</SelectItem>
+                      <SelectItem value="osp-pop-faulty-patch-lead">OSP - POP Faulty Patch Lead</SelectItem>
+                      <SelectItem value="osp-pop-incorrect-patch">OSP - POP Incorrect Patch</SelectItem>
+                      <SelectItem value="osp-pop-faulty-sfp">OSP - POP Faulty SFP</SelectItem>
+                      <SelectItem value="osp-pop-switch-offline-faulty">OSP - POP Switch Offline/Faulty</SelectItem>
+                      <SelectItem value="osp-pop-not-patched">OSP - POP Not Patched</SelectItem>
+                      <SelectItem value="osp-ag-not-patched">OSP - AG Not Patched</SelectItem>
+                      <SelectItem value="osp-ag-incorrect-patch">OSP - AG Incorrect Patch</SelectItem>
+                      <SelectItem value="osp-ag-faulty-patch-lead">OSP - AG Faulty Patch Lead</SelectItem>
+                      <SelectItem value="osp-high-losses">OSP - High Losses</SelectItem>
+                      <SelectItem value="osp-faulty-field-splitter">OSP - Faulty field splitter</SelectItem>
+                      <SelectItem value="osp-fibre-broken-distribution-run">OSP - Fibre Broken on Distribution run</SelectItem>
+                      <SelectItem value="osp-fibre-broken-mdu-dist-box-ndp">OSP - Fibre Broken in MDU Dist Box/NDP</SelectItem>
+                      <SelectItem value="osp-fibre-broken-joint">OSP - Fibre Broken in Joint</SelectItem>
+                      <SelectItem value="osp-fibre-damaged-ctp">OSP - Fibre Damaged at CTP</SelectItem>
+                      <SelectItem value="osp-fibre-broken-wall-box">OSP - Fibre broken in Wall box</SelectItem>
+                      <SelectItem value="osp-wallbox-incorrect-patch">OSP - Wallbox Incorrect Patch</SelectItem>
+                      <SelectItem value="osp-wallbox-not-patched">OSP - Wallbox Not Patched</SelectItem>
+                      <SelectItem value="osp-wallbox-move">OSP - Wallbox Move</SelectItem>
+                      <SelectItem value="osp-civil-works-issue">OSP - Civil Works Issue</SelectItem>
+                      <SelectItem value="service-activation-network-identifier-confirmation">Service activation - Network Identifier Confirmation</SelectItem>
+                      <SelectItem value="internet-service-provider-issue">Internet Service Provider Issue</SelectItem>
+                      <SelectItem value="no-fault-handed-back">No Fault Handed Back</SelectItem>
+                      <SelectItem value="change-completed">Change Completed</SelectItem>
+                      <SelectItem value="nwi-resolved">NWI Resolved</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {/* Tech Comments */}
+                {/* Maintenance Class Issue */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tech Comments
+                    Maintenance Class Issue
+                  </label>
+                  <Select
+                    value={formData.maintenanceClassIssue}
+                    onValueChange={(value) => handleInputChange('maintenanceClassIssue', value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="poor-installation-quality">Poor Installation Quality</SelectItem>
+                      <SelectItem value="self-inflicted-poor-installation">Self Inflicted due to poor Installation</SelectItem>
+                      <SelectItem value="self-inflicted-gardening-dogs">Self inflicted (gardening, dogs, etc)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Resolution Comments */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Resolution Comments
                   </label>
                   <Textarea
                     placeholder="Write here..."
-                    value={formData.techComments}
-                    onChange={(e) => handleInputChange('techComments', e.target.value)}
+                    value={formData.resolutionComments}
+                    onChange={(e) => handleInputChange('resolutionComments', e.target.value)}
                     className="min-h-[80px] resize-none"
-                  />
-                </div>
-
-                {/* ROC Comments */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ROC Comments
-                  </label>
-                  <Textarea
-                    placeholder="Write here..."
-                    value={formData.rocComments}
-                    onChange={(e) => handleInputChange('rocComments', e.target.value)}
-                    className="min-h-[80px] resize-none"
-                  />
-                </div>
-
-                {/* Reference Number */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Reference Number
-                  </label>
-                  <Input
-                    placeholder="Write here..."
-                    value={formData.referenceNumber}
-                    onChange={(e) => handleInputChange('referenceNumber', e.target.value)}
                   />
                 </div>
               </div>
