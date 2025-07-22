@@ -27,6 +27,14 @@ import {
   Database,
   Globe,
   Zap,
+  Wifi,
+  Clock,
+  Eye,
+  Edit,
+  XCircle,
+  Calendar,
+  MapPin,
+  Phone,
 } from "lucide-react";
 
 export default function ManagerDashboard() {
