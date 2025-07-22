@@ -293,7 +293,9 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
         {/* Clock In/Out Slider */}
         <div className="w-full max-w-sm mb-8">
           <div
-            className="relative h-16 bg-white/20 rounded-2xl cursor-pointer overflow-hidden"
+            className={`relative h-16 bg-white/20 rounded-2xl overflow-hidden ${
+              (!selectedAssistant && !isClockedIn) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+            }`}
             onMouseMove={handleSliderMove}
             onMouseUp={handleSliderEnd}
             onMouseLeave={handleSliderEnd}
@@ -301,36 +303,53 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
             onTouchEnd={handleSliderEnd}
           >
             {/* Slider Track */}
-            <div 
+            <div
               className={`absolute left-0 top-0 h-full transition-all duration-300 rounded-2xl ${
-                isClockingIn ? 'bg-green-500' : 'bg-white/30'
+                isClockingIn
+                  ? (isClockedIn ? 'bg-red-500' : 'bg-green-500')
+                  : (isClockedIn ? 'bg-red-300' : 'bg-white/30')
               }`}
               style={{ width: `${sliderPosition}%` }}
             />
-            
+
             {/* Slider Handle */}
             <div
               className={`absolute top-2 left-2 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                isClockingIn ? 'bg-white text-green-500' : 'bg-white text-orange-500'
+                isClockingIn
+                  ? 'bg-white text-green-500'
+                  : isClockedIn
+                    ? 'bg-white text-red-500'
+                    : 'bg-white text-orange-500'
               }`}
-              style={{ 
+              style={{
                 transform: `translateX(${Math.max(0, (sliderPosition / 100) * (100 - 20))}%)`,
-                cursor: isDragging ? 'grabbing' : 'grab'
+                cursor: (!selectedAssistant && !isClockedIn) ? 'not-allowed' : (isDragging ? 'grabbing' : 'grab')
               }}
               onMouseDown={handleSliderStart}
               onTouchStart={handleSliderStart}
             >
               {isClockingIn ? (
-                <div className="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+                <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
+                  isClockedIn ? 'border-red-500' : 'border-green-500'
+                }`} />
               ) : (
-                <div className="w-6 h-6 rounded bg-orange-500" />
+                <div className={`w-6 h-6 rounded ${
+                  isClockedIn ? 'bg-red-500' : 'bg-orange-500'
+                }`} />
               )}
             </div>
-            
+
             {/* Slider Text */}
             <div className="absolute inset-0 flex items-center justify-center">
               <span className={`font-medium transition-opacity ${sliderPosition > 20 ? 'opacity-0' : 'opacity-100'}`}>
-                {isClockingIn ? 'Clocking In...' : 'Clock In'}
+                {isClockingIn
+                  ? (isClockedIn ? 'Clocking Out...' : 'Clocking In...')
+                  : !selectedAssistant && !isClockedIn
+                    ? 'Choose Assistant First'
+                    : isClockedIn
+                      ? 'Clock Out'
+                      : 'Clock In'
+                }
               </span>
             </div>
           </div>
