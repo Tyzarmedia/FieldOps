@@ -57,9 +57,17 @@ export default function UDFieldsScreen() {
     }));
   };
 
+  const handleNavigation = (section: string, route: string) => {
+    setCurrentNavSection(section);
+    if (route.startsWith("/")) {
+      navigate(route);
+    }
+  };
+
   const handleUpdate = () => {
     console.log("Updating UD Fields:", formData);
-    navigate("/");
+    // In real app, this would save the data
+    alert("UDF fields updated successfully!");
   };
 
   return (
