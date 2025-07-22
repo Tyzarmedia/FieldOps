@@ -266,34 +266,8 @@ export default function AssistantTechnicianDashboard() {
 
       {/* Main Content */}
       <div className="p-6">
-        {/* Dashboard Cards Grid - Only 4 cards */}
-        <div className="grid grid-cols-2 gap-4">
-          {dashboardCards.map((card) => {
-            const IconComponent = card.icon;
-            return (
-              <Card
-                key={card.id}
-                className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
-                onClick={card.action}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-4">
-                    <div className={`${card.color} p-4 rounded-2xl`}>
-                      <IconComponent className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="font-semibold text-gray-800 mb-2">
-                    {card.title}
-                  </h3>
-                  <p className="text-sm text-gray-600">{card.description}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* Job Status Summary */}
-        <div className="mt-8 bg-white rounded-2xl p-6 shadow-md">
+        {/* Job Status Summary - Moved to top */}
+        <div className="bg-white rounded-2xl p-6 shadow-md mb-6">
           <h3 className="font-semibold text-gray-800 mb-4">Today's Job Status</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
@@ -321,6 +295,32 @@ export default function AssistantTechnicianDashboard() {
               <div className="text-sm text-gray-600">Completed</div>
             </div>
           </div>
+        </div>
+
+        {/* Dashboard Cards Grid - Only 4 cards */}
+        <div className="grid grid-cols-2 gap-4">
+          {dashboardCards.map((card) => {
+            const IconComponent = card.icon;
+            return (
+              <Card
+                key={card.id}
+                className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
+                onClick={card.action}
+              >
+                <CardContent className="p-6 text-center">
+                  <div className="flex justify-center mb-4">
+                    <div className={`${card.color} p-4 rounded-2xl`}>
+                      <IconComponent className="h-8 w-8 text-white" />
+                    </div>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-2">
+                    {card.title}
+                  </h3>
+                  <p className="text-sm text-gray-600">{card.description}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Latest Job */}
