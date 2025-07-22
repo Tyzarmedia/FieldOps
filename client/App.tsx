@@ -504,61 +504,11 @@ const App = () => (
             }
           />
           {/* New Technician Navigation Routes */}
-          <Route
-            path="/apply-leave"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Apply Leave"
-                  description="Submit leave requests and view leave balance."
-                />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/stock-on-hand"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Stock on Hand"
-                  description="View current stock levels and available equipment."
-                />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/network-assessment"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Network Assessment"
-                  description="Perform network diagnostics and assessments."
-                />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/overtime-list"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Overtime List"
-                  description="View and manage overtime records."
-                />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/technician-settings"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Technician Settings"
-                  description="Configure technician-specific settings and preferences."
-                />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/apply-leave" element={<ApplyLeaveScreen />} />
+          <Route path="/stock-on-hand" element={<StockOnHandScreen />} />
+          <Route path="/network-assessment" element={<NetworkAssessmentScreen />} />
+          <Route path="/overtime-list" element={<OvertimeListScreen />} />
+          <Route path="/technician-settings" element={<TechnicianSettingsScreen />} />
           {/* IT Routes */}
           <Route
             path="/assets"
