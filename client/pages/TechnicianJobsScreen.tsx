@@ -191,7 +191,7 @@ export default function TechnicianJobsScreen() {
           <Card>
             <CardContent className="p-4">
               <h3 className="font-semibold mb-2">Client Address</h3>
-              <div className="bg-gray-200 h-32 rounded-lg mb-2 flex items-center justify-center">
+              <div className="bg-gray-200 h-32 rounded-lg mb-2 flex items-center justify-center sm:mt-0.5">
                 <MapPin className="h-8 w-8 text-gray-400" />
               </div>
               <p className="text-sm text-gray-600">{selectedJob.client.address}</p>
