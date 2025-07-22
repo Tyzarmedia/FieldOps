@@ -18,7 +18,11 @@ import {
 
 interface Photo {
   id: string;
-  category: 'before-light-readings' | 'image-fault' | 'image-after-work' | 'light-readings-after-work';
+  category:
+    | "before-light-readings"
+    | "image-fault"
+    | "image-after-work"
+    | "light-readings-after-work";
   url: string;
   timestamp: Date;
 }
@@ -26,34 +30,51 @@ interface Photo {
 export default function GalleryScreen() {
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState("gallery");
-  const [selectedCategory, setSelectedCategory] = useState<'before-light-readings' | 'image-fault' | 'image-after-work' | 'light-readings-after-work'>('before-light-readings');
+  const [selectedCategory, setSelectedCategory] = useState<
+    | "before-light-readings"
+    | "image-fault"
+    | "image-after-work"
+    | "light-readings-after-work"
+  >("before-light-readings");
   const [photos, setPhotos] = useState<Photo[]>([
     {
-      id: '1',
-      category: 'before-light-readings',
-      url: '/placeholder.svg',
-      timestamp: new Date('2024-01-15T10:30:00')
+      id: "1",
+      category: "before-light-readings",
+      url: "/placeholder.svg",
+      timestamp: new Date("2024-01-15T10:30:00"),
     },
     {
-      id: '2',
-      category: 'image-fault',
-      url: '/placeholder.svg',
-      timestamp: new Date('2024-01-15T11:15:00')
+      id: "2",
+      category: "image-fault",
+      url: "/placeholder.svg",
+      timestamp: new Date("2024-01-15T11:15:00"),
     },
   ]);
 
   const categories = [
-    { id: 'before-light-readings', label: 'Before Light Readings', color: 'bg-blue-500' },
-    { id: 'image-fault', label: 'Image Fault', color: 'bg-red-500' },
-    { id: 'image-after-work', label: 'Image After Work', color: 'bg-green-500' },
-    { id: 'light-readings-after-work', label: 'Light Readings After Work', color: 'bg-purple-500' },
+    {
+      id: "before-light-readings",
+      label: "Before Light Readings",
+      color: "bg-blue-500",
+    },
+    { id: "image-fault", label: "Image Fault", color: "bg-red-500" },
+    {
+      id: "image-after-work",
+      label: "Image After Work",
+      color: "bg-green-500",
+    },
+    {
+      id: "light-readings-after-work",
+      label: "Light Readings After Work",
+      color: "bg-purple-500",
+    },
   ];
 
   const handleTabChange = (tab: string) => {
     setCurrentTab(tab);
     switch (tab) {
       case "details":
-        navigate('/technician/jobs');
+        navigate("/technician/jobs");
         break;
       case "udf":
         // Navigate to UDF screen when routes are set up
@@ -70,22 +91,30 @@ export default function GalleryScreen() {
     }
   };
 
-  const handleUpload = (category: 'before-light-readings' | 'image-fault' | 'image-after-work' | 'light-readings-after-work') => {
+  const handleUpload = (
+    category:
+      | "before-light-readings"
+      | "image-fault"
+      | "image-after-work"
+      | "light-readings-after-work",
+  ) => {
     // Simulate photo upload
     const newPhoto: Photo = {
       id: Date.now().toString(),
       category,
-      url: '/placeholder.svg',
-      timestamp: new Date()
+      url: "/placeholder.svg",
+      timestamp: new Date(),
     };
-    setPhotos(prev => [...prev, newPhoto]);
+    setPhotos((prev) => [...prev, newPhoto]);
   };
 
   const handleDeletePhoto = (photoId: string) => {
-    setPhotos(prev => prev.filter(photo => photo.id !== photoId));
+    setPhotos((prev) => prev.filter((photo) => photo.id !== photoId));
   };
 
-  const filteredPhotos = photos.filter(photo => photo.category === selectedCategory);
+  const filteredPhotos = photos.filter(
+    (photo) => photo.category === selectedCategory,
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -97,7 +126,7 @@ export default function GalleryScreen() {
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
           >
             <X className="h-6 w-6" />
           </Button>
@@ -129,15 +158,17 @@ export default function GalleryScreen() {
           <Button
             variant="outline"
             className="flex flex-col items-center py-4 h-auto border-2 border-dashed border-blue-500 text-blue-600 hover:bg-blue-50"
-            onClick={() => handleUpload('before-light-readings')}
+            onClick={() => handleUpload("before-light-readings")}
           >
             <Camera className="h-6 w-6 mb-2" />
-            <span className="text-xs font-medium text-center">Before Light Readings</span>
+            <span className="text-xs font-medium text-center">
+              Before Light Readings
+            </span>
           </Button>
           <Button
             variant="outline"
             className="flex flex-col items-center py-4 h-auto border-2 border-dashed border-red-500 text-red-600 hover:bg-red-50"
-            onClick={() => handleUpload('image-fault')}
+            onClick={() => handleUpload("image-fault")}
           >
             <Camera className="h-6 w-6 mb-2" />
             <span className="text-xs font-medium text-center">Image Fault</span>
@@ -145,18 +176,22 @@ export default function GalleryScreen() {
           <Button
             variant="outline"
             className="flex flex-col items-center py-4 h-auto border-2 border-dashed border-green-500 text-green-600 hover:bg-green-50"
-            onClick={() => handleUpload('image-after-work')}
+            onClick={() => handleUpload("image-after-work")}
           >
             <Camera className="h-6 w-6 mb-2" />
-            <span className="text-xs font-medium text-center">Image After Work</span>
+            <span className="text-xs font-medium text-center">
+              Image After Work
+            </span>
           </Button>
           <Button
             variant="outline"
             className="flex flex-col items-center py-4 h-auto border-2 border-dashed border-purple-500 text-purple-600 hover:bg-purple-50"
-            onClick={() => handleUpload('light-readings-after-work')}
+            onClick={() => handleUpload("light-readings-after-work")}
           >
             <Camera className="h-6 w-6 mb-2" />
-            <span className="text-xs font-medium text-center">Light Readings After Work</span>
+            <span className="text-xs font-medium text-center">
+              Light Readings After Work
+            </span>
           </Button>
         </div>
 
@@ -164,7 +199,8 @@ export default function GalleryScreen() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-gray-800">
-              {categories.find(c => c.id === selectedCategory)?.label} Photos ({filteredPhotos.length})
+              {categories.find((c) => c.id === selectedCategory)?.label} Photos
+              ({filteredPhotos.length})
             </h3>
             <Button
               variant="ghost"
@@ -198,8 +234,8 @@ export default function GalleryScreen() {
                 <Card key={photo.id} className="overflow-hidden">
                   <CardContent className="p-0">
                     <div className="relative aspect-square bg-gray-200">
-                      <img 
-                        src={photo.url} 
+                      <img
+                        src={photo.url}
                         alt={`${photo.category} photo`}
                         className="w-full h-full object-cover"
                       />
@@ -222,7 +258,10 @@ export default function GalleryScreen() {
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2">
                         <p className="text-xs">
-                          {photo.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {photo.timestamp.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </p>
                       </div>
                     </div>

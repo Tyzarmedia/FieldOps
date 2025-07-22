@@ -29,10 +29,10 @@ export default function AssistantTechnicianDashboard() {
   const navigate = useNavigate();
 
   const stats = {
-    assignedJobs: getJobsByStatus('assigned').length,
-    acceptedJobs: getJobsByStatus('accepted').length,
-    inProgressJobs: getJobsByStatus('in-progress').length,
-    completedJobs: getJobsByStatus('completed').length,
+    assignedJobs: getJobsByStatus("assigned").length,
+    acceptedJobs: getJobsByStatus("accepted").length,
+    inProgressJobs: getJobsByStatus("in-progress").length,
+    completedJobs: getJobsByStatus("completed").length,
   };
 
   const sideNavItems = [
@@ -50,7 +50,7 @@ export default function AssistantTechnicianDashboard() {
       icon: Briefcase,
       color: "bg-orange-500",
       description: `${stats.assignedJobs + stats.acceptedJobs + stats.inProgressJobs} active jobs`,
-      action: () => navigate('/technician/jobs'),
+      action: () => navigate("/technician/jobs"),
     },
     {
       id: "safety",
@@ -58,7 +58,7 @@ export default function AssistantTechnicianDashboard() {
       icon: Shield,
       color: "bg-orange-500",
       description: "Safety checklists and incident reports",
-      action: () => navigate('/technician/safety'),
+      action: () => navigate("/technician/safety"),
     },
     {
       id: "fleet",
@@ -66,7 +66,7 @@ export default function AssistantTechnicianDashboard() {
       icon: Truck,
       color: "bg-orange-500",
       description: "Vehicle and tool inspections",
-      action: () => navigate('/technician/fleet'),
+      action: () => navigate("/technician/fleet"),
     },
     {
       id: "overtime",
@@ -74,7 +74,7 @@ export default function AssistantTechnicianDashboard() {
       icon: Timer,
       color: "bg-orange-500",
       description: "Log overtime hours worked",
-      action: () => navigate('/technician/overtime'),
+      action: () => navigate("/technician/overtime"),
     },
   ];
 
@@ -100,13 +100,13 @@ export default function AssistantTechnicianDashboard() {
         setSidebarOpen(true);
         break;
       case "analytics":
-        navigate('/technician/analytics');
+        navigate("/technician/analytics");
         break;
       case "sync":
         // Sync data
         break;
       case "close":
-        navigate('/login');
+        navigate("/login");
         break;
     }
   };
@@ -118,7 +118,7 @@ export default function AssistantTechnicianDashboard() {
   };
 
   const handleClockOut = () => {
-    navigate('/clock-in');
+    navigate("/clock-in");
   };
 
   return (
@@ -165,9 +165,7 @@ export default function AssistantTechnicianDashboard() {
                 <UserCheck className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">
-                  John Doe
-                </p>
+                <p className="text-sm font-medium text-gray-900">John Doe</p>
                 <p className="text-xs text-gray-500">Assistant Technician</p>
               </div>
             </div>
@@ -268,7 +266,9 @@ export default function AssistantTechnicianDashboard() {
       <div className="p-6">
         {/* Job Status Summary - Moved to top */}
         <div className="bg-white rounded-2xl p-6 shadow-md mb-6">
-          <h3 className="font-semibold text-gray-800 mb-4">Today's Job Status</h3>
+          <h3 className="font-semibold text-gray-800 mb-4">
+            Today's Job Status
+          </h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
@@ -343,7 +343,7 @@ export default function AssistantTechnicianDashboard() {
                   <Button
                     size="sm"
                     className="bg-blue-600 hover:bg-blue-700 text-white"
-                    onClick={() => navigate('/technician/jobs')}
+                    onClick={() => navigate("/technician/jobs")}
                   >
                     <Briefcase className="h-4 w-4 mr-2" />
                     View

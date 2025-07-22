@@ -43,20 +43,42 @@ export default function TechnicianJobsScreen() {
   const navigate = useNavigate();
 
   const tabs = [
-    { id: "assigned", label: "Assigned", count: teamJobs.filter(j => j.status === 'assigned').length, color: "bg-blue-500" },
-    { id: "accepted", label: "Accepted", count: teamJobs.filter(j => j.status === 'accepted').length, color: "bg-orange-500" },
-    { id: "in-progress", label: "In Progress", count: teamJobs.filter(j => j.status === 'in-progress').length, color: "bg-green-500" },
-    { id: "completed", label: "Tech Finished", count: teamJobs.filter(j => j.status === 'completed').length, color: "bg-purple-500" },
+    {
+      id: "assigned",
+      label: "Assigned",
+      count: teamJobs.filter((j) => j.status === "assigned").length,
+      color: "bg-blue-500",
+    },
+    {
+      id: "accepted",
+      label: "Accepted",
+      count: teamJobs.filter((j) => j.status === "accepted").length,
+      color: "bg-orange-500",
+    },
+    {
+      id: "in-progress",
+      label: "In Progress",
+      count: teamJobs.filter((j) => j.status === "in-progress").length,
+      color: "bg-green-500",
+    },
+    {
+      id: "completed",
+      label: "Tech Finished",
+      count: teamJobs.filter((j) => j.status === "completed").length,
+      color: "bg-purple-500",
+    },
   ];
 
-  const filteredJobs = teamJobs.filter(job => {
-    const matchesTab = job.status === selectedTab || 
+  const filteredJobs = teamJobs.filter((job) => {
+    const matchesTab =
+      job.status === selectedTab ||
       (selectedTab === "completed" && job.status === "completed");
-    const matchesSearch = searchQuery === "" || 
+    const matchesSearch =
+      searchQuery === "" ||
       job.client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.assignedTo.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     return matchesTab && matchesSearch;
   });
 
@@ -82,16 +104,25 @@ export default function TechnicianJobsScreen() {
   };
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "assigned": return "bg-blue-500";
-      case "accepted": return "bg-orange-500";
-      case "in-progress": return "bg-green-500";
-      case "completed": return "bg-purple-500";
-      default: return "bg-gray-500";
+      case "assigned":
+        return "bg-blue-500";
+      case "accepted":
+        return "bg-orange-500";
+      case "in-progress":
+        return "bg-green-500";
+      case "completed":
+        return "bg-purple-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
@@ -163,7 +194,7 @@ export default function TechnicianJobsScreen() {
             <h2 className="text-xl font-bold">{selectedJob.client.name}</h2>
             <p className="text-white/80">#{selectedJob.id}</p>
             <Badge className="bg-green-500 text-white mt-2">
-              {selectedJob.status.replace('-', ' ').toUpperCase()}
+              {selectedJob.status.replace("-", " ").toUpperCase()}
             </Badge>
           </div>
 
@@ -177,7 +208,9 @@ export default function TechnicianJobsScreen() {
               <p className="text-sm text-white/80">Status</p>
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                <span className="font-medium">{selectedJob.status.replace('-', ' ')}</span>
+                <span className="font-medium">
+                  {selectedJob.status.replace("-", " ")}
+                </span>
               </div>
             </div>
           </div>
@@ -192,7 +225,9 @@ export default function TechnicianJobsScreen() {
               <div className="bg-gray-200 h-32 rounded-lg mb-2 flex items-center justify-center sm:mt-0.5">
                 <MapPin className="h-8 w-8 text-gray-400" />
               </div>
-              <p className="text-sm text-gray-600">{selectedJob.client.address}</p>
+              <p className="text-sm text-gray-600">
+                {selectedJob.client.address}
+              </p>
             </CardContent>
           </Card>
 
@@ -204,7 +239,9 @@ export default function TechnicianJobsScreen() {
                   <Calendar className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-600">Start Date</p>
-                    <p className="font-medium">{selectedJob.appointment.startDate}</p>
+                    <p className="font-medium">
+                      {selectedJob.appointment.startDate}
+                    </p>
                   </div>
                 </div>
                 <Badge variant="outline">Monday</Badge>
@@ -215,7 +252,9 @@ export default function TechnicianJobsScreen() {
                   <Calendar className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-600">End Date</p>
-                    <p className="font-medium">{selectedJob.appointment.endDate}</p>
+                    <p className="font-medium">
+                      {selectedJob.appointment.endDate}
+                    </p>
                   </div>
                 </div>
                 <Badge variant="outline">Monday</Badge>
@@ -225,7 +264,9 @@ export default function TechnicianJobsScreen() {
                 <Calendar className="h-5 w-5 text-gray-400" />
                 <div>
                   <p className="text-sm text-gray-600">Scheduled Date</p>
-                  <p className="font-medium">{selectedJob.appointment.scheduledDate}</p>
+                  <p className="font-medium">
+                    {selectedJob.appointment.scheduledDate}
+                  </p>
                 </div>
               </div>
 
@@ -233,7 +274,9 @@ export default function TechnicianJobsScreen() {
                 <Building2 className="h-5 w-5 text-gray-400" />
                 <div>
                   <p className="text-sm text-gray-600">Facility</p>
-                  <p className="font-medium">{selectedJob.appointment.facility}</p>
+                  <p className="font-medium">
+                    {selectedJob.appointment.facility}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -276,7 +319,9 @@ export default function TechnicianJobsScreen() {
               <div className="flex items-center space-x-3">
                 <FileText className="h-5 w-5 text-gray-400" />
                 <div>
-                  <p className="text-sm text-gray-600">Service Request/Change Number</p>
+                  <p className="text-sm text-gray-600">
+                    Service Request/Change Number
+                  </p>
                   <p className="font-medium">00766624</p>
                 </div>
               </div>
@@ -293,7 +338,9 @@ export default function TechnicianJobsScreen() {
                 <FileText className="h-5 w-5 text-gray-400" />
                 <div>
                   <p className="text-sm text-gray-600">Appointment Number</p>
-                  <p className="font-medium">{selectedJob.appointment.number}</p>
+                  <p className="font-medium">
+                    {selectedJob.appointment.number}
+                  </p>
                 </div>
               </div>
 
@@ -395,7 +442,9 @@ export default function TechnicianJobsScreen() {
                   </div>
                   <div>
                     <p className="text-gray-600">Mac Address</p>
-                    <p className="font-medium text-blue-600">14-AB-02-CA-9B-FF</p>
+                    <p className="font-medium text-blue-600">
+                      14-AB-02-CA-9B-FF
+                    </p>
                   </div>
                 </div>
               </div>
@@ -416,7 +465,7 @@ export default function TechnicianJobsScreen() {
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-gray-600"
-              onClick={() => navigate('/technician/udf')}
+              onClick={() => navigate("/technician/udf")}
             >
               <Settings className="h-6 w-6" />
               <span className="text-xs font-medium">Udf</span>
@@ -424,7 +473,7 @@ export default function TechnicianJobsScreen() {
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-gray-600"
-              onClick={() => navigate('/technician/gallery')}
+              onClick={() => navigate("/technician/gallery")}
             >
               <Camera className="h-6 w-6" />
               <span className="text-xs font-medium">Gallery</span>
@@ -432,7 +481,7 @@ export default function TechnicianJobsScreen() {
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-gray-600"
-              onClick={() => navigate('/technician/stock')}
+              onClick={() => navigate("/technician/stock")}
             >
               <Package className="h-6 w-6" />
               <span className="text-xs font-medium">Stocks</span>
@@ -440,7 +489,7 @@ export default function TechnicianJobsScreen() {
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-orange-600"
-              onClick={() => navigate('/technician/signoff')}
+              onClick={() => navigate("/technician/signoff")}
             >
               <PenTool className="h-6 w-6" />
               <span className="text-xs font-medium">Sign Off</span>
@@ -461,7 +510,7 @@ export default function TechnicianJobsScreen() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20"
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
             />
             <h1 className="text-xl font-semibold">Jobs</h1>
           </div>
@@ -484,7 +533,7 @@ export default function TechnicianJobsScreen() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20"
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
             >
               <X className="h-6 w-6" />
             </Button>
@@ -543,7 +592,7 @@ export default function TechnicianJobsScreen() {
               key={tab.id}
               onClick={() => setSelectedTab(tab.id)}
               className={`${tab.color} text-white rounded-full px-4 py-2 text-sm whitespace-nowrap ${
-                selectedTab === tab.id ? 'opacity-100' : 'opacity-70'
+                selectedTab === tab.id ? "opacity-100" : "opacity-70"
               }`}
             >
               {tab.label} {tab.count > 0 && tab.count}
@@ -558,7 +607,7 @@ export default function TechnicianJobsScreen() {
           <Card
             key={job.id}
             className="bg-white shadow-md cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => handleJobAction(job, 'view')}
+            onClick={() => handleJobAction(job, "view")}
           >
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-3">
@@ -572,7 +621,7 @@ export default function TechnicianJobsScreen() {
                   </div>
                 </div>
                 <Badge className={`${getStatusColor(job.status)} text-white`}>
-                  {job.status.replace('-', ' ')}
+                  {job.status.replace("-", " ")}
                 </Badge>
               </div>
 
@@ -589,7 +638,7 @@ export default function TechnicianJobsScreen() {
                   <Briefcase className="h-4 w-4 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-600">Client Contacts</p>
-                    <p className="font-medium">{job.client.contact || '-'}</p>
+                    <p className="font-medium">{job.client.contact || "-"}</p>
                   </div>
                 </div>
 
@@ -597,7 +646,9 @@ export default function TechnicianJobsScreen() {
                   <div className="flex items-center space-x-2">
                     <FileText className="h-4 w-4 text-gray-400" />
                     <div>
-                      <p className="text-sm text-gray-600">Appointment Number</p>
+                      <p className="text-sm text-gray-600">
+                        Appointment Number
+                      </p>
                       <p className="font-medium">{job.appointment.number}</p>
                     </div>
                   </div>
@@ -615,7 +666,7 @@ export default function TechnicianJobsScreen() {
                     <Phone className="h-4 w-4 text-gray-400" />
                     <div>
                       <p className="text-sm text-gray-600">Mobile No.</p>
-                      <p className="font-medium">{job.client.mobile || '-'}</p>
+                      <p className="font-medium">{job.client.mobile || "-"}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -646,11 +697,11 @@ export default function TechnicianJobsScreen() {
 
               {/* Action Button */}
               <div className="mt-4 text-center">
-                {job.status === 'assigned' && (
+                {job.status === "assigned" && (
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleJobAction(job, 'accept');
+                      handleJobAction(job, "accept");
                     }}
                     className="w-full bg-cyan-500 hover:bg-cyan-600 text-white rounded-full"
                   >
@@ -658,11 +709,11 @@ export default function TechnicianJobsScreen() {
                     Accept Job
                   </Button>
                 )}
-                {job.status === 'accepted' && (
+                {job.status === "accepted" && (
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleJobAction(job, 'start');
+                      handleJobAction(job, "start");
                     }}
                     className="w-full bg-green-500 hover:bg-green-600 text-white rounded-full"
                   >
@@ -670,12 +721,12 @@ export default function TechnicianJobsScreen() {
                     Start Job
                   </Button>
                 )}
-                {job.status === 'in-progress' && (
+                {job.status === "in-progress" && (
                   <div className="flex space-x-2">
                     <Button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleJobAction(job, 'pause');
+                        handleJobAction(job, "pause");
                       }}
                       className="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-full"
                     >
@@ -685,7 +736,7 @@ export default function TechnicianJobsScreen() {
                     <Button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleJobAction(job, 'complete');
+                        handleJobAction(job, "complete");
                       }}
                       className="flex-1 bg-purple-500 hover:bg-purple-600 text-white rounded-full"
                     >

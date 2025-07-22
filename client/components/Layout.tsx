@@ -194,7 +194,11 @@ function getNavigationForRole(role: string) {
       return [
         { name: "Apply Leave", href: "/apply-leave", icon: Calendar },
         { name: "Stock on Hand", href: "/stock-on-hand", icon: Package2 },
-        { name: "Network Assessment", href: "/network-assessment", icon: Network },
+        {
+          name: "Network Assessment",
+          href: "/network-assessment",
+          icon: Network,
+        },
         { name: "Overtime List", href: "/overtime-list", icon: Timer },
         { name: "Settings", href: "/technician-settings", icon: Settings },
       ];

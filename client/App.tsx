@@ -166,38 +166,20 @@ const App = () => (
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/technician/jobs"
-            element={<TechnicianJobsScreen />}
-          />
+          <Route path="/technician/jobs" element={<TechnicianJobsScreen />} />
           <Route
             path="/technician/safety"
             element={<TechnicianSafetyScreen />}
           />
-          <Route
-            path="/technician/fleet"
-            element={<TechnicianFleetScreen />}
-          />
+          <Route path="/technician/fleet" element={<TechnicianFleetScreen />} />
           <Route
             path="/technician/overtime"
             element={<TechnicianOvertimeScreen />}
           />
-          <Route
-            path="/technician/udf"
-            element={<UDFieldsScreen />}
-          />
-          <Route
-            path="/technician/stock"
-            element={<StockScreen />}
-          />
-          <Route
-            path="/technician/gallery"
-            element={<GalleryScreen />}
-          />
-          <Route
-            path="/technician/signoff"
-            element={<SignOffScreen />}
-          />
+          <Route path="/technician/udf" element={<UDFieldsScreen />} />
+          <Route path="/technician/stock" element={<StockScreen />} />
+          <Route path="/technician/gallery" element={<GalleryScreen />} />
+          <Route path="/technician/signoff" element={<SignOffScreen />} />
           <Route
             path="/fleet"
             element={

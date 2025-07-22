@@ -5,15 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  X,
-  Search,
-  QrCode,
-  Plus,
-  Mic,
-  Package,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { X, Search, QrCode, Plus, Mic, Package } from "lucide-react";
 
 interface AllocatedStock {
   id: string;
@@ -38,29 +37,29 @@ export default function StockScreen() {
 
   const [allocatedStock, setAllocatedStock] = useState<AllocatedStock[]>([
     {
-      id: '1',
-      code: 'FBR-001',
-      description: 'Fiber Optic Cable - 100m',
+      id: "1",
+      code: "FBR-001",
+      description: "Fiber Optic Cable - 100m",
       allocatedQty: 2,
       remainingQty: 8,
-      container: 'Vehicle Storage',
-      allocatedDate: new Date('2024-01-15T09:00:00')
+      container: "Vehicle Storage",
+      allocatedDate: new Date("2024-01-15T09:00:00"),
     },
     {
-      id: '2',
-      code: 'CNT-045',
-      description: 'RJ45 Connector Pack',
+      id: "2",
+      code: "CNT-045",
+      description: "RJ45 Connector Pack",
       allocatedQty: 50,
       remainingQty: 200,
-      container: 'Tool Box A',
-      allocatedDate: new Date('2024-01-15T09:30:00')
+      container: "Tool Box A",
+      allocatedDate: new Date("2024-01-15T09:30:00"),
     },
   ]);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -86,7 +85,7 @@ export default function StockScreen() {
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
           >
             <X className="h-6 w-6" />
           </Button>
@@ -108,7 +107,9 @@ export default function StockScreen() {
 
         {/* Allocated Stock List */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Stock Allocated on This Job</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Stock Allocated on This Job
+          </h3>
           <div className="space-y-3">
             {allocatedStock.map((stock) => (
               <Card key={stock.id} className="border-l-4 border-l-blue-500">
@@ -116,12 +117,16 @@ export default function StockScreen() {
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
-                        <span className="font-semibold text-blue-600">{stock.code}</span>
+                        <span className="font-semibold text-blue-600">
+                          {stock.code}
+                        </span>
                         <Badge variant="outline" className="text-xs">
                           {stock.container}
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-700 mb-2">{stock.description}</p>
+                      <p className="text-sm text-gray-700 mb-2">
+                        {stock.description}
+                      </p>
                       <div className="flex items-center space-x-4 text-xs text-gray-500">
                         <span>Allocated: {stock.allocatedQty}</span>
                         <span>Remaining: {stock.remainingQty}</span>
@@ -143,7 +148,9 @@ export default function StockScreen() {
               <Card>
                 <CardContent className="p-6 text-center">
                   <Package className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500">No stock allocated to this job yet</p>
+                  <p className="text-gray-500">
+                    No stock allocated to this job yet
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -151,7 +158,9 @@ export default function StockScreen() {
         </div>
 
         <hr className="my-6" />
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Add Used Stock</h3>
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          Add Used Stock
+        </h3>
 
         {/* Code Search */}
         <div>
@@ -165,7 +174,7 @@ export default function StockScreen() {
             <Input
               placeholder="Search..."
               value={formData.code}
-              onChange={(e) => handleInputChange('code', e.target.value)}
+              onChange={(e) => handleInputChange("code", e.target.value)}
               className="pl-10 pr-12 py-3 text-lg"
             />
             <Button
@@ -183,9 +192,9 @@ export default function StockScreen() {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Container
           </label>
-          <Select 
-            value={formData.container} 
-            onValueChange={(value) => handleInputChange('container', value)}
+          <Select
+            value={formData.container}
+            onValueChange={(value) => handleInputChange("container", value)}
           >
             <SelectTrigger className="w-full py-3 text-lg">
               <SelectValue placeholder="Select Container" />
@@ -209,7 +218,7 @@ export default function StockScreen() {
             type="number"
             placeholder="0"
             value={formData.qtyUsed}
-            onChange={(e) => handleInputChange('qtyUsed', e.target.value)}
+            onChange={(e) => handleInputChange("qtyUsed", e.target.value)}
             className="py-3 text-lg"
           />
         </div>
@@ -222,7 +231,7 @@ export default function StockScreen() {
           <Textarea
             placeholder=""
             value={formData.description}
-            onChange={(e) => handleInputChange('description', e.target.value)}
+            onChange={(e) => handleInputChange("description", e.target.value)}
             className="min-h-[120px] resize-none text-lg"
           />
         </div>
@@ -236,7 +245,7 @@ export default function StockScreen() {
             <Textarea
               placeholder=""
               value={formData.comments}
-              onChange={(e) => handleInputChange('comments', e.target.value)}
+              onChange={(e) => handleInputChange("comments", e.target.value)}
               className="min-h-[120px] resize-none text-lg pr-12"
             />
             <Button
@@ -252,7 +261,7 @@ export default function StockScreen() {
 
       {/* Fixed Bottom Button */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
-        <Button 
+        <Button
           onClick={handleAdd}
           className="w-full bg-green-500 hover:bg-green-600 text-white py-4 text-lg font-semibold"
         >
