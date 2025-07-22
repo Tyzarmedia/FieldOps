@@ -31,6 +31,7 @@ import {
   Package,
   PenTool,
   Settings,
+  ArrowUpDown,
 } from "lucide-react";
 import { teamJobs, updateJobStatus, type Job } from "../data/sharedJobs";
 
