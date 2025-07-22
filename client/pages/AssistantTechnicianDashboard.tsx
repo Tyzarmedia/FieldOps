@@ -328,10 +328,14 @@ export default function AssistantTechnicianDashboard() {
                       <IconComponent className="h-8 w-8 text-white" />
                     </div>
                   </div>
-                  <h3 className={`font-semibold mb-2 ${isDisabled ? "text-gray-500" : "text-gray-800"}`}>
+                  <h3
+                    className={`font-semibold mb-2 ${isDisabled ? "text-gray-500" : "text-gray-800"}`}
+                  >
                     {card.title}
                   </h3>
-                  <p className={`text-sm ${isDisabled ? "text-gray-400" : "text-gray-600"}`}>
+                  <p
+                    className={`text-sm ${isDisabled ? "text-gray-400" : "text-gray-600"}`}
+                  >
                     {card.description}
                   </p>
                 </CardContent>

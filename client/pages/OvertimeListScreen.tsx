@@ -35,7 +35,7 @@ interface OvertimeEntry {
 export default function OvertimeListScreen() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"list" | "add">("list");
-  
+
   // Form state
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -100,23 +100,23 @@ export default function OvertimeListScreen() {
 
   const calculateHours = () => {
     if (!startTime || !endTime) return 0;
-    
+
     const start = new Date(`2000-01-01T${startTime}`);
     const end = new Date(`2000-01-01T${endTime}`);
-    
+
     if (end <= start) return 0;
-    
+
     const diffMs = end.getTime() - start.getTime();
     return Math.round((diffMs / (1000 * 60 * 60)) * 100) / 100;
   };
 
   const getOvertimeRate = () => {
     if (!date) return 1.5;
-    
+
     const selectedDate = new Date(date);
     const dayOfWeek = selectedDate.getDay(); // 0 = Sunday, 6 = Saturday
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    
+
     return isWeekend ? 2.0 : 1.5;
   };
 
@@ -124,7 +124,7 @@ export default function OvertimeListScreen() {
     const hours = calculateHours();
     const rate = getOvertimeRate();
     const baseRate = 100; // Base hourly rate
-    
+
     return Math.round(hours * rate * baseRate);
   };
 
@@ -159,15 +159,15 @@ export default function OvertimeListScreen() {
       alert("Please fill in all required fields");
       return;
     }
-    
+
     if (calculateHours() <= 0) {
       alert("End time must be after start time");
       return;
     }
-    
+
     // Handle overtime submission
     alert("Overtime entry submitted successfully!");
-    
+
     // Reset form
     setDate("");
     setStartTime("");
@@ -181,10 +181,10 @@ export default function OvertimeListScreen() {
     totalHours: overtimeEntries.reduce((sum, entry) => sum + entry.hours, 0),
     totalAmount: overtimeEntries.reduce((sum, entry) => sum + entry.amount, 0),
     approvedAmount: overtimeEntries
-      .filter(entry => entry.status === "approved")
+      .filter((entry) => entry.status === "approved")
       .reduce((sum, entry) => sum + entry.amount, 0),
     pendingAmount: overtimeEntries
-      .filter(entry => entry.status === "pending")
+      .filter((entry) => entry.status === "pending")
       .reduce((sum, entry) => sum + entry.amount, 0),
   };
 
@@ -204,7 +204,9 @@ export default function OvertimeListScreen() {
             </Button>
             <div>
               <h1 className="text-xl font-semibold">Overtime List</h1>
-              <p className="text-sm opacity-90">Track and manage your overtime</p>
+              <p className="text-sm opacity-90">
+                Track and manage your overtime
+              </p>
             </div>
           </div>
         </div>
@@ -215,7 +217,11 @@ export default function OvertimeListScreen() {
             variant={activeTab === "list" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setActiveTab("list")}
-            className={activeTab === "list" ? "bg-white text-indigo-600" : "text-white hover:bg-white/20"}
+            className={
+              activeTab === "list"
+                ? "bg-white text-indigo-600"
+                : "text-white hover:bg-white/20"
+            }
           >
             Overtime List
           </Button>
@@ -223,7 +229,11 @@ export default function OvertimeListScreen() {
             variant={activeTab === "add" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setActiveTab("add")}
-            className={activeTab === "add" ? "bg-white text-indigo-600" : "text-white hover:bg-white/20"}
+            className={
+              activeTab === "add"
+                ? "bg-white text-indigo-600"
+                : "text-white hover:bg-white/20"
+            }
           >
             Add Overtime
           </Button>
@@ -278,28 +288,36 @@ export default function OvertimeListScreen() {
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
                           <h3 className="font-semibold">
-                            {new Date(entry.date).toLocaleDateString('en-US', { 
-                              weekday: 'long', 
-                              day: 'numeric', 
-                              month: 'long' 
+                            {new Date(entry.date).toLocaleDateString("en-US", {
+                              weekday: "long",
+                              day: "numeric",
+                              month: "long",
                             })}
                           </h3>
                           <Badge className={getStatusColor(entry.status)}>
                             <div className="flex items-center space-x-1">
                               {getStatusIcon(entry.status)}
-                              <span>{entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}</span>
+                              <span>
+                                {entry.status.charAt(0).toUpperCase() +
+                                  entry.status.slice(1)}
+                              </span>
                             </div>
                           </Badge>
                         </div>
-                        
+
                         <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
                           <div className="flex items-center space-x-2">
                             <Clock className="h-4 w-4" />
-                            <span>{entry.startTime} - {entry.endTime} ({entry.hours}h)</span>
+                            <span>
+                              {entry.startTime} - {entry.endTime} ({entry.hours}
+                              h)
+                            </span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <DollarSign className="h-4 w-4" />
-                            <span>R{entry.amount} (x{entry.rate})</span>
+                            <span>
+                              R{entry.amount} (x{entry.rate})
+                            </span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Calendar className="h-4 w-4" />
@@ -315,18 +333,23 @@ export default function OvertimeListScreen() {
 
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <p className="text-sm">
-                            <span className="font-medium">Reason:</span> {entry.reason}
+                            <span className="font-medium">Reason:</span>{" "}
+                            {entry.reason}
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col space-y-2 ml-4">
                         <Button size="sm" variant="outline">
                           <Edit className="h-4 w-4 mr-1" />
                           Edit
                         </Button>
                         {entry.status === "pending" && (
-                          <Button size="sm" variant="outline" className="text-red-600">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600"
+                          >
                             <Trash2 className="h-4 w-4 mr-1" />
                             Delete
                           </Button>
@@ -358,7 +381,9 @@ export default function OvertimeListScreen() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Start Time *</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Start Time *
+                  </label>
                   <Input
                     type="time"
                     value={startTime}
@@ -366,7 +391,9 @@ export default function OvertimeListScreen() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">End Time *</label>
+                  <label className="block text-sm font-medium mb-2">
+                    End Time *
+                  </label>
                   <Input
                     type="time"
                     value={endTime}
@@ -379,20 +406,25 @@ export default function OvertimeListScreen() {
                 <div className="bg-indigo-50 p-3 rounded-lg">
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
-                      <span className="font-medium">Hours:</span> {calculateHours()}
+                      <span className="font-medium">Hours:</span>{" "}
+                      {calculateHours()}
                     </div>
                     <div>
-                      <span className="font-medium">Rate:</span> {getOvertimeRate()}x
+                      <span className="font-medium">Rate:</span>{" "}
+                      {getOvertimeRate()}x
                     </div>
                     <div>
-                      <span className="font-medium">Amount:</span> R{calculateAmount()}
+                      <span className="font-medium">Amount:</span> R
+                      {calculateAmount()}
                     </div>
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium mb-2">Job ID (Optional)</label>
+                <label className="block text-sm font-medium mb-2">
+                  Job ID (Optional)
+                </label>
                 <Input
                   placeholder="Enter related job ID..."
                   value={jobId}
@@ -401,7 +433,9 @@ export default function OvertimeListScreen() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Reason *</label>
+                <label className="block text-sm font-medium mb-2">
+                  Reason *
+                </label>
                 <Textarea
                   placeholder="Provide a detailed reason for overtime..."
                   value={reason}
@@ -410,7 +444,10 @@ export default function OvertimeListScreen() {
                 />
               </div>
 
-              <Button onClick={handleSubmit} className="w-full bg-indigo-600 hover:bg-indigo-700">
+              <Button
+                onClick={handleSubmit}
+                className="w-full bg-indigo-600 hover:bg-indigo-700"
+              >
                 Submit Overtime Entry
               </Button>
             </CardContent>

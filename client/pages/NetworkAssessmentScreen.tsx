@@ -40,9 +40,11 @@ interface Assessment {
 
 export default function NetworkAssessmentScreen() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"current" | "new" | "history">("current");
+  const [activeTab, setActiveTab] = useState<"current" | "new" | "history">(
+    "current",
+  );
   const [isRunningTests, setIsRunningTests] = useState(false);
-  
+
   // Form state for new assessment
   const [location, setLocation] = useState("");
   const [notes, setNotes] = useState("");
@@ -59,7 +61,7 @@ export default function NetworkAssessmentScreen() {
     {
       id: "speed",
       name: "Speed Test",
-      status: "completed", 
+      status: "completed",
       result: "95.2 Mbps ↓ / 47.8 Mbps ↑",
       duration: "45s",
       icon: Wifi,
@@ -95,43 +97,73 @@ export default function NetworkAssessmentScreen() {
       technician: "John Doe",
       overallStatus: "excellent",
       tests: [
-        { id: "ping", name: "Ping Test", status: "completed", result: "8ms avg", icon: Activity },
-        { id: "speed", name: "Speed Test", status: "completed", result: "100 Mbps ↓ / 50 Mbps ↑", icon: Wifi },
-        { id: "dns", name: "DNS Resolution", status: "completed", result: "5ms avg", icon: Globe },
+        {
+          id: "ping",
+          name: "Ping Test",
+          status: "completed",
+          result: "8ms avg",
+          icon: Activity,
+        },
+        {
+          id: "speed",
+          name: "Speed Test",
+          status: "completed",
+          result: "100 Mbps ↓ / 50 Mbps ↑",
+          icon: Wifi,
+        },
+        {
+          id: "dns",
+          name: "DNS Resolution",
+          status: "completed",
+          result: "5ms avg",
+          icon: Globe,
+        },
       ],
     },
     {
-      id: "ASS002", 
+      id: "ASS002",
       location: "Business Park",
       date: "2025-01-19",
       technician: "John Doe",
       overallStatus: "good",
       tests: [
-        { id: "ping", name: "Ping Test", status: "completed", result: "15ms avg", icon: Activity },
-        { id: "speed", name: "Speed Test", status: "completed", result: "85 Mbps ↓ / 42 Mbps ↑", icon: Wifi },
+        {
+          id: "ping",
+          name: "Ping Test",
+          status: "completed",
+          result: "15ms avg",
+          icon: Activity,
+        },
+        {
+          id: "speed",
+          name: "Speed Test",
+          status: "completed",
+          result: "85 Mbps ↓ / 42 Mbps ↑",
+          icon: Wifi,
+        },
       ],
     },
   ];
 
   const runAllTests = async () => {
     setIsRunningTests(true);
-    
+
     // Simulate running tests
     const updatedTests = [...networkTests];
-    
+
     for (let i = 0; i < updatedTests.length; i++) {
       updatedTests[i].status = "running";
       setNetworkTests([...updatedTests]);
-      
+
       // Simulate test duration
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       updatedTests[i].status = "completed";
       updatedTests[i].result = getTestResult(updatedTests[i].id);
       updatedTests[i].duration = "30s";
       setNetworkTests([...updatedTests]);
     }
-    
+
     setIsRunningTests(false);
   };
 
@@ -207,7 +239,9 @@ export default function NetworkAssessmentScreen() {
             </Button>
             <div>
               <h1 className="text-xl font-semibold">Network Assessment</h1>
-              <p className="text-sm opacity-90">Test and diagnose network performance</p>
+              <p className="text-sm opacity-90">
+                Test and diagnose network performance
+              </p>
             </div>
           </div>
         </div>
@@ -218,7 +252,11 @@ export default function NetworkAssessmentScreen() {
             variant={activeTab === "current" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setActiveTab("current")}
-            className={activeTab === "current" ? "bg-white text-purple-600" : "text-white hover:bg-white/20"}
+            className={
+              activeTab === "current"
+                ? "bg-white text-purple-600"
+                : "text-white hover:bg-white/20"
+            }
           >
             Current Test
           </Button>
@@ -226,7 +264,11 @@ export default function NetworkAssessmentScreen() {
             variant={activeTab === "new" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setActiveTab("new")}
-            className={activeTab === "new" ? "bg-white text-purple-600" : "text-white hover:bg-white/20"}
+            className={
+              activeTab === "new"
+                ? "bg-white text-purple-600"
+                : "text-white hover:bg-white/20"
+            }
           >
             New Assessment
           </Button>
@@ -234,7 +276,11 @@ export default function NetworkAssessmentScreen() {
             variant={activeTab === "history" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setActiveTab("history")}
-            className={activeTab === "history" ? "bg-white text-purple-600" : "text-white hover:bg-white/20"}
+            className={
+              activeTab === "history"
+                ? "bg-white text-purple-600"
+                : "text-white hover:bg-white/20"
+            }
           >
             History
           </Button>
@@ -254,9 +300,18 @@ export default function NetworkAssessmentScreen() {
               </CardHeader>
               <CardContent>
                 <div className="text-sm text-gray-600">
-                  <p><span className="font-medium">Location:</span> Vumatel (Pty) Ltd - Central</p>
-                  <p><span className="font-medium">Address:</span> 27 Emerson Crescent, Haven Hills, East London</p>
-                  <p><span className="font-medium">Date:</span> {new Date().toLocaleDateString()}</p>
+                  <p>
+                    <span className="font-medium">Location:</span> Vumatel (Pty)
+                    Ltd - Central
+                  </p>
+                  <p>
+                    <span className="font-medium">Address:</span> 27 Emerson
+                    Crescent, Haven Hills, East London
+                  </p>
+                  <p>
+                    <span className="font-medium">Date:</span>{" "}
+                    {new Date().toLocaleDateString()}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -267,10 +322,12 @@ export default function NetworkAssessmentScreen() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold">Network Diagnostics</h3>
-                    <p className="text-sm text-gray-600">Run comprehensive network tests</p>
+                    <p className="text-sm text-gray-600">
+                      Run comprehensive network tests
+                    </p>
                   </div>
-                  <Button 
-                    onClick={runAllTests} 
+                  <Button
+                    onClick={runAllTests}
                     disabled={isRunningTests}
                     className="bg-purple-600 hover:bg-purple-700"
                   >
@@ -305,18 +362,25 @@ export default function NetworkAssessmentScreen() {
                           <div>
                             <h3 className="font-semibold">{test.name}</h3>
                             {test.result && (
-                              <p className="text-sm text-gray-600">{test.result}</p>
+                              <p className="text-sm text-gray-600">
+                                {test.result}
+                              </p>
                             )}
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           {test.duration && (
-                            <span className="text-xs text-gray-500">{test.duration}</span>
+                            <span className="text-xs text-gray-500">
+                              {test.duration}
+                            </span>
                           )}
                           <Badge className={getStatusColor(test.status)}>
                             <div className="flex items-center space-x-1">
                               {getStatusIcon(test.status)}
-                              <span>{test.status.charAt(0).toUpperCase() + test.status.slice(1)}</span>
+                              <span>
+                                {test.status.charAt(0).toUpperCase() +
+                                  test.status.slice(1)}
+                              </span>
                             </div>
                           </Badge>
                         </div>
@@ -336,7 +400,9 @@ export default function NetworkAssessmentScreen() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Location</label>
+                <label className="block text-sm font-medium mb-2">
+                  Location
+                </label>
                 <Input
                   placeholder="Enter assessment location..."
                   value={location}
@@ -345,7 +411,9 @@ export default function NetworkAssessmentScreen() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Notes (Optional)</label>
+                <label className="block text-sm font-medium mb-2">
+                  Notes (Optional)
+                </label>
                 <Textarea
                   placeholder="Additional notes about this assessment..."
                   value={notes}
@@ -354,13 +422,19 @@ export default function NetworkAssessmentScreen() {
                 />
               </div>
 
-              <Button 
+              <Button
                 className="w-full bg-purple-600 hover:bg-purple-700"
                 onClick={() => {
                   if (location) {
                     setActiveTab("current");
                     // Reset tests for new assessment
-                    setNetworkTests(networkTests.map(test => ({ ...test, status: "pending", result: undefined })));
+                    setNetworkTests(
+                      networkTests.map((test) => ({
+                        ...test,
+                        status: "pending",
+                        result: undefined,
+                      })),
+                    );
                   }
                 }}
                 disabled={!location}
@@ -384,19 +458,29 @@ export default function NetworkAssessmentScreen() {
                         <p>Technician: {assessment.technician}</p>
                       </div>
                     </div>
-                    <Badge className={getOverallStatusColor(assessment.overallStatus)}>
-                      {assessment.overallStatus.charAt(0).toUpperCase() + assessment.overallStatus.slice(1)}
+                    <Badge
+                      className={getOverallStatusColor(
+                        assessment.overallStatus,
+                      )}
+                    >
+                      {assessment.overallStatus.charAt(0).toUpperCase() +
+                        assessment.overallStatus.slice(1)}
                     </Badge>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                     {assessment.tests.map((test) => {
                       const IconComponent = test.icon;
                       return (
-                        <div key={test.id} className="flex items-center space-x-2 text-sm">
+                        <div
+                          key={test.id}
+                          className="flex items-center space-x-2 text-sm"
+                        >
                           <IconComponent className="h-4 w-4 text-gray-400" />
                           <span className="flex-1">{test.name}</span>
-                          <span className="text-green-600 font-medium">{test.result}</span>
+                          <span className="text-green-600 font-medium">
+                            {test.result}
+                          </span>
                         </div>
                       );
                     })}

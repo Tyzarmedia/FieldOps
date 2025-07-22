@@ -4,9 +4,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
   X,
@@ -32,7 +44,9 @@ import {
 export default function TechnicianSettingsScreen() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = useState<"profile" | "notifications" | "app" | "security">("profile");
+  const [activeTab, setActiveTab] = useState<
+    "profile" | "notifications" | "app" | "security"
+  >("profile");
 
   // Profile settings
   const [name, setName] = useState("John Doe");
@@ -49,14 +63,14 @@ export default function TechnicianSettingsScreen() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   // Notification settings
   const [jobNotifications, setJobNotifications] = useState(true);
   const [messageNotifications, setMessageNotifications] = useState(true);
   const [emergencyAlerts, setEmergencyAlerts] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
-  
+
   // App settings
   const [language, setLanguage] = useState("en");
   const [theme, setTheme] = useState("light");
@@ -64,7 +78,7 @@ export default function TechnicianSettingsScreen() {
   const [offlineMode, setOfflineMode] = useState(false);
   const [gpsTracking, setGpsTracking] = useState(true);
   const [autoPhotoBackup, setAutoPhotoBackup] = useState(true);
-  
+
   // Security settings
   const [biometricLogin, setBiometricLogin] = useState(false);
   const [autoLock, setAutoLock] = useState("5");
@@ -84,7 +98,9 @@ export default function TechnicianSettingsScreen() {
     navigate("/login");
   };
 
-  const handleProfileImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfileImageUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -120,7 +136,9 @@ export default function TechnicianSettingsScreen() {
   };
 
   const handleResetSettings = () => {
-    if (confirm("Are you sure you want to reset all settings to default values?")) {
+    if (
+      confirm("Are you sure you want to reset all settings to default values?")
+    ) {
       // Reset to defaults
       setJobNotifications(true);
       setMessageNotifications(true);
@@ -232,7 +250,11 @@ export default function TechnicianSettingsScreen() {
                   ) : (
                     <div className="w-32 h-32 rounded-full border-4 border-gray-200 bg-gray-100 flex items-center justify-center">
                       <span className="text-4xl font-bold text-gray-500">
-                        {name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                        {name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()}
                       </span>
                     </div>
                   )}
@@ -274,7 +296,9 @@ export default function TechnicianSettingsScreen() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Full Name</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Full Name
+                  </label>
                   <Input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -282,7 +306,9 @@ export default function TechnicianSettingsScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Email
+                  </label>
                   <Input
                     type="email"
                     value={email}
@@ -291,7 +317,9 @@ export default function TechnicianSettingsScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Phone Number</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Phone Number
+                  </label>
                   <Input
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
@@ -299,12 +327,10 @@ export default function TechnicianSettingsScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Employee ID</label>
-                  <Input
-                    value={employeeId}
-                    disabled
-                    className="bg-gray-50"
-                  />
+                  <label className="block text-sm font-medium mb-2">
+                    Employee ID
+                  </label>
+                  <Input value={employeeId} disabled className="bg-gray-50" />
                 </div>
               </CardContent>
             </Card>
@@ -317,11 +343,17 @@ export default function TechnicianSettingsScreen() {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
-                    <div className="text-sm text-gray-600 mt-1">Account Status</div>
+                    <Badge className="bg-green-100 text-green-800">
+                      Active
+                    </Badge>
+                    <div className="text-sm text-gray-600 mt-1">
+                      Account Status
+                    </div>
                   </div>
                   <div className="text-center">
-                    <Badge className="bg-blue-100 text-blue-800">Technician</Badge>
+                    <Badge className="bg-blue-100 text-blue-800">
+                      Technician
+                    </Badge>
                     <div className="text-sm text-gray-600 mt-1">Role</div>
                   </div>
                 </div>
@@ -343,29 +375,35 @@ export default function TechnicianSettingsScreen() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Job Notifications</h3>
-                    <p className="text-sm text-gray-600">Get notified about new job assignments</p>
+                    <p className="text-sm text-gray-600">
+                      Get notified about new job assignments
+                    </p>
                   </div>
                   <Switch
                     checked={jobNotifications}
                     onCheckedChange={setJobNotifications}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Message Notifications</h3>
-                    <p className="text-sm text-gray-600">Team messages and updates</p>
+                    <p className="text-sm text-gray-600">
+                      Team messages and updates
+                    </p>
                   </div>
                   <Switch
                     checked={messageNotifications}
                     onCheckedChange={setMessageNotifications}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Emergency Alerts</h3>
-                    <p className="text-sm text-gray-600">Critical system alerts</p>
+                    <p className="text-sm text-gray-600">
+                      Critical system alerts
+                    </p>
                   </div>
                   <Switch
                     checked={emergencyAlerts}
@@ -383,18 +421,22 @@ export default function TechnicianSettingsScreen() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Sound</h3>
-                    <p className="text-sm text-gray-600">Play sounds for notifications</p>
+                    <p className="text-sm text-gray-600">
+                      Play sounds for notifications
+                    </p>
                   </div>
                   <Switch
                     checked={soundEnabled}
                     onCheckedChange={setSoundEnabled}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Vibration</h3>
-                    <p className="text-sm text-gray-600">Vibrate for notifications</p>
+                    <p className="text-sm text-gray-600">
+                      Vibrate for notifications
+                    </p>
                   </div>
                   <Switch
                     checked={vibrationEnabled}
@@ -417,7 +459,9 @@ export default function TechnicianSettingsScreen() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Language</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Language
+                  </label>
                   <Select value={language} onValueChange={setLanguage}>
                     <SelectTrigger>
                       <SelectValue />
@@ -430,9 +474,11 @@ export default function TechnicianSettingsScreen() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium mb-2">Theme</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Theme
+                  </label>
                   <Select value={theme} onValueChange={setTheme}>
                     <SelectTrigger>
                       <SelectValue />
@@ -458,40 +504,45 @@ export default function TechnicianSettingsScreen() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Auto Sync</h3>
-                    <p className="text-sm text-gray-600">Automatically sync data when online</p>
+                    <p className="text-sm text-gray-600">
+                      Automatically sync data when online
+                    </p>
                   </div>
-                  <Switch
-                    checked={autoSync}
-                    onCheckedChange={setAutoSync}
-                  />
+                  <Switch checked={autoSync} onCheckedChange={setAutoSync} />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Offline Mode</h3>
-                    <p className="text-sm text-gray-600">Work offline when no connection</p>
+                    <p className="text-sm text-gray-600">
+                      Work offline when no connection
+                    </p>
                   </div>
                   <Switch
                     checked={offlineMode}
                     onCheckedChange={setOfflineMode}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">GPS Tracking</h3>
-                    <p className="text-sm text-gray-600">Track location for job assignments</p>
+                    <p className="text-sm text-gray-600">
+                      Track location for job assignments
+                    </p>
                   </div>
                   <Switch
                     checked={gpsTracking}
                     onCheckedChange={setGpsTracking}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Auto Photo Backup</h3>
-                    <p className="text-sm text-gray-600">Backup job photos automatically</p>
+                    <p className="text-sm text-gray-600">
+                      Backup job photos automatically
+                    </p>
                   </div>
                   <Switch
                     checked={autoPhotoBackup}
@@ -516,16 +567,20 @@ export default function TechnicianSettingsScreen() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Biometric Login</h3>
-                    <p className="text-sm text-gray-600">Use fingerprint or face ID</p>
+                    <p className="text-sm text-gray-600">
+                      Use fingerprint or face ID
+                    </p>
                   </div>
                   <Switch
                     checked={biometricLogin}
                     onCheckedChange={setBiometricLogin}
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium mb-2">Auto Lock (minutes)</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Auto Lock (minutes)
+                  </label>
                   <Select value={autoLock} onValueChange={setAutoLock}>
                     <SelectTrigger>
                       <SelectValue />
@@ -539,10 +594,15 @@ export default function TechnicianSettingsScreen() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium mb-2">Session Timeout (minutes)</label>
-                  <Select value={sessionTimeout} onValueChange={setSessionTimeout}>
+                  <label className="block text-sm font-medium mb-2">
+                    Session Timeout (minutes)
+                  </label>
+                  <Select
+                    value={sessionTimeout}
+                    onValueChange={setSessionTimeout}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -571,7 +631,7 @@ export default function TechnicianSettingsScreen() {
                   <Key className="h-4 w-4 mr-2" />
                   Change Password
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   className="w-full justify-start"
@@ -580,7 +640,7 @@ export default function TechnicianSettingsScreen() {
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Reset All Settings
                 </Button>
-                
+
                 <Button
                   variant="destructive"
                   className="w-full justify-start"
@@ -699,9 +759,7 @@ export default function TechnicianSettingsScreen() {
             >
               Cancel
             </Button>
-            <Button onClick={handlePasswordChange}>
-              Change Password
-            </Button>
+            <Button onClick={handlePasswordChange}>Change Password</Button>
           </div>
         </DialogContent>
       </Dialog>

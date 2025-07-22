@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { X, Edit3, ChevronDown } from "lucide-react";
 import { assistants } from "../data/sharedJobs";
 
@@ -11,10 +17,15 @@ interface ClockInScreenProps {
   userName?: string;
 }
 
-export default function ClockInScreen({ userRole: propUserRole, userName: propUserName }: ClockInScreenProps = {}) {
+export default function ClockInScreen({
+  userRole: propUserRole,
+  userName: propUserName,
+}: ClockInScreenProps = {}) {
   // Get user info from localStorage if not provided as props
-  const userRole = propUserRole || localStorage.getItem("userRole") || "Technician";
-  const userName = propUserName || localStorage.getItem("userName") || "John Doe";
+  const userRole =
+    propUserRole || localStorage.getItem("userRole") || "Technician";
+  const userName =
+    propUserName || localStorage.getItem("userName") || "John Doe";
   const [isClockingIn, setIsClockingIn] = useState(false);
   const [isClockedIn, setIsClockedIn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -24,7 +35,8 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
   const [isDragging, setIsDragging] = useState(false);
   const [selectedAssistant, setSelectedAssistant] = useState<string>("");
   const [clockInTime, setClockInTime] = useState<Date | null>(null);
-  const [trackingInterval, setTrackingInterval] = useState<NodeJS.Timeout | null>(null);
+  const [trackingInterval, setTrackingInterval] =
+    useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
 
   // Check if user is already clocked in
@@ -44,7 +56,11 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
   // Get user initials
   const getInitials = (name: string) => {
     if (!name) return "JD";
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   };
 
   // Start tracking work time and distance
@@ -57,7 +73,7 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
       const hours = Math.floor(elapsed / (1000 * 60 * 60));
       const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
 
-      setWorkingHours(`${hours}:${minutes.toString().padStart(2, '0')}`);
+      setWorkingHours(`${hours}:${minutes.toString().padStart(2, "0")}`);
 
       // Simulate distance tracking (in real app would use GPS)
       const totalMinutes = Math.floor(elapsed / (1000 * 60));
@@ -94,10 +110,10 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
 
   // Format current date
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long' 
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
     });
   };
 
@@ -115,8 +131,11 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
 
     const slider = e.currentTarget as HTMLElement;
     const rect = slider.getBoundingClientRect();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const position = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const position = Math.max(
+      0,
+      Math.min(100, ((clientX - rect.left) / rect.width) * 100),
+    );
 
     setSliderPosition(position);
 
@@ -144,7 +163,7 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
     setSliderPosition(100);
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const now = new Date();
     setClockInTime(now);
@@ -162,7 +181,7 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
     setSliderPosition(0);
 
     // Navigate to dashboard
-    navigate('/');
+    navigate("/");
   };
 
   const handleClockOut = async () => {
@@ -170,7 +189,7 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
     setSliderPosition(100);
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // Stop tracking
     stopTracking();
@@ -193,10 +212,10 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
   const handleClose = () => {
     if (isClockedIn) {
       // If clocked in, go back to dashboard
-      navigate('/');
+      navigate("/");
     } else {
       // If not clocked in, go to login
-      navigate('/login');
+      navigate("/login");
     }
   };
 
@@ -260,7 +279,10 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
         {/* Assistant Selection */}
         {!isClockedIn && (
           <div className="w-full max-w-sm mb-6">
-            <Select value={selectedAssistant} onValueChange={setSelectedAssistant}>
+            <Select
+              value={selectedAssistant}
+              onValueChange={setSelectedAssistant}
+            >
               <SelectTrigger className="bg-white/20 border-white/30 text-white">
                 <SelectValue placeholder="Choose Assistant or Working Alone" />
                 <ChevronDown className="h-4 w-4 text-white" />
@@ -268,8 +290,8 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
               <SelectContent className="bg-white">
                 <SelectItem value="working-alone">Working Alone</SelectItem>
                 {assistants
-                  .filter(assistant => assistant.available)
-                  .map(assistant => (
+                  .filter((assistant) => assistant.available)
+                  .map((assistant) => (
                     <SelectItem key={assistant.id} value={assistant.name}>
                       {assistant.name}
                     </SelectItem>
@@ -284,7 +306,9 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
           <div className="w-full max-w-sm mb-6 text-center">
             <div className="bg-white/20 px-4 py-2 rounded-full">
               <span className="text-white font-medium">
-                {selectedAssistant === "working-alone" ? "Working Alone" : `Working with: ${selectedAssistant}`}
+                {selectedAssistant === "working-alone"
+                  ? "Working Alone"
+                  : `Working with: ${selectedAssistant}`}
               </span>
             </div>
           </div>
@@ -294,7 +318,9 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
         <div className="w-full max-w-sm mb-8">
           <div
             className={`relative h-16 bg-white/20 rounded-2xl overflow-hidden ${
-              (!selectedAssistant && !isClockedIn) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+              !selectedAssistant && !isClockedIn
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
             }`}
             onMouseMove={handleSliderMove}
             onMouseUp={handleSliderEnd}
@@ -306,8 +332,12 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
             <div
               className={`absolute left-0 top-0 h-full transition-all duration-300 rounded-2xl ${
                 isClockingIn
-                  ? (isClockedIn ? 'bg-red-500' : 'bg-green-500')
-                  : (isClockedIn ? 'bg-red-300' : 'bg-white/30')
+                  ? isClockedIn
+                    ? "bg-red-500"
+                    : "bg-green-500"
+                  : isClockedIn
+                    ? "bg-red-300"
+                    : "bg-white/30"
               }`}
               style={{ width: `${sliderPosition}%` }}
             />
@@ -316,40 +346,52 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
             <div
               className={`absolute top-2 left-2 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
                 isClockingIn
-                  ? 'bg-white text-green-500'
+                  ? "bg-white text-green-500"
                   : isClockedIn
-                    ? 'bg-white text-red-500'
-                    : 'bg-white text-orange-500'
+                    ? "bg-white text-red-500"
+                    : "bg-white text-orange-500"
               }`}
               style={{
                 transform: `translateX(${Math.max(0, (sliderPosition / 100) * (100 - 20))}%)`,
-                cursor: (!selectedAssistant && !isClockedIn) ? 'not-allowed' : (isDragging ? 'grabbing' : 'grab')
+                cursor:
+                  !selectedAssistant && !isClockedIn
+                    ? "not-allowed"
+                    : isDragging
+                      ? "grabbing"
+                      : "grab",
               }}
               onMouseDown={handleSliderStart}
               onTouchStart={handleSliderStart}
             >
               {isClockingIn ? (
-                <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
-                  isClockedIn ? 'border-red-500' : 'border-green-500'
-                }`} />
+                <div
+                  className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
+                    isClockedIn ? "border-red-500" : "border-green-500"
+                  }`}
+                />
               ) : (
-                <div className={`w-6 h-6 rounded ${
-                  isClockedIn ? 'bg-red-500' : 'bg-orange-500'
-                }`} />
+                <div
+                  className={`w-6 h-6 rounded ${
+                    isClockedIn ? "bg-red-500" : "bg-orange-500"
+                  }`}
+                />
               )}
             </div>
 
             {/* Slider Text */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className={`font-medium transition-opacity ${sliderPosition > 20 ? 'opacity-0' : 'opacity-100'}`}>
+              <span
+                className={`font-medium transition-opacity ${sliderPosition > 20 ? "opacity-0" : "opacity-100"}`}
+              >
                 {isClockingIn
-                  ? (isClockedIn ? 'Clocking Out...' : 'Clocking In...')
+                  ? isClockedIn
+                    ? "Clocking Out..."
+                    : "Clocking In..."
                   : !selectedAssistant && !isClockedIn
-                    ? 'Choose Assistant First'
+                    ? "Choose Assistant First"
                     : isClockedIn
-                      ? 'Clock Out'
-                      : 'Clock In'
-                }
+                      ? "Clock Out"
+                      : "Clock In"}
               </span>
             </div>
           </div>
@@ -364,7 +406,9 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20"
-            onClick={() => {/* Handle edit */}}
+            onClick={() => {
+              /* Handle edit */
+            }}
           >
             <Edit3 className="h-5 w-5" />
           </Button>
@@ -377,7 +421,7 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
         <div className="w-8 h-8 border-2 border-white/30 rounded" />
         <div className="w-6 h-6 text-white/50">
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
           </svg>
         </div>
       </div>

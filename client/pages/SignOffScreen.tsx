@@ -4,7 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   X,
   FileText,
@@ -50,7 +56,9 @@ export default function SignOffScreen() {
     }
 
     if (validationChecks.imagesUploaded < validationChecks.requiredImages) {
-      validationErrors.push(`Please upload at least ${validationChecks.requiredImages} images (currently ${validationChecks.imagesUploaded})`);
+      validationErrors.push(
+        `Please upload at least ${validationChecks.requiredImages} images (currently ${validationChecks.imagesUploaded})`,
+      );
     }
 
     if (!validationChecks.udfFieldsCompleted) {
@@ -69,7 +77,7 @@ export default function SignOffScreen() {
     // All validations passed - complete the job
     console.log("Completing job...");
     alert("Job completed successfully and marked as closed!");
-    navigate('/');
+    navigate("/");
   };
 
   const handleNavigation = (section: string, route: string) => {
@@ -113,7 +121,7 @@ export default function SignOffScreen() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
             >
               <X className="h-6 w-6" />
             </Button>
@@ -131,43 +139,76 @@ export default function SignOffScreen() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm">Images Uploaded</span>
-              <Badge className={validationChecks.imagesUploaded >= validationChecks.requiredImages ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
-                {validationChecks.imagesUploaded >= validationChecks.requiredImages ? (
+              <Badge
+                className={
+                  validationChecks.imagesUploaded >=
+                  validationChecks.requiredImages
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }
+              >
+                {validationChecks.imagesUploaded >=
+                validationChecks.requiredImages ? (
                   <CheckCircle className="h-4 w-4 mr-1" />
                 ) : (
                   <XCircle className="h-4 w-4 mr-1" />
                 )}
-                {validationChecks.imagesUploaded}/{validationChecks.requiredImages}
+                {validationChecks.imagesUploaded}/
+                {validationChecks.requiredImages}
               </Badge>
             </div>
 
             <div className="flex items-center justify-between">
               <span className="text-sm">UDF Fields Completed</span>
-              <Badge className={validationChecks.udfFieldsCompleted ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+              <Badge
+                className={
+                  validationChecks.udfFieldsCompleted
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }
+              >
                 {validationChecks.udfFieldsCompleted ? (
                   <CheckCircle className="h-4 w-4 mr-1" />
                 ) : (
                   <XCircle className="h-4 w-4 mr-1" />
                 )}
-                {validationChecks.udfFieldsCompleted ? "Complete" : "Incomplete"}
+                {validationChecks.udfFieldsCompleted
+                  ? "Complete"
+                  : "Incomplete"}
               </Badge>
             </div>
 
             <div className="flex items-center justify-between">
               <span className="text-sm">Stock Management</span>
-              <Badge className={validationChecks.stockAllocated || noStockUsed ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+              <Badge
+                className={
+                  validationChecks.stockAllocated || noStockUsed
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }
+              >
                 {validationChecks.stockAllocated || noStockUsed ? (
                   <CheckCircle className="h-4 w-4 mr-1" />
                 ) : (
                   <XCircle className="h-4 w-4 mr-1" />
                 )}
-                {validationChecks.stockAllocated ? "Allocated" : noStockUsed ? "No Stock Used" : "Pending"}
+                {validationChecks.stockAllocated
+                  ? "Allocated"
+                  : noStockUsed
+                    ? "No Stock Used"
+                    : "Pending"}
               </Badge>
             </div>
 
             <div className="flex items-center justify-between">
               <span className="text-sm">Signature</span>
-              <Badge className={isSigned ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+              <Badge
+                className={
+                  isSigned
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }
+              >
                 {isSigned ? (
                   <CheckCircle className="h-4 w-4 mr-1" />
                 ) : (
@@ -211,7 +252,9 @@ export default function SignOffScreen() {
               {isSigned ? (
                 <div className="text-center">
                   <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <p className="text-green-600 text-lg font-medium">Signature Captured</p>
+                  <p className="text-green-600 text-lg font-medium">
+                    Signature Captured
+                  </p>
                 </div>
               ) : (
                 <p className="text-gray-500 text-lg">TAP TO SIGN</p>
@@ -225,7 +268,9 @@ export default function SignOffScreen() {
           <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
             <CheckCircle className="h-4 w-4 text-white" />
           </div>
-          <span className="text-gray-800 font-medium">I accept the Terms & Conditions</span>
+          <span className="text-gray-800 font-medium">
+            I accept the Terms & Conditions
+          </span>
         </div>
 
         {/* Action Buttons */}
@@ -249,7 +294,10 @@ export default function SignOffScreen() {
       </div>
 
       {/* Validation Dialog */}
-      <Dialog open={showValidationDialog} onOpenChange={setShowValidationDialog}>
+      <Dialog
+        open={showValidationDialog}
+        onOpenChange={setShowValidationDialog}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center space-x-2">
@@ -267,10 +315,13 @@ export default function SignOffScreen() {
                 <span className="text-sm">Complete the signature</span>
               </div>
             )}
-            {validationChecks.imagesUploaded < validationChecks.requiredImages && (
+            {validationChecks.imagesUploaded <
+              validationChecks.requiredImages && (
               <div className="flex items-center space-x-2 text-red-600">
                 <XCircle className="h-4 w-4" />
-                <span className="text-sm">Upload at least {validationChecks.requiredImages} images</span>
+                <span className="text-sm">
+                  Upload at least {validationChecks.requiredImages} images
+                </span>
               </div>
             )}
             {!validationChecks.udfFieldsCompleted && (
@@ -282,14 +333,14 @@ export default function SignOffScreen() {
             {!validationChecks.stockAllocated && !noStockUsed && (
               <div className="flex items-center space-x-2 text-red-600">
                 <XCircle className="h-4 w-4" />
-                <span className="text-sm">Allocate stock or check 'No stock used'</span>
+                <span className="text-sm">
+                  Allocate stock or check 'No stock used'
+                </span>
               </div>
             )}
           </div>
           <div className="flex justify-end">
-            <Button onClick={() => setShowValidationDialog(false)}>
-              OK
-            </Button>
+            <Button onClick={() => setShowValidationDialog(false)}>OK</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -376,12 +427,18 @@ export default function SignOffScreen() {
             className="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300"
             style={{
               width: `${
-                currentTab === "details" ? "20%" :
-                currentTab === "udf" ? "40%" :
-                currentTab === "gallery" ? "60%" :
-                currentTab === "stock" ? "80%" :
-                currentTab === "signoff" ? "100%" : "100%"
-              }%`
+                currentTab === "details"
+                  ? "20%"
+                  : currentTab === "udf"
+                    ? "40%"
+                    : currentTab === "gallery"
+                      ? "60%"
+                      : currentTab === "stock"
+                        ? "80%"
+                        : currentTab === "signoff"
+                          ? "100%"
+                          : "100%"
+              }%`,
             }}
           />
         </div>

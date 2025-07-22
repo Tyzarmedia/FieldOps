@@ -4,7 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
   X,
@@ -33,7 +39,7 @@ interface LeaveRequest {
 export default function ApplyLeaveScreen() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"apply" | "history">("apply");
-  
+
   // Form state
   const [leaveType, setLeaveType] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -104,10 +110,10 @@ export default function ApplyLeaveScreen() {
       alert("Please fill in all fields");
       return;
     }
-    
+
     // Handle leave application submission
     alert("Leave application submitted successfully!");
-    
+
     // Reset form
     setLeaveType("");
     setStartDate("");
@@ -168,7 +174,11 @@ export default function ApplyLeaveScreen() {
             variant={activeTab === "apply" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setActiveTab("apply")}
-            className={activeTab === "apply" ? "bg-white text-blue-600" : "text-white hover:bg-white/20"}
+            className={
+              activeTab === "apply"
+                ? "bg-white text-blue-600"
+                : "text-white hover:bg-white/20"
+            }
           >
             Apply Leave
           </Button>
@@ -176,7 +186,11 @@ export default function ApplyLeaveScreen() {
             variant={activeTab === "history" ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setActiveTab("history")}
-            className={activeTab === "history" ? "bg-white text-blue-600" : "text-white hover:bg-white/20"}
+            className={
+              activeTab === "history"
+                ? "bg-white text-blue-600"
+                : "text-white hover:bg-white/20"
+            }
           >
             Leave History
           </Button>
@@ -199,7 +213,8 @@ export default function ApplyLeaveScreen() {
                     </div>
                     <div className="text-sm text-gray-600">Annual Leave</div>
                     <div className="text-xs text-gray-400">
-                      Used: {leaveBalance.annual.used}/{leaveBalance.annual.total}
+                      Used: {leaveBalance.annual.used}/
+                      {leaveBalance.annual.total}
                     </div>
                   </div>
                   <div className="text-center">
@@ -217,7 +232,8 @@ export default function ApplyLeaveScreen() {
                     </div>
                     <div className="text-sm text-gray-600">Family Leave</div>
                     <div className="text-xs text-gray-400">
-                      Used: {leaveBalance.family.used}/{leaveBalance.family.total}
+                      Used: {leaveBalance.family.used}/
+                      {leaveBalance.family.total}
                     </div>
                   </div>
                 </div>
@@ -234,7 +250,9 @@ export default function ApplyLeaveScreen() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Leave Type</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Leave Type
+                  </label>
                   <Select value={leaveType} onValueChange={setLeaveType}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select leave type" />
@@ -251,7 +269,9 @@ export default function ApplyLeaveScreen() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Start Date</label>
+                    <label className="block text-sm font-medium mb-2">
+                      Start Date
+                    </label>
                     <Input
                       type="date"
                       value={startDate}
@@ -259,7 +279,9 @@ export default function ApplyLeaveScreen() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">End Date</label>
+                    <label className="block text-sm font-medium mb-2">
+                      End Date
+                    </label>
                     <Input
                       type="date"
                       value={endDate}
@@ -271,13 +293,16 @@ export default function ApplyLeaveScreen() {
                 {startDate && endDate && (
                   <div className="bg-blue-50 p-3 rounded-lg">
                     <p className="text-sm text-blue-800">
-                      Total days: <span className="font-semibold">{calculateDays()}</span>
+                      Total days:{" "}
+                      <span className="font-semibold">{calculateDays()}</span>
                     </p>
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Reason</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Reason
+                  </label>
                   <Textarea
                     placeholder="Please provide a reason for your leave..."
                     value={reason}
@@ -306,19 +331,26 @@ export default function ApplyLeaveScreen() {
                           <Badge className={getStatusColor(leave.status)}>
                             <div className="flex items-center space-x-1">
                               {getStatusIcon(leave.status)}
-                              <span>{leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}</span>
+                              <span>
+                                {leave.status.charAt(0).toUpperCase() +
+                                  leave.status.slice(1)}
+                              </span>
                             </div>
                           </Badge>
                         </div>
-                        
+
                         <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
                           <div className="flex items-center space-x-2">
                             <Calendar className="h-4 w-4" />
-                            <span>{leave.startDate} to {leave.endDate}</span>
+                            <span>
+                              {leave.startDate} to {leave.endDate}
+                            </span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Clock className="h-4 w-4" />
-                            <span>{leave.days} day{leave.days > 1 ? 's' : ''}</span>
+                            <span>
+                              {leave.days} day{leave.days > 1 ? "s" : ""}
+                            </span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <FileText className="h-4 w-4" />

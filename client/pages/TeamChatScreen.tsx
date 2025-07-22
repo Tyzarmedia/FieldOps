@@ -85,7 +85,8 @@ export default function TeamChatScreen() {
     {
       id: "1",
       sender: "Manager",
-      message: "Good morning team! Please remember to complete your safety checklists before starting any jobs today.",
+      message:
+        "Good morning team! Please remember to complete your safety checklists before starting any jobs today.",
       time: "8:30 AM",
       isOwn: false,
       status: "read",
@@ -101,7 +102,8 @@ export default function TeamChatScreen() {
     {
       id: "3",
       sender: "Coordinator",
-      message: "Job SA-688808 has been updated with additional requirements. Please check the job details.",
+      message:
+        "Job SA-688808 has been updated with additional requirements. Please check the job details.",
       time: "9:15 AM",
       isOwn: false,
       status: "delivered",
@@ -124,7 +126,7 @@ export default function TeamChatScreen() {
   };
 
   const filteredChats = chatRooms.filter((chat) =>
-    chat.name.toLowerCase().includes(searchQuery.toLowerCase())
+    chat.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -143,7 +145,9 @@ export default function TeamChatScreen() {
             </Button>
             <div>
               <h1 className="text-xl font-semibold">Team Communications</h1>
-              <p className="text-sm opacity-90">Stay connected with your team</p>
+              <p className="text-sm opacity-90">
+                Stay connected with your team
+              </p>
             </div>
           </div>
           <div className="flex space-x-2">
@@ -180,7 +184,9 @@ export default function TeamChatScreen() {
               <div
                 key={chat.id}
                 className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                  selectedChat === chat.id ? "bg-blue-50 border-l-4 border-l-blue-500" : ""
+                  selectedChat === chat.id
+                    ? "bg-blue-50 border-l-4 border-l-blue-500"
+                    : ""
                 }`}
                 onClick={() => setSelectedChat(chat.id)}
               >
@@ -225,13 +231,13 @@ export default function TeamChatScreen() {
                   <div className="flex items-center space-x-3">
                     <div className="relative">
                       <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {chatRooms.find(c => c.id === selectedChat)?.avatar}
+                        {chatRooms.find((c) => c.id === selectedChat)?.avatar}
                       </div>
                       <Circle className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
                     </div>
                     <div>
                       <h3 className="font-semibold">
-                        {chatRooms.find(c => c.id === selectedChat)?.name}
+                        {chatRooms.find((c) => c.id === selectedChat)?.name}
                       </h3>
                       <p className="text-sm text-green-600">Online</p>
                     </div>
@@ -293,7 +299,9 @@ export default function TeamChatScreen() {
                       placeholder="Type a message..."
                       value={messageInput}
                       onChange={(e) => setMessageInput(e.target.value)}
-                      onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && handleSendMessage()
+                      }
                       className="pr-10"
                     />
                     <Button

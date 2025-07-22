@@ -520,19 +520,22 @@ export default function TechnicianJobsScreen() {
         <div className="fixed bottom-20 left-0 right-0 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 z-40">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className={`w-3 h-3 rounded-full ${
-                selectedJob.status === "assigned" ? "bg-blue-400" :
-                selectedJob.status === "accepted" ? "bg-yellow-400" :
-                selectedJob.status === "in-progress" ? "bg-green-400" :
-                "bg-purple-400"
-              }`} />
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  selectedJob.status === "assigned"
+                    ? "bg-blue-400"
+                    : selectedJob.status === "accepted"
+                      ? "bg-yellow-400"
+                      : selectedJob.status === "in-progress"
+                        ? "bg-green-400"
+                        : "bg-purple-400"
+                }`}
+              />
               <span className="text-sm font-medium">
                 Status: {selectedJob.status.replace("-", " ").toUpperCase()}
               </span>
             </div>
-            <div className="text-xs opacity-90">
-              Job #{selectedJob.id}
-            </div>
+            <div className="text-xs opacity-90">Job #{selectedJob.id}</div>
           </div>
         </div>
 
@@ -657,12 +660,18 @@ export default function TechnicianJobsScreen() {
               className="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300"
               style={{
                 width: `${
-                  currentNavSection === "details" ? "20%" :
-                  currentNavSection === "udf" ? "40%" :
-                  currentNavSection === "gallery" ? "60%" :
-                  currentNavSection === "stock" ? "80%" :
-                  currentNavSection === "signoff" ? "100%" : "20%"
-                }%`
+                  currentNavSection === "details"
+                    ? "20%"
+                    : currentNavSection === "udf"
+                      ? "40%"
+                      : currentNavSection === "gallery"
+                        ? "60%"
+                        : currentNavSection === "stock"
+                          ? "80%"
+                          : currentNavSection === "signoff"
+                            ? "100%"
+                            : "20%"
+                }%`,
               }}
             />
           </div>

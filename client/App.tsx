@@ -506,9 +506,15 @@ const App = () => (
           {/* New Technician Navigation Routes */}
           <Route path="/apply-leave" element={<ApplyLeaveScreen />} />
           <Route path="/stock-on-hand" element={<StockOnHandScreen />} />
-          <Route path="/network-assessment" element={<NetworkAssessmentScreen />} />
+          <Route
+            path="/network-assessment"
+            element={<NetworkAssessmentScreen />}
+          />
           <Route path="/overtime-list" element={<OvertimeListScreen />} />
-          <Route path="/technician-settings" element={<TechnicianSettingsScreen />} />
+          <Route
+            path="/technician-settings"
+            element={<TechnicianSettingsScreen />}
+          />
           {/* IT Routes */}
           <Route
             path="/assets"

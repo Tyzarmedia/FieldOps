@@ -22,7 +22,7 @@ import {
   Camera,
   Package,
   PenTool,
-  MessageCircle
+  MessageCircle,
 } from "lucide-react";
 
 export default function UDFieldsScreen() {
@@ -459,12 +459,18 @@ export default function UDFieldsScreen() {
             className="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300"
             style={{
               width: `${
-                currentNavSection === "details" ? "20%" :
-                currentNavSection === "udf" ? "40%" :
-                currentNavSection === "gallery" ? "60%" :
-                currentNavSection === "stock" ? "80%" :
-                currentNavSection === "signoff" ? "100%" : "40%"
-              }%`
+                currentNavSection === "details"
+                  ? "20%"
+                  : currentNavSection === "udf"
+                    ? "40%"
+                    : currentNavSection === "gallery"
+                      ? "60%"
+                      : currentNavSection === "stock"
+                        ? "80%"
+                        : currentNavSection === "signoff"
+                          ? "100%"
+                          : "40%"
+              }%`,
             }}
           />
         </div>

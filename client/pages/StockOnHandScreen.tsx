@@ -141,7 +141,7 @@ export default function StockOnHandScreen() {
       searchQuery === "" ||
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const matchesCategory =
       selectedCategory === "all" || item.category === selectedCategory;
 
@@ -150,9 +150,10 @@ export default function StockOnHandScreen() {
 
   const stockSummary = {
     total: stockItems.length,
-    inStock: stockItems.filter(item => item.status === "in-stock").length,
-    lowStock: stockItems.filter(item => item.status === "low-stock").length,
-    outOfStock: stockItems.filter(item => item.status === "out-of-stock").length,
+    inStock: stockItems.filter((item) => item.status === "in-stock").length,
+    lowStock: stockItems.filter((item) => item.status === "low-stock").length,
+    outOfStock: stockItems.filter((item) => item.status === "out-of-stock")
+      .length,
   };
 
   const calculateStockLevel = (current: number, min: number, max: number) => {
@@ -261,57 +262,75 @@ export default function StockOnHandScreen() {
                         <div className="flex items-center space-x-1">
                           {getStatusIcon(item.status)}
                           <span>
-                            {item.status === "in-stock" ? "In Stock" :
-                             item.status === "low-stock" ? "Low Stock" : "Out of Stock"}
+                            {item.status === "in-stock"
+                              ? "In Stock"
+                              : item.status === "low-stock"
+                                ? "Low Stock"
+                                : "Out of Stock"}
                           </span>
                         </div>
                       </Badge>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
                       <div>
                         <span className="font-medium">SKU:</span> {item.sku}
                       </div>
                       <div>
-                        <span className="font-medium">Category:</span> {item.category}
+                        <span className="font-medium">Category:</span>{" "}
+                        {item.category}
                       </div>
                       <div>
-                        <span className="font-medium">Location:</span> {item.location}
+                        <span className="font-medium">Location:</span>{" "}
+                        {item.location}
                       </div>
                       <div>
-                        <span className="font-medium">Last Updated:</span> {item.lastUpdated}
+                        <span className="font-medium">Last Updated:</span>{" "}
+                        {item.lastUpdated}
                       </div>
                     </div>
 
                     {/* Stock Level */}
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>Current Stock: <span className="font-semibold">{item.currentStock} {item.unit}</span></span>
+                        <span>
+                          Current Stock:{" "}
+                          <span className="font-semibold">
+                            {item.currentStock} {item.unit}
+                          </span>
+                        </span>
                         {item.allocated && (
-                          <span className="text-orange-600">Allocated: {item.allocated} {item.unit}</span>
+                          <span className="text-orange-600">
+                            Allocated: {item.allocated} {item.unit}
+                          </span>
                         )}
                       </div>
-                      
+
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full ${
-                            item.status === "in-stock" ? "bg-green-500" :
-                            item.status === "low-stock" ? "bg-yellow-500" : "bg-red-500"
+                            item.status === "in-stock"
+                              ? "bg-green-500"
+                              : item.status === "low-stock"
+                                ? "bg-yellow-500"
+                                : "bg-red-500"
                           }`}
                           style={{
-                            width: `${Math.min(100, calculateStockLevel(item.currentStock, item.minStock, item.maxStock))}%`
+                            width: `${Math.min(100, calculateStockLevel(item.currentStock, item.minStock, item.maxStock))}%`,
                           }}
                         />
                       </div>
-                      
+
                       <div className="flex justify-between text-xs text-gray-500">
                         <span>Min: {item.minStock}</span>
-                        <span>Available: {item.currentStock - (item.allocated || 0)}</span>
+                        <span>
+                          Available: {item.currentStock - (item.allocated || 0)}
+                        </span>
                         <span>Max: {item.maxStock}</span>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col space-y-2 ml-4">
                     <Button size="sm" variant="outline">
                       <Plus className="h-4 w-4 mr-1" />
