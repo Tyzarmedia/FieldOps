@@ -440,6 +440,12 @@ export default function ManagerDashboard() {
 
   const handleCardAction = (cardId: string) => {
     switch (cardId) {
+      case "network-assessment":
+        setActiveSection("network-assessment");
+        break;
+      case "overtime-management":
+        setActiveSection("overtime-management");
+        break;
       case "jobs-overview":
         alert("Opening Jobs Overview dashboard with detailed job analytics...");
         break;
@@ -482,12 +488,6 @@ export default function ManagerDashboard() {
         alert(
           "Opening Manager Analytics Center with comprehensive insights...",
         );
-        break;
-      case "network-assessment":
-        alert("Opening Network Assessment Reports dashboard...");
-        break;
-      case "overtime-management":
-        alert("Opening Overtime Management for claims approval...");
         break;
       default:
         alert(`Opening ${cardId} dashboard...`);
