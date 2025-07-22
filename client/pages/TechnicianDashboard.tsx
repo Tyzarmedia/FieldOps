@@ -13,12 +13,19 @@ import {
   Truck,
   Clock,
   Timer,
+  Calendar,
+  Package2,
+  Network,
+  Settings,
+  LogOut,
+  UserCheck,
 } from "lucide-react";
 import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
 
 export default function TechnicianDashboard() {
   const [workingHours, setWorkingHours] = useState("12:31");
   const [distanceTraveled, setDistanceTraveled] = useState("42.7");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   const stats = {
