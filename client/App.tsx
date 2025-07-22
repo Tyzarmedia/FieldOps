@@ -38,6 +38,7 @@ import StockManagerDashboard from "./pages/StockManagerDashboard";
 import HSManagerDashboard from "./pages/HSManagerDashboard";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
+import TeamChatScreen from "./pages/TeamChatScreen";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
