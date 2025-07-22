@@ -147,6 +147,13 @@ export default function TechnicianJobsScreen() {
     setSortOrder(sortOrder === "new-to-old" ? "old-to-new" : "new-to-old");
   };
 
+  const handleNavigation = (section: string, route: string) => {
+    setCurrentNavSection(section);
+    if (route.startsWith("/")) {
+      navigate(route);
+    }
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
