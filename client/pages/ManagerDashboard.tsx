@@ -80,7 +80,11 @@ export default function ManagerDashboard() {
       findings: "Network upgrade recommended",
       priority: "Medium",
       estimatedCost: 15000,
-      recommendedActions: ["Replace core switches", "Upgrade fiber backbone", "Implement redundancy"],
+      recommendedActions: [
+        "Replace core switches",
+        "Upgrade fiber backbone",
+        "Implement redundancy",
+      ],
     },
     {
       id: "NA002",
@@ -93,7 +97,11 @@ export default function ManagerDashboard() {
       findings: "Critical security vulnerabilities found",
       priority: "High",
       estimatedCost: 25000,
-      recommendedActions: ["Install firewall", "Update access controls", "Implement monitoring"],
+      recommendedActions: [
+        "Install firewall",
+        "Update access controls",
+        "Implement monitoring",
+      ],
     },
     {
       id: "NA003",
@@ -106,7 +114,11 @@ export default function ManagerDashboard() {
       findings: "Bandwidth limitations affecting operations",
       priority: "Medium",
       estimatedCost: 8000,
-      recommendedActions: ["Increase bandwidth", "Optimize routing", "Add load balancing"],
+      recommendedActions: [
+        "Increase bandwidth",
+        "Optimize routing",
+        "Add load balancing",
+      ],
     },
   ];
 
@@ -121,7 +133,7 @@ export default function ManagerDashboard() {
       date: "2024-01-19",
       hours: 4,
       rate: "1.5x",
-      amount: 450.00,
+      amount: 450.0,
       justification: "Emergency fiber repair - client SLA requirement",
       jobReference: "J087",
       status: "Pending Manager Approval",
@@ -137,7 +149,7 @@ export default function ManagerDashboard() {
       date: "2024-01-18",
       hours: 6,
       rate: "2.0x",
-      amount: 720.00,
+      amount: 720.0,
       justification: "Weekend emergency installation - power outage recovery",
       jobReference: "J089",
       status: "Pending Manager Approval",
@@ -153,7 +165,7 @@ export default function ManagerDashboard() {
       date: "2024-01-17",
       hours: 3,
       rate: "1.5x",
-      amount: 300.00,
+      amount: 300.0,
       justification: "Equipment repair extended beyond normal hours",
       jobReference: "J091",
       status: "Manager Approved",
@@ -171,7 +183,7 @@ export default function ManagerDashboard() {
       date: "2024-01-16",
       hours: 8,
       rate: "2.0x",
-      amount: 960.00,
+      amount: 960.0,
       justification: "Non-emergency work scheduled during overtime",
       jobReference: "J093",
       status: "Coordinator Rejected",
@@ -542,7 +554,10 @@ export default function ManagerDashboard() {
 
       <div className="space-y-4">
         {networkAssessments.map((assessment) => (
-          <Card key={assessment.id} className="hover:shadow-md transition-shadow">
+          <Card
+            key={assessment.id}
+            className="hover:shadow-md transition-shadow"
+          >
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
@@ -555,8 +570,12 @@ export default function ManagerDashboard() {
                       {assessment.priority}
                     </Badge>
                   </div>
-                  <h3 className="font-semibold text-lg">{assessment.assessmentType}</h3>
-                  <p className="text-muted-foreground mb-3">{assessment.clientName}</p>
+                  <h3 className="font-semibold text-lg">
+                    {assessment.assessmentType}
+                  </h3>
+                  <p className="text-muted-foreground mb-3">
+                    {assessment.clientName}
+                  </p>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
                     <div>
@@ -577,7 +596,9 @@ export default function ManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Estimated Cost:</p>
-                      <p className="font-bold">R{assessment.estimatedCost.toLocaleString()}</p>
+                      <p className="font-bold">
+                        R{assessment.estimatedCost.toLocaleString()}
+                      </p>
                     </div>
                     <div className="col-span-2">
                       <p className="font-medium">Recommended Actions:</p>
@@ -638,7 +659,9 @@ export default function ManagerDashboard() {
                     <Badge variant="secondary">{claim.rate} Rate</Badge>
                   </div>
                   <h3 className="font-semibold text-lg">{claim.employee}</h3>
-                  <p className="text-muted-foreground mb-3">{claim.department}</p>
+                  <p className="text-muted-foreground mb-3">
+                    {claim.department}
+                  </p>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
                     <div>
@@ -651,7 +674,9 @@ export default function ManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Amount:</p>
-                      <p className="font-bold text-success">R{claim.amount.toFixed(2)}</p>
+                      <p className="font-bold text-success">
+                        R{claim.amount.toFixed(2)}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Job Reference:</p>
@@ -659,7 +684,9 @@ export default function ManagerDashboard() {
                     </div>
                     <div>
                       <p className="font-medium">Coordinator Approval:</p>
-                      <p className="font-bold text-success">{claim.coordinatorApproval}</p>
+                      <p className="font-bold text-success">
+                        {claim.coordinatorApproval}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Approved By:</p>
@@ -679,18 +706,26 @@ export default function ManagerDashboard() {
                     </div>
                   </div>
 
-                  {claim.status === "Coordinator Rejected" && claim.rejectionReason && (
-                    <div className="mt-3 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                      <p className="font-medium text-destructive">Rejection Reason:</p>
-                      <p className="text-sm text-destructive">{claim.rejectionReason}</p>
-                    </div>
-                  )}
+                  {claim.status === "Coordinator Rejected" &&
+                    claim.rejectionReason && (
+                      <div className="mt-3 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                        <p className="font-medium text-destructive">
+                          Rejection Reason:
+                        </p>
+                        <p className="text-sm text-destructive">
+                          {claim.rejectionReason}
+                        </p>
+                      </div>
+                    )}
 
                   {claim.status === "Manager Approved" && (
                     <div className="mt-3 p-3 bg-success/10 border border-success/20 rounded-lg">
-                      <p className="font-medium text-success">Manager Approved:</p>
+                      <p className="font-medium text-success">
+                        Manager Approved:
+                      </p>
                       <p className="text-sm text-success">
-                        Approved by {claim.managerApprovedBy} on {claim.managerApprovalDate}
+                        Approved by {claim.managerApprovedBy} on{" "}
+                        {claim.managerApprovalDate}
                       </p>
                     </div>
                   )}
@@ -704,7 +739,11 @@ export default function ManagerDashboard() {
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approve
                     </Button>
-                    <Button variant="outline" size="sm" className="text-destructive">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive"
+                    >
                       <XCircle className="h-4 w-4 mr-2" />
                       Reject
                     </Button>
@@ -847,10 +886,7 @@ export default function ManagerDashboard() {
             </p>
           </div>
           {activeSection !== "main" && (
-            <Button
-              variant="outline"
-              onClick={() => setActiveSection("main")}
-            >
+            <Button variant="outline" onClick={() => setActiveSection("main")}>
               ← Back to Dashboard
             </Button>
           )}

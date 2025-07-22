@@ -42,89 +42,98 @@ export default function TechnicianJobsScreen() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showJobDetail, setShowJobDetail] = useState(false);
   const [isJobPaused, setIsJobPaused] = useState(false);
-  const [sortOrder, setSortOrder] = useState<"new-to-old" | "old-to-new">("new-to-old");
+  const [sortOrder, setSortOrder] = useState<"new-to-old" | "old-to-new">(
+    "new-to-old",
+  );
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const navigate = useNavigate();
 
-  const tabs = useMemo(() => [
-    {
-      id: "assigned",
-      label: "Assigned",
-      count: teamJobs.filter((j) => j.status === "assigned").length,
-      color: "bg-blue-500",
-    },
-    {
-      id: "accepted",
-      label: "Accepted",
-      count: teamJobs.filter((j) => j.status === "accepted").length,
-      color: "bg-orange-500",
-    },
-    {
-      id: "in-progress",
-      label: "In Progress",
-      count: teamJobs.filter((j) => j.status === "in-progress").length,
-      color: "bg-green-500",
-    },
-    {
-      id: "completed",
-      label: "Tech Finished",
-      count: teamJobs.filter((j) => j.status === "completed").length,
-      color: "bg-purple-500",
-    },
-  ], [refreshTrigger]);
+  const tabs = useMemo(
+    () => [
+      {
+        id: "assigned",
+        label: "Assigned",
+        count: teamJobs.filter((j) => j.status === "assigned").length,
+        color: "bg-blue-500",
+      },
+      {
+        id: "accepted",
+        label: "Accepted",
+        count: teamJobs.filter((j) => j.status === "accepted").length,
+        color: "bg-orange-500",
+      },
+      {
+        id: "in-progress",
+        label: "In Progress",
+        count: teamJobs.filter((j) => j.status === "in-progress").length,
+        color: "bg-green-500",
+      },
+      {
+        id: "completed",
+        label: "Tech Finished",
+        count: teamJobs.filter((j) => j.status === "completed").length,
+        color: "bg-purple-500",
+      },
+    ],
+    [refreshTrigger],
+  );
 
-  const filteredJobs = useMemo(() => teamJobs
-    .filter((job) => {
-      const matchesTab =
-        job.status === selectedTab ||
-        (selectedTab === "completed" && job.status === "completed");
-      const matchesSearch =
-        searchQuery === "" ||
-        job.client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.assignedTo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.id.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredJobs = useMemo(
+    () =>
+      teamJobs
+        .filter((job) => {
+          const matchesTab =
+            job.status === selectedTab ||
+            (selectedTab === "completed" && job.status === "completed");
+          const matchesSearch =
+            searchQuery === "" ||
+            job.client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            job.assignedTo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            job.id.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // Date filtering
-      const jobDate = new Date(job.createdDate);
-      const fromDateObj = fromDate ? new Date(fromDate) : null;
-      const toDateObj = toDate ? new Date(toDate) : null;
+          // Date filtering
+          const jobDate = new Date(job.createdDate);
+          const fromDateObj = fromDate ? new Date(fromDate) : null;
+          const toDateObj = toDate ? new Date(toDate) : null;
 
-      const matchesDateRange =
-        (!fromDateObj || jobDate >= fromDateObj) &&
-        (!toDateObj || jobDate <= toDateObj);
+          const matchesDateRange =
+            (!fromDateObj || jobDate >= fromDateObj) &&
+            (!toDateObj || jobDate <= toDateObj);
 
-      return matchesTab && matchesSearch && matchesDateRange;
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a.createdDate);
-      const dateB = new Date(b.createdDate);
+          return matchesTab && matchesSearch && matchesDateRange;
+        })
+        .sort((a, b) => {
+          const dateA = new Date(a.createdDate);
+          const dateB = new Date(b.createdDate);
 
-      if (sortOrder === "new-to-old") {
-        return dateB.getTime() - dateA.getTime();
-      } else {
-        return dateA.getTime() - dateB.getTime();
-      }
-    }), [selectedTab, searchQuery, fromDate, toDate, sortOrder, refreshTrigger]);
+          if (sortOrder === "new-to-old") {
+            return dateB.getTime() - dateA.getTime();
+          } else {
+            return dateA.getTime() - dateB.getTime();
+          }
+        }),
+    [selectedTab, searchQuery, fromDate, toDate, sortOrder, refreshTrigger],
+  );
 
   const handleJobAction = (job: Job, action: string) => {
     switch (action) {
       case "accept":
         updateJobStatus(job.id, "accepted");
-        setRefreshTrigger(prev => prev + 1); // Force re-render
+        setRefreshTrigger((prev) => prev + 1); // Force re-render
         break;
       case "start":
         updateJobStatus(job.id, "in-progress");
-        setRefreshTrigger(prev => prev + 1); // Force re-render
+        setRefreshTrigger((prev) => prev + 1); // Force re-render
         break;
       case "pause":
         updateJobStatus(job.id, "accepted");
-        setRefreshTrigger(prev => prev + 1); // Force re-render
+        setRefreshTrigger((prev) => prev + 1); // Force re-render
         break;
       case "complete":
         updateJobStatus(job.id, "completed");
-        setRefreshTrigger(prev => prev + 1); // Force re-render
+        setRefreshTrigger((prev) => prev + 1); // Force re-render
         break;
       case "view":
         setSelectedJob(job);
