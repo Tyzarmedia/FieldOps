@@ -71,18 +71,29 @@ export default function TechnicianJobsScreen() {
     },
   ];
 
-  const filteredJobs = teamJobs.filter((job) => {
-    const matchesTab =
-      job.status === selectedTab ||
-      (selectedTab === "completed" && job.status === "completed");
-    const matchesSearch =
-      searchQuery === "" ||
-      job.client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.assignedTo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.id.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredJobs = teamJobs
+    .filter((job) => {
+      const matchesTab =
+        job.status === selectedTab ||
+        (selectedTab === "completed" && job.status === "completed");
+      const matchesSearch =
+        searchQuery === "" ||
+        job.client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.assignedTo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.id.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesTab && matchesSearch;
-  });
+      return matchesTab && matchesSearch;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.createdDate);
+      const dateB = new Date(b.createdDate);
+
+      if (sortOrder === "new-to-old") {
+        return dateB.getTime() - dateA.getTime();
+      } else {
+        return dateA.getTime() - dateB.getTime();
+      }
+    });
 
   const handleJobAction = (job: Job, action: string) => {
     switch (action) {
