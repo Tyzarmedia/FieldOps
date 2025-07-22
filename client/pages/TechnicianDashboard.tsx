@@ -316,7 +316,6 @@ export default function TechnicianDashboard() {
                   <h3 className="font-semibold text-gray-800 mb-2">
                     {card.title}
                   </h3>
-                  <p className="text-sm text-gray-600">{card.description}</p>
                 </CardContent>
               </Card>
             );
