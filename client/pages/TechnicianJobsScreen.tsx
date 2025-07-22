@@ -75,7 +75,7 @@ export default function TechnicianJobsScreen() {
     },
   ], [refreshTrigger]);
 
-  const filteredJobs = teamJobs
+  const filteredJobs = useMemo(() => teamJobs
     .filter((job) => {
       const matchesTab =
         job.status === selectedTab ||
@@ -106,7 +106,7 @@ export default function TechnicianJobsScreen() {
       } else {
         return dateA.getTime() - dateB.getTime();
       }
-    });
+    }), [selectedTab, searchQuery, fromDate, toDate, sortOrder, refreshTrigger]);
 
   const handleJobAction = (job: Job, action: string) => {
     switch (action) {
