@@ -191,7 +191,13 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
   };
 
   const handleClose = () => {
-    navigate('/login');
+    if (isClockedIn) {
+      // If clocked in, go back to dashboard
+      navigate('/');
+    } else {
+      // If not clocked in, go to login
+      navigate('/login');
+    }
   };
 
   return (
