@@ -13,8 +13,19 @@ import {
   Mic,
 } from "lucide-react";
 
+interface AllocatedStock {
+  id: string;
+  code: string;
+  description: string;
+  allocatedQty: number;
+  remainingQty: number;
+  container: string;
+  allocatedDate: Date;
+}
+
 export default function StockScreen() {
   const navigate = useNavigate();
+  const [showAllocation, setShowAllocation] = useState(false);
   const [formData, setFormData] = useState({
     code: "",
     container: "",
@@ -22,6 +33,27 @@ export default function StockScreen() {
     description: "",
     comments: "",
   });
+
+  const [allocatedStock, setAllocatedStock] = useState<AllocatedStock[]>([
+    {
+      id: '1',
+      code: 'FBR-001',
+      description: 'Fiber Optic Cable - 100m',
+      allocatedQty: 2,
+      remainingQty: 8,
+      container: 'Vehicle Storage',
+      allocatedDate: new Date('2024-01-15T09:00:00')
+    },
+    {
+      id: '2',
+      code: 'CNT-045',
+      description: 'RJ45 Connector Pack',
+      allocatedQty: 50,
+      remainingQty: 200,
+      container: 'Tool Box A',
+      allocatedDate: new Date('2024-01-15T09:30:00')
+    },
+  ]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
