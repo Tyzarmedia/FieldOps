@@ -138,7 +138,9 @@ export default function TechnicianJobsScreen() {
                 size="sm"
                 className="text-white hover:bg-white/20"
                 onClick={() => setShowJobDetail(false)}
-              />
+              >
+                <X className="h-6 w-6" />
+              </Button>
               <h1 className="text-lg font-semibold">Job Details</h1>
             </div>
             <div className="flex space-x-2">
