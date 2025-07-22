@@ -53,7 +53,9 @@ type UserRole =
   | "HSManager"
   | "HR"
   | "Payroll"
-  | "IT";
+  | "PayrollManager"
+  | "IT"
+  | "ITManager";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
