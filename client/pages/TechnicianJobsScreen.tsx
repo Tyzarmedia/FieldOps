@@ -559,7 +559,11 @@ export default function TechnicianJobsScreen() {
       {/* Job List */}
       <div className="p-4 space-y-4">
         {filteredJobs.map((job) => (
-          <Card key={job.id} className="bg-white shadow-md">
+          <Card
+            key={job.id}
+            className="bg-white shadow-md cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => handleJobAction(job, 'view')}
+          >
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
