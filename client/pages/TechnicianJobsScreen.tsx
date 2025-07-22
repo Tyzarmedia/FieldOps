@@ -112,15 +112,19 @@ export default function TechnicianJobsScreen() {
     switch (action) {
       case "accept":
         updateJobStatus(job.id, "accepted");
+        setRefreshTrigger(prev => prev + 1); // Force re-render
         break;
       case "start":
         updateJobStatus(job.id, "in-progress");
+        setRefreshTrigger(prev => prev + 1); // Force re-render
         break;
       case "pause":
         updateJobStatus(job.id, "accepted");
+        setRefreshTrigger(prev => prev + 1); // Force re-render
         break;
       case "complete":
         updateJobStatus(job.id, "completed");
+        setRefreshTrigger(prev => prev + 1); // Force re-render
         break;
       case "view":
         setSelectedJob(job);
