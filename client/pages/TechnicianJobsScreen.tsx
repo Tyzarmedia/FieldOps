@@ -84,7 +84,16 @@ export default function TechnicianJobsScreen() {
         job.assignedTo.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.id.toLowerCase().includes(searchQuery.toLowerCase());
 
-      return matchesTab && matchesSearch;
+      // Date filtering
+      const jobDate = new Date(job.createdDate);
+      const fromDateObj = fromDate ? new Date(fromDate) : null;
+      const toDateObj = toDate ? new Date(toDate) : null;
+
+      const matchesDateRange =
+        (!fromDateObj || jobDate >= fromDateObj) &&
+        (!toDateObj || jobDate <= toDateObj);
+
+      return matchesTab && matchesSearch && matchesDateRange;
     })
     .sort((a, b) => {
       const dateA = new Date(a.createdDate);
