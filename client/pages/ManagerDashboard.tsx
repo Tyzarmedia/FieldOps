@@ -1,189 +1,345 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Users,
   ClipboardList,
-  Clock,
-  TrendingUp,
-  TrendingDown,
-  Activity,
-  CheckCircle,
-  AlertCircle,
-  Timer,
-  Eye,
-  UserCheck,
-  Settings,
-  FileText,
-  Calendar,
-  MapPin,
   DollarSign,
+  Users,
+  TrendingUp,
+  Building,
+  Shield,
+  Truck,
+  Package,
+  Settings,
+  AlertTriangle,
+  FileText,
+  UserPlus,
+  BarChart3,
+  CheckCircle,
+  Timer,
+  Activity,
+  Target,
+  Gauge,
+  PieChart,
+  AlertCircle,
+  Archive,
+  Database,
+  Globe,
+  Zap,
 } from "lucide-react";
 
 export default function ManagerDashboard() {
-  const [selectedDepartment, setSelectedDepartment] = useState("All");
+  const [systemData, setSystemData] = useState<any>(null);
 
-  const teamStats = {
-    totalTechnicians: 12,
-    activeTechnicians: 10,
-    onBreak: 1,
-    offline: 1,
-    avgEfficiency: 91.2,
-    completedJobs: 234,
-    pendingJobs: 18,
-    overdueJobs: 3,
-    departmentRevenue: 89400,
+  const managerStats = {
+    totalJobs: 1247,
+    completedJobs: 1089,
+    failedJobs: 23,
+    activeJobs: 135,
+    totalTechnicians: 45,
+    activeTechnicians: 38,
+    departments: 8,
+    productivity: 87.3,
+    revenue: 245000,
+    targetRevenue: 280000,
+    stockValue: 89500,
+    fleetUtilization: 92.4,
+    complianceScore: 95.2,
+    criticalAlerts: 7,
+    overdueMaintenace: 12,
+    pendingReports: 5,
+    activeUsers: 156,
+    monthlyGrowth: 12.5,
+    profitMargin: 30.2,
+    customerSatisfaction: 94.8,
+    onTimeDelivery: 96.3,
   };
 
-  const technicians = [
+  const dashboardCards = [
     {
-      id: 1,
-      name: "John Smith",
-      status: "active",
-      currentJob: "HVAC Maintenance - Downtown Office",
-      efficiency: 94.2,
-      jobsCompleted: 28,
-      hoursWorked: 42.5,
-      location: "Downtown",
-      overtime: 2.5,
+      id: "jobs-overview",
+      title: "Jobs Overview",
+      icon: ClipboardList,
+      color: "bg-blue-500",
+      mainMetric: managerStats.totalJobs.toLocaleString(),
+      subMetric: `${managerStats.completedJobs} completed`,
+      description: "Total jobs with status breakdown",
+      trend: "+8.2%",
+      trendPositive: true,
     },
     {
-      id: 2,
-      name: "Sarah Johnson",
-      status: "active",
-      currentJob: "Electrical Inspection - Mall Plaza",
-      efficiency: 96.8,
-      jobsCompleted: 31,
-      hoursWorked: 40.0,
-      location: "Midtown",
-      overtime: 0,
+      id: "financial-performance",
+      title: "Financial Performance",
+      icon: DollarSign,
+      color: "bg-green-500",
+      mainMetric: `$${managerStats.revenue.toLocaleString()}`,
+      subMetric: `${Math.round((managerStats.revenue / managerStats.targetRevenue) * 100)}% of target`,
+      description: "Monthly revenue and profit margins",
+      trend: "+12.5%",
+      trendPositive: true,
     },
     {
-      id: 3,
-      name: "Mike Chen",
-      status: "on-break",
-      currentJob: null,
-      efficiency: 88.5,
-      jobsCompleted: 24,
-      hoursWorked: 38.5,
-      location: "Workshop",
-      overtime: 1.5,
+      id: "hr-snapshot",
+      title: "Human Resource Snapshot",
+      icon: Users,
+      color: "bg-purple-500",
+      mainMetric: managerStats.activeTechnicians.toString(),
+      subMetric: `of ${managerStats.totalTechnicians} total staff`,
+      description: "Active staff by role and availability",
+      trend: "+3 new",
+      trendPositive: true,
     },
     {
-      id: 4,
-      name: "Emma Wilson",
-      status: "active",
-      currentJob: "Emergency Plumbing - City Center",
-      efficiency: 92.1,
-      jobsCompleted: 26,
-      hoursWorked: 41.0,
-      location: "City Center",
-      overtime: 3.0,
+      id: "productivity-metrics",
+      title: "Productivity Metrics",
+      icon: TrendingUp,
+      color: "bg-orange-500",
+      mainMetric: `${managerStats.productivity}%`,
+      subMetric: "Above company average",
+      description: "Productivity trends and efficiency",
+      trend: "+2.1%",
+      trendPositive: true,
+    },
+    {
+      id: "departmental-performance",
+      title: "Departmental Performance",
+      icon: Building,
+      color: "bg-cyan-500",
+      mainMetric: managerStats.departments.toString(),
+      subMetric: "Active departments",
+      description: "KPIs and performance by department",
+      trend: "Stable",
+      trendPositive: true,
+    },
+    {
+      id: "compliance-center",
+      title: "Compliance Center",
+      icon: Shield,
+      color: "bg-indigo-500",
+      mainMetric: `${managerStats.complianceScore}%`,
+      subMetric: "Compliance score",
+      description: "SHEQ, labor law, and operational compliance",
+      trend: "+1.2%",
+      trendPositive: true,
+    },
+    {
+      id: "fleet-operations",
+      title: "Fleet Operations",
+      icon: Truck,
+      color: "bg-emerald-500",
+      mainMetric: `${managerStats.fleetUtilization}%`,
+      subMetric: "Fleet utilization",
+      description: "Vehicle status and performance",
+      trend: "+3.5%",
+      trendPositive: true,
+    },
+    {
+      id: "stock-assets",
+      title: "Stock & Assets",
+      icon: Package,
+      color: "bg-pink-500",
+      mainMetric: `$${managerStats.stockValue.toLocaleString()}`,
+      subMetric: "Current stock value",
+      description: "Inventory levels and asset tracking",
+      trend: "-2.1%",
+      trendPositive: false,
+    },
+    {
+      id: "system-settings",
+      title: "System Settings",
+      icon: Settings,
+      color: "bg-slate-500",
+      mainMetric: managerStats.activeUsers.toString(),
+      subMetric: "Active users",
+      description: "User permissions and system config",
+      trend: "+5 users",
+      trendPositive: true,
+    },
+    {
+      id: "critical-alerts",
+      title: "Critical Alerts",
+      icon: AlertTriangle,
+      color: "bg-red-500",
+      mainMetric: managerStats.criticalAlerts.toString(),
+      subMetric: "Active alerts",
+      description: "System incidents and job failures",
+      trend: "-2 alerts",
+      trendPositive: true,
+    },
+    {
+      id: "reports-hub",
+      title: "Reports Hub",
+      icon: FileText,
+      color: "bg-yellow-500",
+      mainMetric: managerStats.pendingReports.toString(),
+      subMetric: "Pending reports",
+      description: "Generate and schedule reports",
+      trend: "3 scheduled",
+      trendPositive: true,
+    },
+    {
+      id: "user-directory",
+      title: "User Directory",
+      icon: UserPlus,
+      color: "bg-teal-500",
+      mainMetric: managerStats.activeUsers.toString(),
+      subMetric: "Total users",
+      description: "User management and access control",
+      trend: "+8% growth",
+      trendPositive: true,
+    },
+    {
+      id: "analytics-center",
+      title: "Manager Analytics Center",
+      icon: BarChart3,
+      color: "bg-violet-500",
+      mainMetric: "All KPIs",
+      subMetric: "In one dashboard",
+      description: "Comprehensive analytics and insights",
+      trend: "Updated",
+      trendPositive: true,
     },
   ];
 
-  const overtimeClaims = [
+  const quickMetrics = [
     {
-      id: 1,
-      technician: "Emma Wilson",
-      date: "2024-01-15",
-      hours: 3.0,
-      reason: "Emergency call extension",
-      status: "pending",
+      title: "Jobs Completed Today",
+      value: "47",
+      icon: CheckCircle,
+      color: "text-success",
+      bgColor: "bg-success/10",
     },
     {
-      id: 2,
-      technician: "John Smith",
-      date: "2024-01-14",
-      hours: 2.5,
-      reason: "Complex installation",
-      status: "pending",
+      title: "Active Technicians",
+      value: managerStats.activeTechnicians.toString(),
+      icon: Users,
+      color: "text-primary",
+      bgColor: "bg-primary/10",
     },
     {
-      id: 3,
-      technician: "Mike Chen",
-      date: "2024-01-13",
-      hours: 1.5,
-      reason: "Equipment setup",
-      status: "approved",
-    },
-  ];
-
-  const jobReports = [
-    {
-      id: "J045",
-      title: "HVAC System Overhaul",
-      technician: "John Smith",
-      status: "completed",
-      duration: "4.5h",
-      delay: null,
-      customerRating: 5,
+      title: "Monthly Revenue",
+      value: `$${managerStats.revenue.toLocaleString()}`,
+      icon: DollarSign,
+      color: "text-success",
+      bgColor: "bg-success/10",
     },
     {
-      id: "J046",
-      title: "Electrical Panel Upgrade",
-      technician: "Sarah Johnson",
-      status: "delayed",
-      duration: "6.2h",
-      delay: "2h",
-      customerRating: null,
+      title: "Fleet Utilization",
+      value: `${managerStats.fleetUtilization}%`,
+      icon: Truck,
+      color: "text-info",
+      bgColor: "bg-info/10",
     },
     {
-      id: "J047",
-      title: "Emergency Leak Repair",
-      technician: "Emma Wilson",
-      status: "completed",
-      duration: "2.8h",
-      delay: null,
-      customerRating: 4,
+      title: "Compliance Score",
+      value: `${managerStats.complianceScore}%`,
+      icon: Shield,
+      color: "text-success",
+      bgColor: "bg-success/10",
+    },
+    {
+      title: "Productivity",
+      value: `${managerStats.productivity}%`,
+      icon: TrendingUp,
+      color: "text-warning",
+      bgColor: "bg-warning/10",
     },
   ];
 
-  const unassignedJobs = [
+  const priorityActions = [
     {
-      id: "J048",
-      title: "Routine Maintenance Check",
-      priority: "medium",
-      location: "Industrial Park",
-      estimatedTime: "2h",
-      skills: ["HVAC", "General"],
+      title: "Review Overdue Jobs",
+      description: "3 high-priority jobs are overdue",
+      action: "Review Now",
+      urgency: "High",
+      icon: AlertTriangle,
     },
     {
-      id: "J049",
-      title: "Electrical Safety Inspection",
-      priority: "high",
-      location: "Hospital Complex",
-      estimatedTime: "3h",
-      skills: ["Electrical", "Safety"],
+      title: "Approve Overtime Requests",
+      description: "8 overtime requests pending approval",
+      action: "Review Requests",
+      urgency: "Medium",
+      icon: Timer,
+    },
+    {
+      title: "Schedule Team Meeting",
+      description: "Weekly department sync due",
+      action: "Schedule",
+      urgency: "Low",
+      icon: Users,
+    },
+    {
+      title: "Review Compliance Report",
+      description: "Monthly compliance report ready",
+      action: "Review",
+      urgency: "Medium",
+      icon: Shield,
     },
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-success text-success-foreground";
-      case "on-break":
-        return "bg-warning text-warning-foreground";
-      case "offline":
-        return "bg-muted text-muted-foreground";
-      case "completed":
-        return "bg-success text-success-foreground";
-      case "delayed":
-        return "bg-destructive text-destructive-foreground";
-      case "pending":
-        return "bg-info text-info-foreground";
-      case "approved":
-        return "bg-success text-success-foreground";
-      default:
-        return "bg-secondary text-secondary-foreground";
+  useEffect(() => {
+    loadSystemData();
+  }, []);
+
+  const loadSystemData = async () => {
+    try {
+      const response = await fetch("/data/database.json");
+      const data = await response.json();
+      setSystemData(data);
+    } catch (error) {
+      console.error("Failed to load system data:", error);
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
+  const handleCardAction = (cardId: string) => {
+    switch (cardId) {
+      case "jobs-overview":
+        alert("Opening Jobs Overview dashboard with detailed job analytics...");
+        break;
+      case "financial-performance":
+        alert("Opening Financial Performance dashboard with revenue analytics...");
+        break;
+      case "hr-snapshot":
+        alert("Opening HR Snapshot with staff management tools...");
+        break;
+      case "productivity-metrics":
+        alert("Opening Productivity Metrics with team efficiency data...");
+        break;
+      case "departmental-performance":
+        alert("Opening Departmental Performance dashboard...");
+        break;
+      case "compliance-center":
+        alert("Opening Compliance Center with audit and risk management...");
+        break;
+      case "fleet-operations":
+        alert("Opening Fleet Operations dashboard...");
+        break;
+      case "stock-assets":
+        alert("Opening Stock & Assets inventory management...");
+        break;
+      case "system-settings":
+        alert("Opening System Settings and configuration...");
+        break;
+      case "critical-alerts":
+        alert("Opening Critical Alerts monitoring dashboard...");
+        break;
+      case "reports-hub":
+        alert("Opening Reports Hub for report generation...");
+        break;
+      case "user-directory":
+        alert("Opening User Directory for user management...");
+        break;
+      case "analytics-center":
+        alert("Opening Manager Analytics Center with comprehensive insights...");
+        break;
+      default:
+        alert(`Opening ${cardId} dashboard...`);
+    }
+  };
+
+  const getUrgencyColor = (urgency: string) => {
+    switch (urgency.toLowerCase()) {
       case "high":
         return "bg-destructive text-destructive-foreground";
       case "medium":
@@ -196,371 +352,258 @@ export default function ManagerDashboard() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Team Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="min-h-screen bg-background p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Manager Dashboard
+        </h1>
+        <p className="text-muted-foreground">
+          Comprehensive management overview with key performance indicators
+        </p>
+      </div>
+
+      {/* Quick Metrics Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        {quickMetrics.map((metric, index) => {
+          const IconComponent = metric.icon;
+          return (
+            <Card key={index} className="border-0 shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 rounded-lg ${metric.bgColor}`}>
+                    <IconComponent className={`h-5 w-5 ${metric.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">{metric.title}</p>
+                    <p className="text-lg font-bold">{metric.value}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Main Dashboard Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        {dashboardCards.map((card) => {
+          const IconComponent = card.icon;
+          return (
+            <Card
+              key={card.id}
+              className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 shadow-md overflow-hidden"
+              onClick={() => handleCardAction(card.id)}
+            >
+              <CardContent className="p-0">
+                {/* Header with Icon */}
+                <div className={`${card.color} p-4 text-white`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-lg">{card.title}</h3>
+                      <p className="text-sm opacity-90">{card.description}</p>
+                    </div>
+                    <IconComponent className="h-8 w-8 opacity-80" />
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
+                  <div className="flex items-end justify-between mb-3">
+                    <div>
+                      <p className="text-2xl font-bold text-foreground">{card.mainMetric}</p>
+                      <p className="text-sm text-muted-foreground">{card.subMetric}</p>
+                    </div>
+                    <div className="text-right">
+                      <p
+                        className={`text-sm font-semibold ${
+                          card.trendPositive ? "text-success" : "text-destructive"
+                        }`}
+                      >
+                        {card.trend}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCardAction(card.id);
+                    }}
+                  >
+                    Open Dashboard
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Priority Actions Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Team Status</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <AlertCircle className="h-5 w-5 text-warning" />
+              <span>Priority Actions Required</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {teamStats.activeTechnicians}/{teamStats.totalTechnicians}
-            </div>
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-              <Activity className="h-3 w-3 text-success" />
-              <span>
-                {Math.round(
-                  (teamStats.activeTechnicians / teamStats.totalTechnicians) *
-                    100,
-                )}
-                % active
-              </span>
+            <div className="space-y-4">
+              {priorityActions.map((action, index) => {
+                const IconComponent = action.icon;
+                return (
+                  <div key={index} className="border border-border rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-start space-x-3">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <IconComponent className="h-4 w-4 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">{action.title}</h4>
+                          <p className="text-sm text-muted-foreground">{action.description}</p>
+                        </div>
+                      </div>
+                      <Badge className={getUrgencyColor(action.urgency)}>
+                        {action.urgency}
+                      </Badge>
+                    </div>
+                    <Button variant="outline" size="sm" className="w-full">
+                      {action.action}
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Efficiency</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Activity className="h-5 w-5 text-primary" />
+              <span>Team Performance Summary</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{teamStats.avgEfficiency}%</div>
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 text-success" />
-              <span>+3.2% from last week</span>
-            </div>
-          </CardContent>
-        </Card>
+            <div className="space-y-4">
+              <div className="border border-border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">Customer Satisfaction</span>
+                  <span className="text-lg font-bold text-success">{managerStats.customerSatisfaction}%</span>
+                </div>
+                <div className="bg-secondary rounded-full h-2">
+                  <div 
+                    className="bg-success h-2 rounded-full" 
+                    style={{ width: `${managerStats.customerSatisfaction}%` }}
+                  ></div>
+                </div>
+              </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Jobs Today</CardTitle>
-            <ClipboardList className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{teamStats.completedJobs}</div>
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-              <CheckCircle className="h-3 w-3 text-success" />
-              <span>{teamStats.pendingJobs} pending</span>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="border border-border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">On-Time Delivery</span>
+                  <span className="text-lg font-bold text-primary">{managerStats.onTimeDelivery}%</span>
+                </div>
+                <div className="bg-secondary rounded-full h-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full" 
+                    style={{ width: `${managerStats.onTimeDelivery}%` }}
+                  ></div>
+                </div>
+              </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              ${teamStats.departmentRevenue.toLocaleString()}
-            </div>
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 text-success" />
-              <span>This month</span>
+              <div className="border border-border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">Profit Margin</span>
+                  <span className="text-lg font-bold text-success">{managerStats.profitMargin}%</span>
+                </div>
+                <div className="bg-secondary rounded-full h-2">
+                  <div 
+                    className="bg-success h-2 rounded-full" 
+                    style={{ width: `${managerStats.profitMargin}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="border border-border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">Monthly Growth</span>
+                  <span className="text-lg font-bold text-warning">+{managerStats.monthlyGrowth}%</span>
+                </div>
+                <div className="bg-secondary rounded-full h-2">
+                  <div 
+                    className="bg-warning h-2 rounded-full" 
+                    style={{ width: `${managerStats.monthlyGrowth * 4}%` }}
+                  ></div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Main Content Tabs */}
-      <Tabs defaultValue="team" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="team">Live Team</TabsTrigger>
-          <TabsTrigger value="jobs">Job Reports</TabsTrigger>
-          <TabsTrigger value="overtime">Overtime</TabsTrigger>
-          <TabsTrigger value="unassigned">Unassigned</TabsTrigger>
-          <TabsTrigger value="controls">Controls</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="team" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>Real-Time Team Status</span>
-                <Button variant="outline" size="sm">
-                  <Activity className="h-4 w-4 mr-2" />
-                  Refresh
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {technicians.map((tech) => (
-                  <div
-                    key={tech.id}
-                    className="flex items-center justify-between p-4 border border-border rounded-lg"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <UserCheck className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold">{tech.name}</h4>
-                        <div className="flex items-center space-x-2">
-                          <Badge className={getStatusColor(tech.status)}>
-                            {tech.status}
-                          </Badge>
-                          {tech.currentJob && (
-                            <p className="text-sm text-muted-foreground">
-                              {tech.currentJob}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-6">
-                      <div className="text-center">
-                        <p className="text-xs text-muted-foreground">
-                          Efficiency
-                        </p>
-                        <p className="font-semibold text-success">
-                          {tech.efficiency}%
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-xs text-muted-foreground">Jobs</p>
-                        <p className="font-semibold">{tech.jobsCompleted}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-xs text-muted-foreground">Hours</p>
-                        <p className="font-semibold">{tech.hoursWorked}h</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-xs text-muted-foreground">
-                          Location
-                        </p>
-                        <p className="font-semibold flex items-center">
-                          <MapPin className="h-3 w-3 mr-1" />
-                          {tech.location}
-                        </p>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="jobs" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Job Completion & Delay Reports</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {jobReports.map((job) => (
-                  <div
-                    key={job.id}
-                    className="flex items-center justify-between p-4 border border-border rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Badge variant="outline">{job.id}</Badge>
-                        <Badge className={getStatusColor(job.status)}>
-                          {job.status}
-                        </Badge>
-                        {job.delay && (
-                          <Badge className="bg-destructive text-destructive-foreground">
-                            +{job.delay} delay
-                          </Badge>
-                        )}
-                      </div>
-                      <h4 className="font-semibold">{job.title}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Technician: {job.technician}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="text-center">
-                        <p className="text-xs text-muted-foreground">
-                          Duration
-                        </p>
-                        <p className="font-semibold">{job.duration}</p>
-                      </div>
-                      {job.customerRating && (
-                        <div className="text-center">
-                          <p className="text-xs text-muted-foreground">
-                            Rating
-                          </p>
-                          <p className="font-semibold text-warning">
-                            {"★".repeat(job.customerRating)}
-                          </p>
-                        </div>
-                      )}
-                      <Button variant="outline" size="sm">
-                        View Report
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="overtime" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>Overtime Claims</span>
-                <Button size="sm">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Approve All
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {overtimeClaims.map((claim) => (
-                  <div
-                    key={claim.id}
-                    className="flex items-center justify-between p-4 border border-border rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <h4 className="font-semibold">{claim.technician}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {claim.reason}
-                      </p>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Calendar className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">
-                          {claim.date}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="text-center">
-                        <p className="text-xs text-muted-foreground">Hours</p>
-                        <p className="font-semibold">{claim.hours}h</p>
-                      </div>
-                      <Badge className={getStatusColor(claim.status)}>
-                        {claim.status}
-                      </Badge>
-                      {claim.status === "pending" && (
-                        <div className="flex space-x-2">
-                          <Button size="sm" variant="outline">
-                            Reject
-                          </Button>
-                          <Button size="sm">Approve</Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="unassigned" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Unassigned Jobs</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {unassignedJobs.map((job) => (
-                  <div
-                    key={job.id}
-                    className="flex items-center justify-between p-4 border border-border rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Badge variant="outline">{job.id}</Badge>
-                        <Badge className={getPriorityColor(job.priority)}>
-                          {job.priority}
-                        </Badge>
-                      </div>
-                      <h4 className="font-semibold">{job.title}</h4>
-                      <p className="text-sm text-muted-foreground flex items-center">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        {job.location}
-                      </p>
-                      <div className="flex items-center space-x-4 mt-2">
-                        <div className="flex items-center">
-                          <Timer className="h-3 w-3 mr-1 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">
-                            {job.estimatedTime}
-                          </span>
-                        </div>
-                        <div className="flex space-x-1">
-                          {job.skills.map((skill) => (
-                            <Badge
-                              key={skill}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {skill}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
-                      <Button size="sm">Assign</Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="controls" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Role Management</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full justify-start">
-                  <Users className="h-4 w-4 mr-2" />
-                  Assign Coordinator Roles
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <UserCheck className="h-4 w-4 mr-2" />
-                  Modify Technician Roles
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Set Default Dashboards
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Department Controls</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full justify-start">
-                  <ClipboardList className="h-4 w-4 mr-2" />
-                  View All Submitted Jobs
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Moderate H&S Reports
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Activity className="h-4 w-4 mr-2" />
-                  Fleet Status Overview
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+      {/* Quick Actions */}
+      <div className="mt-8 bg-card rounded-2xl p-6 border shadow-sm">
+        <h3 className="font-semibold text-foreground mb-4 flex items-center space-x-2">
+          <Zap className="h-5 w-5 text-primary" />
+          <span>Quick Actions</span>
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Creating new job assignment...")}
+          >
+            <ClipboardList className="h-4 w-4 mr-2" />
+            New Job
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Opening team management...")}
+          >
+            <Users className="h-4 w-4 mr-2" />
+            Manage Team
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Generating weekly report...")}
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            Weekly Report
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Reviewing resource allocation...")}
+          >
+            <Package className="h-4 w-4 mr-2" />
+            Resources
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Opening performance review...")}
+          >
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Performance
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start"
+            onClick={() => alert("Opening system settings...")}
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
