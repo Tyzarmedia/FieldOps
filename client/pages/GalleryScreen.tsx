@@ -106,15 +106,15 @@ export default function GalleryScreen() {
 
       {/* Content */}
       <div className="p-4 pb-20">
-        {/* Category Tabs */}
-        <div className="flex space-x-2 mb-6">
+        {/* Category Tabs - 2x2 Grid */}
+        <div className="grid grid-cols-2 gap-2 mb-6">
           {categories.map((category) => (
             <Button
               key={category.id}
               variant={selectedCategory === category.id ? "default" : "outline"}
-              className={`flex-1 py-3 ${
-                selectedCategory === category.id 
-                  ? `${category.color} hover:${category.color}/90 text-white` 
+              className={`py-3 text-sm ${
+                selectedCategory === category.id
+                  ? `${category.color} hover:${category.color}/90 text-white`
                   : "border-gray-300 text-gray-700 hover:bg-gray-50"
               }`}
               onClick={() => setSelectedCategory(category.id as any)}
