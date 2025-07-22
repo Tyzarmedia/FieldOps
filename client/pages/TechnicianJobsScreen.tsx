@@ -652,7 +652,10 @@ export default function TechnicianJobsScreen() {
               <div className="mt-4 text-center">
                 {job.status === 'assigned' && (
                   <Button
-                    onClick={() => handleJobAction(job, 'accept')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleJobAction(job, 'accept');
+                    }}
                     className="w-full bg-cyan-500 hover:bg-cyan-600 text-white rounded-full"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
@@ -661,7 +664,10 @@ export default function TechnicianJobsScreen() {
                 )}
                 {job.status === 'accepted' && (
                   <Button
-                    onClick={() => handleJobAction(job, 'start')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleJobAction(job, 'start');
+                    }}
                     className="w-full bg-green-500 hover:bg-green-600 text-white rounded-full"
                   >
                     <Play className="h-4 w-4 mr-2" />
@@ -671,14 +677,20 @@ export default function TechnicianJobsScreen() {
                 {job.status === 'in-progress' && (
                   <div className="flex space-x-2">
                     <Button
-                      onClick={() => handleJobAction(job, 'pause')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleJobAction(job, 'pause');
+                      }}
                       className="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-full"
                     >
                       <Pause className="h-4 w-4 mr-2" />
                       Pause
                     </Button>
                     <Button
-                      onClick={() => handleJobAction(job, 'complete')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleJobAction(job, 'complete');
+                      }}
                       className="flex-1 bg-purple-500 hover:bg-purple-600 text-white rounded-full"
                     >
                       <CheckCircle className="h-4 w-4 mr-2" />
@@ -686,13 +698,6 @@ export default function TechnicianJobsScreen() {
                     </Button>
                   </div>
                 )}
-                <Button
-                  onClick={() => handleJobAction(job, 'view')}
-                  variant="outline"
-                  className="w-full mt-2"
-                >
-                  View Details
-                </Button>
               </div>
             </CardContent>
           </Card>
