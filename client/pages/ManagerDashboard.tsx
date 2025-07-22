@@ -39,6 +39,7 @@ import {
 
 export default function ManagerDashboard() {
   const [systemData, setSystemData] = useState<any>(null);
+  const [activeSection, setActiveSection] = useState("main");
 
   const managerStats = {
     totalJobs: 1247,
