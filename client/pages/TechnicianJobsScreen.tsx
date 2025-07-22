@@ -547,8 +547,10 @@ export default function TechnicianJobsScreen() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20"
+              onClick={toggleSortOrder}
+              title={`Sort ${sortOrder === "new-to-old" ? "Old to New" : "New to Old"}`}
             >
-              <MoreVertical className="h-6 w-6" />
+              <ArrowUpDown className="h-6 w-6" />
             </Button>
             <Button
               variant="ghost"
