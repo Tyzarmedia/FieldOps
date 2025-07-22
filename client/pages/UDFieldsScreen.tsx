@@ -27,6 +27,7 @@ import {
 
 export default function UDFieldsScreen() {
   const navigate = useNavigate();
+  const [currentNavSection, setCurrentNavSection] = useState("udf");
   const [expandedSections, setExpandedSections] = useState<{
     [key: string]: boolean;
   }>({
