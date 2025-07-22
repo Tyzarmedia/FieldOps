@@ -48,6 +48,7 @@ export default function TechnicianJobsScreen() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [currentNavSection, setCurrentNavSection] = useState("details");
   const navigate = useNavigate();
 
   const tabs = useMemo(
