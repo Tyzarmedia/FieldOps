@@ -267,7 +267,7 @@ export default function TechnicianDashboard() {
       {/* Main Content */}
       <div className="p-6">
         {/* Job Status Summary - Moved to top */}
-        <div className="bg-white rounded-2xl p-6 shadow-md mb-6">
+        <div className="bg-white rounded-2xl p-6 shadow-md mb-6 sm:pb-12">
           <h3 className="font-semibold text-gray-800 mb-4">Today's Job Status</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
