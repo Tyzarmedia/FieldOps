@@ -24,6 +24,18 @@ export default function SignOffScreen() {
   const navigate = useNavigate();
   const [termsAccepted, setTermsAccepted] = useState(true);
   const [currentTab, setCurrentTab] = useState("signoff");
+  const [showValidationDialog, setShowValidationDialog] = useState(false);
+  const [noStockUsed, setNoStockUsed] = useState(false);
+  const [isSigned, setIsSigned] = useState(false);
+
+  // Mock validation data (in real app this would come from API/state)
+  const validationChecks = {
+    imagesUploaded: 3, // Number of images uploaded
+    requiredImages: 2, // Minimum required images
+    udfFieldsCompleted: true, // Whether all UDF fields are filled
+    stockAllocated: false, // Whether stock has been allocated
+    signatureCompleted: isSigned, // Whether user has signed
+  };
 
   const handleSave = () => {
     console.log("Saving sign off...");
