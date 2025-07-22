@@ -116,6 +116,10 @@ export default function TechnicianJobsScreen() {
     }
   };
 
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === "new-to-old" ? "old-to-new" : "new-to-old");
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
