@@ -73,9 +73,12 @@ export default function AssistantTechnicianDashboard() {
       id: "overtime",
       title: "Capture Overtime",
       icon: Timer,
-      color: "bg-orange-500",
-      description: "Log overtime hours worked",
-      action: () => navigate("/technician/overtime"),
+      color: "bg-gray-400",
+      description: "Overtime captured by technician",
+      action: () => {
+        alert("Overtime is managed by the technician you are working with");
+      },
+      disabled: true,
     },
   ];
 
