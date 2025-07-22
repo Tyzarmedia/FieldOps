@@ -42,7 +42,33 @@ export default function SignOffScreen() {
   };
 
   const handleComplete = () => {
+    // Check all validation requirements
+    const validationErrors = [];
+
+    if (!validationChecks.signatureCompleted) {
+      validationErrors.push("Please complete the signature");
+    }
+
+    if (validationChecks.imagesUploaded < validationChecks.requiredImages) {
+      validationErrors.push(`Please upload at least ${validationChecks.requiredImages} images (currently ${validationChecks.imagesUploaded})`);
+    }
+
+    if (!validationChecks.udfFieldsCompleted) {
+      validationErrors.push("Please complete all UDF fields");
+    }
+
+    if (!validationChecks.stockAllocated && !noStockUsed) {
+      validationErrors.push("Please allocate stock or check 'No stock used'");
+    }
+
+    if (validationErrors.length > 0) {
+      setShowValidationDialog(true);
+      return;
+    }
+
+    // All validations passed - complete the job
     console.log("Completing job...");
+    alert("Job completed successfully and marked as closed!");
     navigate('/');
   };
 
