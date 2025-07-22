@@ -323,6 +323,28 @@ export default function ManagerDashboard() {
       trend: "Updated",
       trendPositive: true,
     },
+    {
+      id: "network-assessment",
+      title: "Network Assessment Reports",
+      icon: Wifi,
+      color: "bg-blue-600",
+      mainMetric: managerStats.networkAssessments.toString(),
+      subMetric: "Assessments completed",
+      description: "Network infrastructure evaluations",
+      trend: "+5 this month",
+      trendPositive: true,
+    },
+    {
+      id: "overtime-management",
+      title: "Overtime Management",
+      icon: Clock,
+      color: "bg-amber-500",
+      mainMetric: managerStats.pendingOvertimeClaims.toString(),
+      subMetric: "Pending approval",
+      description: "Review and approve overtime claims",
+      trend: `R${managerStats.overtimeValue.toLocaleString()}`,
+      trendPositive: true,
+    },
   ];
 
   const quickMetrics = [
