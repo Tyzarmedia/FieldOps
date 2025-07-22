@@ -125,30 +125,38 @@ export default function GalleryScreen() {
         </div>
 
         {/* Upload Buttons */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-2 gap-3 mb-6">
           <Button
             variant="outline"
-            className="flex flex-col items-center py-6 h-auto border-2 border-dashed border-blue-500 text-blue-600 hover:bg-blue-50"
-            onClick={() => handleUpload('before')}
+            className="flex flex-col items-center py-4 h-auto border-2 border-dashed border-blue-500 text-blue-600 hover:bg-blue-50"
+            onClick={() => handleUpload('before-light-readings')}
           >
-            <Camera className="h-8 w-8 mb-2" />
-            <span className="text-sm font-medium">Before</span>
+            <Camera className="h-6 w-6 mb-2" />
+            <span className="text-xs font-medium text-center">Before Light Readings</span>
           </Button>
           <Button
             variant="outline"
-            className="flex flex-col items-center py-6 h-auto border-2 border-dashed border-orange-500 text-orange-600 hover:bg-orange-50"
-            onClick={() => handleUpload('fault-finding')}
+            className="flex flex-col items-center py-4 h-auto border-2 border-dashed border-red-500 text-red-600 hover:bg-red-50"
+            onClick={() => handleUpload('image-fault')}
           >
-            <Camera className="h-8 w-8 mb-2" />
-            <span className="text-sm font-medium">Fault Finding</span>
+            <Camera className="h-6 w-6 mb-2" />
+            <span className="text-xs font-medium text-center">Image Fault</span>
           </Button>
           <Button
             variant="outline"
-            className="flex flex-col items-center py-6 h-auto border-2 border-dashed border-green-500 text-green-600 hover:bg-green-50"
-            onClick={() => handleUpload('after-fix')}
+            className="flex flex-col items-center py-4 h-auto border-2 border-dashed border-green-500 text-green-600 hover:bg-green-50"
+            onClick={() => handleUpload('image-after-work')}
           >
-            <Camera className="h-8 w-8 mb-2" />
-            <span className="text-sm font-medium">After Fix</span>
+            <Camera className="h-6 w-6 mb-2" />
+            <span className="text-xs font-medium text-center">Image After Work</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="flex flex-col items-center py-4 h-auto border-2 border-dashed border-purple-500 text-purple-600 hover:bg-purple-50"
+            onClick={() => handleUpload('light-readings-after-work')}
+          >
+            <Camera className="h-6 w-6 mb-2" />
+            <span className="text-xs font-medium text-center">Light Readings After Work</span>
           </Button>
         </div>
 
