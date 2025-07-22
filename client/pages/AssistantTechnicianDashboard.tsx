@@ -13,6 +13,12 @@ import {
   Truck,
   Clock,
   Timer,
+  Calendar,
+  Package2,
+  Network,
+  Settings,
+  LogOut,
+  UserCheck,
 } from "lucide-react";
 import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
 
