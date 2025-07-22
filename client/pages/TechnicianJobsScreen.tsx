@@ -601,6 +601,56 @@ export default function TechnicianJobsScreen() {
             </Button>
           </div>
 
+          {/* Quick Actions Row */}
+          {selectedJob.status !== "completed" && (
+            <div className="flex justify-center space-x-2 py-2 border-t border-gray-100">
+              {selectedJob.status === "assigned" && (
+                <Button
+                  size="sm"
+                  className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1"
+                  onClick={() => {
+                    handleJobAction(selectedJob, "accept");
+                  }}
+                >
+                  Accept Job
+                </Button>
+              )}
+              {selectedJob.status === "accepted" && (
+                <Button
+                  size="sm"
+                  className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1"
+                  onClick={() => {
+                    handleJobAction(selectedJob, "start");
+                  }}
+                >
+                  Start Job
+                </Button>
+              )}
+              {selectedJob.status === "in-progress" && (
+                <>
+                  <Button
+                    size="sm"
+                    className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1"
+                    onClick={() => {
+                      handleJobAction(selectedJob, "pause");
+                    }}
+                  >
+                    Pause
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-purple-500 hover:bg-purple-600 text-white text-xs px-3 py-1"
+                    onClick={() => {
+                      handleJobAction(selectedJob, "complete");
+                    }}
+                  >
+                    Complete
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
+
           {/* Progress Indicator */}
           <div className="bg-gray-100 h-1">
             <div
