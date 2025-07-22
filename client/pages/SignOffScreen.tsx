@@ -72,25 +72,17 @@ export default function SignOffScreen() {
     navigate('/');
   };
 
-  const handleTabChange = (tab: string) => {
-    setCurrentTab(tab);
-    switch (tab) {
-      case "details":
-        navigate('/technician/jobs');
-        break;
-      case "udf":
-        // Navigate to UDF screen when implemented
-        break;
-      case "gallery":
-        // Navigate to Gallery screen when implemented
-        break;
-      case "stocks":
-        // Navigate to Stocks screen when implemented
-        break;
-      case "signoff":
-        // Already on sign off screen
-        break;
+  const handleNavigation = (section: string, route: string) => {
+    setCurrentTab(section);
+    if (route.startsWith("/")) {
+      navigate(route);
     }
+  };
+
+  const handleSignature = () => {
+    setIsSigned(true);
+    // In real app, this would open signature pad
+    alert("Signature captured!");
   };
 
   return (
