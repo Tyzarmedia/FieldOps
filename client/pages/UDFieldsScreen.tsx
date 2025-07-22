@@ -366,15 +366,108 @@ export default function UDFieldsScreen() {
         </Card>
       </div>
 
-      {/* Fixed Bottom Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
+      {/* Chat Button - Fixed to bottom right */}
+      <div className="fixed bottom-32 right-6 z-50">
+        <Button
+          size="lg"
+          className="bg-blue-600 hover:bg-blue-700 text-white rounded-full h-14 w-14 shadow-lg"
+          onClick={() => navigate("/team-chat")}
+        >
+          <MessageCircle className="h-6 w-6" />
+        </Button>
+      </div>
+
+      {/* Update Button - Above Navigation */}
+      <div className="fixed bottom-20 left-0 right-0 px-4 z-40">
         <Button
           onClick={handleUpdate}
-          className="w-full bg-green-500 hover:bg-green-600 text-white py-4 text-lg font-semibold"
+          className="w-full bg-green-500 hover:bg-green-600 text-white py-3 text-lg font-semibold shadow-lg"
         >
           <RefreshCw className="h-5 w-5 mr-2" />
-          Update
+          Update UDF Fields
         </Button>
+      </div>
+
+      {/* Enhanced Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-orange-200 shadow-xl z-40">
+        <div className="flex justify-around py-3 px-2">
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentNavSection === "details"
+                ? "bg-orange-50 text-orange-600 border border-orange-200"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
+            onClick={() => handleNavigation("details", "/technician/jobs")}
+          >
+            <FileText className="h-5 w-5" />
+            <span className="text-xs font-medium">Details</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentNavSection === "udf"
+                ? "bg-orange-50 text-orange-600 border border-orange-200"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
+            onClick={() => handleNavigation("udf", "")}
+          >
+            <Settings className="h-5 w-5" />
+            <span className="text-xs font-medium">UDF</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentNavSection === "gallery"
+                ? "bg-orange-50 text-orange-600 border border-orange-200"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
+            onClick={() => handleNavigation("gallery", "/technician/gallery")}
+          >
+            <Camera className="h-5 w-5" />
+            <span className="text-xs font-medium">Gallery</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentNavSection === "stock"
+                ? "bg-orange-50 text-orange-600 border border-orange-200"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
+            onClick={() => handleNavigation("stock", "/technician/stock")}
+          >
+            <Package className="h-5 w-5" />
+            <span className="text-xs font-medium">Stock</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentNavSection === "signoff"
+                ? "bg-green-50 text-green-600 border border-green-200"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
+            onClick={() => handleNavigation("signoff", "/technician/signoff")}
+          >
+            <PenTool className="h-5 w-5" />
+            <span className="text-xs font-medium">Sign Off</span>
+          </Button>
+        </div>
+
+        {/* Progress Indicator */}
+        <div className="bg-gray-100 h-1">
+          <div
+            className="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300"
+            style={{
+              width: `${
+                currentNavSection === "details" ? "20%" :
+                currentNavSection === "udf" ? "40%" :
+                currentNavSection === "gallery" ? "60%" :
+                currentNavSection === "stock" ? "80%" :
+                currentNavSection === "signoff" ? "100%" : "40%"
+              }%`
+            }}
+          />
+        </div>
       </div>
     </div>
   );
