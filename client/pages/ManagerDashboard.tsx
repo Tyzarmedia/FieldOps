@@ -482,6 +482,12 @@ export default function ManagerDashboard() {
           "Opening Manager Analytics Center with comprehensive insights...",
         );
         break;
+      case "network-assessment":
+        alert("Opening Network Assessment Reports dashboard...");
+        break;
+      case "overtime-management":
+        alert("Opening Overtime Management for claims approval...");
+        break;
       default:
         alert(`Opening ${cardId} dashboard...`);
     }
