@@ -305,59 +305,85 @@ export default function SignOffScreen() {
         </Button>
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="flex justify-around py-2">
+      {/* Enhanced Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-orange-200 shadow-xl z-40">
+        <div className="flex justify-around py-3 px-2">
           <Button
             variant="ghost"
-            className={`flex flex-col items-center space-y-1 p-3 ${
-              currentTab === "details" ? "text-blue-600" : "text-gray-600"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentTab === "details"
+                ? "bg-orange-50 text-orange-600 border border-orange-200"
+                : "text-gray-600 hover:bg-gray-50"
             }`}
-            onClick={() => handleTabChange("details")}
+            onClick={() => handleNavigation("details", "/technician/jobs")}
           >
-            <FileText className="h-6 w-6" />
+            <FileText className="h-5 w-5" />
             <span className="text-xs font-medium">Details</span>
           </Button>
           <Button
             variant="ghost"
-            className={`flex flex-col items-center space-y-1 p-3 ${
-              currentTab === "udf" ? "text-blue-600" : "text-gray-600"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentTab === "udf"
+                ? "bg-orange-50 text-orange-600 border border-orange-200"
+                : "text-gray-600 hover:bg-gray-50"
             }`}
-            onClick={() => handleTabChange("udf")}
+            onClick={() => handleNavigation("udf", "/technician/udf")}
           >
-            <Settings className="h-6 w-6" />
-            <span className="text-xs font-medium">Udf</span>
+            <Settings className="h-5 w-5" />
+            <span className="text-xs font-medium">UDF</span>
           </Button>
           <Button
             variant="ghost"
-            className={`flex flex-col items-center space-y-1 p-3 ${
-              currentTab === "gallery" ? "text-blue-600" : "text-gray-600"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentTab === "gallery"
+                ? "bg-orange-50 text-orange-600 border border-orange-200"
+                : "text-gray-600 hover:bg-gray-50"
             }`}
-            onClick={() => handleTabChange("gallery")}
+            onClick={() => handleNavigation("gallery", "/technician/gallery")}
           >
-            <Camera className="h-6 w-6" />
+            <Camera className="h-5 w-5" />
             <span className="text-xs font-medium">Gallery</span>
           </Button>
           <Button
             variant="ghost"
-            className={`flex flex-col items-center space-y-1 p-3 ${
-              currentTab === "stocks" ? "text-blue-600" : "text-gray-600"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentTab === "stock"
+                ? "bg-orange-50 text-orange-600 border border-orange-200"
+                : "text-gray-600 hover:bg-gray-50"
             }`}
-            onClick={() => handleTabChange("stocks")}
+            onClick={() => handleNavigation("stock", "/technician/stock")}
           >
-            <Package className="h-6 w-6" />
-            <span className="text-xs font-medium">Stocks</span>
+            <Package className="h-5 w-5" />
+            <span className="text-xs font-medium">Stock</span>
           </Button>
           <Button
             variant="ghost"
-            className={`flex flex-col items-center space-y-1 p-3 ${
-              currentTab === "signoff" ? "text-orange-600" : "text-gray-600"
+            className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+              currentTab === "signoff"
+                ? "bg-green-50 text-green-600 border border-green-200"
+                : "text-gray-600 hover:bg-gray-50"
             }`}
-            onClick={() => handleTabChange("signoff")}
+            onClick={() => handleNavigation("signoff", "")}
           >
-            <PenTool className="h-6 w-6" />
+            <PenTool className="h-5 w-5" />
             <span className="text-xs font-medium">Sign Off</span>
           </Button>
+        </div>
+
+        {/* Progress Indicator */}
+        <div className="bg-gray-100 h-1">
+          <div
+            className="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300"
+            style={{
+              width: `${
+                currentTab === "details" ? "20%" :
+                currentTab === "udf" ? "40%" :
+                currentTab === "gallery" ? "60%" :
+                currentTab === "stock" ? "80%" :
+                currentTab === "signoff" ? "100%" : "100%"
+              }%`
+            }}
+          />
         </div>
       </div>
     </div>
