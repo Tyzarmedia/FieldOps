@@ -208,7 +208,7 @@ export default function TechnicianDashboard() {
       </div>
 
       {/* Mobile Header */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-b-3xl">
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-b-3xl sm:-my-1">
         {/* Top Navigation */}
         <div className="flex justify-between items-center mb-8">
           <Button
