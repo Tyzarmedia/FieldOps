@@ -48,7 +48,7 @@ export default function TechnicianJobsScreen() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const navigate = useNavigate();
 
-  const tabs = [
+  const tabs = useMemo(() => [
     {
       id: "assigned",
       label: "Assigned",
@@ -73,7 +73,7 @@ export default function TechnicianJobsScreen() {
       count: teamJobs.filter((j) => j.status === "completed").length,
       color: "bg-purple-500",
     },
-  ];
+  ], [refreshTrigger]);
 
   const filteredJobs = teamJobs
     .filter((job) => {
