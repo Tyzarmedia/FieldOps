@@ -62,6 +62,9 @@ export default function ManagerDashboard() {
     profitMargin: 30.2,
     customerSatisfaction: 94.8,
     onTimeDelivery: 96.3,
+    networkAssessments: 23,
+    pendingOvertimeClaims: 8,
+    overtimeValue: 12450,
   };
 
   const dashboardCards = [
