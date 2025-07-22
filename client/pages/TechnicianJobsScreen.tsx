@@ -516,48 +516,85 @@ export default function TechnicianJobsScreen() {
           </Button>
         </div>
 
-        {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-          <div className="flex justify-around py-2">
+        {/* Enhanced Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-orange-200 shadow-xl z-40">
+          <div className="flex justify-around py-3 px-2">
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-blue-600"
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "details"
+                  ? "bg-orange-50 text-orange-600 border border-orange-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("details", "")}
             >
-              <FileText className="h-6 w-6" />
+              <FileText className="h-5 w-5" />
               <span className="text-xs font-medium">Details</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-gray-600"
-              onClick={() => navigate("/technician/udf")}
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "udf"
+                  ? "bg-orange-50 text-orange-600 border border-orange-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("udf", "/technician/udf")}
             >
-              <Settings className="h-6 w-6" />
-              <span className="text-xs font-medium">Udf</span>
+              <Settings className="h-5 w-5" />
+              <span className="text-xs font-medium">UDF</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-gray-600"
-              onClick={() => navigate("/technician/gallery")}
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "gallery"
+                  ? "bg-orange-50 text-orange-600 border border-orange-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("gallery", "/technician/gallery")}
             >
-              <Camera className="h-6 w-6" />
+              <Camera className="h-5 w-5" />
               <span className="text-xs font-medium">Gallery</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-gray-600"
-              onClick={() => navigate("/technician/stock")}
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "stock"
+                  ? "bg-orange-50 text-orange-600 border border-orange-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("stock", "/technician/stock")}
             >
-              <Package className="h-6 w-6" />
-              <span className="text-xs font-medium">Stocks</span>
+              <Package className="h-5 w-5" />
+              <span className="text-xs font-medium">Stock</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-orange-600"
-              onClick={() => navigate("/technician/signoff")}
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "signoff"
+                  ? "bg-green-50 text-green-600 border border-green-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("signoff", "/technician/signoff")}
             >
-              <PenTool className="h-6 w-6" />
+              <PenTool className="h-5 w-5" />
               <span className="text-xs font-medium">Sign Off</span>
             </Button>
+          </div>
+
+          {/* Progress Indicator */}
+          <div className="bg-gray-100 h-1">
+            <div
+              className="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300"
+              style={{
+                width: `${
+                  currentNavSection === "details" ? "20%" :
+                  currentNavSection === "udf" ? "40%" :
+                  currentNavSection === "gallery" ? "60%" :
+                  currentNavSection === "stock" ? "80%" :
+                  currentNavSection === "signoff" ? "100%" : "20%"
+                }%`
+              }}
+            />
           </div>
         </div>
       </div>
