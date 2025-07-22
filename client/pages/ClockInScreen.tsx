@@ -16,12 +16,30 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
   const userRole = propUserRole || localStorage.getItem("userRole") || "Technician";
   const userName = propUserName || localStorage.getItem("userName") || "John Doe";
   const [isClockingIn, setIsClockingIn] = useState(false);
+  const [isClockedIn, setIsClockedIn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [workingHours, setWorkingHours] = useState("0:00");
   const [distanceTraveled, setDistanceTraveled] = useState("0.0");
   const [sliderPosition, setSliderPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedAssistant, setSelectedAssistant] = useState<string>("");
+  const [clockInTime, setClockInTime] = useState<Date | null>(null);
+  const [trackingInterval, setTrackingInterval] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
+
+  // Check if user is already clocked in
+  useEffect(() => {
+    const clockedInStatus = localStorage.getItem("isClockedIn");
+    const storedClockInTime = localStorage.getItem("clockInTime");
+    const storedAssistant = localStorage.getItem("selectedAssistant");
+
+    if (clockedInStatus === "true" && storedClockInTime) {
+      setIsClockedIn(true);
+      setClockInTime(new Date(storedClockInTime));
+      setSelectedAssistant(storedAssistant || "");
+      startTracking(new Date(storedClockInTime));
+    }
+  }, []);
 
   // Get user initials
   const getInitials = (name: string) => {
