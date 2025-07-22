@@ -507,6 +507,229 @@ export default function ManagerDashboard() {
     }
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "completed":
+      case "manager approved":
+        return "bg-success text-success-foreground";
+      case "in progress":
+      case "pending manager approval":
+        return "bg-warning text-warning-foreground";
+      case "pending review":
+        return "bg-info text-info-foreground";
+      case "coordinator rejected":
+        return "bg-destructive text-destructive-foreground";
+      default:
+        return "bg-secondary text-secondary-foreground";
+    }
+  };
+
+  const renderNetworkAssessment = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Network Assessment Reports</h2>
+        <div className="flex space-x-2">
+          <Button variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Export Report
+          </Button>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Assessment
+          </Button>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {networkAssessments.map((assessment) => (
+          <Card key={assessment.id} className="hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Badge variant="outline">{assessment.id}</Badge>
+                    <Badge className={getStatusColor(assessment.status)}>
+                      {assessment.status}
+                    </Badge>
+                    <Badge className={getUrgencyColor(assessment.priority)}>
+                      {assessment.priority}
+                    </Badge>
+                  </div>
+                  <h3 className="font-semibold text-lg">{assessment.assessmentType}</h3>
+                  <p className="text-muted-foreground mb-3">{assessment.clientName}</p>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
+                    <div>
+                      <p className="font-medium">Technician:</p>
+                      <p>{assessment.technician}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Location:</p>
+                      <p>{assessment.location}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Date:</p>
+                      <p>{assessment.date}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Findings:</p>
+                      <p>{assessment.findings}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Estimated Cost:</p>
+                      <p className="font-bold">R{assessment.estimatedCost.toLocaleString()}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="font-medium">Recommended Actions:</p>
+                      <p>{assessment.recommendedActions.join(", ")}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" size="sm">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Full Report
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download PDF
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Phone className="h-4 w-4 mr-2" />
+                  Contact Client
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderOvertimeManagement = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Overtime Management</h2>
+        <div className="flex space-x-2">
+          <Button variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Export Claims
+          </Button>
+          <Button variant="outline">
+            <Timer className="h-4 w-4 mr-2" />
+            Bulk Approve
+          </Button>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {overtimeClaims.map((claim) => (
+          <Card key={claim.id} className="hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Badge variant="outline">{claim.id}</Badge>
+                    <Badge className={getStatusColor(claim.status)}>
+                      {claim.status}
+                    </Badge>
+                    <Badge variant="secondary">{claim.rate} Rate</Badge>
+                  </div>
+                  <h3 className="font-semibold text-lg">{claim.employee}</h3>
+                  <p className="text-muted-foreground mb-3">{claim.department}</p>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
+                    <div>
+                      <p className="font-medium">Date:</p>
+                      <p>{claim.date}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Hours:</p>
+                      <p className="font-bold">{claim.hours}h</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Amount:</p>
+                      <p className="font-bold text-success">R{claim.amount.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Job Reference:</p>
+                      <p>{claim.jobReference}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Coordinator Approval:</p>
+                      <p className="font-bold text-success">{claim.coordinatorApproval}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Approved By:</p>
+                      <p>{claim.coordinatorApprovedBy}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Approval Date:</p>
+                      <p>{claim.coordinatorApprovalDate}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Submitted:</p>
+                      <p>{claim.submittedDate}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="font-medium">Justification:</p>
+                      <p>{claim.justification}</p>
+                    </div>
+                  </div>
+
+                  {claim.status === "Coordinator Rejected" && claim.rejectionReason && (
+                    <div className="mt-3 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                      <p className="font-medium text-destructive">Rejection Reason:</p>
+                      <p className="text-sm text-destructive">{claim.rejectionReason}</p>
+                    </div>
+                  )}
+
+                  {claim.status === "Manager Approved" && (
+                    <div className="mt-3 p-3 bg-success/10 border border-success/20 rounded-lg">
+                      <p className="font-medium text-success">Manager Approved:</p>
+                      <p className="text-sm text-success">
+                        Approved by {claim.managerApprovedBy} on {claim.managerApprovalDate}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                {claim.status === "Pending Manager Approval" && (
+                  <>
+                    <Button size="sm" className="bg-success">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Approve
+                    </Button>
+                    <Button variant="outline" size="sm" className="text-destructive">
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Reject
+                    </Button>
+                  </>
+                )}
+                <Button variant="outline" size="sm">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Job Details
+                </Button>
+                <Button variant="outline" size="sm">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  View Location
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Phone className="h-4 w-4 mr-2" />
+                  Contact Employee
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background p-6">
       {/* Header */}
