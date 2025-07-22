@@ -31,13 +31,24 @@ import {
 
 export default function TechnicianSettingsScreen() {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<"profile" | "notifications" | "app" | "security">("profile");
-  
+
   // Profile settings
   const [name, setName] = useState("John Doe");
   const [email, setEmail] = useState("john.doe@britelink.com");
   const [phone, setPhone] = useState("+27 82 555 0123");
   const [employeeId, setEmployeeId] = useState("EMP001");
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  // Password change dialog
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   // Notification settings
   const [jobNotifications, setJobNotifications] = useState(true);
