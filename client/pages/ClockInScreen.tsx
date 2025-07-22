@@ -47,6 +47,43 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
+  // Start tracking work time and distance
+  const startTracking = (startTime: Date) => {
+    if (trackingInterval) clearInterval(trackingInterval);
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      const elapsed = now.getTime() - startTime.getTime();
+      const hours = Math.floor(elapsed / (1000 * 60 * 60));
+      const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+
+      setWorkingHours(`${hours}:${minutes.toString().padStart(2, '0')}`);
+
+      // Simulate distance tracking (in real app would use GPS)
+      const totalMinutes = Math.floor(elapsed / (1000 * 60));
+      setDistanceTraveled((totalMinutes * 0.5).toFixed(1)); // 0.5 km per minute simulation
+    }, 60000); // Update every minute
+
+    setTrackingInterval(interval);
+  };
+
+  // Stop tracking
+  const stopTracking = () => {
+    if (trackingInterval) {
+      clearInterval(trackingInterval);
+      setTrackingInterval(null);
+    }
+  };
+
+  // Get overtime rate based on day
+  const getOvertimeRate = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 = Sunday, 6 = Saturday
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    // You can add holiday checking logic here
+    return isWeekend ? "2.0" : "1.5";
+  };
+
   // Update time every second
   useEffect(() => {
     const timer = setInterval(() => {
