@@ -21,12 +21,11 @@ export default function UDFieldsScreen() {
   });
 
   const [formData, setFormData] = useState({
-    faultResolved: "",
-    faultSolutionType: "",
+    resolution: "",
+    fixType: "",
     maintenanceIssueClass: "",
-    techComments: "",
-    rocComments: "",
-    referenceNumber: "",
+    maintenanceClassIssue: "",
+    resolutionComments: "",
   });
 
   const toggleSection = (section: string) => {
