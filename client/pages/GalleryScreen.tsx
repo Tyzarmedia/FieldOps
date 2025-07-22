@@ -70,7 +70,7 @@ export default function GalleryScreen() {
     }
   };
 
-  const handleUpload = (category: 'before' | 'fault-finding' | 'after-fix') => {
+  const handleUpload = (category: 'before-light-readings' | 'image-fault' | 'image-after-work' | 'light-readings-after-work') => {
     // Simulate photo upload
     const newPhoto: Photo = {
       id: Date.now().toString(),
