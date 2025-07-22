@@ -12,6 +12,7 @@ import {
   QrCode,
   Plus,
   Mic,
+  Package,
 } from "lucide-react";
 
 interface AllocatedStock {
