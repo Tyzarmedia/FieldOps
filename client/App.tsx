@@ -185,9 +185,7 @@ const App = () => (
           <Route
             path="/"
             element={
-              <ProtectedRoute>
-                <DashboardRouter />
-              </ProtectedRoute>
+              <DashboardRouterWrapper />
             }
           />
           <Route
