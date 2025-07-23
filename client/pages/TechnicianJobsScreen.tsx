@@ -799,7 +799,7 @@ export default function TechnicianJobsScreen() {
       </div>
 
       {/* Job List */}
-      <div className="p-4 space-y-4">
+      <div className="p-4 pb-32 space-y-4">
         {filteredJobs.map((job) => (
           <Card
             key={job.id}
