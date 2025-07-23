@@ -278,13 +278,21 @@ export default function ClockInScreen({
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         {/* User Avatar */}
-        <div className="relative mb-8">
+        <div className="relative mb-4">
           <div className="w-32 h-32 rounded-full border-4 border-white bg-red-500 flex items-center justify-center text-4xl font-bold">
             {getInitials(userName)}
           </div>
           <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
             <div className="w-3 h-3 bg-white rounded-full"></div>
           </div>
+        </div>
+
+        {/* User Info */}
+        <div className="text-center mb-8">
+          <h2 className="text-xl font-bold text-white">{userName}</h2>
+          <p className="text-white/80 text-sm">
+            {userRole === "AssistantTechnician" ? "Assistant Technician" : "Technician"}
+          </p>
         </div>
 
         {/* Date */}
