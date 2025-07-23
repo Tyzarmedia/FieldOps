@@ -110,13 +110,8 @@ export default function AssistantTechnicianDashboard() {
         // Sync data
         break;
       case "close":
-        // Check if user is clocked in, if so go to clock screen, otherwise login
-        const isClockedIn = localStorage.getItem("isClockedIn");
-        if (isClockedIn === "true") {
-          navigate("/clock-in");
-        } else {
-          navigate("/login");
-        }
+        // Always go to clock-in screen from dashboard
+        navigate("/clock-in");
         break;
     }
   };
