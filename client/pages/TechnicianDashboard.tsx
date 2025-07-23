@@ -256,17 +256,7 @@ export default function TechnicianDashboard() {
           </div>
         </div>
 
-        {/* Clock Out Button */}
-        <div className="mt-6 text-center">
-          <Button
-            onClick={handleClockOut}
-            className="w-full max-w-xs bg-white/20 text-white border-white/30 hover:bg-white/30 transition-all duration-300"
-            variant="outline"
-          >
-            <Clock className="h-4 w-4 mr-2" />
-            Clock Out
-          </Button>
-        </div>
+
       </div>
 
       {/* Main Content */}
