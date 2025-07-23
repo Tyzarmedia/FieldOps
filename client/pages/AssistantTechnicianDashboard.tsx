@@ -263,7 +263,7 @@ export default function AssistantTechnicianDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="p-6">
+      <div className="p-6 pb-24">
         {/* Job Status Summary - Moved to top */}
         <div className="bg-white rounded-2xl p-6 shadow-md mb-6">
           <h3 className="font-semibold text-gray-800 mb-4">
