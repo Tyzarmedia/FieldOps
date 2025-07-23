@@ -120,7 +120,7 @@ function MobileProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function DashboardRouter() {
+function DashboardRouterWrapper() {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
 
   useEffect(() => {
@@ -132,17 +132,29 @@ function DashboardRouter() {
   const mobileDashboards = ["Technician", "AssistantTechnician"];
 
   if (mobileDashboards.includes(userRole || "")) {
-    switch (userRole) {
-      case "Technician":
-        return <TechnicianDashboard />;
-      case "AssistantTechnician":
-        return <AssistantTechnicianDashboard />;
-      default:
-        return <Dashboard />;
-    }
+    return (
+      <MobileProtectedRoute>
+        <DashboardRouter />
+      </MobileProtectedRoute>
+    );
   }
 
   // Desktop dashboard components that use Layout
+  return (
+    <ProtectedRoute>
+      <DashboardRouter />
+    </ProtectedRoute>
+  );
+}
+
+function DashboardRouter() {
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("userRole") as UserRole;
+    setUserRole(storedRole);
+  }, []);
+
   switch (userRole) {
     case "CEO":
       return <CeoDashboard />;
@@ -150,6 +162,10 @@ function DashboardRouter() {
       return <ManagerDashboard />;
     case "Coordinator":
       return <CoordinatorDashboard />;
+    case "Technician":
+      return <TechnicianDashboard />;
+    case "AssistantTechnician":
+      return <AssistantTechnicianDashboard />;
     case "FleetManager":
       return <FleetManagerDashboard />;
     case "StockManager":
