@@ -713,14 +713,6 @@ export default function TechnicianJobsScreen() {
             >
               <ArrowUpDown className="h-6 w-6" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/20"
-              onClick={() => navigate("/")}
-            >
-              <X className="h-6 w-6" />
-            </Button>
           </div>
         </div>
 
