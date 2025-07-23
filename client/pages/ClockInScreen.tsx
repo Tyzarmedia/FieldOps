@@ -256,6 +256,59 @@ export default function ClockInScreen({
     setSliderPosition(0);
   };
 
+  const handleClockIn = async () => {
+    if (!selectedAssistant) return;
+
+    setIsClockingIn(true);
+    setSliderPosition(100);
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const now = new Date();
+    setClockInTime(now);
+    setIsClockedIn(true);
+
+    // Store in localStorage
+    localStorage.setItem("isClockedIn", "true");
+    localStorage.setItem("clockInTime", now.toISOString());
+    localStorage.setItem("selectedAssistant", selectedAssistant);
+
+    // Start tracking
+    startTracking(now);
+
+    setIsClockingIn(false);
+    setSliderPosition(0);
+
+    // Navigate to dashboard
+    navigate("/");
+  };
+
+  const handleClockOut = async () => {
+    setIsClockingIn(true);
+    setSliderPosition(100);
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Stop tracking
+    stopTracking();
+
+    // Clear localStorage
+    localStorage.removeItem("isClockedIn");
+    localStorage.removeItem("clockInTime");
+    localStorage.removeItem("selectedAssistant");
+
+    // Reset state
+    setIsClockedIn(false);
+    setClockInTime(null);
+    setSelectedAssistant("");
+    setWorkingHours("0:00");
+    setDistanceTraveled("0.0");
+    setIsClockingIn(false);
+    setSliderPosition(0);
+  };
+
   const handleClose = () => {
     if (isClockedIn) {
       // If clocked in, go back to dashboard
