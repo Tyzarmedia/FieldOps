@@ -94,7 +94,14 @@ export default function Login() {
       localStorage.setItem("userRole", selectedRole);
       localStorage.setItem("userEmail", email);
       setIsLoading(false);
-      navigate("/");
+
+      // Mobile roles go to clock-in first, others go to dashboard
+      const mobileRoles = ["Technician", "AssistantTechnician"];
+      if (mobileRoles.includes(selectedRole)) {
+        navigate("/clock-in");
+      } else {
+        navigate("/");
+      }
     }, 1000);
   };
 
