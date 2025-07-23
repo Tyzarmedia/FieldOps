@@ -179,7 +179,7 @@ export default function TechnicianJobsScreen() {
 
   if (showJobDetail && selectedJob) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen h-screen bg-gray-100 overflow-auto">
         {/* Job Detail Header */}
         <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
           <div className="flex items-center justify-between mb-4">
