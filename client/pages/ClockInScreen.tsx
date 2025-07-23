@@ -359,7 +359,7 @@ export default function ClockInScreen({
         {/* Clock In/Out Slider */}
         <div className="w-full max-w-sm mb-8">
           <div
-            className={`relative h-16 bg-white/20 rounded-2xl overflow-hidden ${
+            className={`clock-slider relative h-16 bg-white/20 rounded-2xl overflow-hidden ${
               !selectedAssistant && !isClockedIn
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer"
