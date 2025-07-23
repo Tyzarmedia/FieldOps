@@ -201,7 +201,7 @@ export default function ClockInScreen({
     }
   };
 
-  const handleClockIn = async () => {
+  const handleClockIn = useCallback(async () => {
     if (!selectedAssistant) return;
 
     setIsClockingIn(true);
@@ -227,9 +227,9 @@ export default function ClockInScreen({
 
     // Navigate to dashboard
     navigate("/");
-  };
+  }, [selectedAssistant, navigate, startTracking]);
 
-  const handleClockOut = async () => {
+  const handleClockOut = useCallback(async () => {
     setIsClockingIn(true);
     setSliderPosition(100);
 
@@ -252,7 +252,7 @@ export default function ClockInScreen({
     setDistanceTraveled("0.0");
     setIsClockingIn(false);
     setSliderPosition(0);
-  };
+  }, [stopTracking]);
 
   const handleClose = () => {
     // Always go to dashboard from clock-in screen
