@@ -82,6 +82,14 @@ export default function ClockInScreen({
     navigate("/");
   }, [selectedAssistant, navigate]);
 
+  // Stop tracking
+  const stopTracking = () => {
+    if (trackingInterval) {
+      clearInterval(trackingInterval);
+      setTrackingInterval(null);
+    }
+  };
+
   // Clock out function
   const handleClockOut = useCallback(async () => {
     setIsClockingIn(true);
@@ -106,7 +114,7 @@ export default function ClockInScreen({
     setDistanceTraveled("0.0");
     setIsClockingIn(false);
     setSliderPosition(0);
-  }, []);
+  }, [trackingInterval]);
 
   // Global drag handling
   useEffect(() => {
