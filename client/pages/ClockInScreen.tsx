@@ -53,6 +53,53 @@ export default function ClockInScreen({
     }
   }, []);
 
+  // Global drag handling
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleGlobalMove = (e: MouseEvent | TouchEvent) => {
+      const slider = document.querySelector('.clock-slider') as HTMLElement;
+      if (!slider) return;
+
+      const rect = slider.getBoundingClientRect();
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const position = Math.max(
+        0,
+        Math.min(100, ((clientX - rect.left) / rect.width) * 100),
+      );
+
+      setSliderPosition(position);
+
+      // Auto action when slider reaches 80%
+      if (position > 80 && !isClockingIn) {
+        if (isClockedIn) {
+          handleClockOut();
+        } else {
+          handleClockIn();
+        }
+      }
+    };
+
+    const handleGlobalEnd = () => {
+      setIsDragging(false);
+      if (sliderPosition < 80) {
+        setSliderPosition(0);
+      }
+    };
+
+    document.addEventListener('mousemove', handleGlobalMove);
+    document.addEventListener('mouseup', handleGlobalEnd);
+    document.addEventListener('touchmove', handleGlobalMove);
+    document.addEventListener('touchend', handleGlobalEnd);
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMove);
+      document.removeEventListener('mouseup', handleGlobalEnd);
+      document.removeEventListener('touchmove', handleGlobalMove);
+      document.removeEventListener('touchend', handleGlobalEnd);
+    };
+  }, [isDragging, sliderPosition, isClockingIn, isClockedIn]);
+
   // Get user initials
   const getInitials = (name: string) => {
     if (!name) return "JD";
