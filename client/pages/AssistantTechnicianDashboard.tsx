@@ -253,8 +253,6 @@ export default function AssistantTechnicianDashboard() {
             </div>
           </div>
         </div>
-
-
       </div>
 
       {/* Main Content */}

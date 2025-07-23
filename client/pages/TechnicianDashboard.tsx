@@ -250,8 +250,6 @@ export default function TechnicianDashboard() {
             </div>
           </div>
         </div>
-
-
       </div>
 
       {/* Main Content */}

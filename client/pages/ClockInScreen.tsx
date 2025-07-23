@@ -123,11 +123,11 @@ export default function ClockInScreen({
     let actionTriggered = false;
 
     const handleGlobalMove = (e: MouseEvent | TouchEvent) => {
-      const slider = document.querySelector('.clock-slider') as HTMLElement;
+      const slider = document.querySelector(".clock-slider") as HTMLElement;
       if (!slider) return;
 
       const rect = slider.getBoundingClientRect();
-      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
       const position = Math.max(
         0,
         Math.min(100, ((clientX - rect.left) / rect.width) * 100),
@@ -150,20 +150,20 @@ export default function ClockInScreen({
     const handleGlobalEnd = () => {
       setIsDragging(false);
       if (!actionTriggered) {
-        setSliderPosition(prev => prev < 80 ? 0 : prev);
+        setSliderPosition((prev) => (prev < 80 ? 0 : prev));
       }
     };
 
-    document.addEventListener('mousemove', handleGlobalMove);
-    document.addEventListener('mouseup', handleGlobalEnd);
-    document.addEventListener('touchmove', handleGlobalMove);
-    document.addEventListener('touchend', handleGlobalEnd);
+    document.addEventListener("mousemove", handleGlobalMove);
+    document.addEventListener("mouseup", handleGlobalEnd);
+    document.addEventListener("touchmove", handleGlobalMove);
+    document.addEventListener("touchend", handleGlobalEnd);
 
     return () => {
-      document.removeEventListener('mousemove', handleGlobalMove);
-      document.removeEventListener('mouseup', handleGlobalEnd);
-      document.removeEventListener('touchmove', handleGlobalMove);
-      document.removeEventListener('touchend', handleGlobalEnd);
+      document.removeEventListener("mousemove", handleGlobalMove);
+      document.removeEventListener("mouseup", handleGlobalEnd);
+      document.removeEventListener("touchmove", handleGlobalMove);
+      document.removeEventListener("touchend", handleGlobalEnd);
     };
   }, [isDragging, isClockingIn, isClockedIn, handleClockIn, handleClockOut]);
 
@@ -231,10 +231,10 @@ export default function ClockInScreen({
     setIsDragging(true);
     e.preventDefault();
 
-    const slider = document.querySelector('.clock-slider') as HTMLElement;
+    const slider = document.querySelector(".clock-slider") as HTMLElement;
     if (!slider) return;
 
-    const startX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const startX = "touches" in e ? e.touches[0].clientX : e.clientX;
     const sliderRect = slider.getBoundingClientRect();
     const startPosition = ((startX - sliderRect.left) / sliderRect.width) * 100;
 
@@ -271,8 +271,6 @@ export default function ClockInScreen({
     }
   };
 
-
-
   const handleClose = () => {
     // Always go to dashboard from clock-in screen
     navigate("/");
@@ -308,7 +306,9 @@ export default function ClockInScreen({
         <div className="text-center mb-8">
           <h2 className="text-xl font-bold text-white">{userName}</h2>
           <p className="text-white/80 text-sm">
-            {userRole === "AssistantTechnician" ? "Assistant Technician" : "Technician"}
+            {userRole === "AssistantTechnician"
+              ? "Assistant Technician"
+              : "Technician"}
           </p>
         </div>
 
