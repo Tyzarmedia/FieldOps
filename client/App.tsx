@@ -128,6 +128,21 @@ function DashboardRouter() {
     setUserRole(storedRole);
   }, []);
 
+  // Mobile dashboard components that shouldn't use Layout
+  const mobileDashboards = ["Technician", "AssistantTechnician"];
+
+  if (mobileDashboards.includes(userRole || "")) {
+    switch (userRole) {
+      case "Technician":
+        return <TechnicianDashboard />;
+      case "AssistantTechnician":
+        return <AssistantTechnicianDashboard />;
+      default:
+        return <Dashboard />;
+    }
+  }
+
+  // Desktop dashboard components that use Layout
   switch (userRole) {
     case "CEO":
       return <CeoDashboard />;
@@ -135,10 +150,6 @@ function DashboardRouter() {
       return <ManagerDashboard />;
     case "Coordinator":
       return <CoordinatorDashboard />;
-    case "Technician":
-      return <TechnicianDashboard />;
-    case "AssistantTechnician":
-      return <AssistantTechnicianDashboard />;
     case "FleetManager":
       return <FleetManagerDashboard />;
     case "StockManager":
