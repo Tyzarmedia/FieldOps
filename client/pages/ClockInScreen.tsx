@@ -169,6 +169,15 @@ export default function ClockInScreen({
 
     setIsDragging(true);
     e.preventDefault();
+
+    const slider = document.querySelector('.clock-slider') as HTMLElement;
+    if (!slider) return;
+
+    const startX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const sliderRect = slider.getBoundingClientRect();
+    const startPosition = ((startX - sliderRect.left) / sliderRect.width) * 100;
+
+    setSliderPosition(Math.max(0, Math.min(100, startPosition)));
   };
 
   const handleSliderMove = (e: React.MouseEvent | React.TouchEvent) => {
