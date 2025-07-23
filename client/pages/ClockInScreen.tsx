@@ -82,9 +82,7 @@ export default function ClockInScreen({
 
     const handleGlobalEnd = () => {
       setIsDragging(false);
-      if (sliderPosition < 80) {
-        setSliderPosition(0);
-      }
+      setSliderPosition(prev => prev < 80 ? 0 : prev);
     };
 
     document.addEventListener('mousemove', handleGlobalMove);
@@ -98,7 +96,7 @@ export default function ClockInScreen({
       document.removeEventListener('touchmove', handleGlobalMove);
       document.removeEventListener('touchend', handleGlobalEnd);
     };
-  }, [isDragging, sliderPosition, isClockingIn, isClockedIn]);
+  }, [isDragging, isClockingIn, isClockedIn, handleClockIn, handleClockOut]);
 
   // Get user initials
   const getInitials = (name: string) => {
