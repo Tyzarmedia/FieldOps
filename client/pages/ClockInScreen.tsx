@@ -197,14 +197,6 @@ export default function ClockInScreen({
     setTrackingInterval(interval);
   };
 
-  // Stop tracking
-  const stopTracking = () => {
-    if (trackingInterval) {
-      clearInterval(trackingInterval);
-      setTrackingInterval(null);
-    }
-  };
-
   // Get overtime rate based on day
   const getOvertimeRate = () => {
     const today = new Date();
