@@ -198,12 +198,7 @@ const App = () => (
           <Route path="/demo-hr" element={<AutoLogin />} />
           <Route path="/clock-in" element={<ClockInScreen />} />
 
-          <Route
-            path="/"
-            element={
-              <DashboardRouterWrapper />
-            }
-          />
+          <Route path="/" element={<DashboardRouterWrapper />} />
           <Route
             path="/clock"
             element={
