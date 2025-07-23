@@ -57,6 +57,8 @@ export default function ClockInScreen({
   useEffect(() => {
     if (!isDragging) return;
 
+    let actionTriggered = false;
+
     const handleGlobalMove = (e: MouseEvent | TouchEvent) => {
       const slider = document.querySelector('.clock-slider') as HTMLElement;
       if (!slider) return;
@@ -71,7 +73,9 @@ export default function ClockInScreen({
       setSliderPosition(position);
 
       // Auto action when slider reaches 80%
-      if (position > 80 && !isClockingIn) {
+      if (position > 80 && !isClockingIn && !actionTriggered) {
+        actionTriggered = true;
+        setIsDragging(false);
         if (isClockedIn) {
           handleClockOut();
         } else {
@@ -82,7 +86,9 @@ export default function ClockInScreen({
 
     const handleGlobalEnd = () => {
       setIsDragging(false);
-      setSliderPosition(prev => prev < 80 ? 0 : prev);
+      if (!actionTriggered) {
+        setSliderPosition(prev => prev < 80 ? 0 : prev);
+      }
     };
 
     document.addEventListener('mousemove', handleGlobalMove);
