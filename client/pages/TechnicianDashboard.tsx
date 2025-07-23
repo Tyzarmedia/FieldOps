@@ -129,7 +129,7 @@ export default function TechnicianDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen h-screen bg-gray-100 overflow-auto">
       {/* Sidebar backdrop */}
       {sidebarOpen && (
         <div
