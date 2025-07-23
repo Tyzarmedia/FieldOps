@@ -402,7 +402,7 @@ export default function ClockInScreen({
                     : "bg-white text-orange-500"
               }`}
               style={{
-                transform: `translateX(${Math.max(0, (sliderPosition / 100) * (100 - 20))}%)`,
+                transform: `translateX(${Math.max(0, (sliderPosition / 100) * 200)}px)`,
                 cursor:
                   !selectedAssistant && !isClockedIn
                     ? "not-allowed"
