@@ -257,13 +257,8 @@ export default function ClockInScreen({
   };
 
   const handleClose = () => {
-    if (isClockedIn) {
-      // If clocked in, go back to dashboard
-      navigate("/");
-    } else {
-      // If not clocked in, go to login
-      navigate("/login");
-    }
+    // Always go to dashboard from clock-in screen
+    navigate("/");
   };
 
   return (
