@@ -94,7 +94,23 @@ export default function Login() {
       localStorage.setItem("userRole", selectedRole);
       localStorage.setItem("userEmail", email);
       setIsLoading(false);
-      navigate("/");
+
+      // Mobile roles navigation logic
+      const mobileRoles = ["Technician", "AssistantTechnician"];
+      if (mobileRoles.includes(selectedRole)) {
+        // Check if already clocked in
+        const isClockedIn = localStorage.getItem("isClockedIn");
+        if (isClockedIn === "true") {
+          // Already clocked in, go to dashboard
+          navigate("/");
+        } else {
+          // Not clocked in, go to clock-in screen
+          navigate("/clock-in");
+        }
+      } else {
+        // Desktop roles go directly to dashboard
+        navigate("/");
+      }
     }, 1000);
   };
 

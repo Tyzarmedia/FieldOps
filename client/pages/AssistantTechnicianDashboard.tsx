@@ -19,6 +19,7 @@ import {
   Settings,
   LogOut,
   UserCheck,
+  MessageCircle,
 } from "lucide-react";
 import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
 
@@ -72,9 +73,12 @@ export default function AssistantTechnicianDashboard() {
       id: "overtime",
       title: "Capture Overtime",
       icon: Timer,
-      color: "bg-orange-500",
-      description: "Log overtime hours worked",
-      action: () => navigate("/technician/overtime"),
+      color: "bg-gray-400",
+      description: "Overtime captured by technician",
+      action: () => {
+        alert("Overtime is managed by the technician you are working with");
+      },
+      disabled: true,
     },
   ];
 
@@ -106,7 +110,8 @@ export default function AssistantTechnicianDashboard() {
         // Sync data
         break;
       case "close":
-        navigate("/login");
+        // Always go to clock-in screen from dashboard
+        navigate("/clock-in");
         break;
     }
   };
@@ -122,7 +127,7 @@ export default function AssistantTechnicianDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen h-screen bg-gray-100 overflow-auto">
       {/* Sidebar backdrop */}
       {sidebarOpen && (
         <div
@@ -248,22 +253,10 @@ export default function AssistantTechnicianDashboard() {
             </div>
           </div>
         </div>
-
-        {/* Clock Out Button */}
-        <div className="mt-6 text-center">
-          <Button
-            onClick={handleClockOut}
-            className="w-full max-w-xs bg-white/20 text-white border-white/30 hover:bg-white/30 transition-all duration-300"
-            variant="outline"
-          >
-            <Clock className="h-4 w-4 mr-2" />
-            Clock Out
-          </Button>
-        </div>
       </div>
 
       {/* Main Content */}
-      <div className="p-6">
+      <div className="p-6 pb-24">
         {/* Job Status Summary - Moved to top */}
         <div className="bg-white rounded-2xl p-6 shadow-md mb-6">
           <h3 className="font-semibold text-gray-800 mb-4">
@@ -301,10 +294,15 @@ export default function AssistantTechnicianDashboard() {
         <div className="grid grid-cols-2 gap-4">
           {dashboardCards.map((card) => {
             const IconComponent = card.icon;
+            const isDisabled = card.disabled || false;
             return (
               <Card
                 key={card.id}
-                className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
+                className={`bg-white transition-all duration-300 border-0 shadow-md ${
+                  isDisabled
+                    ? "opacity-60 cursor-not-allowed"
+                    : "hover:shadow-lg cursor-pointer"
+                }`}
                 onClick={card.action}
               >
                 <CardContent className="p-6 text-center">
@@ -313,10 +311,16 @@ export default function AssistantTechnicianDashboard() {
                       <IconComponent className="h-8 w-8 text-white" />
                     </div>
                   </div>
-                  <h3 className="font-semibold text-gray-800 mb-2">
+                  <h3
+                    className={`font-semibold mb-2 ${isDisabled ? "text-gray-500" : "text-gray-800"}`}
+                  >
                     {card.title}
                   </h3>
-                  <p className="text-sm text-gray-600">{card.description}</p>
+                  <p
+                    className={`text-sm ${isDisabled ? "text-gray-400" : "text-gray-600"}`}
+                  >
+                    {card.description}
+                  </p>
                 </CardContent>
               </Card>
             );
@@ -353,6 +357,17 @@ export default function AssistantTechnicianDashboard() {
             </Card>
           </div>
         )}
+
+        {/* Chat Button - Fixed to bottom right */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <Button
+            size="lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-full h-14 w-14 shadow-lg"
+            onClick={() => navigate("/team-chat")}
+          >
+            <MessageCircle className="h-6 w-6" />
+          </Button>
+        </div>
       </div>
     </div>
   );

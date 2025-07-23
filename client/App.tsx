@@ -30,10 +30,20 @@ import EnhancedHRDashboard from "./pages/EnhancedHRDashboard";
 import HRDashboardWithTab from "./pages/HRDashboardWithTab";
 import PayrollDashboard from "./pages/PayrollDashboard";
 import PayrollDashboardWithTab from "./pages/PayrollDashboardWithTab";
+import PayrollManagerDashboard from "./pages/PayrollManagerDashboard";
 import ITDashboard from "./pages/ITDashboard";
 import ITDashboardWithTab from "./pages/ITDashboardWithTab";
+import ITManagerDashboard from "./pages/ITManagerDashboard";
+import StockManagerDashboard from "./pages/StockManagerDashboard";
+import HSManagerDashboard from "./pages/HSManagerDashboard";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
+import TeamChatScreen from "./pages/TeamChatScreen";
+import ApplyLeaveScreen from "./pages/ApplyLeaveScreen";
+import StockOnHandScreen from "./pages/StockOnHandScreen";
+import NetworkAssessmentScreen from "./pages/NetworkAssessmentScreen";
+import OvertimeListScreen from "./pages/OvertimeListScreen";
+import TechnicianSettingsScreen from "./pages/TechnicianSettingsScreen";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,7 +59,9 @@ type UserRole =
   | "HSManager"
   | "HR"
   | "Payroll"
-  | "IT";
+  | "PayrollManager"
+  | "IT"
+  | "ITManager";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
@@ -79,6 +91,62 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <Layout userRole={userRole}>{children}</Layout>;
 }
 
+function MobileProtectedRoute({ children }: { children: React.ReactNode }) {
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("userRole") as UserRole;
+    setUserRole(storedRole);
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!userRole) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Return children directly without Layout wrapper for mobile components
+  return <>{children}</>;
+}
+
+function DashboardRouterWrapper() {
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("userRole") as UserRole;
+    setUserRole(storedRole);
+  }, []);
+
+  // Mobile dashboard components that shouldn't use Layout
+  const mobileDashboards = ["Technician", "AssistantTechnician"];
+
+  if (mobileDashboards.includes(userRole || "")) {
+    return (
+      <MobileProtectedRoute>
+        <DashboardRouter />
+      </MobileProtectedRoute>
+    );
+  }
+
+  // Desktop dashboard components that use Layout
+  return (
+    <ProtectedRoute>
+      <DashboardRouter />
+    </ProtectedRoute>
+  );
+}
+
 function DashboardRouter() {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
 
@@ -101,25 +169,19 @@ function DashboardRouter() {
     case "FleetManager":
       return <FleetManagerDashboard />;
     case "StockManager":
-      return (
-        <PlaceholderPage
-          title="Stock Manager Dashboard"
-          description="Inventory management, stock allocation, and usage tracking."
-        />
-      );
+      return <StockManagerDashboard />;
     case "HSManager":
-      return (
-        <PlaceholderPage
-          title="Health & Safety Manager Dashboard"
-          description="Safety compliance, incident management, and H&S task assignment."
-        />
-      );
+      return <HSManagerDashboard />;
     case "HR":
       return <EnhancedHRDashboard />;
     case "Payroll":
       return <PayrollDashboard />;
+    case "PayrollManager":
+      return <PayrollManagerDashboard />;
     case "IT":
       return <ITDashboard />;
+    case "ITManager":
+      return <ITManagerDashboard />;
     default:
       return <Dashboard />;
   }
@@ -136,14 +198,7 @@ const App = () => (
           <Route path="/demo-hr" element={<AutoLogin />} />
           <Route path="/clock-in" element={<ClockInScreen />} />
 
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <DashboardRouter />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/" element={<DashboardRouterWrapper />} />
           <Route
             path="/clock"
             element={
@@ -180,6 +235,7 @@ const App = () => (
           <Route path="/technician/stock" element={<StockScreen />} />
           <Route path="/technician/gallery" element={<GalleryScreen />} />
           <Route path="/technician/signoff" element={<SignOffScreen />} />
+          <Route path="/team-chat" element={<TeamChatScreen />} />
           <Route
             path="/fleet"
             element={
@@ -497,60 +553,16 @@ const App = () => (
             }
           />
           {/* New Technician Navigation Routes */}
-          <Route
-            path="/apply-leave"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Apply Leave"
-                  description="Submit leave requests and view leave balance."
-                />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/stock-on-hand"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Stock on Hand"
-                  description="View current stock levels and available equipment."
-                />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/apply-leave" element={<ApplyLeaveScreen />} />
+          <Route path="/stock-on-hand" element={<StockOnHandScreen />} />
           <Route
             path="/network-assessment"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Network Assessment"
-                  description="Perform network diagnostics and assessments."
-                />
-              </ProtectedRoute>
-            }
+            element={<NetworkAssessmentScreen />}
           />
-          <Route
-            path="/overtime-list"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Overtime List"
-                  description="View and manage overtime records."
-                />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/overtime-list" element={<OvertimeListScreen />} />
           <Route
             path="/technician-settings"
-            element={
-              <ProtectedRoute>
-                <PlaceholderPage
-                  title="Technician Settings"
-                  description="Configure technician-specific settings and preferences."
-                />
-              </ProtectedRoute>
-            }
+            element={<TechnicianSettingsScreen />}
           />
           {/* IT Routes */}
           <Route

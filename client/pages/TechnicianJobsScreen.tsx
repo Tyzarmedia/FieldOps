@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,8 @@ import {
   Package,
   PenTool,
   Settings,
+  ArrowUpDown,
+  MessageCircle,
 } from "lucide-react";
 import { teamJobs, updateJobStatus, type Job } from "../data/sharedJobs";
 
@@ -40,66 +42,115 @@ export default function TechnicianJobsScreen() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showJobDetail, setShowJobDetail] = useState(false);
   const [isJobPaused, setIsJobPaused] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"new-to-old" | "old-to-new">(
+    "new-to-old",
+  );
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [currentNavSection, setCurrentNavSection] = useState("details");
   const navigate = useNavigate();
 
-  const tabs = [
-    {
-      id: "assigned",
-      label: "Assigned",
-      count: teamJobs.filter((j) => j.status === "assigned").length,
-      color: "bg-blue-500",
-    },
-    {
-      id: "accepted",
-      label: "Accepted",
-      count: teamJobs.filter((j) => j.status === "accepted").length,
-      color: "bg-orange-500",
-    },
-    {
-      id: "in-progress",
-      label: "In Progress",
-      count: teamJobs.filter((j) => j.status === "in-progress").length,
-      color: "bg-green-500",
-    },
-    {
-      id: "completed",
-      label: "Tech Finished",
-      count: teamJobs.filter((j) => j.status === "completed").length,
-      color: "bg-purple-500",
-    },
-  ];
+  const tabs = useMemo(
+    () => [
+      {
+        id: "assigned",
+        label: "Assigned",
+        count: teamJobs.filter((j) => j.status === "assigned").length,
+        color: "bg-blue-500",
+      },
+      {
+        id: "accepted",
+        label: "Accepted",
+        count: teamJobs.filter((j) => j.status === "accepted").length,
+        color: "bg-orange-500",
+      },
+      {
+        id: "in-progress",
+        label: "In Progress",
+        count: teamJobs.filter((j) => j.status === "in-progress").length,
+        color: "bg-green-500",
+      },
+      {
+        id: "completed",
+        label: "Tech Finished",
+        count: teamJobs.filter((j) => j.status === "completed").length,
+        color: "bg-purple-500",
+      },
+    ],
+    [refreshTrigger],
+  );
 
-  const filteredJobs = teamJobs.filter((job) => {
-    const matchesTab =
-      job.status === selectedTab ||
-      (selectedTab === "completed" && job.status === "completed");
-    const matchesSearch =
-      searchQuery === "" ||
-      job.client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.assignedTo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.id.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredJobs = useMemo(
+    () =>
+      teamJobs
+        .filter((job) => {
+          const matchesTab =
+            job.status === selectedTab ||
+            (selectedTab === "completed" && job.status === "completed");
+          const matchesSearch =
+            searchQuery === "" ||
+            job.client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            job.assignedTo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            job.id.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesTab && matchesSearch;
-  });
+          // Date filtering
+          const jobDate = new Date(job.createdDate);
+          const fromDateObj = fromDate ? new Date(fromDate) : null;
+          const toDateObj = toDate ? new Date(toDate) : null;
+
+          const matchesDateRange =
+            (!fromDateObj || jobDate >= fromDateObj) &&
+            (!toDateObj || jobDate <= toDateObj);
+
+          return matchesTab && matchesSearch && matchesDateRange;
+        })
+        .sort((a, b) => {
+          const dateA = new Date(a.createdDate);
+          const dateB = new Date(b.createdDate);
+
+          if (sortOrder === "new-to-old") {
+            return dateB.getTime() - dateA.getTime();
+          } else {
+            return dateA.getTime() - dateB.getTime();
+          }
+        }),
+    [selectedTab, searchQuery, fromDate, toDate, sortOrder, refreshTrigger],
+  );
 
   const handleJobAction = (job: Job, action: string) => {
     switch (action) {
       case "accept":
         updateJobStatus(job.id, "accepted");
+        setRefreshTrigger((prev) => prev + 1); // Force re-render
         break;
       case "start":
         updateJobStatus(job.id, "in-progress");
+        setRefreshTrigger((prev) => prev + 1); // Force re-render
         break;
       case "pause":
         updateJobStatus(job.id, "accepted");
+        setRefreshTrigger((prev) => prev + 1); // Force re-render
         break;
       case "complete":
         updateJobStatus(job.id, "completed");
+        setRefreshTrigger((prev) => prev + 1); // Force re-render
         break;
       case "view":
         setSelectedJob(job);
         setShowJobDetail(true);
         break;
+    }
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === "new-to-old" ? "old-to-new" : "new-to-old");
+  };
+
+  const handleNavigation = (section: string, route: string) => {
+    setCurrentNavSection(section);
+    if (route.startsWith("/")) {
+      navigate(route);
     }
   };
 
@@ -128,7 +179,7 @@ export default function TechnicianJobsScreen() {
 
   if (showJobDetail && selectedJob) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen h-screen bg-gray-100 overflow-auto">
         {/* Job Detail Header */}
         <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
           <div className="flex items-center justify-between mb-4">
@@ -138,7 +189,9 @@ export default function TechnicianJobsScreen() {
                 size="sm"
                 className="text-white hover:bg-white/20"
                 onClick={() => setShowJobDetail(false)}
-              />
+              >
+                <X className="h-6 w-6" />
+              </Button>
               <h1 className="text-lg font-semibold">Job Details</h1>
             </div>
             <div className="flex space-x-2">
@@ -217,7 +270,7 @@ export default function TechnicianJobsScreen() {
         </div>
 
         {/* Job Details Content */}
-        <div className="p-4 pb-20 space-y-6">
+        <div className="p-4 pb-32 space-y-6">
           {/* Client Address with Map */}
           <Card>
             <CardContent className="p-4">
@@ -452,48 +505,175 @@ export default function TechnicianJobsScreen() {
           </Card>
         </div>
 
-        {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-          <div className="flex justify-around py-2">
+        {/* Chat Button - Fixed to bottom right */}
+        <div className="fixed bottom-32 right-6 z-50">
+          <Button
+            size="lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-full h-14 w-14 shadow-lg"
+            onClick={() => navigate("/team-chat")}
+          >
+            <MessageCircle className="h-6 w-6" />
+          </Button>
+        </div>
+
+        {/* Job Status Bar */}
+        <div className="fixed bottom-20 left-0 right-0 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 z-40">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  selectedJob.status === "assigned"
+                    ? "bg-blue-400"
+                    : selectedJob.status === "accepted"
+                      ? "bg-yellow-400"
+                      : selectedJob.status === "in-progress"
+                        ? "bg-green-400"
+                        : "bg-purple-400"
+                }`}
+              />
+              <span className="text-sm font-medium">
+                Status: {selectedJob.status.replace("-", " ").toUpperCase()}
+              </span>
+            </div>
+            <div className="text-xs opacity-90">Job #{selectedJob.id}</div>
+          </div>
+        </div>
+
+        {/* Enhanced Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-orange-200 shadow-xl z-40">
+          <div className="flex justify-around py-3 px-2">
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-blue-600"
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "details"
+                  ? "bg-orange-50 text-orange-600 border border-orange-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("details", "")}
             >
-              <FileText className="h-6 w-6" />
+              <FileText className="h-5 w-5" />
               <span className="text-xs font-medium">Details</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-gray-600"
-              onClick={() => navigate("/technician/udf")}
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "udf"
+                  ? "bg-orange-50 text-orange-600 border border-orange-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("udf", "/technician/udf")}
             >
-              <Settings className="h-6 w-6" />
-              <span className="text-xs font-medium">Udf</span>
+              <Settings className="h-5 w-5" />
+              <span className="text-xs font-medium">UDF</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-gray-600"
-              onClick={() => navigate("/technician/gallery")}
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "gallery"
+                  ? "bg-orange-50 text-orange-600 border border-orange-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("gallery", "/technician/gallery")}
             >
-              <Camera className="h-6 w-6" />
+              <Camera className="h-5 w-5" />
               <span className="text-xs font-medium">Gallery</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-gray-600"
-              onClick={() => navigate("/technician/stock")}
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "stock"
+                  ? "bg-orange-50 text-orange-600 border border-orange-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("stock", "/technician/stock")}
             >
-              <Package className="h-6 w-6" />
-              <span className="text-xs font-medium">Stocks</span>
+              <Package className="h-5 w-5" />
+              <span className="text-xs font-medium">Stock</span>
             </Button>
             <Button
               variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-orange-600"
-              onClick={() => navigate("/technician/signoff")}
+              className={`flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-200 ${
+                currentNavSection === "signoff"
+                  ? "bg-green-50 text-green-600 border border-green-200"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavigation("signoff", "/technician/signoff")}
             >
-              <PenTool className="h-6 w-6" />
+              <PenTool className="h-5 w-5" />
               <span className="text-xs font-medium">Sign Off</span>
             </Button>
+          </div>
+
+          {/* Quick Actions Row */}
+          {selectedJob.status !== "completed" && (
+            <div className="flex justify-center space-x-2 py-2 border-t border-gray-100">
+              {selectedJob.status === "assigned" && (
+                <Button
+                  size="sm"
+                  className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1"
+                  onClick={() => {
+                    handleJobAction(selectedJob, "accept");
+                  }}
+                >
+                  Accept Job
+                </Button>
+              )}
+              {selectedJob.status === "accepted" && (
+                <Button
+                  size="sm"
+                  className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1"
+                  onClick={() => {
+                    handleJobAction(selectedJob, "start");
+                  }}
+                >
+                  Start Job
+                </Button>
+              )}
+              {selectedJob.status === "in-progress" && (
+                <>
+                  <Button
+                    size="sm"
+                    className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1"
+                    onClick={() => {
+                      handleJobAction(selectedJob, "pause");
+                    }}
+                  >
+                    Pause
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-purple-500 hover:bg-purple-600 text-white text-xs px-3 py-1"
+                    onClick={() => {
+                      handleJobAction(selectedJob, "complete");
+                    }}
+                  >
+                    Complete
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Progress Indicator */}
+          <div className="bg-gray-100 h-1">
+            <div
+              className="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300"
+              style={{
+                width: `${
+                  currentNavSection === "details"
+                    ? "20%"
+                    : currentNavSection === "udf"
+                      ? "40%"
+                      : currentNavSection === "gallery"
+                        ? "60%"
+                        : currentNavSection === "stock"
+                          ? "80%"
+                          : currentNavSection === "signoff"
+                            ? "100%"
+                            : "20%"
+                }%`,
+              }}
+            />
           </div>
         </div>
       </div>
@@ -501,7 +681,7 @@ export default function TechnicianJobsScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen h-screen bg-gray-100 overflow-auto">
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
         <div className="flex items-center justify-between mb-6">
@@ -511,7 +691,9 @@ export default function TechnicianJobsScreen() {
               size="sm"
               className="text-white hover:bg-white/20"
               onClick={() => navigate("/")}
-            />
+            >
+              <X className="h-6 w-6" />
+            </Button>
             <h1 className="text-xl font-semibold">Jobs</h1>
           </div>
           <div className="flex space-x-2">
@@ -526,16 +708,10 @@ export default function TechnicianJobsScreen() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20"
+              onClick={toggleSortOrder}
+              title={`Sort ${sortOrder === "new-to-old" ? "Old to New" : "New to Old"}`}
             >
-              <MoreVertical className="h-6 w-6" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/20"
-              onClick={() => navigate("/")}
-            >
-              <X className="h-6 w-6" />
+              <ArrowUpDown className="h-6 w-6" />
             </Button>
           </div>
         </div>
@@ -546,14 +722,24 @@ export default function TechnicianJobsScreen() {
             <Calendar className="h-5 w-5" />
             <div>
               <p className="text-sm">From</p>
-              <p className="text-sm opacity-80">Select Date</p>
+              <Input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="text-sm bg-white/20 border-white/30 text-white placeholder:text-white/60 w-32"
+              />
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <Calendar className="h-5 w-5" />
             <div>
               <p className="text-sm">To</p>
-              <p className="text-sm opacity-80">Select Date</p>
+              <Input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="text-sm bg-white/20 border-white/30 text-white placeholder:text-white/60 w-32"
+              />
             </div>
           </div>
         </div>
@@ -601,8 +787,19 @@ export default function TechnicianJobsScreen() {
         </div>
       </div>
 
+      {/* Chat Button - Fixed to bottom right */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button
+          size="lg"
+          className="bg-blue-600 hover:bg-blue-700 text-white rounded-full h-14 w-14 shadow-lg"
+          onClick={() => navigate("/team-chat")}
+        >
+          <MessageCircle className="h-6 w-6" />
+        </Button>
+      </div>
+
       {/* Job List */}
-      <div className="p-4 space-y-4">
+      <div className="p-4 pb-32 space-y-4">
         {filteredJobs.map((job) => (
           <Card
             key={job.id}
