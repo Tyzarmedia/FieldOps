@@ -439,7 +439,7 @@ export default function CeoDashboard() {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2">
-                    <Tools className="h-4 w-4 text-orange-500" />
+                    <Wrench className="h-4 w-4 text-orange-500" />
                     <span className="text-sm text-gray-600">Tools Low</span>
                   </div>
                   <p className="text-sm font-bold">Splicing kit</p>
