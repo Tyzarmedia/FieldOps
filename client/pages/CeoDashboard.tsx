@@ -45,7 +45,7 @@ import {
   Filter,
   ExternalLink,
   Wrench,
-  Tool,
+  Tools,
   Gauge,
   ChevronRight,
   Target,
