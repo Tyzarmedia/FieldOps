@@ -52,5 +52,22 @@ export function createServer() {
   app.post("/api/inventory/issue", issueInventory);
   app.post("/api/inventory/return", returnInventory);
 
+  // Sync management routes
+  app.get("/api/sync/schedules", getSyncSchedules);
+  app.post("/api/sync/schedules", createSyncSchedule);
+  app.put("/api/sync/schedules/:id", updateSyncSchedule);
+  app.delete("/api/sync/schedules/:id", deleteSyncSchedule);
+  app.post("/api/sync/manual", triggerManualSync);
+  app.get("/api/sync/status", getSyncStatus);
+  app.post("/api/sync/track-movement", trackStockMovement);
+
+  // Initialize sync service
+  getSyncService();
+
+  // Initialize WebSocket server (runs on port 8081)
+  if (process.env.NODE_ENV !== 'test') {
+    createWebSocketServer();
+  }
+
   return app;
 }
