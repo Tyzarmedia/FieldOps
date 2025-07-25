@@ -505,10 +505,7 @@ const App = () => (
             path="/stock-on-hand"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Stock on Hand"
-                  description="View current stock levels and available equipment."
-                />
+                <InventoryManagement />
               </ProtectedRoute>
             }
           />
