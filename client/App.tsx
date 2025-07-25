@@ -202,10 +202,7 @@ const App = () => (
             path="/stock"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Stock Management"
-                  description="Inventory tracking, stock allocation, and usage reporting."
-                />
+                <InventoryManagement />
               </ProtectedRoute>
             }
           />
