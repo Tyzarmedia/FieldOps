@@ -11,7 +11,7 @@ import {
   syncInventory,
   getInventoryStats,
   issueInventory,
-  returnInventory
+  returnInventory,
 } from "./routes/inventory";
 
 export function createServer() {

@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from "axios";
 
 export interface SageX3Config {
   baseUrl: string;
@@ -25,7 +25,7 @@ export interface InventoryItem {
   supplier: string;
   supplierCode: string;
   unitOfMeasure: string;
-  status: 'Active' | 'Inactive' | 'Discontinued';
+  status: "Active" | "Inactive" | "Discontinued";
   averageCost: number;
   lastMovementDate: string;
 }
@@ -33,7 +33,7 @@ export interface InventoryItem {
 export interface StockMovement {
   movementId: string;
   itemCode: string;
-  movementType: 'IN' | 'OUT' | 'TRANSFER' | 'ADJUSTMENT';
+  movementType: "IN" | "OUT" | "TRANSFER" | "ADJUSTMENT";
   quantity: number;
   warehouse: string;
   location: string;
@@ -48,7 +48,7 @@ export interface PurchaseOrder {
   supplier: string;
   orderDate: string;
   expectedDeliveryDate: string;
-  status: 'Pending' | 'Approved' | 'Shipped' | 'Received' | 'Cancelled';
+  status: "Pending" | "Approved" | "Shipped" | "Received" | "Cancelled";
   items: Array<{
     itemCode: string;
     description: string;
@@ -70,9 +70,9 @@ export class SageX3Service {
       baseURL: config.baseUrl,
       timeout: 30000,
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
     });
 
     // Add request interceptor for authentication
@@ -98,7 +98,7 @@ export class SageX3Service {
           return this.api.request(error.config);
         }
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -107,18 +107,21 @@ export class SageX3Service {
    */
   private async authenticate(): Promise<void> {
     try {
-      const response = await axios.post(`${this.config.baseUrl}/api/1/authentication/login`, {
-        username: this.config.username,
-        password: this.config.password,
-        database: this.config.database,
-        poolAlias: this.config.poolAlias || '',
-        requestConfig: this.config.requestConfig || ''
-      });
+      const response = await axios.post(
+        `${this.config.baseUrl}/api/1/authentication/login`,
+        {
+          username: this.config.username,
+          password: this.config.password,
+          database: this.config.database,
+          poolAlias: this.config.poolAlias || "",
+          requestConfig: this.config.requestConfig || "",
+        },
+      );
 
       this.sessionToken = response.data.sessionToken;
-      console.log('Sage X3 authentication successful');
+      console.log("Sage X3 authentication successful");
     } catch (error) {
-      console.error('Sage X3 authentication failed:', error);
+      console.error("Sage X3 authentication failed:", error);
       throw new Error(`Failed to authenticate with Sage X3: ${error.message}`);
     }
   }
@@ -129,20 +132,20 @@ export class SageX3Service {
   async getInventoryItems(warehouse?: string): Promise<InventoryItem[]> {
     try {
       const params: any = {
-        representation: 'STK$ITM'
+        representation: "STK$ITM",
       };
 
       if (warehouse) {
         params.where = `STOFCY_0="${warehouse}"`;
       }
 
-      const response = await this.api.get('/api/1/collaboration/search/STK', {
-        params
+      const response = await this.api.get("/api/1/collaboration/search/STK", {
+        params,
       });
 
       return response.data.map(this.mapSageItemToInventoryItem);
     } catch (error) {
-      console.error('Error fetching inventory items:', error);
+      console.error("Error fetching inventory items:", error);
       throw new Error(`Failed to fetch inventory items: ${error.message}`);
     }
   }
@@ -150,15 +153,18 @@ export class SageX3Service {
   /**
    * Get specific inventory item by item code
    */
-  async getInventoryItem(itemCode: string, warehouse?: string): Promise<InventoryItem | null> {
+  async getInventoryItem(
+    itemCode: string,
+    warehouse?: string,
+  ): Promise<InventoryItem | null> {
     try {
       const response = await this.api.get(`/api/1/collaboration/search/STK`, {
         params: {
-          representation: 'STK$ITM',
-          where: warehouse ? 
-            `ITMREF_0="${itemCode}" AND STOFCY_0="${warehouse}"` : 
-            `ITMREF_0="${itemCode}"`
-        }
+          representation: "STK$ITM",
+          where: warehouse
+            ? `ITMREF_0="${itemCode}" AND STOFCY_0="${warehouse}"`
+            : `ITMREF_0="${itemCode}"`,
+        },
       });
 
       if (response.data.length === 0) {
@@ -167,17 +173,24 @@ export class SageX3Service {
 
       return this.mapSageItemToInventoryItem(response.data[0]);
     } catch (error) {
-      console.error('Error fetching inventory item:', error);
-      throw new Error(`Failed to fetch inventory item ${itemCode}: ${error.message}`);
+      console.error("Error fetching inventory item:", error);
+      throw new Error(
+        `Failed to fetch inventory item ${itemCode}: ${error.message}`,
+      );
     }
   }
 
   /**
    * Get stock movements for an item or warehouse
    */
-  async getStockMovements(itemCode?: string, warehouse?: string, startDate?: string, endDate?: string): Promise<StockMovement[]> {
+  async getStockMovements(
+    itemCode?: string,
+    warehouse?: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<StockMovement[]> {
     try {
-      let whereClause = '';
+      let whereClause = "";
       const conditions = [];
 
       if (itemCode) conditions.push(`ITMREF_0="${itemCode}"`);
@@ -186,20 +199,20 @@ export class SageX3Service {
       if (endDate) conditions.push(`MOVDAT_0<="${endDate}"`);
 
       if (conditions.length > 0) {
-        whereClause = conditions.join(' AND ');
+        whereClause = conditions.join(" AND ");
       }
 
-      const response = await this.api.get('/api/1/collaboration/search/STMV', {
+      const response = await this.api.get("/api/1/collaboration/search/STMV", {
         params: {
-          representation: 'STMV$MVT',
+          representation: "STMV$MVT",
           where: whereClause || undefined,
-          orderBy: 'MOVDAT_0 DESC'
-        }
+          orderBy: "MOVDAT_0 DESC",
+        },
       });
 
       return response.data.map(this.mapSageMovementToStockMovement);
     } catch (error) {
-      console.error('Error fetching stock movements:', error);
+      console.error("Error fetching stock movements:", error);
       throw new Error(`Failed to fetch stock movements: ${error.message}`);
     }
   }
@@ -207,28 +220,36 @@ export class SageX3Service {
   /**
    * Create stock movement (issue/receipt)
    */
-  async createStockMovement(movement: Omit<StockMovement, 'movementId' | 'date'>): Promise<StockMovement> {
+  async createStockMovement(
+    movement: Omit<StockMovement, "movementId" | "date">,
+  ): Promise<StockMovement> {
     try {
       const sageMovement = {
         ITMREF_0: movement.itemCode,
         STOFCY_0: movement.warehouse,
         LOC_0: movement.location,
-        QTYSTU_0: movement.movementType === 'OUT' ? -movement.quantity : movement.quantity,
+        QTYSTU_0:
+          movement.movementType === "OUT"
+            ? -movement.quantity
+            : movement.quantity,
         MVTTYP_0: this.getSageMovementType(movement.movementType),
         REFNUM_0: movement.reference,
-        TEXTE_0: movement.notes || '',
-        USR_0: movement.technician || 'SYSTEM'
+        TEXTE_0: movement.notes || "",
+        USR_0: movement.technician || "SYSTEM",
       };
 
-      const response = await this.api.post('/api/1/collaboration/search/STMV', sageMovement);
-      
+      const response = await this.api.post(
+        "/api/1/collaboration/search/STMV",
+        sageMovement,
+      );
+
       return {
         ...movement,
         movementId: response.data.ROWID,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('Error creating stock movement:', error);
+      console.error("Error creating stock movement:", error);
       throw new Error(`Failed to create stock movement: ${error.message}`);
     }
   }
@@ -239,20 +260,20 @@ export class SageX3Service {
   async getPurchaseOrders(status?: string): Promise<PurchaseOrder[]> {
     try {
       const params: any = {
-        representation: 'POH$PUR'
+        representation: "POH$PUR",
       };
 
       if (status) {
         params.where = `POHSTA_0="${status}"`;
       }
 
-      const response = await this.api.get('/api/1/collaboration/search/POH', {
-        params
+      const response = await this.api.get("/api/1/collaboration/search/POH", {
+        params,
       });
 
       return response.data.map(this.mapSagePOToPurchaseOrder);
     } catch (error) {
-      console.error('Error fetching purchase orders:', error);
+      console.error("Error fetching purchase orders:", error);
       throw new Error(`Failed to fetch purchase orders: ${error.message}`);
     }
   }
@@ -263,21 +284,21 @@ export class SageX3Service {
   async getLowStockItems(warehouse?: string): Promise<InventoryItem[]> {
     try {
       const params: any = {
-        representation: 'STK$ITM',
-        where: 'QTYSTU_0 <= REOLEV_0'
+        representation: "STK$ITM",
+        where: "QTYSTU_0 <= REOLEV_0",
       };
 
       if (warehouse) {
         params.where += ` AND STOFCY_0="${warehouse}"`;
       }
 
-      const response = await this.api.get('/api/1/collaboration/search/STK', {
-        params
+      const response = await this.api.get("/api/1/collaboration/search/STK", {
+        params,
       });
 
       return response.data.map(this.mapSageItemToInventoryItem);
     } catch (error) {
-      console.error('Error fetching low stock items:', error);
+      console.error("Error fetching low stock items:", error);
       throw new Error(`Failed to fetch low stock items: ${error.message}`);
     }
   }
@@ -294,7 +315,7 @@ export class SageX3Service {
     try {
       const [allItems, lowStockItems] = await Promise.all([
         this.getInventoryItems(warehouse),
-        this.getLowStockItems(warehouse)
+        this.getLowStockItems(warehouse),
       ]);
 
       // Here you would typically save to your local database
@@ -303,10 +324,10 @@ export class SageX3Service {
         totalItems: allItems.length,
         updatedItems: allItems.length,
         lowStockItems: lowStockItems.length,
-        lastSync: new Date().toISOString()
+        lastSync: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('Error syncing inventory:', error);
+      console.error("Error syncing inventory:", error);
       throw new Error(`Failed to sync inventory: ${error.message}`);
     }
   }
@@ -314,83 +335,87 @@ export class SageX3Service {
   // Helper methods for mapping Sage X3 data to our format
   private mapSageItemToInventoryItem(sageItem: any): InventoryItem {
     return {
-      itemCode: sageItem.ITMREF_0 || '',
-      description: sageItem.ITMDES1_0 || '',
-      category: sageItem.TCLCOD_0 || '',
+      itemCode: sageItem.ITMREF_0 || "",
+      description: sageItem.ITMDES1_0 || "",
+      category: sageItem.TCLCOD_0 || "",
       quantity: parseFloat(sageItem.QTYSTU_0) || 0,
       unitPrice: parseFloat(sageItem.PRI_0) || 0,
-      currency: sageItem.CUR_0 || 'USD',
-      warehouse: sageItem.STOFCY_0 || '',
-      location: sageItem.LOC_0 || '',
+      currency: sageItem.CUR_0 || "USD",
+      warehouse: sageItem.STOFCY_0 || "",
+      location: sageItem.LOC_0 || "",
       lastUpdate: sageItem.UPDDATTIM_0 || new Date().toISOString(),
       minimumStock: parseFloat(sageItem.MINSTO_0) || 0,
       maximumStock: parseFloat(sageItem.MAXSTO_0) || 0,
       reorderLevel: parseFloat(sageItem.REOLEV_0) || 0,
-      supplier: sageItem.BPSNUM_0 || '',
-      supplierCode: sageItem.BPSSHO_0 || '',
-      unitOfMeasure: sageItem.STU_0 || '',
-      status: sageItem.ITMSTA_0 === 'A' ? 'Active' : 'Inactive',
+      supplier: sageItem.BPSNUM_0 || "",
+      supplierCode: sageItem.BPSSHO_0 || "",
+      unitOfMeasure: sageItem.STU_0 || "",
+      status: sageItem.ITMSTA_0 === "A" ? "Active" : "Inactive",
       averageCost: parseFloat(sageItem.CUMWACPRI_0) || 0,
-      lastMovementDate: sageItem.LASTMOVDAT_0 || ''
+      lastMovementDate: sageItem.LASTMOVDAT_0 || "",
     };
   }
 
   private mapSageMovementToStockMovement(sageMovement: any): StockMovement {
     return {
-      movementId: sageMovement.ROWID || '',
-      itemCode: sageMovement.ITMREF_0 || '',
+      movementId: sageMovement.ROWID || "",
+      itemCode: sageMovement.ITMREF_0 || "",
       movementType: this.getMovementTypeFromSage(sageMovement.MVTTYP_0),
       quantity: Math.abs(parseFloat(sageMovement.QTYSTU_0) || 0),
-      warehouse: sageMovement.STOFCY_0 || '',
-      location: sageMovement.LOC_0 || '',
-      reference: sageMovement.REFNUM_0 || '',
-      date: sageMovement.MOVDAT_0 || '',
-      technician: sageMovement.USR_0 || '',
-      notes: sageMovement.TEXTE_0 || ''
+      warehouse: sageMovement.STOFCY_0 || "",
+      location: sageMovement.LOC_0 || "",
+      reference: sageMovement.REFNUM_0 || "",
+      date: sageMovement.MOVDAT_0 || "",
+      technician: sageMovement.USR_0 || "",
+      notes: sageMovement.TEXTE_0 || "",
     };
   }
 
   private mapSagePOToPurchaseOrder(sagePO: any): PurchaseOrder {
     return {
-      orderNumber: sagePO.POHNUM_0 || '',
-      supplier: sagePO.BPSNUM_0 || '',
-      orderDate: sagePO.ORDDAT_0 || '',
-      expectedDeliveryDate: sagePO.EXTRCPDAT_0 || '',
+      orderNumber: sagePO.POHNUM_0 || "",
+      supplier: sagePO.BPSNUM_0 || "",
+      orderDate: sagePO.ORDDAT_0 || "",
+      expectedDeliveryDate: sagePO.EXTRCPDAT_0 || "",
       status: this.getPOStatusFromSage(sagePO.POHSTA_0),
       items: [], // Would need separate call to get line items
-      totalAmount: parseFloat(sagePO.TOTATI_0) || 0
+      totalAmount: parseFloat(sagePO.TOTATI_0) || 0,
     };
   }
 
   private getSageMovementType(movementType: string): string {
     const mapping = {
-      'IN': 'R',    // Receipt
-      'OUT': 'I',   // Issue
-      'TRANSFER': 'T', // Transfer
-      'ADJUSTMENT': 'A' // Adjustment
+      IN: "R", // Receipt
+      OUT: "I", // Issue
+      TRANSFER: "T", // Transfer
+      ADJUSTMENT: "A", // Adjustment
     };
-    return mapping[movementType] || 'I';
+    return mapping[movementType] || "I";
   }
 
-  private getMovementTypeFromSage(sageType: string): 'IN' | 'OUT' | 'TRANSFER' | 'ADJUSTMENT' {
+  private getMovementTypeFromSage(
+    sageType: string,
+  ): "IN" | "OUT" | "TRANSFER" | "ADJUSTMENT" {
     const mapping = {
-      'R': 'IN',
-      'I': 'OUT',
-      'T': 'TRANSFER',
-      'A': 'ADJUSTMENT'
+      R: "IN",
+      I: "OUT",
+      T: "TRANSFER",
+      A: "ADJUSTMENT",
     };
-    return mapping[sageType] || 'OUT';
+    return mapping[sageType] || "OUT";
   }
 
-  private getPOStatusFromSage(sageStatus: string): 'Pending' | 'Approved' | 'Shipped' | 'Received' | 'Cancelled' {
+  private getPOStatusFromSage(
+    sageStatus: string,
+  ): "Pending" | "Approved" | "Shipped" | "Received" | "Cancelled" {
     const mapping = {
-      'O': 'Pending',
-      'A': 'Approved',
-      'S': 'Shipped',
-      'R': 'Received',
-      'C': 'Cancelled'
+      O: "Pending",
+      A: "Approved",
+      S: "Shipped",
+      R: "Received",
+      C: "Cancelled",
     };
-    return mapping[sageStatus] || 'Pending';
+    return mapping[sageStatus] || "Pending";
   }
 }
 
