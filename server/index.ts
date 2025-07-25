@@ -13,6 +13,15 @@ import {
   issueInventory,
   returnInventory
 } from "./routes/inventory";
+import {
+  getSyncSchedules,
+  createSyncSchedule,
+  updateSyncSchedule,
+  deleteSyncSchedule,
+  triggerManualSync,
+  getSyncStatus,
+  trackStockMovement
+} from "./routes/sync";
 import { getSyncService } from "./services/syncService";
 import { createWebSocketServer } from "./routes/websocket";
 
