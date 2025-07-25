@@ -11,8 +11,10 @@ import {
   syncInventory,
   getInventoryStats,
   issueInventory,
-  returnInventory,
+  returnInventory
 } from "./routes/inventory";
+import { getSyncService } from "./services/syncService";
+import { createWebSocketServer } from "./routes/websocket";
 
 export function createServer() {
   const app = express();
