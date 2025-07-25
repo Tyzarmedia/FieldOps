@@ -102,12 +102,7 @@ function DashboardRouter() {
     case "FleetManager":
       return <FleetManagerDashboard />;
     case "StockManager":
-      return (
-        <PlaceholderPage
-          title="Stock Manager Dashboard"
-          description="Inventory management, stock allocation, and usage tracking."
-        />
-      );
+      return <InventoryManagement />;
     case "HSManager":
       return (
         <PlaceholderPage
