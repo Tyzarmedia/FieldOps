@@ -468,13 +468,15 @@ export default function InventoryManagement() {
       )}
 
       {/* Main Content */}
-      <Tabs defaultValue="inventory" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="inventory">Inventory</TabsTrigger>
-          <TabsTrigger value="movements">Stock Movements</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3">
+          <Tabs defaultValue="inventory" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="inventory">Inventory</TabsTrigger>
+              <TabsTrigger value="movements">Stock Movements</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+            </TabsList>
 
         <TabsContent value="inventory" className="space-y-4">
           {/* Filters */}
@@ -761,7 +763,17 @@ export default function InventoryManagement() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
+          </Tabs>
+        </div>
+
+        {/* Alerts Sidebar */}
+        <div className="lg:col-span-1">
+          <InventoryAlerts
+            onRefreshInventory={loadInventoryData}
+            className="sticky top-6"
+          />
+        </div>
+      </div>
 
       {/* Modals */}
       
