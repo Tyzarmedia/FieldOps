@@ -1,6 +1,18 @@
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import {
+  getInventoryItems,
+  getInventoryItem,
+  getStockMovements,
+  createStockMovement,
+  getPurchaseOrders,
+  getLowStockItems,
+  syncInventory,
+  getInventoryStats,
+  issueInventory,
+  returnInventory
+} from "./routes/inventory";
 
 export function createServer() {
   const app = express();
