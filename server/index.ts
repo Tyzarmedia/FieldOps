@@ -29,5 +29,17 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // Inventory API routes
+  app.get("/api/inventory/items", getInventoryItems);
+  app.get("/api/inventory/item/:itemCode", getInventoryItem);
+  app.get("/api/inventory/movements", getStockMovements);
+  app.post("/api/inventory/movements", createStockMovement);
+  app.get("/api/inventory/purchase-orders", getPurchaseOrders);
+  app.get("/api/inventory/low-stock", getLowStockItems);
+  app.post("/api/inventory/sync", syncInventory);
+  app.get("/api/inventory/stats", getInventoryStats);
+  app.post("/api/inventory/issue", issueInventory);
+  app.post("/api/inventory/return", returnInventory);
+
   return app;
 }
