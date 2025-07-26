@@ -118,6 +118,8 @@ function DashboardRouter() {
       return <PayrollDashboard />;
     case "IT":
       return <ITDashboard />;
+    case "SystemAdministrator":
+      return <SystemAdministratorDashboard />;
     default:
       return <Dashboard />;
   }
