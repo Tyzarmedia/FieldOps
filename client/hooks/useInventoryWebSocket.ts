@@ -122,20 +122,21 @@ export function useInventoryWebSocket(options: WebSocketHookOptions = {}) {
       };
 
       ws.current.onclose = (event) => {
-        console.log('WebSocket disconnected:', event.reason);
+        console.info('WebSocket disconnected (this is normal if no WebSocket server is running)');
         setState(prev => ({
           ...prev,
           connected: false,
           connecting: false,
-          subscriptions: []
+          subscriptions: [],
+          error: 'Real-time features unavailable'
         }));
 
-        // Auto-reconnect if enabled
-        if (autoReconnect && state.reconnectAttempts < maxReconnectAttempts) {
+        // Only auto-reconnect if explicitly enabled and not due to server unavailability
+        if (autoReconnect && state.reconnectAttempts < maxReconnectAttempts && event.code !== 1006) {
           setState(prev => ({ ...prev, reconnectAttempts: prev.reconnectAttempts + 1 }));
-          
+
           reconnectTimeout.current = setTimeout(() => {
-            console.log(`Attempting to reconnect (${state.reconnectAttempts + 1}/${maxReconnectAttempts})`);
+            console.info(`Attempting to reconnect (${state.reconnectAttempts + 1}/${maxReconnectAttempts})`);
             connect();
           }, reconnectDelay);
         }
