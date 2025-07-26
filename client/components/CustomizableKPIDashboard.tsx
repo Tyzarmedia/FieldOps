@@ -1179,47 +1179,113 @@ export default function CustomizableKPIDashboard() {
 
       {/* Edit Widget Modal */}
       <Dialog open={activeModal === 'editWidget'} onOpenChange={() => setActiveModal(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Widget - {selectedWidget?.title}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div>
-              <Label>Widget Title</Label>
-              <Input
-                value={editWidgetForm.title || selectedWidget?.title || ''}
-                onChange={(e) => setEditWidgetForm(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="Enter widget title"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Widget Title</Label>
+                <Input
+                  value={editWidgetForm.title || selectedWidget?.title || ''}
+                  onChange={(e) => setEditWidgetForm(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Enter widget title"
+                />
+              </div>
+              <div>
+                <Label>Data Source</Label>
+                <Select
+                  value={editWidgetForm.dataSource || selectedWidget?.dataSource || ''}
+                  onValueChange={(value) => setEditWidgetForm(prev => ({ ...prev, dataSource: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select KPI data" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">No data source</SelectItem>
+                    {KPI_DATA_SOURCES.map(source => (
+                      <SelectItem key={source.id} value={source.id}>
+                        {source.name} ({source.category})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+
+            {(selectedWidget?.type === 'chart' || selectedWidget?.type === 'gauge') && (
+              <div>
+                <Label>Chart Type</Label>
+                <Select
+                  value={editWidgetForm.chartType || selectedWidget?.config.chartType || 'bar'}
+                  onValueChange={(value) => setEditWidgetForm(prev => ({ ...prev, chartType: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bar">Bar Chart</SelectItem>
+                    <SelectItem value="line">Line Chart</SelectItem>
+                    <SelectItem value="area">Area Chart</SelectItem>
+                    {selectedWidget?.type === 'gauge' && (
+                      <>
+                        <SelectItem value="donut">Donut Chart</SelectItem>
+                        <SelectItem value="pie">Pie Chart</SelectItem>
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Background Color</Label>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#6b7280', '#ec4899', '#06b6d4', '#84cc16'].map(color => (
+                    <button
+                      key={color}
+                      className={`w-8 h-8 rounded border-2 ${
+                        (editWidgetForm.backgroundColor || selectedWidget?.config.backgroundColor) === color
+                          ? 'border-gray-800' : 'border-gray-300'
+                      }`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => setEditWidgetForm(prev => ({ ...prev, backgroundColor: color }))}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>Text Color</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {['#ffffff', '#000000', '#374151', '#6b7280'].map(color => (
+                    <button
+                      key={color}
+                      className={`w-8 h-8 rounded border-2 ${
+                        (editWidgetForm.textColor || selectedWidget?.config.textColor) === color
+                          ? 'border-blue-500' : 'border-gray-300'
+                      }`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => setEditWidgetForm(prev => ({ ...prev, textColor: color }))}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div>
-              <Label>Background Color</Label>
-              <div className="flex gap-2 mt-2">
-                {['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#6b7280'].map(color => (
+              <Label>Chart/Accent Color</Label>
+              <div className="grid grid-cols-6 gap-2 mt-2">
+                {['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#6b7280', '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#8b5a2b', '#6366f1'].map(color => (
                   <button
                     key={color}
                     className={`w-8 h-8 rounded border-2 ${
-                      (editWidgetForm.backgroundColor || selectedWidget?.config.backgroundColor) === color
+                      (editWidgetForm.chartColor || selectedWidget?.config.chartColor) === color
                         ? 'border-gray-800' : 'border-gray-300'
                     }`}
                     style={{ backgroundColor: color }}
-                    onClick={() => setEditWidgetForm(prev => ({ ...prev, backgroundColor: color }))}
-                  />
-                ))}
-              </div>
-            </div>
-            <div>
-              <Label>Text Color</Label>
-              <div className="flex gap-2 mt-2">
-                {['#ffffff', '#000000', '#374151', '#6b7280'].map(color => (
-                  <button
-                    key={color}
-                    className={`w-8 h-8 rounded border-2 ${
-                      (editWidgetForm.textColor || selectedWidget?.config.textColor) === color
-                        ? 'border-blue-500' : 'border-gray-300'
-                    }`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => setEditWidgetForm(prev => ({ ...prev, textColor: color }))}
+                    onClick={() => setEditWidgetForm(prev => ({ ...prev, chartColor: color }))}
                   />
                 ))}
               </div>
