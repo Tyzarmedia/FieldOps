@@ -307,11 +307,59 @@ export default function CustomizableKPIDashboard() {
   };
 
   const resizeWidget = (widgetId: string, newSize: { width: number; height: number }) => {
-    setWidgets(prev => prev.map(w => 
-      w.id === widgetId 
-        ? { ...w, size: newSize }
-        : w
-    ));
+    const widget = widgets.find(w => w.id === widgetId);
+    if (!widget) return;
+
+    // Check if new size is valid
+    if (checkWidgetPlacement({ ...widget, size: newSize }, widget.position.x, widget.position.y)) {
+      setWidgets(prev => prev.map(w =>
+        w.id === widgetId
+          ? { ...w, size: newSize }
+          : w
+      ));
+      toast({
+        title: "Widget Resized",
+        description: `Widget resized to ${newSize.width}x${newSize.height}`,
+      });
+    } else {
+      toast({
+        title: "Cannot Resize",
+        description: "Not enough space to resize widget to that size.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleMouseDownResize = (widget: KPIWidget, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startWidth = widget.size.width;
+    const startHeight = widget.size.height;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      // Calculate new size based on mouse movement
+      // Each grid cell is approximately 200px wide and 100px tall
+      const newWidth = Math.max(1, Math.min(4, startWidth + Math.round(deltaX / 200)));
+      const newHeight = Math.max(1, Math.min(3, startHeight + Math.round(deltaY / 100)));
+
+      if (newWidth !== widget.size.width || newHeight !== widget.size.height) {
+        resizeWidget(widget.id, { width: newWidth, height: newHeight });
+      }
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
 
   const deleteWidget = (widgetId: string) => {
