@@ -315,10 +315,19 @@ export const getInventoryStats: RequestHandler = async (req, res) => {
   try {
     const { warehouse } = req.query;
 
-    const items = await sageX3Service.getInventoryItems(warehouse as string);
-    const lowStockItems = await sageX3Service.getLowStockItems(
-      warehouse as string,
-    );
+    let items: InventoryItem[] = [];
+    let lowStockItems: InventoryItem[] = [];
+
+    try {
+      // Try Sage X3 service first
+      items = await sageX3Service.getInventoryItems(warehouse as string);
+      lowStockItems = await sageX3Service.getLowStockItems(warehouse as string);
+    } catch (sageError) {
+      console.warn("Sage X3 service unavailable, using mock data:", sageError.message);
+      // Fallback to mock service
+      items = await mockService.getInventoryItems(warehouse as string);
+      lowStockItems = await mockService.getLowStockItems(warehouse as string);
+    }
 
     // Calculate statistics
     const totalValue = items.reduce(
