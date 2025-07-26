@@ -186,7 +186,9 @@ export default function CustomizableKPIDashboard() {
     type: 'metric' as KPIWidget['type'],
     size: { width: 1, height: 1 },
     dataSource: '',
-    color: '#3b82f6'
+    color: '#3b82f6',
+    textColor: '#ffffff',
+    chartType: 'bar' as const
   });
   const [newLayoutForm, setNewLayoutForm] = useState({
     name: '',
