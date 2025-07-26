@@ -184,14 +184,42 @@ export default function InventoryManagement() {
       const params = new URLSearchParams();
       if (selectedWarehouse !== "all") params.append("warehouse", selectedWarehouse);
 
-      const response = await fetch(`/api/inventory/stats?${params}`);
+      const response = await fetch(`/api/inventory/stats?${params}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.success) {
         setInventoryStats(data.data);
+      } else {
+        console.warn("Failed to load inventory stats:", data.error);
+        // Set default stats as fallback
+        setInventoryStats({
+          totalItems: 0,
+          totalValue: 0,
+          lowStockItems: 0,
+          categories: [],
+          warehouses: []
+        });
       }
     } catch (error) {
       console.error("Error loading inventory stats:", error);
+      // Set default stats as fallback
+      setInventoryStats({
+        totalItems: 0,
+        totalValue: 0,
+        lowStockItems: 0,
+        categories: [],
+        warehouses: []
+      });
     }
   };
 
