@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
+import { KPIDataService, KPI_DATA_SOURCES, type KPIDataSource } from "@/services/kpiDataService";
 import {
   Eye,
   Edit3,
