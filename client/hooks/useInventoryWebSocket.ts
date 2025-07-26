@@ -272,7 +272,8 @@ export function useInventoryUpdates(callback: (event: InventoryWebSocketEvent) =
 
 export function useStockMovements(callback: (event: InventoryWebSocketEvent) => void) {
   const { addEventListener, connected } = useInventoryWebSocket({
-    subscriptions: ['stock_movements']
+    subscriptions: ['stock_movements'],
+    autoConnect: false
   });
 
   useEffect(() => {
@@ -284,7 +285,8 @@ export function useStockMovements(callback: (event: InventoryWebSocketEvent) => 
 
 export function useLowStockAlerts(callback: (event: InventoryWebSocketEvent) => void) {
   const { addEventListener, connected } = useInventoryWebSocket({
-    subscriptions: ['low_stock_alerts']
+    subscriptions: ['low_stock_alerts'],
+    autoConnect: false
   });
 
   useEffect(() => {
@@ -296,7 +298,8 @@ export function useLowStockAlerts(callback: (event: InventoryWebSocketEvent) => 
 
 export function useSyncStatus(callback: (event: InventoryWebSocketEvent) => void) {
   const { addEventListener, connected } = useInventoryWebSocket({
-    subscriptions: ['sync_status']
+    subscriptions: ['sync_status'],
+    autoConnect: false
   });
 
   useEffect(() => {
