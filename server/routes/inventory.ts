@@ -18,8 +18,16 @@ const sageX3Config: SageX3Config = {
   requestConfig: process.env.SAGE_X3_REQUEST_CONFIG || "",
 };
 
-// Initialize Sage X3 service
+// Initialize Sage X3 service and mock service as fallback
 const sageX3Service = getSageX3Service(sageX3Config);
+const mockService = new MockInventoryService();
+
+// Helper to get service with fallback
+const getInventoryService = () => {
+  // In production, you might want to check if Sage X3 is available
+  // For now, we'll use mock service as fallback when Sage X3 fails
+  return sageX3Service;
+};
 
 // Response interfaces
 interface ApiResponse<T> {
