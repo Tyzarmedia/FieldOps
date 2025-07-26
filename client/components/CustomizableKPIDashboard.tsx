@@ -421,23 +421,38 @@ export default function CustomizableKPIDashboard() {
     });
   };
 
-  const addNewWidget = () => {
+  const addNewWidget = async () => {
     const newWidget: KPIWidget = {
       id: `widget-${Date.now()}`,
       title: newWidgetForm.title,
       type: newWidgetForm.type,
       size: newWidgetForm.size,
       position: { x: 0, y: 0 }, // Will be placed automatically
+      dataSource: newWidgetForm.dataSource || undefined,
       data: {
         value: 0,
-        label: newWidgetForm.title,
-        color: newWidgetForm.color
+        label: newWidgetForm.title
       },
       config: {
         backgroundColor: newWidgetForm.color,
-        textColor: '#ffffff'
+        textColor: newWidgetForm.textColor,
+        chartType: newWidgetForm.chartType,
+        chartColor: newWidgetForm.color,
+        showTrend: true,
+        showTarget: false,
+        animated: true
       }
     };
+
+    // Load initial data if data source is specified
+    if (newWidget.dataSource) {
+      try {
+        const kpiData = await kpiService.current.getKPIData(newWidget.dataSource);
+        newWidget.data = { ...newWidget.data, ...kpiData };
+      } catch (error) {
+        console.error('Failed to load initial data for new widget:', error);
+      }
+    }
 
     // Find available position
     let placed = false;
