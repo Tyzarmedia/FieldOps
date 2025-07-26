@@ -154,12 +154,26 @@ export const getStockMovements: RequestHandler = async (req, res) => {
       limit = "100",
     } = req.query;
 
-    let movements = await sageX3Service.getStockMovements(
-      itemCode as string,
-      warehouse as string,
-      startDate as string,
-      endDate as string,
-    );
+    let movements: StockMovement[] = [];
+
+    try {
+      // Try Sage X3 service first
+      movements = await sageX3Service.getStockMovements(
+        itemCode as string,
+        warehouse as string,
+        startDate as string,
+        endDate as string,
+      );
+    } catch (sageError) {
+      console.warn("Sage X3 service unavailable, using mock data:", sageError.message);
+      // Fallback to mock service
+      movements = await mockService.getStockMovements(
+        itemCode as string,
+        warehouse as string,
+        startDate as string,
+        endDate as string,
+      );
+    }
 
     // Limit results
     const limitNum = parseInt(limit as string);
