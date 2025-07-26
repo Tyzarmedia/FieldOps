@@ -1034,6 +1034,43 @@ export default function CustomizableKPIDashboard() {
                 ))}
               </div>
             </div>
+            <div>
+              <Label>Widget Size</Label>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                {[
+                  { width: 1, height: 1, label: '1x1' },
+                  { width: 2, height: 1, label: '2x1' },
+                  { width: 1, height: 2, label: '1x2' },
+                  { width: 2, height: 2, label: '2x2' },
+                  { width: 3, height: 1, label: '3x1' },
+                  { width: 1, height: 3, label: '1x3' },
+                  { width: 3, height: 2, label: '3x2' },
+                  { width: 4, height: 1, label: '4x1' },
+                  { width: 4, height: 2, label: '4x2' }
+                ].map((preset) => (
+                  <Button
+                    key={`${preset.width}x${preset.height}`}
+                    type="button"
+                    variant={selectedWidget?.size.width === preset.width && selectedWidget?.size.height === preset.height ? "default" : "outline"}
+                    className="h-12 flex flex-col items-center justify-center"
+                    onClick={() => {
+                      if (selectedWidget) {
+                        resizeWidget(selectedWidget.id, { width: preset.width, height: preset.height });
+                      }
+                    }}
+                  >
+                    <div className="text-xs font-medium">{preset.label}</div>
+                    <div
+                      className="bg-current opacity-30 rounded-sm mt-1"
+                      style={{
+                        width: `${preset.width * 8 + 2}px`,
+                        height: `${preset.height * 4 + 2}px`
+                      }}
+                    />
+                  </Button>
+                ))}
+              </div>
+            </div>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label>Show Trend</Label>
