@@ -390,6 +390,58 @@ export default function CustomizableKPIDashboard() {
     setIsEditMode(false);
   };
 
+  const createNewLayout = () => {
+    const newLayout: DashboardLayout = {
+      id: `layout-${Date.now()}`,
+      name: newLayoutForm.name,
+      description: newLayoutForm.description,
+      widgets: newLayoutForm.copyFrom === 'current' && currentLayout ?
+        JSON.parse(JSON.stringify(currentLayout.widgets)) :
+        newLayoutForm.copyFrom === 'default' ?
+        JSON.parse(JSON.stringify(DEFAULT_WIDGETS)) : [],
+      permissions: {
+        viewRoles: ['Manager', 'CEO', 'Coordinator'],
+        editRoles: ['Manager', 'CEO']
+      },
+      createdBy: 'Manager',
+      createdAt: new Date().toISOString(),
+      lastModified: new Date().toISOString()
+    };
+
+    saveDashboardLayout(newLayout);
+    setCurrentLayout(newLayout);
+    setWidgets(newLayout.widgets);
+    setActiveModal(null);
+    setNewLayoutForm({ name: '', description: '', copyFrom: '' });
+  };
+
+  const updateWidgetConfig = () => {
+    if (!selectedWidget) return;
+
+    setWidgets(prev => prev.map(w =>
+      w.id === selectedWidget.id
+        ? {
+            ...w,
+            title: editWidgetForm.title || w.title,
+            config: {
+              ...w.config,
+              backgroundColor: editWidgetForm.backgroundColor || w.config.backgroundColor,
+              textColor: editWidgetForm.textColor || w.config.textColor,
+              showTrend: editWidgetForm.showTrend,
+              showTarget: editWidgetForm.showTarget
+            }
+          }
+        : w
+    ));
+
+    setActiveModal(null);
+    setSelectedWidget(null);
+    toast({
+      title: "Widget Updated",
+      description: "Widget configuration has been saved.",
+    });
+  };
+
   const renderWidget = (widget: KPIWidget) => {
     const gridSpan = `col-span-${widget.size.width} row-span-${widget.size.height}`;
     const isSelected = selectedWidget?.id === widget.id;
