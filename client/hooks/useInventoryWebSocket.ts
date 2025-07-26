@@ -264,9 +264,11 @@ export function useInventoryUpdates(callback: (event: InventoryWebSocketEvent) =
   });
 
   useEffect(() => {
-    if (connected) {
+    if (connected && addEventListener) {
       return addEventListener('inventory_updated', callback);
     }
+    // Return empty cleanup function when not connected
+    return () => {};
   }, [addEventListener, callback, connected]);
 }
 
