@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import CustomizableKPIDashboard from "@/components/CustomizableKPIDashboard";
 import {
   Users,
   ClipboardList,
