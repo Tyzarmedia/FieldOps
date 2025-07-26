@@ -67,7 +67,10 @@ export const getInventoryItems: RequestHandler = async (req, res) => {
       // Try Sage X3 service first
       items = await sageX3Service.getInventoryItems(warehouse as string);
     } catch (sageError) {
-      console.warn("Sage X3 service unavailable, using mock data:", sageError.message);
+      console.warn(
+        "Sage X3 service unavailable, using mock data:",
+        sageError.message,
+      );
       // Fallback to mock service
       items = await mockService.getInventoryItems(warehouse as string);
     }
@@ -165,7 +168,10 @@ export const getStockMovements: RequestHandler = async (req, res) => {
         endDate as string,
       );
     } catch (sageError) {
-      console.warn("Sage X3 service unavailable, using mock data:", sageError.message);
+      console.warn(
+        "Sage X3 service unavailable, using mock data:",
+        sageError.message,
+      );
       // Fallback to mock service
       movements = await mockService.getStockMovements(
         itemCode as string,
@@ -286,7 +292,10 @@ export const getLowStockItems: RequestHandler = async (req, res) => {
       // Try Sage X3 service first
       lowStockItems = await sageX3Service.getLowStockItems(warehouse as string);
     } catch (sageError) {
-      console.warn("Sage X3 service unavailable, using mock data:", sageError.message);
+      console.warn(
+        "Sage X3 service unavailable, using mock data:",
+        sageError.message,
+      );
       // Fallback to mock service
       lowStockItems = await mockService.getLowStockItems(warehouse as string);
     }
@@ -353,7 +362,10 @@ export const getInventoryStats: RequestHandler = async (req, res) => {
       items = await sageX3Service.getInventoryItems(warehouse as string);
       lowStockItems = await sageX3Service.getLowStockItems(warehouse as string);
     } catch (sageError) {
-      console.warn("Sage X3 service unavailable, using mock data:", sageError.message);
+      console.warn(
+        "Sage X3 service unavailable, using mock data:",
+        sageError.message,
+      );
       // Fallback to mock service
       items = await mockService.getInventoryItems(warehouse as string);
       lowStockItems = await mockService.getLowStockItems(warehouse as string);

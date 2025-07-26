@@ -3,12 +3,32 @@ import { useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -62,7 +82,7 @@ import {
   TrendingUp,
   TrendingDown,
   Gauge,
-  Monitor
+  Monitor,
 } from "lucide-react";
 
 interface User {
@@ -70,7 +90,7 @@ interface User {
   name: string;
   email: string;
   role: string;
-  status: 'active' | 'inactive' | 'suspended';
+  status: "active" | "inactive" | "suspended";
   lastLogin: string;
   permissions: string[];
   createdAt: string;
@@ -90,7 +110,7 @@ interface SystemSettings {
 
 interface IntegrationStatus {
   name: string;
-  status: 'connected' | 'disconnected' | 'error';
+  status: "connected" | "disconnected" | "error";
   lastSync: string;
   endpoint: string;
   enabled: boolean;
@@ -110,52 +130,76 @@ export default function SystemAdministratorDashboard() {
   const location = useLocation();
   const [users, setUsers] = useState<User[]>([]);
   const [systemSettings, setSystemSettings] = useState<SystemSettings>({
-    timezone: 'Africa/Johannesburg',
-    language: 'en',
-    theme: 'light',
+    timezone: "Africa/Johannesburg",
+    language: "en",
+    theme: "light",
     autoOvertimeRules: true,
     sessionTimeout: 30,
     maxLoginAttempts: 5,
     passwordExpiry: 90,
-    backupFrequency: 'daily',
-    maintenanceMode: false
+    backupFrequency: "daily",
+    maintenanceMode: false,
   });
 
   // Determine active tab based on URL
   const getActiveTab = () => {
     const path = location.pathname;
-    if (path.includes('/settings')) return 'settings';
-    if (path.includes('/integrations')) return 'integrations';
-    if (path.includes('/monitoring')) return 'monitoring';
-    if (path.includes('/security')) return 'security';
-    if (path.includes('/data')) return 'data';
-    return 'users';
+    if (path.includes("/settings")) return "settings";
+    if (path.includes("/integrations")) return "integrations";
+    if (path.includes("/monitoring")) return "monitoring";
+    if (path.includes("/security")) return "security";
+    if (path.includes("/data")) return "data";
+    return "users";
   };
   const [integrations, setIntegrations] = useState<IntegrationStatus[]>([
-    { name: 'Sage X3', status: 'connected', lastSync: '2025-01-25 10:30:00', endpoint: 'https://sage-server.com:8124', enabled: true },
-    { name: 'GPS Tracking', status: 'connected', lastSync: '2025-01-25 10:35:00', endpoint: 'https://gps-api.com/v1', enabled: true },
-    { name: 'WhatsApp API', status: 'disconnected', lastSync: '2025-01-24 15:20:00', endpoint: 'https://api.whatsapp.com/v1', enabled: false },
-    { name: 'Vuma Portal', status: 'error', lastSync: '2025-01-25 09:15:00', endpoint: 'https://vuma.co.za/api', enabled: true }
+    {
+      name: "Sage X3",
+      status: "connected",
+      lastSync: "2025-01-25 10:30:00",
+      endpoint: "https://sage-server.com:8124",
+      enabled: true,
+    },
+    {
+      name: "GPS Tracking",
+      status: "connected",
+      lastSync: "2025-01-25 10:35:00",
+      endpoint: "https://gps-api.com/v1",
+      enabled: true,
+    },
+    {
+      name: "WhatsApp API",
+      status: "disconnected",
+      lastSync: "2025-01-24 15:20:00",
+      endpoint: "https://api.whatsapp.com/v1",
+      enabled: false,
+    },
+    {
+      name: "Vuma Portal",
+      status: "error",
+      lastSync: "2025-01-25 09:15:00",
+      endpoint: "https://vuma.co.za/api",
+      enabled: true,
+    },
   ]);
   const [systemHealth, setSystemHealth] = useState<SystemHealth>({
     cpu: 45,
     memory: 68,
     disk: 72,
-    uptime: '15 days, 6 hours',
+    uptime: "15 days, 6 hours",
     connections: 247,
     errors: 12,
-    responseTime: 156
+    responseTime: 156,
   });
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [newUser, setNewUser] = useState({
-    name: '',
-    email: '',
-    role: '',
-    permissions: [] as string[]
+    name: "",
+    email: "",
+    role: "",
+    permissions: [] as string[],
   });
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { toast } = useToast();
@@ -170,45 +214,45 @@ export default function SystemAdministratorDashboard() {
     // Mock data - replace with actual API call
     const mockUsers: User[] = [
       {
-        id: '1',
-        name: 'Dyondzani Masinge',
-        email: 'dyondzani@tyzarmedia.com',
-        role: 'CEO',
-        status: 'active',
-        lastLogin: '2025-01-25 09:30:00',
-        permissions: ['all'],
-        createdAt: '2024-01-15'
+        id: "1",
+        name: "Dyondzani Masinge",
+        email: "dyondzani@tyzarmedia.com",
+        role: "CEO",
+        status: "active",
+        lastLogin: "2025-01-25 09:30:00",
+        permissions: ["all"],
+        createdAt: "2024-01-15",
       },
       {
-        id: '2',
-        name: 'John Mokoena',
-        email: 'john@tyzarmedia.com',
-        role: 'FleetManager',
-        status: 'active',
-        lastLogin: '2025-01-25 08:15:00',
-        permissions: ['fleet:read', 'fleet:write', 'vehicles:manage'],
-        createdAt: '2024-02-01'
+        id: "2",
+        name: "John Mokoena",
+        email: "john@tyzarmedia.com",
+        role: "FleetManager",
+        status: "active",
+        lastLogin: "2025-01-25 08:15:00",
+        permissions: ["fleet:read", "fleet:write", "vehicles:manage"],
+        createdAt: "2024-02-01",
       },
       {
-        id: '3',
-        name: 'Brenda Khumalo',
-        email: 'brenda@tyzarmedia.com',
-        role: 'StockManager',
-        status: 'active',
-        lastLogin: '2025-01-24 16:45:00',
-        permissions: ['inventory:read', 'inventory:write', 'stock:manage'],
-        createdAt: '2024-01-20'
+        id: "3",
+        name: "Brenda Khumalo",
+        email: "brenda@tyzarmedia.com",
+        role: "StockManager",
+        status: "active",
+        lastLogin: "2025-01-24 16:45:00",
+        permissions: ["inventory:read", "inventory:write", "stock:manage"],
+        createdAt: "2024-01-20",
       },
       {
-        id: '4',
-        name: 'Sipho Masinga',
-        email: 'sipho@tyzarmedia.com',
-        role: 'Technician',
-        status: 'suspended',
-        lastLogin: '2025-01-23 14:20:00',
-        permissions: ['jobs:read', 'stock:read'],
-        createdAt: '2024-03-10'
-      }
+        id: "4",
+        name: "Sipho Masinga",
+        email: "sipho@tyzarmedia.com",
+        role: "Technician",
+        status: "suspended",
+        lastLogin: "2025-01-23 14:20:00",
+        permissions: ["jobs:read", "stock:read"],
+        createdAt: "2024-03-10",
+      },
     ];
     setUsers(mockUsers);
   };
@@ -216,10 +260,38 @@ export default function SystemAdministratorDashboard() {
   const loadAuditLogs = async () => {
     // Mock audit log data
     const mockLogs = [
-      { id: 1, user: 'Dyondzani Masinge', action: 'Login', resource: 'System', timestamp: '2025-01-25 09:30:00', ip: '192.168.1.100' },
-      { id: 2, user: 'Brenda Khumalo', action: 'Create Stock Movement', resource: 'Inventory', timestamp: '2025-01-25 09:15:00', ip: '192.168.1.105' },
-      { id: 3, user: 'System', action: 'Automated Sync', resource: 'Sage X3', timestamp: '2025-01-25 09:00:00', ip: 'server' },
-      { id: 4, user: 'John Mokoena', action: 'Update Vehicle', resource: 'Fleet', timestamp: '2025-01-25 08:45:00', ip: '192.168.1.102' }
+      {
+        id: 1,
+        user: "Dyondzani Masinge",
+        action: "Login",
+        resource: "System",
+        timestamp: "2025-01-25 09:30:00",
+        ip: "192.168.1.100",
+      },
+      {
+        id: 2,
+        user: "Brenda Khumalo",
+        action: "Create Stock Movement",
+        resource: "Inventory",
+        timestamp: "2025-01-25 09:15:00",
+        ip: "192.168.1.105",
+      },
+      {
+        id: 3,
+        user: "System",
+        action: "Automated Sync",
+        resource: "Sage X3",
+        timestamp: "2025-01-25 09:00:00",
+        ip: "server",
+      },
+      {
+        id: 4,
+        user: "John Mokoena",
+        action: "Update Vehicle",
+        resource: "Fleet",
+        timestamp: "2025-01-25 08:45:00",
+        ip: "192.168.1.102",
+      },
     ];
     setAuditLogs(mockLogs);
   };
@@ -230,10 +302,10 @@ export default function SystemAdministratorDashboard() {
       cpu: Math.floor(Math.random() * 30) + 40,
       memory: Math.floor(Math.random() * 20) + 60,
       disk: Math.floor(Math.random() * 15) + 70,
-      uptime: '15 days, 6 hours',
+      uptime: "15 days, 6 hours",
       connections: Math.floor(Math.random() * 50) + 200,
       errors: Math.floor(Math.random() * 10) + 5,
-      responseTime: Math.floor(Math.random() * 50) + 100
+      responseTime: Math.floor(Math.random() * 50) + 100,
     });
   };
 
@@ -242,7 +314,7 @@ export default function SystemAdministratorDashboard() {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -252,14 +324,14 @@ export default function SystemAdministratorDashboard() {
       name: newUser.name,
       email: newUser.email,
       role: newUser.role,
-      status: 'active',
-      lastLogin: 'Never',
+      status: "active",
+      lastLogin: "Never",
       permissions: newUser.permissions,
-      createdAt: new Date().toISOString().split('T')[0]
+      createdAt: new Date().toISOString().split("T")[0],
     };
 
-    setUsers(prev => [...prev, user]);
-    setNewUser({ name: '', email: '', role: '', permissions: [] });
+    setUsers((prev) => [...prev, user]);
+    setNewUser({ name: "", email: "", role: "", permissions: [] });
     setActiveModal(null);
 
     toast({
@@ -268,10 +340,13 @@ export default function SystemAdministratorDashboard() {
     });
   };
 
-  const updateUserStatus = (userId: string, status: 'active' | 'inactive' | 'suspended') => {
-    setUsers(prev => prev.map(user => 
-      user.id === userId ? { ...user, status } : user
-    ));
+  const updateUserStatus = (
+    userId: string,
+    status: "active" | "inactive" | "suspended",
+  ) => {
+    setUsers((prev) =>
+      prev.map((user) => (user.id === userId ? { ...user, status } : user)),
+    );
 
     toast({
       title: "User Updated",
@@ -280,7 +355,7 @@ export default function SystemAdministratorDashboard() {
   };
 
   const resetUserPassword = (userId: string) => {
-    const user = users.find(u => u.id === userId);
+    const user = users.find((u) => u.id === userId);
     if (user) {
       toast({
         title: "Password Reset",
@@ -290,8 +365,8 @@ export default function SystemAdministratorDashboard() {
   };
 
   const updateSystemSetting = (key: keyof SystemSettings, value: any) => {
-    setSystemSettings(prev => ({ ...prev, [key]: value }));
-    
+    setSystemSettings((prev) => ({ ...prev, [key]: value }));
+
     toast({
       title: "Setting Updated",
       description: `${key} has been updated successfully`,
@@ -300,15 +375,21 @@ export default function SystemAdministratorDashboard() {
 
   const testIntegration = async (integrationName: string) => {
     setLoading(true);
-    
+
     // Simulate API test
     setTimeout(() => {
-      setIntegrations(prev => prev.map(int => 
-        int.name === integrationName 
-          ? { ...int, status: 'connected', lastSync: new Date().toISOString() }
-          : int
-      ));
-      
+      setIntegrations((prev) =>
+        prev.map((int) =>
+          int.name === integrationName
+            ? {
+                ...int,
+                status: "connected",
+                lastSync: new Date().toISOString(),
+              }
+            : int,
+        ),
+      );
+
       setLoading(false);
       toast({
         title: "Integration Test",
@@ -318,11 +399,11 @@ export default function SystemAdministratorDashboard() {
   };
 
   const toggleIntegration = (integrationName: string) => {
-    setIntegrations(prev => prev.map(int => 
-      int.name === integrationName 
-        ? { ...int, enabled: !int.enabled }
-        : int
-    ));
+    setIntegrations((prev) =>
+      prev.map((int) =>
+        int.name === integrationName ? { ...int, enabled: !int.enabled } : int,
+      ),
+    );
   };
 
   const exportData = (dataType: string) => {
@@ -332,36 +413,60 @@ export default function SystemAdministratorDashboard() {
     });
   };
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.role.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active':
-        return <Badge variant="default" className="bg-green-500">Active</Badge>;
-      case 'inactive':
+      case "active":
+        return (
+          <Badge variant="default" className="bg-green-500">
+            Active
+          </Badge>
+        );
+      case "inactive":
         return <Badge variant="secondary">Inactive</Badge>;
-      case 'suspended':
+      case "suspended":
         return <Badge variant="destructive">Suspended</Badge>;
-      case 'connected':
-        return <Badge variant="default" className="bg-green-500">Connected</Badge>;
-      case 'disconnected':
+      case "connected":
+        return (
+          <Badge variant="default" className="bg-green-500">
+            Connected
+          </Badge>
+        );
+      case "disconnected":
         return <Badge variant="secondary">Disconnected</Badge>;
-      case 'error':
+      case "error":
         return <Badge variant="destructive">Error</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
   };
 
-  const getHealthColor = (value: number, type: 'cpu' | 'memory' | 'disk') => {
-    if (type === 'cpu') return value > 80 ? 'text-red-500' : value > 60 ? 'text-yellow-500' : 'text-green-500';
-    if (type === 'memory') return value > 85 ? 'text-red-500' : value > 70 ? 'text-yellow-500' : 'text-green-500';
-    if (type === 'disk') return value > 90 ? 'text-red-500' : value > 75 ? 'text-yellow-500' : 'text-green-500';
-    return 'text-green-500';
+  const getHealthColor = (value: number, type: "cpu" | "memory" | "disk") => {
+    if (type === "cpu")
+      return value > 80
+        ? "text-red-500"
+        : value > 60
+          ? "text-yellow-500"
+          : "text-green-500";
+    if (type === "memory")
+      return value > 85
+        ? "text-red-500"
+        : value > 70
+          ? "text-yellow-500"
+          : "text-green-500";
+    if (type === "disk")
+      return value > 90
+        ? "text-red-500"
+        : value > 75
+          ? "text-yellow-500"
+          : "text-green-500";
+    return "text-green-500";
   };
 
   return (
@@ -388,10 +493,14 @@ export default function SystemAdministratorDashboard() {
               Refresh Status
             </Button>
             <Button
-              onClick={() => setActiveModal('maintenance')}
-              variant={systemSettings.maintenanceMode ? "destructive" : "outline"}
+              onClick={() => setActiveModal("maintenance")}
+              variant={
+                systemSettings.maintenanceMode ? "destructive" : "outline"
+              }
             >
-              {systemSettings.maintenanceMode ? "Exit Maintenance" : "Maintenance Mode"}
+              {systemSettings.maintenanceMode
+                ? "Exit Maintenance"
+                : "Maintenance Mode"}
             </Button>
           </div>
         </div>
@@ -404,7 +513,9 @@ export default function SystemAdministratorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">CPU Usage</p>
-                <p className={`text-2xl font-bold ${getHealthColor(systemHealth.cpu, 'cpu')}`}>
+                <p
+                  className={`text-2xl font-bold ${getHealthColor(systemHealth.cpu, "cpu")}`}
+                >
                   {systemHealth.cpu}%
                 </p>
               </div>
@@ -418,7 +529,9 @@ export default function SystemAdministratorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Memory</p>
-                <p className={`text-2xl font-bold ${getHealthColor(systemHealth.memory, 'memory')}`}>
+                <p
+                  className={`text-2xl font-bold ${getHealthColor(systemHealth.memory, "memory")}`}
+                >
                   {systemHealth.memory}%
                 </p>
               </div>
@@ -432,7 +545,9 @@ export default function SystemAdministratorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Disk Space</p>
-                <p className={`text-2xl font-bold ${getHealthColor(systemHealth.disk, 'disk')}`}>
+                <p
+                  className={`text-2xl font-bold ${getHealthColor(systemHealth.disk, "disk")}`}
+                >
                   {systemHealth.disk}%
                 </p>
               </div>
@@ -491,7 +606,7 @@ export default function SystemAdministratorDashboard() {
                       className="pl-10 w-64"
                     />
                   </div>
-                  <Button onClick={() => setActiveModal('createUser')}>
+                  <Button onClick={() => setActiveModal("createUser")}>
                     <UserPlus className="h-4 w-4 mr-2" />
                     Add User
                   </Button>
@@ -525,7 +640,7 @@ export default function SystemAdministratorDashboard() {
                             variant="ghost"
                             onClick={() => {
                               setSelectedUser(user);
-                              setActiveModal('editUser');
+                              setActiveModal("editUser");
                             }}
                           >
                             <Edit className="h-3 w-3" />
@@ -540,9 +655,20 @@ export default function SystemAdministratorDashboard() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => updateUserStatus(user.id, user.status === 'active' ? 'suspended' : 'active')}
+                            onClick={() =>
+                              updateUserStatus(
+                                user.id,
+                                user.status === "active"
+                                  ? "suspended"
+                                  : "active",
+                              )
+                            }
                           >
-                            {user.status === 'active' ? <UserMinus className="h-3 w-3" /> : <UserPlus className="h-3 w-3" />}
+                            {user.status === "active" ? (
+                              <UserMinus className="h-3 w-3" />
+                            ) : (
+                              <UserPlus className="h-3 w-3" />
+                            )}
                           </Button>
                         </div>
                       </TableCell>
@@ -567,20 +693,34 @@ export default function SystemAdministratorDashboard() {
               <CardContent className="space-y-4">
                 <div>
                   <Label>Timezone</Label>
-                  <Select value={systemSettings.timezone} onValueChange={(value) => updateSystemSetting('timezone', value)}>
+                  <Select
+                    value={systemSettings.timezone}
+                    onValueChange={(value) =>
+                      updateSystemSetting("timezone", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Africa/Johannesburg">Africa/Johannesburg</SelectItem>
+                      <SelectItem value="Africa/Johannesburg">
+                        Africa/Johannesburg
+                      </SelectItem>
                       <SelectItem value="UTC">UTC</SelectItem>
-                      <SelectItem value="Europe/London">Europe/London</SelectItem>
+                      <SelectItem value="Europe/London">
+                        Europe/London
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
                   <Label>Language</Label>
-                  <Select value={systemSettings.language} onValueChange={(value) => updateSystemSetting('language', value)}>
+                  <Select
+                    value={systemSettings.language}
+                    onValueChange={(value) =>
+                      updateSystemSetting("language", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -593,7 +733,12 @@ export default function SystemAdministratorDashboard() {
                 </div>
                 <div>
                   <Label>Theme</Label>
-                  <Select value={systemSettings.theme} onValueChange={(value) => updateSystemSetting('theme', value)}>
+                  <Select
+                    value={systemSettings.theme}
+                    onValueChange={(value) =>
+                      updateSystemSetting("theme", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -608,7 +753,9 @@ export default function SystemAdministratorDashboard() {
                   <Label>Auto Overtime Rules</Label>
                   <Switch
                     checked={systemSettings.autoOvertimeRules}
-                    onCheckedChange={(checked) => updateSystemSetting('autoOvertimeRules', checked)}
+                    onCheckedChange={(checked) =>
+                      updateSystemSetting("autoOvertimeRules", checked)
+                    }
                   />
                 </div>
               </CardContent>
@@ -627,7 +774,12 @@ export default function SystemAdministratorDashboard() {
                   <Input
                     type="number"
                     value={systemSettings.sessionTimeout}
-                    onChange={(e) => updateSystemSetting('sessionTimeout', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateSystemSetting(
+                        "sessionTimeout",
+                        parseInt(e.target.value),
+                      )
+                    }
                   />
                 </div>
                 <div>
@@ -635,7 +787,12 @@ export default function SystemAdministratorDashboard() {
                   <Input
                     type="number"
                     value={systemSettings.maxLoginAttempts}
-                    onChange={(e) => updateSystemSetting('maxLoginAttempts', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateSystemSetting(
+                        "maxLoginAttempts",
+                        parseInt(e.target.value),
+                      )
+                    }
                   />
                 </div>
                 <div>
@@ -643,14 +800,21 @@ export default function SystemAdministratorDashboard() {
                   <Input
                     type="number"
                     value={systemSettings.passwordExpiry}
-                    onChange={(e) => updateSystemSetting('passwordExpiry', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateSystemSetting(
+                        "passwordExpiry",
+                        parseInt(e.target.value),
+                      )
+                    }
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <Label>Maintenance Mode</Label>
                   <Switch
                     checked={systemSettings.maintenanceMode}
-                    onCheckedChange={(checked) => updateSystemSetting('maintenanceMode', checked)}
+                    onCheckedChange={(checked) =>
+                      updateSystemSetting("maintenanceMode", checked)
+                    }
                   />
                 </div>
               </CardContent>
@@ -682,14 +846,22 @@ export default function SystemAdministratorDashboard() {
                 <TableBody>
                   {integrations.map((integration) => (
                     <TableRow key={integration.name}>
-                      <TableCell className="font-medium">{integration.name}</TableCell>
-                      <TableCell>{getStatusBadge(integration.status)}</TableCell>
+                      <TableCell className="font-medium">
+                        {integration.name}
+                      </TableCell>
+                      <TableCell>
+                        {getStatusBadge(integration.status)}
+                      </TableCell>
                       <TableCell>{integration.lastSync}</TableCell>
-                      <TableCell className="font-mono text-xs">{integration.endpoint}</TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {integration.endpoint}
+                      </TableCell>
                       <TableCell>
                         <Switch
                           checked={integration.enabled}
-                          onCheckedChange={() => toggleIntegration(integration.name)}
+                          onCheckedChange={() =>
+                            toggleIntegration(integration.name)
+                          }
                         />
                       </TableCell>
                       <TableCell>
@@ -728,11 +900,15 @@ export default function SystemAdministratorDashboard() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span>Response Time:</span>
-                  <span className="font-mono">{systemHealth.responseTime}ms</span>
+                  <span className="font-mono">
+                    {systemHealth.responseTime}ms
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Error Rate:</span>
-                  <span className="font-mono">{systemHealth.errors} errors</span>
+                  <span className="font-mono">
+                    {systemHealth.errors} errors
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Active Connections:</span>
@@ -755,10 +931,15 @@ export default function SystemAdministratorDashboard() {
               <CardContent>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {auditLogs.map((log) => (
-                    <div key={log.id} className="flex justify-between items-center text-sm py-2 border-b">
+                    <div
+                      key={log.id}
+                      className="flex justify-between items-center text-sm py-2 border-b"
+                    >
                       <div>
                         <div className="font-medium">{log.action}</div>
-                        <div className="text-gray-500">{log.user} • {log.resource}</div>
+                        <div className="text-gray-500">
+                          {log.user} • {log.resource}
+                        </div>
                       </div>
                       <div className="text-right">
                         <div className="text-gray-500">{log.timestamp}</div>
@@ -783,19 +964,31 @@ export default function SystemAdministratorDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button onClick={() => exportData('Users')} className="w-full justify-start">
+                <Button
+                  onClick={() => exportData("Users")}
+                  className="w-full justify-start"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export Users
                 </Button>
-                <Button onClick={() => exportData('Jobs')} className="w-full justify-start">
+                <Button
+                  onClick={() => exportData("Jobs")}
+                  className="w-full justify-start"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export Jobs
                 </Button>
-                <Button onClick={() => exportData('Inventory')} className="w-full justify-start">
+                <Button
+                  onClick={() => exportData("Inventory")}
+                  className="w-full justify-start"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export Inventory
                 </Button>
-                <Button onClick={() => exportData('Audit Logs')} className="w-full justify-start">
+                <Button
+                  onClick={() => exportData("Audit Logs")}
+                  className="w-full justify-start"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Export Audit Logs
                 </Button>
@@ -820,7 +1013,12 @@ export default function SystemAdministratorDashboard() {
                 </Button>
                 <div>
                   <Label>Backup Frequency</Label>
-                  <Select value={systemSettings.backupFrequency} onValueChange={(value) => updateSystemSetting('backupFrequency', value)}>
+                  <Select
+                    value={systemSettings.backupFrequency}
+                    onValueChange={(value) =>
+                      updateSystemSetting("backupFrequency", value)
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -843,8 +1041,12 @@ export default function SystemAdministratorDashboard() {
             <CardContent className="p-6">
               <div className="text-center">
                 <TestTube className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-lg font-semibold mb-2">Module Access Control</h3>
-                <p className="text-gray-600">Configure module access and permissions for different roles.</p>
+                <h3 className="text-lg font-semibold mb-2">
+                  Module Access Control
+                </h3>
+                <p className="text-gray-600">
+                  Configure module access and permissions for different roles.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -855,8 +1057,12 @@ export default function SystemAdministratorDashboard() {
             <CardContent className="p-6">
               <div className="text-center">
                 <Lock className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-lg font-semibold mb-2">Security & Compliance</h3>
-                <p className="text-gray-600">Manage security policies and compliance settings.</p>
+                <h3 className="text-lg font-semibold mb-2">
+                  Security & Compliance
+                </h3>
+                <p className="text-gray-600">
+                  Manage security policies and compliance settings.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -868,7 +1074,9 @@ export default function SystemAdministratorDashboard() {
               <div className="text-center">
                 <Code className="h-12 w-12 mx-auto mb-4 text-gray-400" />
                 <h3 className="text-lg font-semibold mb-2">Developer Tools</h3>
-                <p className="text-gray-600">Access debugging tools and developer utilities.</p>
+                <p className="text-gray-600">
+                  Access debugging tools and developer utilities.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -876,7 +1084,10 @@ export default function SystemAdministratorDashboard() {
       </Tabs>
 
       {/* Create User Modal */}
-      <Dialog open={activeModal === 'createUser'} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "createUser"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New User</DialogTitle>
@@ -887,7 +1098,9 @@ export default function SystemAdministratorDashboard() {
               <Label>Full Name</Label>
               <Input
                 value={newUser.name}
-                onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, name: e.target.value })
+                }
                 placeholder="Enter full name"
               />
             </div>
@@ -896,13 +1109,20 @@ export default function SystemAdministratorDashboard() {
               <Input
                 type="email"
                 value={newUser.email}
-                onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, email: e.target.value })
+                }
                 placeholder="Enter email address"
               />
             </div>
             <div>
               <Label>Role</Label>
-              <Select value={newUser.role} onValueChange={(value) => setNewUser({...newUser, role: value})}>
+              <Select
+                value={newUser.role}
+                onValueChange={(value) =>
+                  setNewUser({ ...newUser, role: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
@@ -924,9 +1144,7 @@ export default function SystemAdministratorDashboard() {
             <Button variant="outline" onClick={() => setActiveModal(null)}>
               Cancel
             </Button>
-            <Button onClick={createUser}>
-              Create User
-            </Button>
+            <Button onClick={createUser}>Create User</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

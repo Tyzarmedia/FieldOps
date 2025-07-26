@@ -5,12 +5,28 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { KPIDataService, KPI_DATA_SOURCES, type KPIDataSource } from "@/services/kpiDataService";
+import {
+  KPIDataService,
+  KPI_DATA_SOURCES,
+  type KPIDataSource,
+} from "@/services/kpiDataService";
 import {
   Eye,
   Edit3,
@@ -31,13 +47,13 @@ import {
   Layout,
   Grid3x3,
   Square,
-  Rectangle
+  Rectangle,
 } from "lucide-react";
 
 interface KPIWidget {
   id: string;
   title: string;
-  type: 'metric' | 'chart' | 'table' | 'gauge' | 'heatmap' | 'progress';
+  type: "metric" | "chart" | "table" | "gauge" | "heatmap" | "progress";
   size: {
     width: number; // Grid columns (1-4)
     height: number; // Grid rows (1-3)
@@ -64,7 +80,7 @@ interface KPIWidget {
     showTrend?: boolean;
     showTarget?: boolean;
     refreshInterval?: number;
-    chartType?: 'bar' | 'line' | 'area' | 'pie' | 'donut';
+    chartType?: "bar" | "line" | "area" | "pie" | "donut";
     chartColor?: string;
     animated?: boolean;
   };
@@ -89,121 +105,127 @@ const GRID_ROWS = 6;
 
 const DEFAULT_WIDGETS: KPIWidget[] = [
   {
-    id: 'widget-1',
-    title: 'Open Tickets',
-    type: 'metric',
+    id: "widget-1",
+    title: "Open Tickets",
+    type: "metric",
     size: { width: 1, height: 1 },
     position: { x: 0, y: 0 },
-    dataSource: 'open_tickets',
+    dataSource: "open_tickets",
     data: {
       value: 8,
-      label: 'Open Tickets',
-      trend: '+12%',
-      unit: 'tickets'
+      label: "Open Tickets",
+      trend: "+12%",
+      unit: "tickets",
     },
     config: {
-      backgroundColor: '#3b82f6',
-      textColor: '#ffffff',
+      backgroundColor: "#3b82f6",
+      textColor: "#ffffff",
       showTrend: true,
-      animated: true
-    }
+      animated: true,
+    },
   },
   {
-    id: 'widget-2',
-    title: 'Completed Jobs',
-    type: 'metric',
+    id: "widget-2",
+    title: "Completed Jobs",
+    type: "metric",
     size: { width: 1, height: 1 },
     position: { x: 1, y: 0 },
-    dataSource: 'completed_jobs',
+    dataSource: "completed_jobs",
     data: {
       value: 12,
-      label: 'Completed Jobs',
-      trend: '+5%',
-      unit: 'jobs'
+      label: "Completed Jobs",
+      trend: "+5%",
+      unit: "jobs",
     },
     config: {
-      backgroundColor: '#10b981',
-      textColor: '#ffffff',
+      backgroundColor: "#10b981",
+      textColor: "#ffffff",
       showTrend: true,
-      animated: true
-    }
+      animated: true,
+    },
   },
   {
-    id: 'widget-3',
-    title: 'Team Efficiency',
-    type: 'gauge',
+    id: "widget-3",
+    title: "Team Efficiency",
+    type: "gauge",
     size: { width: 2, height: 2 },
     position: { x: 2, y: 0 },
-    dataSource: 'team_efficiency',
+    dataSource: "team_efficiency",
     data: {
       value: 85,
-      label: 'Team Efficiency',
+      label: "Team Efficiency",
       target: 90,
-      unit: '%'
+      unit: "%",
     },
     config: {
-      backgroundColor: '#8b5cf6',
-      textColor: '#ffffff',
+      backgroundColor: "#8b5cf6",
+      textColor: "#ffffff",
       showTarget: true,
-      chartColor: '#8b5cf6',
-      animated: true
-    }
+      chartColor: "#8b5cf6",
+      animated: true,
+    },
   },
   {
-    id: 'widget-4',
-    title: 'Performance Trend',
-    type: 'chart',
+    id: "widget-4",
+    title: "Performance Trend",
+    type: "chart",
     size: { width: 2, height: 2 },
     position: { x: 0, y: 1 },
-    dataSource: 'team_efficiency',
+    dataSource: "team_efficiency",
     data: {
       value: 85,
-      label: 'Performance Trend',
+      label: "Performance Trend",
       chartData: [],
-      unit: '%'
+      unit: "%",
     },
     config: {
-      backgroundColor: '#f59e0b',
-      textColor: '#ffffff',
-      chartType: 'bar',
-      chartColor: '#f59e0b',
-      animated: true
-    }
-  }
+      backgroundColor: "#f59e0b",
+      textColor: "#ffffff",
+      chartType: "bar",
+      chartColor: "#f59e0b",
+      animated: true,
+    },
+  },
 ];
 
 export default function CustomizableKPIDashboard() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [widgets, setWidgets] = useState<KPIWidget[]>(DEFAULT_WIDGETS);
   const [selectedWidget, setSelectedWidget] = useState<KPIWidget | null>(null);
-  const [dashboardLayouts, setDashboardLayouts] = useState<DashboardLayout[]>([]);
-  const [currentLayout, setCurrentLayout] = useState<DashboardLayout | null>(null);
+  const [dashboardLayouts, setDashboardLayouts] = useState<DashboardLayout[]>(
+    [],
+  );
+  const [currentLayout, setCurrentLayout] = useState<DashboardLayout | null>(
+    null,
+  );
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [draggedWidget, setDraggedWidget] = useState<KPIWidget | null>(null);
-  const [gridHover, setGridHover] = useState<{ x: number; y: number } | null>(null);
+  const [gridHover, setGridHover] = useState<{ x: number; y: number } | null>(
+    null,
+  );
   const [newWidgetForm, setNewWidgetForm] = useState({
-    title: '',
-    type: 'metric' as KPIWidget['type'],
+    title: "",
+    type: "metric" as KPIWidget["type"],
     size: { width: 1, height: 1 },
-    dataSource: '',
-    color: '#3b82f6',
-    textColor: '#ffffff',
-    chartType: 'bar' as const
+    dataSource: "",
+    color: "#3b82f6",
+    textColor: "#ffffff",
+    chartType: "bar" as const,
   });
   const [newLayoutForm, setNewLayoutForm] = useState({
-    name: '',
-    description: '',
-    copyFrom: ''
+    name: "",
+    description: "",
+    copyFrom: "",
   });
   const [editWidgetForm, setEditWidgetForm] = useState({
-    title: '',
-    backgroundColor: '',
-    textColor: '',
+    title: "",
+    backgroundColor: "",
+    textColor: "",
     showTrend: false,
     showTarget: false,
-    dataSource: '',
-    chartType: 'bar' as const,
-    chartColor: ''
+    dataSource: "",
+    chartType: "bar" as const,
+    chartColor: "",
   });
 
   const { toast } = useToast();
@@ -217,17 +239,19 @@ export default function CustomizableKPIDashboard() {
     // Set up real-time updates
     const handleKPIUpdate = (event: CustomEvent) => {
       const { dataSourceId, data } = event.detail;
-      setWidgets(prev => prev.map(widget =>
-        widget.dataSource === dataSourceId
-          ? { ...widget, data: { ...widget.data, ...data } }
-          : widget
-      ));
+      setWidgets((prev) =>
+        prev.map((widget) =>
+          widget.dataSource === dataSourceId
+            ? { ...widget, data: { ...widget.data, ...data } }
+            : widget,
+        ),
+      );
     };
 
-    window.addEventListener('kpiUpdate', handleKPIUpdate as EventListener);
+    window.addEventListener("kpiUpdate", handleKPIUpdate as EventListener);
 
     return () => {
-      window.removeEventListener('kpiUpdate', handleKPIUpdate as EventListener);
+      window.removeEventListener("kpiUpdate", handleKPIUpdate as EventListener);
       kpiService.current.cleanup();
     };
   }, []);
@@ -237,45 +261,52 @@ export default function CustomizableKPIDashboard() {
       widgets.map(async (widget) => {
         if (widget.dataSource) {
           try {
-            const kpiData = await kpiService.current.getKPIData(widget.dataSource);
+            const kpiData = await kpiService.current.getKPIData(
+              widget.dataSource,
+            );
             return {
               ...widget,
-              data: { ...widget.data, ...kpiData }
+              data: { ...widget.data, ...kpiData },
             };
           } catch (error) {
-            console.error(`Failed to load data for widget ${widget.id}:`, error);
+            console.error(
+              `Failed to load data for widget ${widget.id}:`,
+              error,
+            );
           }
         }
         return widget;
-      })
+      }),
     );
     setWidgets(updatedWidgets);
   };
 
   const loadDashboardLayouts = () => {
     // Mock loading from localStorage/API
-    const saved = localStorage.getItem('kpi_dashboard_layouts');
+    const saved = localStorage.getItem("kpi_dashboard_layouts");
     if (saved) {
       const layouts = JSON.parse(saved);
       setDashboardLayouts(layouts);
       if (layouts.length > 0) {
-        const defaultLayout = layouts.find((l: DashboardLayout) => l.name === 'Default') || layouts[0];
+        const defaultLayout =
+          layouts.find((l: DashboardLayout) => l.name === "Default") ||
+          layouts[0];
         setCurrentLayout(defaultLayout);
         setWidgets(defaultLayout.widgets);
       }
     } else {
       const defaultLayout: DashboardLayout = {
-        id: 'default-layout',
-        name: 'Default Dashboard',
-        description: 'Default KPI dashboard layout',
+        id: "default-layout",
+        name: "Default Dashboard",
+        description: "Default KPI dashboard layout",
         widgets: DEFAULT_WIDGETS,
         permissions: {
-          viewRoles: ['Manager', 'CEO', 'Coordinator'],
-          editRoles: ['Manager', 'CEO']
+          viewRoles: ["Manager", "CEO", "Coordinator"],
+          editRoles: ["Manager", "CEO"],
         },
-        createdBy: 'Manager',
+        createdBy: "Manager",
         createdAt: new Date().toISOString(),
-        lastModified: new Date().toISOString()
+        lastModified: new Date().toISOString(),
       };
       setDashboardLayouts([defaultLayout]);
       setCurrentLayout(defaultLayout);
@@ -283,15 +314,18 @@ export default function CustomizableKPIDashboard() {
   };
 
   const saveDashboardLayout = (layout: DashboardLayout) => {
-    const updatedLayouts = dashboardLayouts.map(l => 
-      l.id === layout.id ? layout : l
+    const updatedLayouts = dashboardLayouts.map((l) =>
+      l.id === layout.id ? layout : l,
     );
-    if (!dashboardLayouts.find(l => l.id === layout.id)) {
+    if (!dashboardLayouts.find((l) => l.id === layout.id)) {
       updatedLayouts.push(layout);
     }
     setDashboardLayouts(updatedLayouts);
-    localStorage.setItem('kpi_dashboard_layouts', JSON.stringify(updatedLayouts));
-    
+    localStorage.setItem(
+      "kpi_dashboard_layouts",
+      JSON.stringify(updatedLayouts),
+    );
+
     toast({
       title: "Dashboard Saved",
       description: `Layout "${layout.name}" has been saved successfully.`,
@@ -300,7 +334,7 @@ export default function CustomizableKPIDashboard() {
 
   const handleWidgetDragStart = (widget: KPIWidget, e: React.DragEvent) => {
     setDraggedWidget(widget);
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.effectAllowed = "move";
   };
 
   const handleGridCellDrop = (x: number, y: number, e: React.DragEvent) => {
@@ -313,16 +347,16 @@ export default function CustomizableKPIDashboard() {
       toast({
         title: "Invalid Position",
         description: "Cannot place widget here due to overlap.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
-    setWidgets(prev => prev.map(w => 
-      w.id === draggedWidget.id 
-        ? { ...w, position: { x, y } }
-        : w
-    ));
+    setWidgets((prev) =>
+      prev.map((w) =>
+        w.id === draggedWidget.id ? { ...w, position: { x, y } } : w,
+      ),
+    );
     setDraggedWidget(null);
     setGridHover(null);
   };
@@ -334,40 +368,60 @@ export default function CustomizableKPIDashboard() {
     }
   };
 
-  const checkWidgetPlacement = (widget: KPIWidget, x: number, y: number): boolean => {
+  const checkWidgetPlacement = (
+    widget: KPIWidget,
+    x: number,
+    y: number,
+  ): boolean => {
     // Check bounds
-    if (x + widget.size.width > GRID_COLUMNS || y + widget.size.height > GRID_ROWS) {
+    if (
+      x + widget.size.width > GRID_COLUMNS ||
+      y + widget.size.height > GRID_ROWS
+    ) {
       return false;
     }
 
     // Check overlap with other widgets
     for (const otherWidget of widgets) {
       if (otherWidget.id === widget.id) continue;
-      
+
       const otherX = otherWidget.position.x;
       const otherY = otherWidget.position.y;
       const otherW = otherWidget.size.width;
       const otherH = otherWidget.size.height;
 
-      if (!(x >= otherX + otherW || x + widget.size.width <= otherX || 
-            y >= otherY + otherH || y + widget.size.height <= otherY)) {
+      if (
+        !(
+          x >= otherX + otherW ||
+          x + widget.size.width <= otherX ||
+          y >= otherY + otherH ||
+          y + widget.size.height <= otherY
+        )
+      ) {
         return false;
       }
     }
     return true;
   };
 
-  const resizeWidget = (widgetId: string, newSize: { width: number; height: number }) => {
-    const widget = widgets.find(w => w.id === widgetId);
+  const resizeWidget = (
+    widgetId: string,
+    newSize: { width: number; height: number },
+  ) => {
+    const widget = widgets.find((w) => w.id === widgetId);
     if (!widget) return;
 
     // Check if new size is valid
-    if (checkWidgetPlacement({ ...widget, size: newSize }, widget.position.x, widget.position.y)) {
-      setWidgets(prev => prev.map(w =>
-        w.id === widgetId
-          ? { ...w, size: newSize }
-          : w
-      ));
+    if (
+      checkWidgetPlacement(
+        { ...widget, size: newSize },
+        widget.position.x,
+        widget.position.y,
+      )
+    ) {
+      setWidgets((prev) =>
+        prev.map((w) => (w.id === widgetId ? { ...w, size: newSize } : w)),
+      );
       toast({
         title: "Widget Resized",
         description: `Widget resized to ${newSize.width}x${newSize.height}`,
@@ -376,7 +430,7 @@ export default function CustomizableKPIDashboard() {
       toast({
         title: "Cannot Resize",
         description: "Not enough space to resize widget to that size.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -396,8 +450,14 @@ export default function CustomizableKPIDashboard() {
 
       // Calculate new size based on mouse movement
       // Each grid cell is approximately 200px wide and 100px tall
-      const newWidth = Math.max(1, Math.min(4, startWidth + Math.round(deltaX / 200)));
-      const newHeight = Math.max(1, Math.min(3, startHeight + Math.round(deltaY / 100)));
+      const newWidth = Math.max(
+        1,
+        Math.min(4, startWidth + Math.round(deltaX / 200)),
+      );
+      const newHeight = Math.max(
+        1,
+        Math.min(3, startHeight + Math.round(deltaY / 100)),
+      );
 
       if (newWidth !== widget.size.width || newHeight !== widget.size.height) {
         resizeWidget(widget.id, { width: newWidth, height: newHeight });
@@ -405,16 +465,16 @@ export default function CustomizableKPIDashboard() {
     };
 
     const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   const deleteWidget = (widgetId: string) => {
-    setWidgets(prev => prev.filter(w => w.id !== widgetId));
+    setWidgets((prev) => prev.filter((w) => w.id !== widgetId));
     toast({
       title: "Widget Deleted",
       description: "Widget has been removed from the dashboard.",
@@ -431,7 +491,7 @@ export default function CustomizableKPIDashboard() {
       dataSource: newWidgetForm.dataSource || undefined,
       data: {
         value: 0,
-        label: newWidgetForm.title
+        label: newWidgetForm.title,
       },
       config: {
         backgroundColor: newWidgetForm.color,
@@ -440,17 +500,19 @@ export default function CustomizableKPIDashboard() {
         chartColor: newWidgetForm.color,
         showTrend: true,
         showTarget: false,
-        animated: true
-      }
+        animated: true,
+      },
     };
 
     // Load initial data if data source is specified
     if (newWidget.dataSource) {
       try {
-        const kpiData = await kpiService.current.getKPIData(newWidget.dataSource);
+        const kpiData = await kpiService.current.getKPIData(
+          newWidget.dataSource,
+        );
         newWidget.data = { ...newWidget.data, ...kpiData };
       } catch (error) {
-        console.error('Failed to load initial data for new widget:', error);
+        console.error("Failed to load initial data for new widget:", error);
       }
     }
 
@@ -468,16 +530,16 @@ export default function CustomizableKPIDashboard() {
     }
 
     if (placed) {
-      setWidgets(prev => [...prev, newWidget]);
+      setWidgets((prev) => [...prev, newWidget]);
       setActiveModal(null);
       setNewWidgetForm({
-        title: '',
-        type: 'metric',
+        title: "",
+        type: "metric",
         size: { width: 1, height: 1 },
-        dataSource: '',
-        color: '#3b82f6',
-        textColor: '#ffffff',
-        chartType: 'bar'
+        dataSource: "",
+        color: "#3b82f6",
+        textColor: "#ffffff",
+        chartType: "bar",
       });
       toast({
         title: "Widget Added",
@@ -487,7 +549,7 @@ export default function CustomizableKPIDashboard() {
       toast({
         title: "Cannot Add Widget",
         description: "No available space on the dashboard.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -498,7 +560,7 @@ export default function CustomizableKPIDashboard() {
     const updatedLayout: DashboardLayout = {
       ...currentLayout,
       widgets: widgets,
-      lastModified: new Date().toISOString()
+      lastModified: new Date().toISOString(),
     };
 
     saveDashboardLayout(updatedLayout);
@@ -511,24 +573,26 @@ export default function CustomizableKPIDashboard() {
       id: `layout-${Date.now()}`,
       name: newLayoutForm.name,
       description: newLayoutForm.description,
-      widgets: newLayoutForm.copyFrom === 'current' && currentLayout ?
-        JSON.parse(JSON.stringify(currentLayout.widgets)) :
-        newLayoutForm.copyFrom === 'default' ?
-        JSON.parse(JSON.stringify(DEFAULT_WIDGETS)) : [],
+      widgets:
+        newLayoutForm.copyFrom === "current" && currentLayout
+          ? JSON.parse(JSON.stringify(currentLayout.widgets))
+          : newLayoutForm.copyFrom === "default"
+            ? JSON.parse(JSON.stringify(DEFAULT_WIDGETS))
+            : [],
       permissions: {
-        viewRoles: ['Manager', 'CEO', 'Coordinator'],
-        editRoles: ['Manager', 'CEO']
+        viewRoles: ["Manager", "CEO", "Coordinator"],
+        editRoles: ["Manager", "CEO"],
       },
-      createdBy: 'Manager',
+      createdBy: "Manager",
       createdAt: new Date().toISOString(),
-      lastModified: new Date().toISOString()
+      lastModified: new Date().toISOString(),
     };
 
     saveDashboardLayout(newLayout);
     setCurrentLayout(newLayout);
     setWidgets(newLayout.widgets);
     setActiveModal(null);
-    setNewLayoutForm({ name: '', description: '', copyFrom: '' });
+    setNewLayoutForm({ name: "", description: "", copyFrom: "" });
   };
 
   const updateWidgetConfig = async () => {
@@ -540,40 +604,49 @@ export default function CustomizableKPIDashboard() {
       dataSource: editWidgetForm.dataSource || selectedWidget.dataSource,
       config: {
         ...selectedWidget.config,
-        backgroundColor: editWidgetForm.backgroundColor || selectedWidget.config.backgroundColor,
+        backgroundColor:
+          editWidgetForm.backgroundColor ||
+          selectedWidget.config.backgroundColor,
         textColor: editWidgetForm.textColor || selectedWidget.config.textColor,
         chartType: editWidgetForm.chartType || selectedWidget.config.chartType,
-        chartColor: editWidgetForm.chartColor || selectedWidget.config.chartColor,
+        chartColor:
+          editWidgetForm.chartColor || selectedWidget.config.chartColor,
         showTrend: editWidgetForm.showTrend ?? selectedWidget.config.showTrend,
-        showTarget: editWidgetForm.showTarget ?? selectedWidget.config.showTarget
-      }
+        showTarget:
+          editWidgetForm.showTarget ?? selectedWidget.config.showTarget,
+      },
     };
 
     // Load new data if data source changed
-    if (editWidgetForm.dataSource && editWidgetForm.dataSource !== selectedWidget.dataSource) {
+    if (
+      editWidgetForm.dataSource &&
+      editWidgetForm.dataSource !== selectedWidget.dataSource
+    ) {
       try {
-        const kpiData = await kpiService.current.getKPIData(editWidgetForm.dataSource);
+        const kpiData = await kpiService.current.getKPIData(
+          editWidgetForm.dataSource,
+        );
         updatedWidget.data = { ...updatedWidget.data, ...kpiData };
       } catch (error) {
-        console.error('Failed to load new data source:', error);
+        console.error("Failed to load new data source:", error);
       }
     }
 
-    setWidgets(prev => prev.map(w =>
-      w.id === selectedWidget.id ? updatedWidget : w
-    ));
+    setWidgets((prev) =>
+      prev.map((w) => (w.id === selectedWidget.id ? updatedWidget : w)),
+    );
 
     setActiveModal(null);
     setSelectedWidget(null);
     setEditWidgetForm({
-      title: '',
-      backgroundColor: '',
-      textColor: '',
+      title: "",
+      backgroundColor: "",
+      textColor: "",
       showTrend: false,
       showTarget: false,
-      dataSource: '',
-      chartType: 'bar',
-      chartColor: ''
+      dataSource: "",
+      chartType: "bar",
+      chartColor: "",
     });
 
     toast({
@@ -593,7 +666,7 @@ export default function CustomizableKPIDashboard() {
       <div
         key={widget.id}
         className={`relative group transition-all duration-200 ${
-          isSelected ? 'ring-2 ring-blue-500' : ''
+          isSelected ? "ring-2 ring-blue-500" : ""
         }`}
         style={{
           gridColumn: gridColumnSpan,
@@ -615,7 +688,7 @@ export default function CustomizableKPIDashboard() {
                 onClick={(e) => {
                   e.stopPropagation();
                   setSelectedWidget(widget);
-                  setActiveModal('editWidget');
+                  setActiveModal("editWidget");
                 }}
               >
                 <Edit3 className="h-3 w-3" />
@@ -643,7 +716,9 @@ export default function CustomizableKPIDashboard() {
 
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center justify-between">
-              <span style={{ color: widget.config.textColor }}>{widget.title}</span>
+              <span style={{ color: widget.config.textColor }}>
+                {widget.title}
+              </span>
               {!isEditMode && (
                 <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
                   <Eye className="h-3 w-3" />
@@ -656,51 +731,75 @@ export default function CustomizableKPIDashboard() {
             className="pt-0"
             style={{
               backgroundColor: widget.config.backgroundColor,
-              color: widget.config.textColor
+              color: widget.config.textColor,
             }}
           >
-            {widget.type === 'metric' && (
+            {widget.type === "metric" && (
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2" style={{ color: widget.config.textColor }}>
+                <div
+                  className="text-3xl font-bold mb-2"
+                  style={{ color: widget.config.textColor }}
+                >
                   {widget.data.value}
                   {widget.data.unit && (
-                    <span className="text-lg ml-1 opacity-75">{widget.data.unit}</span>
+                    <span className="text-lg ml-1 opacity-75">
+                      {widget.data.unit}
+                    </span>
                   )}
                 </div>
-                <div className="text-sm opacity-80" style={{ color: widget.config.textColor }}>
+                <div
+                  className="text-sm opacity-80"
+                  style={{ color: widget.config.textColor }}
+                >
                   {widget.data.label}
                 </div>
                 {widget.config.showTrend && widget.data.trend && (
-                  <div className="text-xs mt-1 opacity-70" style={{ color: widget.config.textColor }}>
+                  <div
+                    className="text-xs mt-1 opacity-70"
+                    style={{ color: widget.config.textColor }}
+                  >
                     {widget.data.trend}
                   </div>
                 )}
                 {widget.config.showTarget && widget.data.target && (
-                  <div className="text-xs mt-1 opacity-60" style={{ color: widget.config.textColor }}>
-                    Target: {widget.data.target}{widget.data.unit}
+                  <div
+                    className="text-xs mt-1 opacity-60"
+                    style={{ color: widget.config.textColor }}
+                  >
+                    Target: {widget.data.target}
+                    {widget.data.unit}
                   </div>
                 )}
               </div>
             )}
 
-            {widget.type === 'gauge' && (
+            {widget.type === "gauge" && (
               <div className="flex items-center justify-center h-32">
                 <div className="relative w-24 h-24">
                   <div className="w-full h-full rounded-full border-8 border-white/20"></div>
                   <div
                     className="absolute inset-0 w-full h-full rounded-full border-8 transform transition-all duration-1000"
                     style={{
-                      borderColor: widget.config.chartColor || widget.config.textColor,
-                      clipPath: `polygon(50% 50%, 50% 0%, ${50 + Math.min(100, (widget.data.value as number) || 0) * 0.5}% ${50 - Math.min(100, (widget.data.value as number) || 0) * 0.5}%)`
+                      borderColor:
+                        widget.config.chartColor || widget.config.textColor,
+                      clipPath: `polygon(50% 50%, 50% 0%, ${50 + Math.min(100, (widget.data.value as number) || 0) * 0.5}% ${50 - Math.min(100, (widget.data.value as number) || 0) * 0.5}%)`,
                     }}
                   ></div>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-lg font-bold" style={{ color: widget.config.textColor }}>
-                      {widget.data.value}{widget.data.unit}
+                    <span
+                      className="text-lg font-bold"
+                      style={{ color: widget.config.textColor }}
+                    >
+                      {widget.data.value}
+                      {widget.data.unit}
                     </span>
                     {widget.config.showTarget && widget.data.target && (
-                      <span className="text-xs opacity-70" style={{ color: widget.config.textColor }}>
-                        Target: {widget.data.target}{widget.data.unit}
+                      <span
+                        className="text-xs opacity-70"
+                        style={{ color: widget.config.textColor }}
+                      >
+                        Target: {widget.data.target}
+                        {widget.data.unit}
                       </span>
                     )}
                   </div>
@@ -708,24 +807,37 @@ export default function CustomizableKPIDashboard() {
               </div>
             )}
 
-            {widget.type === 'chart' && (
-              <div className="h-32 rounded flex items-end justify-around p-2" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+            {widget.type === "chart" && (
+              <div
+                className="h-32 rounded flex items-end justify-around p-2"
+                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+              >
                 {widget.data.chartData?.map((data, index) => {
-                  const maxValue = Math.max(...(widget.data.chartData || []).map(d => d.value));
+                  const maxValue = Math.max(
+                    ...(widget.data.chartData || []).map((d) => d.value),
+                  );
                   const height = Math.max(8, (data.value / maxValue) * 80);
 
                   return (
-                    <div key={index} className="flex flex-col items-center gap-1">
+                    <div
+                      key={index}
+                      className="flex flex-col items-center gap-1"
+                    >
                       <div
-                        className={`rounded-t transition-all duration-500 ${widget.config.animated ? 'animate-pulse' : ''}`}
+                        className={`rounded-t transition-all duration-500 ${widget.config.animated ? "animate-pulse" : ""}`}
                         style={{
-                          backgroundColor: widget.config.chartColor || widget.config.textColor,
-                          width: widget.config.chartType === 'line' ? '2px' : '16px',
+                          backgroundColor:
+                            widget.config.chartColor || widget.config.textColor,
+                          width:
+                            widget.config.chartType === "line" ? "2px" : "16px",
                           height: `${height}px`,
-                          opacity: 0.8
+                          opacity: 0.8,
                         }}
                       ></div>
-                      <span className="text-xs opacity-75" style={{ color: widget.config.textColor }}>
+                      <span
+                        className="text-xs opacity-75"
+                        style={{ color: widget.config.textColor }}
+                      >
                         {data.name}
                       </span>
                     </div>
@@ -734,12 +846,18 @@ export default function CustomizableKPIDashboard() {
               </div>
             )}
 
-            {widget.type === 'progress' && (
+            {widget.type === "progress" && (
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span style={{ color: widget.config.textColor }}>{widget.data.label}</span>
-                  <span className="font-bold" style={{ color: widget.config.textColor }}>
-                    {widget.data.value}{widget.data.unit}
+                  <span style={{ color: widget.config.textColor }}>
+                    {widget.data.label}
+                  </span>
+                  <span
+                    className="font-bold"
+                    style={{ color: widget.config.textColor }}
+                  >
+                    {widget.data.value}
+                    {widget.data.unit}
                   </span>
                 </div>
                 <div className="w-full bg-white/20 rounded-full h-2">
@@ -747,20 +865,28 @@ export default function CustomizableKPIDashboard() {
                     className="h-2 rounded-full transition-all duration-1000"
                     style={{
                       width: `${Math.min(100, (widget.data.value as number) || 0)}%`,
-                      backgroundColor: widget.config.chartColor || widget.config.textColor
+                      backgroundColor:
+                        widget.config.chartColor || widget.config.textColor,
                     }}
                   ></div>
                 </div>
                 {widget.config.showTarget && widget.data.target && (
-                  <div className="text-xs opacity-70" style={{ color: widget.config.textColor }}>
-                    Target: {widget.data.target}{widget.data.unit}
+                  <div
+                    className="text-xs opacity-70"
+                    style={{ color: widget.config.textColor }}
+                  >
+                    Target: {widget.data.target}
+                    {widget.data.unit}
                   </div>
                 )}
               </div>
             )}
 
             {widget.data.timestamp && (
-              <div className="text-xs opacity-50 mt-2 text-right" style={{ color: widget.config.textColor }}>
+              <div
+                className="text-xs opacity-50 mt-2 text-right"
+                style={{ color: widget.config.textColor }}
+              >
                 Updated: {new Date(widget.data.timestamp).toLocaleTimeString()}
               </div>
             )}
@@ -789,14 +915,19 @@ export default function CustomizableKPIDashboard() {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (widget.size.width > 1) {
-                      resizeWidget(widget.id, { ...widget.size, width: widget.size.width - 1 });
+                      resizeWidget(widget.id, {
+                        ...widget.size,
+                        width: widget.size.width - 1,
+                      });
                     }
                   }}
                   disabled={widget.size.width <= 1}
                 >
                   -
                 </Button>
-                <span className="text-xs font-medium w-8 text-center">{widget.size.width}x{widget.size.height}</span>
+                <span className="text-xs font-medium w-8 text-center">
+                  {widget.size.width}x{widget.size.height}
+                </span>
                 <Button
                   size="sm"
                   variant="outline"
@@ -804,7 +935,10 @@ export default function CustomizableKPIDashboard() {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (widget.size.width < 4) {
-                      resizeWidget(widget.id, { ...widget.size, width: widget.size.width + 1 });
+                      resizeWidget(widget.id, {
+                        ...widget.size,
+                        width: widget.size.width + 1,
+                      });
                     }
                   }}
                   disabled={widget.size.width >= 4}
@@ -822,7 +956,10 @@ export default function CustomizableKPIDashboard() {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (widget.size.height < 3) {
-                      resizeWidget(widget.id, { ...widget.size, height: widget.size.height + 1 });
+                      resizeWidget(widget.id, {
+                        ...widget.size,
+                        height: widget.size.height + 1,
+                      });
                     }
                   }}
                   disabled={widget.size.height >= 3}
@@ -836,7 +973,10 @@ export default function CustomizableKPIDashboard() {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (widget.size.height > 1) {
-                      resizeWidget(widget.id, { ...widget.size, height: widget.size.height - 1 });
+                      resizeWidget(widget.id, {
+                        ...widget.size,
+                        height: widget.size.height - 1,
+                      });
                     }
                   }}
                   disabled={widget.size.height <= 1}
@@ -856,20 +996,22 @@ export default function CustomizableKPIDashboard() {
     for (let y = 0; y < GRID_ROWS; y++) {
       for (let x = 0; x < GRID_COLUMNS; x++) {
         const isHovered = gridHover?.x === x && gridHover?.y === y;
-        const canDrop = draggedWidget ? checkWidgetPlacement(draggedWidget, x, y) : false;
-        
+        const canDrop = draggedWidget
+          ? checkWidgetPlacement(draggedWidget, x, y)
+          : false;
+
         gridCells.push(
           <div
             key={`${x}-${y}`}
             className={`border border-dashed border-gray-300 min-h-[80px] ${
-              isEditMode ? 'border-opacity-50' : 'border-opacity-0'
-            } ${isHovered && canDrop ? 'bg-blue-100 border-blue-400' : ''} ${
-              isHovered && !canDrop ? 'bg-red-100 border-red-400' : ''
+              isEditMode ? "border-opacity-50" : "border-opacity-0"
+            } ${isHovered && canDrop ? "bg-blue-100 border-blue-400" : ""} ${
+              isHovered && !canDrop ? "bg-red-100 border-red-400" : ""
             }`}
             onDrop={(e) => handleGridCellDrop(x, y, e)}
             onDragOver={(e) => handleGridCellDragOver(x, y, e)}
             onDragLeave={() => setGridHover(null)}
-          />
+          />,
         );
       }
     }
@@ -883,7 +1025,7 @@ export default function CustomizableKPIDashboard() {
         <div>
           <h3 className="text-xl font-semibold flex items-center gap-2">
             <Layout className="h-5 w-5" />
-            {currentLayout?.name || 'KPI Dashboard'}
+            {currentLayout?.name || "KPI Dashboard"}
           </h3>
           <p className="text-sm text-gray-600">{currentLayout?.description}</p>
         </div>
@@ -894,7 +1036,11 @@ export default function CustomizableKPIDashboard() {
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh
               </Button>
-              <Button variant="outline" size="sm" onClick={() => setActiveModal('layoutManager')}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveModal("layoutManager")}
+              >
                 <Settings className="h-4 w-4 mr-2" />
                 Layouts
               </Button>
@@ -905,14 +1051,22 @@ export default function CustomizableKPIDashboard() {
             </>
           ) : (
             <>
-              <Button variant="outline" size="sm" onClick={() => setActiveModal('addWidget')}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveModal("addWidget")}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Widget
               </Button>
-              <Button variant="outline" size="sm" onClick={() => {
-                setWidgets(currentLayout?.widgets || DEFAULT_WIDGETS);
-                setIsEditMode(false);
-              }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setWidgets(currentLayout?.widgets || DEFAULT_WIDGETS);
+                  setIsEditMode(false);
+                }}
+              >
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Cancel
               </Button>
@@ -929,7 +1083,9 @@ export default function CustomizableKPIDashboard() {
       <div
         ref={gridRef}
         className={`grid grid-cols-4 gap-4 min-h-[500px] relative ${
-          isEditMode ? 'bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300' : ''
+          isEditMode
+            ? "bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300"
+            : ""
         }`}
         style={{ gridTemplateRows: `repeat(${GRID_ROWS}, minmax(80px, 1fr))` }}
       >
@@ -945,13 +1101,17 @@ export default function CustomizableKPIDashboard() {
             <span className="font-medium">Edit Mode Active</span>
           </div>
           <p className="text-sm text-blue-700 mt-1">
-            Drag widgets to reposition, click to select, use handles to resize. Click "Save Changes" when done.
+            Drag widgets to reposition, click to select, use handles to resize.
+            Click "Save Changes" when done.
           </p>
         </div>
       )}
 
       {/* Add Widget Modal */}
-      <Dialog open={activeModal === 'addWidget'} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "addWidget"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Widget</DialogTitle>
@@ -961,7 +1121,12 @@ export default function CustomizableKPIDashboard() {
               <Label>Widget Title</Label>
               <Input
                 value={newWidgetForm.title}
-                onChange={(e) => setNewWidgetForm(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setNewWidgetForm((prev) => ({
+                    ...prev,
+                    title: e.target.value,
+                  }))
+                }
                 placeholder="Enter widget title"
               />
             </div>
@@ -970,7 +1135,9 @@ export default function CustomizableKPIDashboard() {
                 <Label>Widget Type</Label>
                 <Select
                   value={newWidgetForm.type}
-                  onValueChange={(value: KPIWidget['type']) => setNewWidgetForm(prev => ({ ...prev, type: value }))}
+                  onValueChange={(value: KPIWidget["type"]) =>
+                    setNewWidgetForm((prev) => ({ ...prev, type: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -988,14 +1155,16 @@ export default function CustomizableKPIDashboard() {
                 <Label>Data Source</Label>
                 <Select
                   value={newWidgetForm.dataSource}
-                  onValueChange={(value) => setNewWidgetForm(prev => ({ ...prev, dataSource: value }))}
+                  onValueChange={(value) =>
+                    setNewWidgetForm((prev) => ({ ...prev, dataSource: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select KPI data" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">No data source</SelectItem>
-                    {KPI_DATA_SOURCES.map(source => (
+                    {KPI_DATA_SOURCES.map((source) => (
                       <SelectItem key={source.id} value={source.id}>
                         {source.name} ({source.category})
                       </SelectItem>
@@ -1009,47 +1178,58 @@ export default function CustomizableKPIDashboard() {
               <div className="grid grid-cols-3 gap-2 mt-2">
                 {/* Size presets */}
                 {[
-                  { width: 1, height: 1, label: '1x1' },
-                  { width: 2, height: 1, label: '2x1' },
-                  { width: 1, height: 2, label: '1x2' },
-                  { width: 2, height: 2, label: '2x2' },
-                  { width: 3, height: 1, label: '3x1' },
-                  { width: 1, height: 3, label: '1x3' },
-                  { width: 3, height: 2, label: '3x2' },
-                  { width: 4, height: 1, label: '4x1' },
-                  { width: 4, height: 2, label: '4x2' }
+                  { width: 1, height: 1, label: "1x1" },
+                  { width: 2, height: 1, label: "2x1" },
+                  { width: 1, height: 2, label: "1x2" },
+                  { width: 2, height: 2, label: "2x2" },
+                  { width: 3, height: 1, label: "3x1" },
+                  { width: 1, height: 3, label: "1x3" },
+                  { width: 3, height: 2, label: "3x2" },
+                  { width: 4, height: 1, label: "4x1" },
+                  { width: 4, height: 2, label: "4x2" },
                 ].map((preset) => (
                   <Button
                     key={`${preset.width}x${preset.height}`}
                     type="button"
-                    variant={newWidgetForm.size.width === preset.width && newWidgetForm.size.height === preset.height ? "default" : "outline"}
+                    variant={
+                      newWidgetForm.size.width === preset.width &&
+                      newWidgetForm.size.height === preset.height
+                        ? "default"
+                        : "outline"
+                    }
                     className="h-12 flex flex-col items-center justify-center"
-                    onClick={() => setNewWidgetForm(prev => ({
-                      ...prev,
-                      size: { width: preset.width, height: preset.height }
-                    }))}
+                    onClick={() =>
+                      setNewWidgetForm((prev) => ({
+                        ...prev,
+                        size: { width: preset.width, height: preset.height },
+                      }))
+                    }
                   >
                     <div className="text-xs font-medium">{preset.label}</div>
                     <div
                       className="bg-current opacity-30 rounded-sm mt-1"
                       style={{
                         width: `${preset.width * 8 + 2}px`,
-                        height: `${preset.height * 4 + 2}px`
+                        height: `${preset.height * 4 + 2}px`,
                       }}
                     />
                   </Button>
                 ))}
               </div>
               <div className="text-xs text-gray-500 mt-2">
-                Current selection: {newWidgetForm.size.width}x{newWidgetForm.size.height}
+                Current selection: {newWidgetForm.size.width}x
+                {newWidgetForm.size.height}
               </div>
             </div>
-            {(newWidgetForm.type === 'chart' || newWidgetForm.type === 'gauge') && (
+            {(newWidgetForm.type === "chart" ||
+              newWidgetForm.type === "gauge") && (
               <div>
                 <Label>Chart Type</Label>
                 <Select
-                  value={newWidgetForm.chartType || 'bar'}
-                  onValueChange={(value) => setNewWidgetForm(prev => ({ ...prev, chartType: value }))}
+                  value={newWidgetForm.chartType || "bar"}
+                  onValueChange={(value) =>
+                    setNewWidgetForm((prev) => ({ ...prev, chartType: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -1058,7 +1238,7 @@ export default function CustomizableKPIDashboard() {
                     <SelectItem value="bar">Bar Chart</SelectItem>
                     <SelectItem value="line">Line Chart</SelectItem>
                     <SelectItem value="area">Area Chart</SelectItem>
-                    {newWidgetForm.type === 'gauge' && (
+                    {newWidgetForm.type === "gauge" && (
                       <>
                         <SelectItem value="donut">Donut Chart</SelectItem>
                         <SelectItem value="pie">Pie Chart</SelectItem>
@@ -1073,14 +1253,28 @@ export default function CustomizableKPIDashboard() {
               <div>
                 <Label>Background Color</Label>
                 <div className="grid grid-cols-3 gap-2 mt-2">
-                  {['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#6b7280', '#ec4899', '#06b6d4', '#84cc16'].map(color => (
+                  {[
+                    "#3b82f6",
+                    "#10b981",
+                    "#8b5cf6",
+                    "#f59e0b",
+                    "#ef4444",
+                    "#6b7280",
+                    "#ec4899",
+                    "#06b6d4",
+                    "#84cc16",
+                  ].map((color) => (
                     <button
                       key={color}
                       className={`w-8 h-8 rounded border-2 ${
-                        newWidgetForm.color === color ? 'border-gray-800' : 'border-gray-300'
+                        newWidgetForm.color === color
+                          ? "border-gray-800"
+                          : "border-gray-300"
                       }`}
                       style={{ backgroundColor: color }}
-                      onClick={() => setNewWidgetForm(prev => ({ ...prev, color }))}
+                      onClick={() =>
+                        setNewWidgetForm((prev) => ({ ...prev, color }))
+                      }
                     />
                   ))}
                 </div>
@@ -1088,14 +1282,21 @@ export default function CustomizableKPIDashboard() {
               <div>
                 <Label>Text Color</Label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  {['#ffffff', '#000000', '#374151', '#6b7280'].map(color => (
+                  {["#ffffff", "#000000", "#374151", "#6b7280"].map((color) => (
                     <button
                       key={color}
                       className={`w-8 h-8 rounded border-2 ${
-                        newWidgetForm.textColor === color ? 'border-blue-500' : 'border-gray-300'
+                        newWidgetForm.textColor === color
+                          ? "border-blue-500"
+                          : "border-gray-300"
                       }`}
                       style={{ backgroundColor: color }}
-                      onClick={() => setNewWidgetForm(prev => ({ ...prev, textColor: color }))}
+                      onClick={() =>
+                        setNewWidgetForm((prev) => ({
+                          ...prev,
+                          textColor: color,
+                        }))
+                      }
                     />
                   ))}
                 </div>
@@ -1103,35 +1304,52 @@ export default function CustomizableKPIDashboard() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
-            <Button onClick={addNewWidget} disabled={!newWidgetForm.title}>Add Widget</Button>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>
+              Cancel
+            </Button>
+            <Button onClick={addNewWidget} disabled={!newWidgetForm.title}>
+              Add Widget
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Layout Manager Modal */}
-      <Dialog open={activeModal === 'layoutManager'} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "layoutManager"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Dashboard Layouts</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid gap-3">
-              {dashboardLayouts.map(layout => (
-                <div key={layout.id} className="flex items-center justify-between p-3 border rounded-lg">
+              {dashboardLayouts.map((layout) => (
+                <div
+                  key={layout.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
                   <div>
                     <div className="font-medium">{layout.name}</div>
-                    <div className="text-sm text-gray-600">{layout.description}</div>
+                    <div className="text-sm text-gray-600">
+                      {layout.description}
+                    </div>
                     <div className="text-xs text-gray-500">
-                      {layout.widgets.length} widgets • Modified {new Date(layout.lastModified).toLocaleDateString()}
+                      {layout.widgets.length} widgets • Modified{" "}
+                      {new Date(layout.lastModified).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => {
-                      setCurrentLayout(layout);
-                      setWidgets(layout.widgets);
-                      setActiveModal(null);
-                    }}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setCurrentLayout(layout);
+                        setWidgets(layout.widgets);
+                        setActiveModal(null);
+                      }}
+                    >
                       Load
                     </Button>
                     <Button size="sm" variant="outline">
@@ -1144,7 +1362,10 @@ export default function CustomizableKPIDashboard() {
                 </div>
               ))}
             </div>
-            <Button className="w-full" onClick={() => setActiveModal('newLayout')}>
+            <Button
+              className="w-full"
+              onClick={() => setActiveModal("newLayout")}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Create New Layout
             </Button>
@@ -1153,7 +1374,10 @@ export default function CustomizableKPIDashboard() {
       </Dialog>
 
       {/* New Layout Modal */}
-      <Dialog open={activeModal === 'newLayout'} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "newLayout"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Dashboard Layout</DialogTitle>
@@ -1163,7 +1387,12 @@ export default function CustomizableKPIDashboard() {
               <Label>Layout Name</Label>
               <Input
                 value={newLayoutForm.name}
-                onChange={(e) => setNewLayoutForm(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) =>
+                  setNewLayoutForm((prev) => ({
+                    ...prev,
+                    name: e.target.value,
+                  }))
+                }
                 placeholder="Enter layout name"
               />
             </div>
@@ -1171,7 +1400,12 @@ export default function CustomizableKPIDashboard() {
               <Label>Description</Label>
               <Textarea
                 value={newLayoutForm.description}
-                onChange={(e) => setNewLayoutForm(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setNewLayoutForm((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 placeholder="Describe this layout..."
               />
             </div>
@@ -1179,7 +1413,9 @@ export default function CustomizableKPIDashboard() {
               <Label>Start From</Label>
               <Select
                 value={newLayoutForm.copyFrom}
-                onValueChange={(value) => setNewLayoutForm(prev => ({ ...prev, copyFrom: value }))}
+                onValueChange={(value) =>
+                  setNewLayoutForm((prev) => ({ ...prev, copyFrom: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Choose starting point" />
@@ -1193,7 +1429,9 @@ export default function CustomizableKPIDashboard() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>
+              Cancel
+            </Button>
             <Button onClick={createNewLayout} disabled={!newLayoutForm.name}>
               Create Layout
             </Button>
@@ -1202,7 +1440,10 @@ export default function CustomizableKPIDashboard() {
       </Dialog>
 
       {/* Edit Widget Modal */}
-      <Dialog open={activeModal === 'editWidget'} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "editWidget"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Widget - {selectedWidget?.title}</DialogTitle>
@@ -1212,23 +1453,37 @@ export default function CustomizableKPIDashboard() {
               <div>
                 <Label>Widget Title</Label>
                 <Input
-                  value={editWidgetForm.title || selectedWidget?.title || ''}
-                  onChange={(e) => setEditWidgetForm(prev => ({ ...prev, title: e.target.value }))}
+                  value={editWidgetForm.title || selectedWidget?.title || ""}
+                  onChange={(e) =>
+                    setEditWidgetForm((prev) => ({
+                      ...prev,
+                      title: e.target.value,
+                    }))
+                  }
                   placeholder="Enter widget title"
                 />
               </div>
               <div>
                 <Label>Data Source</Label>
                 <Select
-                  value={editWidgetForm.dataSource || selectedWidget?.dataSource || ''}
-                  onValueChange={(value) => setEditWidgetForm(prev => ({ ...prev, dataSource: value }))}
+                  value={
+                    editWidgetForm.dataSource ||
+                    selectedWidget?.dataSource ||
+                    ""
+                  }
+                  onValueChange={(value) =>
+                    setEditWidgetForm((prev) => ({
+                      ...prev,
+                      dataSource: value,
+                    }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select KPI data" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">No data source</SelectItem>
-                    {KPI_DATA_SOURCES.map(source => (
+                    {KPI_DATA_SOURCES.map((source) => (
                       <SelectItem key={source.id} value={source.id}>
                         {source.name} ({source.category})
                       </SelectItem>
@@ -1238,12 +1493,19 @@ export default function CustomizableKPIDashboard() {
               </div>
             </div>
 
-            {(selectedWidget?.type === 'chart' || selectedWidget?.type === 'gauge') && (
+            {(selectedWidget?.type === "chart" ||
+              selectedWidget?.type === "gauge") && (
               <div>
                 <Label>Chart Type</Label>
                 <Select
-                  value={editWidgetForm.chartType || selectedWidget?.config.chartType || 'bar'}
-                  onValueChange={(value) => setEditWidgetForm(prev => ({ ...prev, chartType: value }))}
+                  value={
+                    editWidgetForm.chartType ||
+                    selectedWidget?.config.chartType ||
+                    "bar"
+                  }
+                  onValueChange={(value) =>
+                    setEditWidgetForm((prev) => ({ ...prev, chartType: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -1252,7 +1514,7 @@ export default function CustomizableKPIDashboard() {
                     <SelectItem value="bar">Bar Chart</SelectItem>
                     <SelectItem value="line">Line Chart</SelectItem>
                     <SelectItem value="area">Area Chart</SelectItem>
-                    {selectedWidget?.type === 'gauge' && (
+                    {selectedWidget?.type === "gauge" && (
                       <>
                         <SelectItem value="donut">Donut Chart</SelectItem>
                         <SelectItem value="pie">Pie Chart</SelectItem>
@@ -1267,15 +1529,32 @@ export default function CustomizableKPIDashboard() {
               <div>
                 <Label>Background Color</Label>
                 <div className="grid grid-cols-3 gap-2 mt-2">
-                  {['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#6b7280', '#ec4899', '#06b6d4', '#84cc16'].map(color => (
+                  {[
+                    "#3b82f6",
+                    "#10b981",
+                    "#8b5cf6",
+                    "#f59e0b",
+                    "#ef4444",
+                    "#6b7280",
+                    "#ec4899",
+                    "#06b6d4",
+                    "#84cc16",
+                  ].map((color) => (
                     <button
                       key={color}
                       className={`w-8 h-8 rounded border-2 ${
-                        (editWidgetForm.backgroundColor || selectedWidget?.config.backgroundColor) === color
-                          ? 'border-gray-800' : 'border-gray-300'
+                        (editWidgetForm.backgroundColor ||
+                          selectedWidget?.config.backgroundColor) === color
+                          ? "border-gray-800"
+                          : "border-gray-300"
                       }`}
                       style={{ backgroundColor: color }}
-                      onClick={() => setEditWidgetForm(prev => ({ ...prev, backgroundColor: color }))}
+                      onClick={() =>
+                        setEditWidgetForm((prev) => ({
+                          ...prev,
+                          backgroundColor: color,
+                        }))
+                      }
                     />
                   ))}
                 </div>
@@ -1283,15 +1562,22 @@ export default function CustomizableKPIDashboard() {
               <div>
                 <Label>Text Color</Label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  {['#ffffff', '#000000', '#374151', '#6b7280'].map(color => (
+                  {["#ffffff", "#000000", "#374151", "#6b7280"].map((color) => (
                     <button
                       key={color}
                       className={`w-8 h-8 rounded border-2 ${
-                        (editWidgetForm.textColor || selectedWidget?.config.textColor) === color
-                          ? 'border-blue-500' : 'border-gray-300'
+                        (editWidgetForm.textColor ||
+                          selectedWidget?.config.textColor) === color
+                          ? "border-blue-500"
+                          : "border-gray-300"
                       }`}
                       style={{ backgroundColor: color }}
-                      onClick={() => setEditWidgetForm(prev => ({ ...prev, textColor: color }))}
+                      onClick={() =>
+                        setEditWidgetForm((prev) => ({
+                          ...prev,
+                          textColor: color,
+                        }))
+                      }
                     />
                   ))}
                 </div>
@@ -1301,15 +1587,35 @@ export default function CustomizableKPIDashboard() {
             <div>
               <Label>Chart/Accent Color</Label>
               <div className="grid grid-cols-6 gap-2 mt-2">
-                {['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#6b7280', '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#8b5a2b', '#6366f1'].map(color => (
+                {[
+                  "#3b82f6",
+                  "#10b981",
+                  "#8b5cf6",
+                  "#f59e0b",
+                  "#ef4444",
+                  "#6b7280",
+                  "#ec4899",
+                  "#06b6d4",
+                  "#84cc16",
+                  "#f97316",
+                  "#8b5a2b",
+                  "#6366f1",
+                ].map((color) => (
                   <button
                     key={color}
                     className={`w-8 h-8 rounded border-2 ${
-                      (editWidgetForm.chartColor || selectedWidget?.config.chartColor) === color
-                        ? 'border-gray-800' : 'border-gray-300'
+                      (editWidgetForm.chartColor ||
+                        selectedWidget?.config.chartColor) === color
+                        ? "border-gray-800"
+                        : "border-gray-300"
                     }`}
                     style={{ backgroundColor: color }}
-                    onClick={() => setEditWidgetForm(prev => ({ ...prev, chartColor: color }))}
+                    onClick={() =>
+                      setEditWidgetForm((prev) => ({
+                        ...prev,
+                        chartColor: color,
+                      }))
+                    }
                   />
                 ))}
               </div>
@@ -1318,24 +1624,32 @@ export default function CustomizableKPIDashboard() {
               <Label>Widget Size</Label>
               <div className="grid grid-cols-3 gap-2 mt-2">
                 {[
-                  { width: 1, height: 1, label: '1x1' },
-                  { width: 2, height: 1, label: '2x1' },
-                  { width: 1, height: 2, label: '1x2' },
-                  { width: 2, height: 2, label: '2x2' },
-                  { width: 3, height: 1, label: '3x1' },
-                  { width: 1, height: 3, label: '1x3' },
-                  { width: 3, height: 2, label: '3x2' },
-                  { width: 4, height: 1, label: '4x1' },
-                  { width: 4, height: 2, label: '4x2' }
+                  { width: 1, height: 1, label: "1x1" },
+                  { width: 2, height: 1, label: "2x1" },
+                  { width: 1, height: 2, label: "1x2" },
+                  { width: 2, height: 2, label: "2x2" },
+                  { width: 3, height: 1, label: "3x1" },
+                  { width: 1, height: 3, label: "1x3" },
+                  { width: 3, height: 2, label: "3x2" },
+                  { width: 4, height: 1, label: "4x1" },
+                  { width: 4, height: 2, label: "4x2" },
                 ].map((preset) => (
                   <Button
                     key={`${preset.width}x${preset.height}`}
                     type="button"
-                    variant={selectedWidget?.size.width === preset.width && selectedWidget?.size.height === preset.height ? "default" : "outline"}
+                    variant={
+                      selectedWidget?.size.width === preset.width &&
+                      selectedWidget?.size.height === preset.height
+                        ? "default"
+                        : "outline"
+                    }
                     className="h-12 flex flex-col items-center justify-center"
                     onClick={() => {
                       if (selectedWidget) {
-                        resizeWidget(selectedWidget.id, { width: preset.width, height: preset.height });
+                        resizeWidget(selectedWidget.id, {
+                          width: preset.width,
+                          height: preset.height,
+                        });
                       }
                     }}
                   >
@@ -1344,7 +1658,7 @@ export default function CustomizableKPIDashboard() {
                       className="bg-current opacity-30 rounded-sm mt-1"
                       style={{
                         width: `${preset.width * 8 + 2}px`,
-                        height: `${preset.height * 4 + 2}px`
+                        height: `${preset.height * 4 + 2}px`,
                       }}
                     />
                   </Button>
@@ -1355,24 +1669,42 @@ export default function CustomizableKPIDashboard() {
               <div className="flex items-center justify-between">
                 <Label>Show Trend</Label>
                 <Switch
-                  checked={editWidgetForm.showTrend || selectedWidget?.config.showTrend || false}
-                  onCheckedChange={(checked) => setEditWidgetForm(prev => ({ ...prev, showTrend: checked }))}
+                  checked={
+                    editWidgetForm.showTrend ||
+                    selectedWidget?.config.showTrend ||
+                    false
+                  }
+                  onCheckedChange={(checked) =>
+                    setEditWidgetForm((prev) => ({
+                      ...prev,
+                      showTrend: checked,
+                    }))
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
                 <Label>Show Target</Label>
                 <Switch
-                  checked={editWidgetForm.showTarget || selectedWidget?.config.showTarget || false}
-                  onCheckedChange={(checked) => setEditWidgetForm(prev => ({ ...prev, showTarget: checked }))}
+                  checked={
+                    editWidgetForm.showTarget ||
+                    selectedWidget?.config.showTarget ||
+                    false
+                  }
+                  onCheckedChange={(checked) =>
+                    setEditWidgetForm((prev) => ({
+                      ...prev,
+                      showTarget: checked,
+                    }))
+                  }
                 />
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
-            <Button onClick={updateWidgetConfig}>
-              Save Changes
+            <Button variant="outline" onClick={() => setActiveModal(null)}>
+              Cancel
             </Button>
+            <Button onClick={updateWidgetConfig}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

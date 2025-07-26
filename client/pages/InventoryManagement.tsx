@@ -2,11 +2,31 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -39,7 +59,7 @@ import {
   Zap,
   Clock,
   BarChart3,
-  Activity
+  Activity,
 } from "lucide-react";
 
 // Types for inventory data
@@ -59,7 +79,7 @@ interface InventoryItem {
   supplier: string;
   supplierCode: string;
   unitOfMeasure: string;
-  status: 'Active' | 'Inactive' | 'Discontinued';
+  status: "Active" | "Inactive" | "Discontinued";
   averageCost: number;
   lastMovementDate: string;
 }
@@ -67,7 +87,7 @@ interface InventoryItem {
 interface StockMovement {
   movementId: string;
   itemCode: string;
-  movementType: 'IN' | 'OUT' | 'TRANSFER' | 'ADJUSTMENT';
+  movementType: "IN" | "OUT" | "TRANSFER" | "ADJUSTMENT";
   quantity: number;
   warehouse: string;
   location: string;
@@ -96,7 +116,9 @@ interface InventoryStats {
 export default function InventoryManagement() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [stockMovements, setStockMovements] = useState<StockMovement[]>([]);
-  const [inventoryStats, setInventoryStats] = useState<InventoryStats | null>(null);
+  const [inventoryStats, setInventoryStats] = useState<InventoryStats | null>(
+    null,
+  );
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [selectedWarehouse, setSelectedWarehouse] = useState<string>("all");
@@ -111,7 +133,7 @@ export default function InventoryManagement() {
     technicianId: "",
     jobReference: "",
     warehouse: "",
-    notes: ""
+    notes: "",
   });
   const [returnForm, setReturnForm] = useState({
     itemCode: "",
@@ -119,7 +141,7 @@ export default function InventoryManagement() {
     technicianId: "",
     warehouse: "",
     condition: "Good",
-    notes: ""
+    notes: "",
   });
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
 
@@ -143,14 +165,16 @@ export default function InventoryManagement() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (selectedWarehouse !== "all") params.append("warehouse", selectedWarehouse);
-      if (selectedCategory !== "all") params.append("category", selectedCategory);
+      if (selectedWarehouse !== "all")
+        params.append("warehouse", selectedWarehouse);
+      if (selectedCategory !== "all")
+        params.append("category", selectedCategory);
       if (showLowStockOnly) params.append("lowStock", "true");
 
       const response = await fetch(`/api/inventory/items?${params}`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -164,13 +188,16 @@ export default function InventoryManagement() {
         setInventoryItems(data.data || []);
         // Only show success toast on initial load or when there are items
         if (data.data && data.data.length > 0) {
-          console.log(`Loaded ${data.data.length} inventory items successfully`);
+          console.log(
+            `Loaded ${data.data.length} inventory items successfully`,
+          );
           // Check if this might be mock data (could be indicated by a flag in the response)
-          if (data.message && data.message.includes('mock')) {
+          if (data.message && data.message.includes("mock")) {
             toast({
               title: "Using Mock Data",
-              description: "External inventory system unavailable, showing sample data",
-              variant: "default"
+              description:
+                "External inventory system unavailable, showing sample data",
+              variant: "default",
             });
           }
         }
@@ -181,8 +208,11 @@ export default function InventoryManagement() {
       console.error("Error loading inventory:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to load inventory data",
-        variant: "destructive"
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to load inventory data",
+        variant: "destructive",
       });
       // Set empty array as fallback
       setInventoryItems([]);
@@ -194,12 +224,13 @@ export default function InventoryManagement() {
   const loadInventoryStats = async () => {
     try {
       const params = new URLSearchParams();
-      if (selectedWarehouse !== "all") params.append("warehouse", selectedWarehouse);
+      if (selectedWarehouse !== "all")
+        params.append("warehouse", selectedWarehouse);
 
       const response = await fetch(`/api/inventory/stats?${params}`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -219,7 +250,7 @@ export default function InventoryManagement() {
           totalValue: 0,
           lowStockItems: 0,
           categories: [],
-          warehouses: []
+          warehouses: [],
         });
       }
     } catch (error) {
@@ -230,7 +261,7 @@ export default function InventoryManagement() {
         totalValue: 0,
         lowStockItems: 0,
         categories: [],
-        warehouses: []
+        warehouses: [],
       });
     }
   };
@@ -239,7 +270,8 @@ export default function InventoryManagement() {
     try {
       const params = new URLSearchParams();
       if (itemCode) params.append("itemCode", itemCode);
-      if (selectedWarehouse !== "all") params.append("warehouse", selectedWarehouse);
+      if (selectedWarehouse !== "all")
+        params.append("warehouse", selectedWarehouse);
       params.append("limit", "50");
 
       const response = await fetch(`/api/inventory/movements?${params}`);
@@ -259,9 +291,10 @@ export default function InventoryManagement() {
       const response = await fetch("/api/inventory/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          warehouse: selectedWarehouse !== "all" ? selectedWarehouse : undefined 
-        })
+        body: JSON.stringify({
+          warehouse:
+            selectedWarehouse !== "all" ? selectedWarehouse : undefined,
+        }),
       });
 
       const data = await response.json();
@@ -278,7 +311,7 @@ export default function InventoryManagement() {
         toast({
           title: "Sync Failed",
           description: data.error || "Failed to sync with Sage X3",
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } catch (error) {
@@ -286,7 +319,7 @@ export default function InventoryManagement() {
       toast({
         title: "Sync Failed",
         description: "Failed to sync with Sage X3",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setSyncing(false);
@@ -298,7 +331,7 @@ export default function InventoryManagement() {
       const response = await fetch("/api/inventory/issue", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(issueForm)
+        body: JSON.stringify(issueForm),
       });
 
       const data = await response.json();
@@ -315,14 +348,14 @@ export default function InventoryManagement() {
           technicianId: "",
           jobReference: "",
           warehouse: "",
-          notes: ""
+          notes: "",
         });
         loadInventoryData();
       } else {
         toast({
           title: "Issue Failed",
           description: data.error || "Failed to issue inventory",
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } catch (error) {
@@ -330,7 +363,7 @@ export default function InventoryManagement() {
       toast({
         title: "Issue Failed",
         description: "Failed to issue inventory",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -340,7 +373,7 @@ export default function InventoryManagement() {
       const response = await fetch("/api/inventory/return", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(returnForm)
+        body: JSON.stringify(returnForm),
       });
 
       const data = await response.json();
@@ -357,14 +390,14 @@ export default function InventoryManagement() {
           technicianId: "",
           warehouse: "",
           condition: "Good",
-          notes: ""
+          notes: "",
         });
         loadInventoryData();
       } else {
         toast({
           title: "Return Failed",
           description: data.error || "Failed to return inventory",
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } catch (error) {
@@ -372,12 +405,12 @@ export default function InventoryManagement() {
       toast({
         title: "Return Failed",
         description: "Failed to return inventory",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
-  const filteredItems = inventoryItems.filter(item => {
+  const filteredItems = inventoryItems.filter((item) => {
     if (searchTerm) {
       const search = searchTerm.toLowerCase();
       return (
@@ -442,17 +475,11 @@ export default function InventoryManagement() {
               )}
               {syncing ? "Syncing..." : "Sync with Sage X3"}
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => setActiveModal("issue")}
-            >
+            <Button variant="outline" onClick={() => setActiveModal("issue")}>
               <Send className="h-4 w-4 mr-2" />
               Issue Item
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => setActiveModal("return")}
-            >
+            <Button variant="outline" onClick={() => setActiveModal("return")}>
               <Archive className="h-4 w-4 mr-2" />
               Return Item
             </Button>
@@ -535,291 +562,317 @@ export default function InventoryManagement() {
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
 
-        <TabsContent value="inventory" className="space-y-4">
-          {/* Filters */}
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex flex-wrap gap-4 items-center">
-                <div className="flex items-center gap-2">
-                  <Search className="h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search items..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-64"
-                  />
-                </div>
-                <Select value={selectedWarehouse} onValueChange={setSelectedWarehouse}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Warehouses</SelectItem>
-                    <SelectItem value="MAIN">Main Warehouse</SelectItem>
-                    <SelectItem value="FIELD">Field Warehouse</SelectItem>
-                    <SelectItem value="REPAIR">Repair Shop</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="CABLE">Cables</SelectItem>
-                    <SelectItem value="TOOLS">Tools</SelectItem>
-                    <SelectItem value="HARDWARE">Hardware</SelectItem>
-                    <SelectItem value="EQUIPMENT">Equipment</SelectItem>
-                  </SelectContent>
-                </Select>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="lowStock"
-                    checked={showLowStockOnly}
-                    onChange={(e) => setShowLowStockOnly(e.target.checked)}
-                    className="rounded"
-                  />
-                  <label htmlFor="lowStock" className="text-sm font-medium">
-                    Low Stock Only
-                  </label>
-                </div>
-                <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            <TabsContent value="inventory" className="space-y-4">
+              {/* Filters */}
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex flex-wrap gap-4 items-center">
+                    <div className="flex items-center gap-2">
+                      <Search className="h-4 w-4 text-gray-400" />
+                      <Input
+                        placeholder="Search items..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-64"
+                      />
+                    </div>
+                    <Select
+                      value={selectedWarehouse}
+                      onValueChange={setSelectedWarehouse}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Warehouses</SelectItem>
+                        <SelectItem value="MAIN">Main Warehouse</SelectItem>
+                        <SelectItem value="FIELD">Field Warehouse</SelectItem>
+                        <SelectItem value="REPAIR">Repair Shop</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={selectedCategory}
+                      onValueChange={setSelectedCategory}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        <SelectItem value="CABLE">Cables</SelectItem>
+                        <SelectItem value="TOOLS">Tools</SelectItem>
+                        <SelectItem value="HARDWARE">Hardware</SelectItem>
+                        <SelectItem value="EQUIPMENT">Equipment</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="lowStock"
+                        checked={showLowStockOnly}
+                        onChange={(e) => setShowLowStockOnly(e.target.checked)}
+                        className="rounded"
+                      />
+                      <label htmlFor="lowStock" className="text-sm font-medium">
+                        Low Stock Only
+                      </label>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      <Download className="h-4 w-4 mr-2" />
+                      Export
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
 
-          {/* Inventory Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5" />
-                Inventory Items ({filteredItems.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex items-center justify-center h-32">
-                  <RefreshCw className="h-6 w-6 animate-spin" />
-                  <span className="ml-2">Loading inventory...</span>
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Item Code</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Warehouse</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Unit Price</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredItems.map((item) => (
-                      <TableRow key={`${item.itemCode}-${item.warehouse}`}>
-                        <TableCell className="font-medium">{item.itemCode}</TableCell>
-                        <TableCell>{item.description}</TableCell>
-                        <TableCell>{item.category}</TableCell>
-                        <TableCell>{item.warehouse}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span>{item.quantity}</span>
-                            <span className="text-sm text-gray-500">{item.unitOfMeasure}</span>
-                            {item.quantity <= item.reorderLevel && (
-                              <AlertTriangle className="h-4 w-4 text-orange-500" />
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>${item.unitPrice.toFixed(2)}</TableCell>
-                        <TableCell>{getStatusBadge(item)}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-1">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => {
-                                setSelectedItem(item);
-                                setActiveModal("details");
-                                loadStockMovements(item.itemCode);
-                              }}
-                            >
-                              <Eye className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => {
-                                setIssueForm({
-                                  ...issueForm,
-                                  itemCode: item.itemCode,
-                                  warehouse: item.warehouse
-                                });
-                                setActiveModal("issue");
-                              }}
-                            >
-                              <Send className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => {
-                                setReturnForm({
-                                  ...returnForm,
-                                  itemCode: item.itemCode,
-                                  warehouse: item.warehouse
-                                });
-                                setActiveModal("return");
-                              }}
-                            >
-                              <Archive className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
+              {/* Inventory Table */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="h-5 w-5" />
+                    Inventory Items ({filteredItems.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <div className="flex items-center justify-center h-32">
+                      <RefreshCw className="h-6 w-6 animate-spin" />
+                      <span className="ml-2">Loading inventory...</span>
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Item Code</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead>Category</TableHead>
+                          <TableHead>Warehouse</TableHead>
+                          <TableHead>Quantity</TableHead>
+                          <TableHead>Unit Price</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredItems.map((item) => (
+                          <TableRow key={`${item.itemCode}-${item.warehouse}`}>
+                            <TableCell className="font-medium">
+                              {item.itemCode}
+                            </TableCell>
+                            <TableCell>{item.description}</TableCell>
+                            <TableCell>{item.category}</TableCell>
+                            <TableCell>{item.warehouse}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <span>{item.quantity}</span>
+                                <span className="text-sm text-gray-500">
+                                  {item.unitOfMeasure}
+                                </span>
+                                {item.quantity <= item.reorderLevel && (
+                                  <AlertTriangle className="h-4 w-4 text-orange-500" />
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>${item.unitPrice.toFixed(2)}</TableCell>
+                            <TableCell>{getStatusBadge(item)}</TableCell>
+                            <TableCell>
+                              <div className="flex gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setSelectedItem(item);
+                                    setActiveModal("details");
+                                    loadStockMovements(item.itemCode);
+                                  }}
+                                >
+                                  <Eye className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setIssueForm({
+                                      ...issueForm,
+                                      itemCode: item.itemCode,
+                                      warehouse: item.warehouse,
+                                    });
+                                    setActiveModal("issue");
+                                  }}
+                                >
+                                  <Send className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setReturnForm({
+                                      ...returnForm,
+                                      itemCode: item.itemCode,
+                                      warehouse: item.warehouse,
+                                    });
+                                    setActiveModal("return");
+                                  }}
+                                >
+                                  <Archive className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="movements" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5" />
+                    Recent Stock Movements
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-4">
+                    <Button onClick={() => loadStockMovements()}>
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh Movements
+                    </Button>
+                  </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Item Code</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Warehouse</TableHead>
+                        <TableHead>Reference</TableHead>
+                        <TableHead>Technician</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {stockMovements.map((movement) => (
+                        <TableRow key={movement.movementId}>
+                          <TableCell>
+                            {new Date(movement.date).toLocaleString()}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {getMovementIcon(movement.movementType)}
+                              <span>{movement.movementType}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {movement.itemCode}
+                          </TableCell>
+                          <TableCell>{movement.quantity}</TableCell>
+                          <TableCell>{movement.warehouse}</TableCell>
+                          <TableCell>{movement.reference}</TableCell>
+                          <TableCell>{movement.technician || "-"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="analytics" className="space-y-4">
+              {inventoryStats && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Inventory by Category</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {inventoryStats.categories.map((category) => (
+                          <div
+                            key={category.name}
+                            className="flex justify-between items-center"
+                          >
+                            <span className="font-medium">{category.name}</span>
+                            <div className="text-right">
+                              <div className="font-semibold">
+                                {category.count} items
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                ${category.value.toLocaleString()}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Inventory by Warehouse</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {inventoryStats.warehouses.map((warehouse) => (
+                          <div
+                            key={warehouse.name}
+                            className="flex justify-between items-center"
+                          >
+                            <span className="font-medium">
+                              {warehouse.name}
+                            </span>
+                            <div className="text-right">
+                              <div className="font-semibold">
+                                {warehouse.itemCount} items
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                ${warehouse.totalValue.toLocaleString()}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="movements" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                Recent Stock Movements
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <Button onClick={() => loadStockMovements()}>
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Refresh Movements
-                </Button>
-              </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Item Code</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Warehouse</TableHead>
-                    <TableHead>Reference</TableHead>
-                    <TableHead>Technician</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {stockMovements.map((movement) => (
-                    <TableRow key={movement.movementId}>
-                      <TableCell>
-                        {new Date(movement.date).toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {getMovementIcon(movement.movementType)}
-                          <span>{movement.movementType}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-medium">{movement.itemCode}</TableCell>
-                      <TableCell>{movement.quantity}</TableCell>
-                      <TableCell>{movement.warehouse}</TableCell>
-                      <TableCell>{movement.reference}</TableCell>
-                      <TableCell>{movement.technician || "-"}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-4">
-          {inventoryStats && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <TabsContent value="settings" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Inventory by Category</CardTitle>
+                  <CardTitle>Sage X3 Integration Settings</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {inventoryStats.categories.map((category) => (
-                      <div key={category.name} className="flex justify-between items-center">
-                        <span className="font-medium">{category.name}</span>
-                        <div className="text-right">
-                          <div className="font-semibold">{category.count} items</div>
-                          <div className="text-sm text-gray-500">
-                            ${category.value.toLocaleString()}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Sage X3 Server URL</Label>
+                      <Input placeholder="https://your-sage-server.com:8124" />
+                    </div>
+                    <div>
+                      <Label>Database</Label>
+                      <Input placeholder="X3V12" />
+                    </div>
+                    <div>
+                      <Label>Username</Label>
+                      <Input placeholder="admin" />
+                    </div>
+                    <div>
+                      <Label>Password</Label>
+                      <Input type="password" placeholder="password" />
+                    </div>
+                  </div>
+                  <div className="pt-4">
+                    <Button>Test Connection</Button>
+                    <Button variant="outline" className="ml-2">
+                      Save Settings
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Inventory by Warehouse</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {inventoryStats.warehouses.map((warehouse) => (
-                      <div key={warehouse.name} className="flex justify-between items-center">
-                        <span className="font-medium">{warehouse.name}</span>
-                        <div className="text-right">
-                          <div className="font-semibold">{warehouse.itemCount} items</div>
-                          <div className="text-sm text-gray-500">
-                            ${warehouse.totalValue.toLocaleString()}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="settings" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sage X3 Integration Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Sage X3 Server URL</Label>
-                  <Input placeholder="https://your-sage-server.com:8124" />
-                </div>
-                <div>
-                  <Label>Database</Label>
-                  <Input placeholder="X3V12" />
-                </div>
-                <div>
-                  <Label>Username</Label>
-                  <Input placeholder="admin" />
-                </div>
-                <div>
-                  <Label>Password</Label>
-                  <Input type="password" placeholder="password" />
-                </div>
-              </div>
-              <div className="pt-4">
-                <Button>Test Connection</Button>
-                <Button variant="outline" className="ml-2">Save Settings</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            </TabsContent>
           </Tabs>
         </div>
 
@@ -833,9 +886,12 @@ export default function InventoryManagement() {
       </div>
 
       {/* Modals */}
-      
+
       {/* Item Details Modal */}
-      <Dialog open={activeModal === "details"} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "details"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>Item Details - {selectedItem?.itemCode}</DialogTitle>
@@ -870,17 +926,24 @@ export default function InventoryManagement() {
                 </div>
                 <div>
                   <Label>Supplier</Label>
-                  <div>{selectedItem.supplier} ({selectedItem.supplierCode})</div>
+                  <div>
+                    {selectedItem.supplier} ({selectedItem.supplierCode})
+                  </div>
                 </div>
               </div>
               <div>
                 <Label>Recent Movements</Label>
                 <div className="mt-2 max-h-64 overflow-y-auto">
                   {stockMovements.slice(0, 10).map((movement) => (
-                    <div key={movement.movementId} className="flex justify-between items-center py-2 border-b">
+                    <div
+                      key={movement.movementId}
+                      className="flex justify-between items-center py-2 border-b"
+                    >
                       <div className="flex items-center gap-2">
                         {getMovementIcon(movement.movementType)}
-                        <span className="font-medium">{movement.movementType}</span>
+                        <span className="font-medium">
+                          {movement.movementType}
+                        </span>
                       </div>
                       <div className="text-right">
                         <div>{movement.quantity}</div>
@@ -898,18 +961,25 @@ export default function InventoryManagement() {
       </Dialog>
 
       {/* Issue Item Modal */}
-      <Dialog open={activeModal === "issue"} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "issue"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Issue Inventory Item</DialogTitle>
-            <DialogDescription>Issue inventory to a technician</DialogDescription>
+            <DialogDescription>
+              Issue inventory to a technician
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <Label>Item Code</Label>
               <Input
                 value={issueForm.itemCode}
-                onChange={(e) => setIssueForm({...issueForm, itemCode: e.target.value})}
+                onChange={(e) =>
+                  setIssueForm({ ...issueForm, itemCode: e.target.value })
+                }
                 placeholder="Enter item code"
               />
             </div>
@@ -918,7 +988,12 @@ export default function InventoryManagement() {
               <Input
                 type="number"
                 value={issueForm.quantity}
-                onChange={(e) => setIssueForm({...issueForm, quantity: parseInt(e.target.value) || 0})}
+                onChange={(e) =>
+                  setIssueForm({
+                    ...issueForm,
+                    quantity: parseInt(e.target.value) || 0,
+                  })
+                }
                 placeholder="Enter quantity"
               />
             </div>
@@ -926,7 +1001,9 @@ export default function InventoryManagement() {
               <Label>Technician ID</Label>
               <Input
                 value={issueForm.technicianId}
-                onChange={(e) => setIssueForm({...issueForm, technicianId: e.target.value})}
+                onChange={(e) =>
+                  setIssueForm({ ...issueForm, technicianId: e.target.value })
+                }
                 placeholder="Enter technician ID"
               />
             </div>
@@ -934,15 +1011,19 @@ export default function InventoryManagement() {
               <Label>Job Reference (Optional)</Label>
               <Input
                 value={issueForm.jobReference}
-                onChange={(e) => setIssueForm({...issueForm, jobReference: e.target.value})}
+                onChange={(e) =>
+                  setIssueForm({ ...issueForm, jobReference: e.target.value })
+                }
                 placeholder="Enter job reference"
               />
             </div>
             <div>
               <Label>Warehouse</Label>
-              <Select 
-                value={issueForm.warehouse} 
-                onValueChange={(value) => setIssueForm({...issueForm, warehouse: value})}
+              <Select
+                value={issueForm.warehouse}
+                onValueChange={(value) =>
+                  setIssueForm({ ...issueForm, warehouse: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select warehouse" />
@@ -958,7 +1039,9 @@ export default function InventoryManagement() {
               <Label>Notes (Optional)</Label>
               <Textarea
                 value={issueForm.notes}
-                onChange={(e) => setIssueForm({...issueForm, notes: e.target.value})}
+                onChange={(e) =>
+                  setIssueForm({ ...issueForm, notes: e.target.value })
+                }
                 placeholder="Enter any notes"
               />
             </div>
@@ -967,26 +1050,31 @@ export default function InventoryManagement() {
             <Button variant="outline" onClick={() => setActiveModal(null)}>
               Cancel
             </Button>
-            <Button onClick={issueInventoryItem}>
-              Issue Item
-            </Button>
+            <Button onClick={issueInventoryItem}>Issue Item</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Return Item Modal */}
-      <Dialog open={activeModal === "return"} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "return"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Return Inventory Item</DialogTitle>
-            <DialogDescription>Return inventory from a technician</DialogDescription>
+            <DialogDescription>
+              Return inventory from a technician
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <Label>Item Code</Label>
               <Input
                 value={returnForm.itemCode}
-                onChange={(e) => setReturnForm({...returnForm, itemCode: e.target.value})}
+                onChange={(e) =>
+                  setReturnForm({ ...returnForm, itemCode: e.target.value })
+                }
                 placeholder="Enter item code"
               />
             </div>
@@ -995,7 +1083,12 @@ export default function InventoryManagement() {
               <Input
                 type="number"
                 value={returnForm.quantity}
-                onChange={(e) => setReturnForm({...returnForm, quantity: parseInt(e.target.value) || 0})}
+                onChange={(e) =>
+                  setReturnForm({
+                    ...returnForm,
+                    quantity: parseInt(e.target.value) || 0,
+                  })
+                }
                 placeholder="Enter quantity"
               />
             </div>
@@ -1003,15 +1096,19 @@ export default function InventoryManagement() {
               <Label>Technician ID</Label>
               <Input
                 value={returnForm.technicianId}
-                onChange={(e) => setReturnForm({...returnForm, technicianId: e.target.value})}
+                onChange={(e) =>
+                  setReturnForm({ ...returnForm, technicianId: e.target.value })
+                }
                 placeholder="Enter technician ID"
               />
             </div>
             <div>
               <Label>Warehouse</Label>
-              <Select 
-                value={returnForm.warehouse} 
-                onValueChange={(value) => setReturnForm({...returnForm, warehouse: value})}
+              <Select
+                value={returnForm.warehouse}
+                onValueChange={(value) =>
+                  setReturnForm({ ...returnForm, warehouse: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select warehouse" />
@@ -1025,9 +1122,11 @@ export default function InventoryManagement() {
             </div>
             <div>
               <Label>Condition</Label>
-              <Select 
-                value={returnForm.condition} 
-                onValueChange={(value) => setReturnForm({...returnForm, condition: value})}
+              <Select
+                value={returnForm.condition}
+                onValueChange={(value) =>
+                  setReturnForm({ ...returnForm, condition: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -1043,7 +1142,9 @@ export default function InventoryManagement() {
               <Label>Notes (Optional)</Label>
               <Textarea
                 value={returnForm.notes}
-                onChange={(e) => setReturnForm({...returnForm, notes: e.target.value})}
+                onChange={(e) =>
+                  setReturnForm({ ...returnForm, notes: e.target.value })
+                }
                 placeholder="Enter any notes"
               />
             </div>
@@ -1052,9 +1153,7 @@ export default function InventoryManagement() {
             <Button variant="outline" onClick={() => setActiveModal(null)}>
               Cancel
             </Button>
-            <Button onClick={returnInventoryItem}>
-              Return Item
-            </Button>
+            <Button onClick={returnInventoryItem}>Return Item</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

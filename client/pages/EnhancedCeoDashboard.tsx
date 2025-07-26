@@ -2,12 +2,32 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -59,7 +79,7 @@ import {
   Ban,
   UserCheck,
   PieChart,
-  TrendingUpDown
+  TrendingUpDown,
 } from "lucide-react";
 
 export default function EnhancedCeoDashboard() {
@@ -68,12 +88,12 @@ export default function EnhancedCeoDashboard() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('');
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("");
   const [newDepartment, setNewDepartment] = useState({
-    name: '',
-    manager: '',
+    name: "",
+    manager: "",
     budget: 0,
-    location: ''
+    location: "",
   });
 
   const { toast } = useToast();
@@ -101,7 +121,7 @@ export default function EnhancedCeoDashboard() {
     totalVehicles: 25,
     lowStockItems: 12,
     activeAlerts: 7,
-    resolvedToday: 12
+    resolvedToday: 12,
   };
 
   useEffect(() => {
@@ -120,13 +140,16 @@ export default function EnhancedCeoDashboard() {
       toast({
         title: "Error",
         description: "Please select both a user and department",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
-    const success = mockDB.assignUserToDepartment(selectedUser.id, selectedDepartment);
-    
+    const success = mockDB.assignUserToDepartment(
+      selectedUser.id,
+      selectedDepartment,
+    );
+
     if (success) {
       toast({
         title: "Assignment Successful",
@@ -135,12 +158,12 @@ export default function EnhancedCeoDashboard() {
       loadDashboardData();
       setActiveModal(null);
       setSelectedUser(null);
-      setSelectedDepartment('');
+      setSelectedDepartment("");
     } else {
       toast({
         title: "Assignment Failed",
         description: "Failed to assign user to department",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -150,14 +173,14 @@ export default function EnhancedCeoDashboard() {
       toast({
         title: "Error",
         description: "Please fill in required fields",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     const department = mockDB.addDepartment({
       ...newDepartment,
-      employees: []
+      employees: [],
     });
 
     toast({
@@ -168,18 +191,18 @@ export default function EnhancedCeoDashboard() {
     loadDashboardData();
     setActiveModal(null);
     setNewDepartment({
-      name: '',
-      manager: '',
+      name: "",
+      manager: "",
       budget: 0,
-      location: ''
+      location: "",
     });
   };
 
   const getDepartmentStats = () => {
-    return departments.map(dept => ({
+    return departments.map((dept) => ({
       ...dept,
       employeeCount: dept.employees.length,
-      utilization: (dept.employees.length / 10 * 100) // Mock utilization
+      utilization: (dept.employees.length / 10) * 100, // Mock utilization
     }));
   };
 
@@ -247,39 +270,37 @@ export default function EnhancedCeoDashboard() {
       color: "bg-red-500",
       description: "System configuration and settings",
       action: () => setActiveModal("system-settings"),
-    }
+    },
   ];
 
   // Mock analytics data
   const analyticsData = {
     jobTrends: [
-      { month: 'Jan', completed: 245, pending: 32 },
-      { month: 'Feb', completed: 289, pending: 28 },
-      { month: 'Mar', completed: 312, pending: 35 },
-      { month: 'Apr', completed: 278, pending: 42 },
-      { month: 'May', completed: 334, pending: 29 }
+      { month: "Jan", completed: 245, pending: 32 },
+      { month: "Feb", completed: 289, pending: 28 },
+      { month: "Mar", completed: 312, pending: 35 },
+      { month: "Apr", completed: 278, pending: 42 },
+      { month: "May", completed: 334, pending: 29 },
     ],
-    departmentPerformance: departments.map(dept => ({
+    departmentPerformance: departments.map((dept) => ({
       name: dept.name,
       efficiency: Math.floor(Math.random() * 30) + 70,
       budget: dept.budget,
-      utilization: Math.floor(Math.random() * 40) + 60
+      utilization: Math.floor(Math.random() * 40) + 60,
     })),
     kpis: {
       customerSatisfaction: 94.2,
       employeeEngagement: 87.5,
       operationalEfficiency: 91.8,
-      profitMargin: 23.4
-    }
+      profitMargin: 23.4,
+    },
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          CEO Dashboard
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">CEO Dashboard</h1>
         <p className="text-gray-600">
           Executive overview and strategic management
         </p>
@@ -401,7 +422,10 @@ export default function EnhancedCeoDashboard() {
       {/* Modals */}
 
       {/* Assign to Department Modal */}
-      <Dialog open={activeModal === 'assign-department'} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "assign-department"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Assign Employee to Department</DialogTitle>
@@ -423,17 +447,24 @@ export default function EnhancedCeoDashboard() {
                 </TableHeader>
                 <TableBody>
                   {users.map((user) => (
-                    <TableRow key={user.id} className={selectedUser?.id === user.id ? 'bg-blue-50' : ''}>
+                    <TableRow
+                      key={user.id}
+                      className={
+                        selectedUser?.id === user.id ? "bg-blue-50" : ""
+                      }
+                    >
                       <TableCell className="font-medium">{user.name}</TableCell>
                       <TableCell>{user.role}</TableCell>
                       <TableCell>{user.department}</TableCell>
                       <TableCell>
-                        <Button 
-                          size="sm" 
-                          variant={selectedUser?.id === user.id ? 'default' : 'outline'}
+                        <Button
+                          size="sm"
+                          variant={
+                            selectedUser?.id === user.id ? "default" : "outline"
+                          }
                           onClick={() => setSelectedUser(user)}
                         >
-                          {selectedUser?.id === user.id ? 'Selected' : 'Select'}
+                          {selectedUser?.id === user.id ? "Selected" : "Select"}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -445,7 +476,10 @@ export default function EnhancedCeoDashboard() {
             {selectedUser && (
               <div>
                 <Label>Assign to Department</Label>
-                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                <Select
+                  value={selectedDepartment}
+                  onValueChange={setSelectedDepartment}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
@@ -464,7 +498,10 @@ export default function EnhancedCeoDashboard() {
             <Button variant="outline" onClick={() => setActiveModal(null)}>
               Cancel
             </Button>
-            <Button onClick={handleAssignToDepartment} disabled={!selectedUser || !selectedDepartment}>
+            <Button
+              onClick={handleAssignToDepartment}
+              disabled={!selectedUser || !selectedDepartment}
+            >
               Assign to Department
             </Button>
           </DialogFooter>
@@ -472,7 +509,10 @@ export default function EnhancedCeoDashboard() {
       </Dialog>
 
       {/* Analytics Modal */}
-      <Dialog open={activeModal === 'analytics'} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "analytics"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -509,8 +549,12 @@ export default function EnhancedCeoDashboard() {
                 <Card>
                   <CardContent className="p-4">
                     <div className="text-center">
-                      <p className="text-sm text-gray-600">Customer Satisfaction</p>
-                      <p className="text-2xl font-bold text-blue-600">{analyticsData.kpis.customerSatisfaction}%</p>
+                      <p className="text-sm text-gray-600">
+                        Customer Satisfaction
+                      </p>
+                      <p className="text-2xl font-bold text-blue-600">
+                        {analyticsData.kpis.customerSatisfaction}%
+                      </p>
                       <div className="flex items-center justify-center gap-1 mt-1">
                         <TrendingUp className="h-3 w-3 text-blue-500" />
                         <span className="text-xs text-blue-600">+2.3%</span>
@@ -521,8 +565,12 @@ export default function EnhancedCeoDashboard() {
                 <Card>
                   <CardContent className="p-4">
                     <div className="text-center">
-                      <p className="text-sm text-gray-600">Employee Engagement</p>
-                      <p className="text-2xl font-bold text-purple-600">{analyticsData.kpis.employeeEngagement}%</p>
+                      <p className="text-sm text-gray-600">
+                        Employee Engagement
+                      </p>
+                      <p className="text-2xl font-bold text-purple-600">
+                        {analyticsData.kpis.employeeEngagement}%
+                      </p>
                       <div className="flex items-center justify-center gap-1 mt-1">
                         <TrendingUp className="h-3 w-3 text-purple-500" />
                         <span className="text-xs text-purple-600">+5.1%</span>
@@ -533,8 +581,12 @@ export default function EnhancedCeoDashboard() {
                 <Card>
                   <CardContent className="p-4">
                     <div className="text-center">
-                      <p className="text-sm text-gray-600">Operational Efficiency</p>
-                      <p className="text-2xl font-bold text-orange-600">{analyticsData.kpis.operationalEfficiency}%</p>
+                      <p className="text-sm text-gray-600">
+                        Operational Efficiency
+                      </p>
+                      <p className="text-2xl font-bold text-orange-600">
+                        {analyticsData.kpis.operationalEfficiency}%
+                      </p>
                       <div className="flex items-center justify-center gap-1 mt-1">
                         <TrendingUp className="h-3 w-3 text-orange-500" />
                         <span className="text-xs text-orange-600">+1.8%</span>
@@ -543,14 +595,16 @@ export default function EnhancedCeoDashboard() {
                   </CardContent>
                 </Card>
               </div>
-              
+
               <Card>
                 <CardHeader>
                   <CardTitle>Business Performance Trends</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-48 bg-gray-100 rounded flex items-center justify-center">
-                    <span className="text-gray-500">Business Performance Chart</span>
+                    <span className="text-gray-500">
+                      Business Performance Chart
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -574,26 +628,48 @@ export default function EnhancedCeoDashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {analyticsData.departmentPerformance.map((dept, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium">{dept.name}</TableCell>
-                          <TableCell>{departments.find(d => d.name === dept.name)?.manager}</TableCell>
-                          <TableCell>{departments.find(d => d.name === dept.name)?.employees.length}</TableCell>
-                          <TableCell>R{dept.budget.toLocaleString()}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Progress value={dept.efficiency} className="w-16" />
-                              <span>{dept.efficiency}%</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Progress value={dept.utilization} className="w-16" />
-                              <span>{dept.utilization}%</span>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {analyticsData.departmentPerformance.map(
+                        (dept, index) => (
+                          <TableRow key={index}>
+                            <TableCell className="font-medium">
+                              {dept.name}
+                            </TableCell>
+                            <TableCell>
+                              {
+                                departments.find((d) => d.name === dept.name)
+                                  ?.manager
+                              }
+                            </TableCell>
+                            <TableCell>
+                              {
+                                departments.find((d) => d.name === dept.name)
+                                  ?.employees.length
+                              }
+                            </TableCell>
+                            <TableCell>
+                              R{dept.budget.toLocaleString()}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Progress
+                                  value={dept.efficiency}
+                                  className="w-16"
+                                />
+                                <span>{dept.efficiency}%</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Progress
+                                  value={dept.utilization}
+                                  className="w-16"
+                                />
+                                <span>{dept.utilization}%</span>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ),
+                      )}
                     </TableBody>
                   </Table>
                 </CardContent>
@@ -618,7 +694,9 @@ export default function EnhancedCeoDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="h-48 bg-gray-100 rounded flex items-center justify-center">
-                      <span className="text-gray-500">Revenue Growth Chart</span>
+                      <span className="text-gray-500">
+                        Revenue Growth Chart
+                      </span>
                     </div>
                   </CardContent>
                 </Card>
@@ -632,7 +710,7 @@ export default function EnhancedCeoDashboard() {
                     <CardContent className="p-6">
                       <div className="text-center">
                         <h3 className="font-semibold text-lg mb-2 capitalize">
-                          {key.replace(/([A-Z])/g, ' $1').trim()}
+                          {key.replace(/([A-Z])/g, " $1").trim()}
                         </h3>
                         <div className="text-4xl font-bold text-blue-600 mb-2">
                           {value}%
@@ -649,7 +727,10 @@ export default function EnhancedCeoDashboard() {
       </Dialog>
 
       {/* Departments Modal */}
-      <Dialog open={activeModal === 'departments'} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "departments"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -664,7 +745,7 @@ export default function EnhancedCeoDashboard() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Current Departments</h3>
-              <Button onClick={() => setActiveModal('create-department')}>
+              <Button onClick={() => setActiveModal("create-department")}>
                 <Plus className="h-4 w-4 mr-2" />
                 Create Department
               </Button>
@@ -691,8 +772,12 @@ export default function EnhancedCeoDashboard() {
                     <TableCell>{dept.location}</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button size="sm" variant="ghost"><Eye className="h-3 w-3" /></Button>
-                        <Button size="sm" variant="ghost"><Edit className="h-3 w-3" /></Button>
+                        <Button size="sm" variant="ghost">
+                          <Eye className="h-3 w-3" />
+                        </Button>
+                        <Button size="sm" variant="ghost">
+                          <Edit className="h-3 w-3" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -704,18 +789,25 @@ export default function EnhancedCeoDashboard() {
       </Dialog>
 
       {/* Create Department Modal */}
-      <Dialog open={activeModal === 'create-department'} onOpenChange={() => setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "create-department"}
+        onOpenChange={() => setActiveModal(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Department</DialogTitle>
-            <DialogDescription>Add a new department to the organization</DialogDescription>
+            <DialogDescription>
+              Add a new department to the organization
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <Label>Department Name</Label>
               <Input
                 value={newDepartment.name}
-                onChange={(e) => setNewDepartment({...newDepartment, name: e.target.value})}
+                onChange={(e) =>
+                  setNewDepartment({ ...newDepartment, name: e.target.value })
+                }
                 placeholder="Enter department name"
               />
             </div>
@@ -723,7 +815,12 @@ export default function EnhancedCeoDashboard() {
               <Label>Manager</Label>
               <Input
                 value={newDepartment.manager}
-                onChange={(e) => setNewDepartment({...newDepartment, manager: e.target.value})}
+                onChange={(e) =>
+                  setNewDepartment({
+                    ...newDepartment,
+                    manager: e.target.value,
+                  })
+                }
                 placeholder="Enter manager name"
               />
             </div>
@@ -732,7 +829,12 @@ export default function EnhancedCeoDashboard() {
               <Input
                 type="number"
                 value={newDepartment.budget}
-                onChange={(e) => setNewDepartment({...newDepartment, budget: parseInt(e.target.value) || 0})}
+                onChange={(e) =>
+                  setNewDepartment({
+                    ...newDepartment,
+                    budget: parseInt(e.target.value) || 0,
+                  })
+                }
                 placeholder="Enter budget amount"
               />
             </div>
@@ -740,7 +842,12 @@ export default function EnhancedCeoDashboard() {
               <Label>Location</Label>
               <Input
                 value={newDepartment.location}
-                onChange={(e) => setNewDepartment({...newDepartment, location: e.target.value})}
+                onChange={(e) =>
+                  setNewDepartment({
+                    ...newDepartment,
+                    location: e.target.value,
+                  })
+                }
                 placeholder="Enter location"
               />
             </div>
@@ -749,9 +856,7 @@ export default function EnhancedCeoDashboard() {
             <Button variant="outline" onClick={() => setActiveModal(null)}>
               Cancel
             </Button>
-            <Button onClick={handleCreateDepartment}>
-              Create Department
-            </Button>
+            <Button onClick={handleCreateDepartment}>Create Department</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

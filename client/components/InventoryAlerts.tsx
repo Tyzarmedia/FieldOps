@@ -11,7 +11,7 @@ import {
   useLowStockAlerts,
   useSyncStatus,
   useInventoryUpdates,
-  InventoryWebSocketEvent
+  InventoryWebSocketEvent,
 } from "@/hooks/useInventoryWebSocket";
 import {
   AlertTriangle,
@@ -26,15 +26,20 @@ import {
   Bell,
   X,
   RefreshCw,
-  Users
+  Users,
 } from "lucide-react";
 
 interface AlertItem {
   id: string;
-  type: 'low_stock' | 'out_of_stock' | 'sync_error' | 'connection' | 'inventory_change';
+  type:
+    | "low_stock"
+    | "out_of_stock"
+    | "sync_error"
+    | "connection"
+    | "inventory_change";
   title: string;
   message: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   timestamp: string;
   warehouse?: string;
   itemCode?: string;
@@ -47,9 +52,14 @@ interface InventoryAlertsProps {
   className?: string;
 }
 
-export default function InventoryAlerts({ onRefreshInventory, className }: InventoryAlertsProps) {
+export default function InventoryAlerts({
+  onRefreshInventory,
+  className,
+}: InventoryAlertsProps) {
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
-  const [recentEvents, setRecentEvents] = useState<InventoryWebSocketEvent[]>([]);
+  const [recentEvents, setRecentEvents] = useState<InventoryWebSocketEvent[]>(
+    [],
+  );
   const [showAllAlerts, setShowAllAlerts] = useState(false);
   const { toast } = useToast();
 
@@ -61,39 +71,49 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
     subscriptions,
     reconnectAttempts,
     connect,
-    disconnect
+    disconnect,
   } = useInventoryWebSocket({
-    subscriptions: ['inventory_updates', 'stock_movements', 'low_stock_alerts', 'sync_status'],
+    subscriptions: [
+      "inventory_updates",
+      "stock_movements",
+      "low_stock_alerts",
+      "sync_status",
+    ],
     autoConnect: false, // Disable auto-connect to prevent errors when WebSocket server is not available
     autoReconnect: false,
-    maxReconnectAttempts: 3
+    maxReconnectAttempts: 3,
   });
 
   // Handle low stock alerts
   useLowStockAlerts((event) => {
     const lowStockItems = event.data?.items || [];
-    
+
     lowStockItems.forEach((item: any) => {
       const alert: AlertItem = {
         id: `low-stock-${item.itemCode}-${item.warehouse}-${Date.now()}`,
-        type: 'low_stock',
-        title: 'Low Stock Alert',
+        type: "low_stock",
+        title: "Low Stock Alert",
         message: `${item.description} (${item.itemCode}) in ${item.warehouse}: ${item.quantity} remaining`,
-        severity: item.quantity === 0 ? 'critical' : item.quantity <= 5 ? 'high' : 'medium',
+        severity:
+          item.quantity === 0
+            ? "critical"
+            : item.quantity <= 5
+              ? "high"
+              : "medium",
         timestamp: event.timestamp,
         warehouse: item.warehouse,
         itemCode: item.itemCode,
         acknowledged: false,
-        data: item
+        data: item,
       };
 
-      setAlerts(prev => [alert, ...prev.slice(0, 49)]); // Keep last 50 alerts
+      setAlerts((prev) => [alert, ...prev.slice(0, 49)]); // Keep last 50 alerts
 
       // Show toast notification
       toast({
         title: alert.title,
         description: alert.message,
-        variant: alert.severity === 'critical' ? 'destructive' : 'default'
+        variant: alert.severity === "critical" ? "destructive" : "default",
       });
     });
   });
@@ -102,73 +122,80 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
   useSyncStatus((event) => {
     let alert: AlertItem;
 
-    if (event.type === 'sync_complete') {
+    if (event.type === "sync_complete") {
       alert = {
         id: `sync-complete-${Date.now()}`,
-        type: 'connection',
-        title: 'Sync Complete',
+        type: "connection",
+        title: "Sync Complete",
         message: `Updated ${event.data?.updatedItems || 0} items. ${event.data?.lowStockItems || 0} items are low on stock.`,
-        severity: 'low',
+        severity: "low",
         timestamp: event.timestamp,
         warehouse: event.warehouse,
         acknowledged: false,
-        data: event.data
+        data: event.data,
       };
 
       if (onRefreshInventory) {
         onRefreshInventory();
       }
-    } else if (event.type === 'sync_error') {
+    } else if (event.type === "sync_error") {
       alert = {
         id: `sync-error-${Date.now()}`,
-        type: 'sync_error',
-        title: 'Sync Failed',
-        message: event.data?.error || 'Failed to sync with Sage X3',
-        severity: 'high',
+        type: "sync_error",
+        title: "Sync Failed",
+        message: event.data?.error || "Failed to sync with Sage X3",
+        severity: "high",
         timestamp: event.timestamp,
         warehouse: event.warehouse,
         acknowledged: false,
-        data: event.data
+        data: event.data,
       };
 
       toast({
         title: alert.title,
         description: alert.message,
-        variant: 'destructive'
+        variant: "destructive",
       });
     } else {
       return;
     }
 
-    setAlerts(prev => [alert, ...prev.slice(0, 49)]);
+    setAlerts((prev) => [alert, ...prev.slice(0, 49)]);
   });
 
   // Handle inventory updates
   useInventoryUpdates((event) => {
     const change = event.data;
-    
+
     let alert: AlertItem;
-    if (change?.type === 'updated') {
-      const quantityChange = change.changes?.find((c: any) => c.field === 'quantity');
-      
+    if (change?.type === "updated") {
+      const quantityChange = change.changes?.find(
+        (c: any) => c.field === "quantity",
+      );
+
       if (quantityChange) {
-        const direction = quantityChange.newValue > quantityChange.oldValue ? 'increased' : 'decreased';
-        const difference = Math.abs(quantityChange.newValue - quantityChange.oldValue);
-        
+        const direction =
+          quantityChange.newValue > quantityChange.oldValue
+            ? "increased"
+            : "decreased";
+        const difference = Math.abs(
+          quantityChange.newValue - quantityChange.oldValue,
+        );
+
         alert = {
           id: `inventory-change-${change.item.itemCode}-${Date.now()}`,
-          type: 'inventory_change',
-          title: 'Inventory Updated',
+          type: "inventory_change",
+          title: "Inventory Updated",
           message: `${change.item.description} quantity ${direction} by ${difference} in ${change.item.warehouse}`,
-          severity: 'low',
+          severity: "low",
           timestamp: event.timestamp,
           warehouse: change.item.warehouse,
           itemCode: change.item.itemCode,
           acknowledged: false,
-          data: change
+          data: change,
         };
 
-        setAlerts(prev => [alert, ...prev.slice(0, 49)]);
+        setAlerts((prev) => [alert, ...prev.slice(0, 49)]);
       }
     }
   });
@@ -176,18 +203,20 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
   // Track all events for recent activity
   useEffect(() => {
     if (lastEvent) {
-      setRecentEvents(prev => [lastEvent, ...prev.slice(0, 19)]); // Keep last 20 events
+      setRecentEvents((prev) => [lastEvent, ...prev.slice(0, 19)]); // Keep last 20 events
     }
   }, [lastEvent]);
 
   const acknowledgeAlert = (alertId: string) => {
-    setAlerts(prev => prev.map(alert => 
-      alert.id === alertId ? { ...alert, acknowledged: true } : alert
-    ));
+    setAlerts((prev) =>
+      prev.map((alert) =>
+        alert.id === alertId ? { ...alert, acknowledged: true } : alert,
+      ),
+    );
   };
 
   const dismissAlert = (alertId: string) => {
-    setAlerts(prev => prev.filter(alert => alert.id !== alertId));
+    setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
   };
 
   const clearAllAlerts = () => {
@@ -196,26 +225,38 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'text-red-600 bg-red-50 border-red-200';
-      case 'high': return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'low': return 'text-blue-600 bg-blue-50 border-blue-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case "critical":
+        return "text-red-600 bg-red-50 border-red-200";
+      case "high":
+        return "text-orange-600 bg-orange-50 border-orange-200";
+      case "medium":
+        return "text-yellow-600 bg-yellow-50 border-yellow-200";
+      case "low":
+        return "text-blue-600 bg-blue-50 border-blue-200";
+      default:
+        return "text-gray-600 bg-gray-50 border-gray-200";
     }
   };
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
-      case 'critical': return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      case 'high': return <AlertTriangle className="h-4 w-4 text-orange-500" />;
-      case 'medium': return <Clock className="h-4 w-4 text-yellow-500" />;
-      case 'low': return <CheckCircle className="h-4 w-4 text-blue-500" />;
-      default: return <Package className="h-4 w-4 text-gray-500" />;
+      case "critical":
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+      case "high":
+        return <AlertTriangle className="h-4 w-4 text-orange-500" />;
+      case "medium":
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "low":
+        return <CheckCircle className="h-4 w-4 text-blue-500" />;
+      default:
+        return <Package className="h-4 w-4 text-gray-500" />;
     }
   };
 
-  const unacknowledgedAlerts = alerts.filter(alert => !alert.acknowledged);
-  const criticalAlerts = alerts.filter(alert => alert.severity === 'critical');
+  const unacknowledgedAlerts = alerts.filter((alert) => !alert.acknowledged);
+  const criticalAlerts = alerts.filter(
+    (alert) => alert.severity === "critical",
+  );
 
   return (
     <div className={className}>
@@ -227,13 +268,16 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
               {connected ? (
                 <>
                   <Wifi className="h-4 w-4 text-green-500" />
-                  <span className="text-sm font-medium text-green-600">Connected to real-time updates</span>
+                  <span className="text-sm font-medium text-green-600">
+                    Connected to real-time updates
+                  </span>
                 </>
               ) : connecting ? (
                 <>
                   <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />
                   <span className="text-sm font-medium text-blue-600">
-                    Connecting... {reconnectAttempts > 0 && `(Attempt ${reconnectAttempts})`}
+                    Connecting...{" "}
+                    {reconnectAttempts > 0 && `(Attempt ${reconnectAttempts})`}
                   </span>
                 </>
               ) : (
@@ -269,8 +313,12 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
                 Active Alerts ({unacknowledgedAlerts.length})
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setShowAllAlerts(!showAllAlerts)}>
-                  {showAllAlerts ? 'Hide' : 'Show All'}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowAllAlerts(!showAllAlerts)}
+                >
+                  {showAllAlerts ? "Hide" : "Show All"}
                 </Button>
                 <Button size="sm" variant="outline" onClick={clearAllAlerts}>
                   Clear All
@@ -282,14 +330,20 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
             {criticalAlerts.length > 0 && (
               <Alert className="border-red-200 bg-red-50">
                 <AlertTriangle className="h-4 w-4 text-red-500" />
-                <AlertTitle className="text-red-700">Critical Alerts</AlertTitle>
+                <AlertTitle className="text-red-700">
+                  Critical Alerts
+                </AlertTitle>
                 <AlertDescription className="text-red-600">
-                  {criticalAlerts.length} critical alerts require immediate attention
+                  {criticalAlerts.length} critical alerts require immediate
+                  attention
                 </AlertDescription>
               </Alert>
             )}
 
-            {(showAllAlerts ? unacknowledgedAlerts : unacknowledgedAlerts.slice(0, 5)).map((alert) => (
+            {(showAllAlerts
+              ? unacknowledgedAlerts
+              : unacknowledgedAlerts.slice(0, 5)
+            ).map((alert) => (
               <div
                 key={alert.id}
                 className={`p-3 rounded-lg border ${getSeverityColor(alert.severity)}`}
@@ -359,15 +413,28 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {recentEvents.map((event, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm py-1">
+                <div
+                  key={index}
+                  className="flex items-center gap-2 text-sm py-1"
+                >
                   <div className="flex items-center gap-2 flex-1">
-                    {event.type === 'inventory_updated' && <TrendingUp className="h-3 w-3 text-blue-500" />}
-                    {event.type === 'stock_movement' && <TrendingDown className="h-3 w-3 text-orange-500" />}
-                    {event.type === 'low_stock_alert' && <AlertTriangle className="h-3 w-3 text-red-500" />}
-                    {event.type === 'sync_complete' && <CheckCircle className="h-3 w-3 text-green-500" />}
-                    {event.type === 'sync_error' && <X className="h-3 w-3 text-red-500" />}
+                    {event.type === "inventory_updated" && (
+                      <TrendingUp className="h-3 w-3 text-blue-500" />
+                    )}
+                    {event.type === "stock_movement" && (
+                      <TrendingDown className="h-3 w-3 text-orange-500" />
+                    )}
+                    {event.type === "low_stock_alert" && (
+                      <AlertTriangle className="h-3 w-3 text-red-500" />
+                    )}
+                    {event.type === "sync_complete" && (
+                      <CheckCircle className="h-3 w-3 text-green-500" />
+                    )}
+                    {event.type === "sync_error" && (
+                      <X className="h-3 w-3 text-red-500" />
+                    )}
                     <span className="flex-1 truncate">
-                      {event.type.replace('_', ' ')}
+                      {event.type.replace("_", " ")}
                       {event.warehouse && ` • ${event.warehouse}`}
                     </span>
                   </div>
