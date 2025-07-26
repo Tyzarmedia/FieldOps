@@ -475,7 +475,9 @@ export default function CustomizableKPIDashboard() {
         type: 'metric',
         size: { width: 1, height: 1 },
         dataSource: '',
-        color: '#3b82f6'
+        color: '#3b82f6',
+        textColor: '#ffffff',
+        chartType: 'bar'
       });
       toast({
         title: "Widget Added",
