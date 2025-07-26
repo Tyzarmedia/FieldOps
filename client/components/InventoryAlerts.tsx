@@ -240,7 +240,7 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
                 <>
                   <WifiOff className="h-4 w-4 text-gray-500" />
                   <span className="text-sm font-medium text-gray-600">
-                    Real-time alerts disabled {wsError && `- ${wsError}`}
+                    Real-time alerts disabled (click to enable)
                   </span>
                 </>
               )}
