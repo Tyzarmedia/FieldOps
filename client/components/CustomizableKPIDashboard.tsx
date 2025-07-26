@@ -817,6 +817,128 @@ export default function CustomizableKPIDashboard() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* New Layout Modal */}
+      <Dialog open={activeModal === 'newLayout'} onOpenChange={() => setActiveModal(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Dashboard Layout</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Layout Name</Label>
+              <Input
+                value={newLayoutForm.name}
+                onChange={(e) => setNewLayoutForm(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Enter layout name"
+              />
+            </div>
+            <div>
+              <Label>Description</Label>
+              <Textarea
+                value={newLayoutForm.description}
+                onChange={(e) => setNewLayoutForm(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Describe this layout..."
+              />
+            </div>
+            <div>
+              <Label>Start From</Label>
+              <Select
+                value={newLayoutForm.copyFrom}
+                onValueChange={(value) => setNewLayoutForm(prev => ({ ...prev, copyFrom: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose starting point" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="blank">Blank Dashboard</SelectItem>
+                  <SelectItem value="default">Default Template</SelectItem>
+                  <SelectItem value="current">Copy Current Layout</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
+            <Button onClick={createNewLayout} disabled={!newLayoutForm.name}>
+              Create Layout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Widget Modal */}
+      <Dialog open={activeModal === 'editWidget'} onOpenChange={() => setActiveModal(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Widget - {selectedWidget?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Widget Title</Label>
+              <Input
+                value={editWidgetForm.title || selectedWidget?.title || ''}
+                onChange={(e) => setEditWidgetForm(prev => ({ ...prev, title: e.target.value }))}
+                placeholder="Enter widget title"
+              />
+            </div>
+            <div>
+              <Label>Background Color</Label>
+              <div className="flex gap-2 mt-2">
+                {['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#6b7280'].map(color => (
+                  <button
+                    key={color}
+                    className={`w-8 h-8 rounded border-2 ${
+                      (editWidgetForm.backgroundColor || selectedWidget?.config.backgroundColor) === color
+                        ? 'border-gray-800' : 'border-gray-300'
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setEditWidgetForm(prev => ({ ...prev, backgroundColor: color }))}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label>Text Color</Label>
+              <div className="flex gap-2 mt-2">
+                {['#ffffff', '#000000', '#374151', '#6b7280'].map(color => (
+                  <button
+                    key={color}
+                    className={`w-8 h-8 rounded border-2 ${
+                      (editWidgetForm.textColor || selectedWidget?.config.textColor) === color
+                        ? 'border-blue-500' : 'border-gray-300'
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setEditWidgetForm(prev => ({ ...prev, textColor: color }))}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label>Show Trend</Label>
+                <Switch
+                  checked={editWidgetForm.showTrend || selectedWidget?.config.showTrend || false}
+                  onCheckedChange={(checked) => setEditWidgetForm(prev => ({ ...prev, showTrend: checked }))}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label>Show Target</Label>
+                <Switch
+                  checked={editWidgetForm.showTarget || selectedWidget?.config.showTarget || false}
+                  onCheckedChange={(checked) => setEditWidgetForm(prev => ({ ...prev, showTarget: checked }))}
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
+            <Button onClick={updateWidgetConfig}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
