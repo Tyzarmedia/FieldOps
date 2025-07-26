@@ -241,10 +241,7 @@ const App = () => (
             path="/team-tracking"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Team Tracking"
-                  description="Real-time technician status, GPS tracking, and performance monitoring."
-                />
+                <TeamTrackingPage />
               </ProtectedRoute>
             }
           />
