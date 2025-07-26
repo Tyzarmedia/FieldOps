@@ -129,7 +129,7 @@ export function useInventoryWebSocket(options: WebSocketHookOptions = {}) {
         console.error('WebSocket error:', error);
         setState(prev => ({
           ...prev,
-          error: 'WebSocket connection error',
+          error: `WebSocket connection error: ${error.type || 'Connection failed'}`,
           connecting: false
         }));
       };
