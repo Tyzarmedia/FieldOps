@@ -46,7 +46,8 @@ import {
   Smartphone,
   Wifi,
   Star,
-  TrendingUpDown
+  TrendingUpDown,
+  MessageSquare
 } from "lucide-react";
 
 interface Ticket {
