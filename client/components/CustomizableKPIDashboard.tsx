@@ -491,16 +491,21 @@ export default function CustomizableKPIDashboard() {
   };
 
   const renderWidget = (widget: KPIWidget) => {
-    const gridSpan = `col-span-${widget.size.width} row-span-${widget.size.height}`;
     const isSelected = selectedWidget?.id === widget.id;
+
+    // Create dynamic grid classes
+    const gridColumnSpan = `span ${widget.size.width} / span ${widget.size.width}`;
+    const gridRowSpan = `span ${widget.size.height} / span ${widget.size.height}`;
 
     return (
       <div
         key={widget.id}
-        className={`relative group ${gridSpan} transition-all duration-200 ${
+        className={`relative group transition-all duration-200 ${
           isSelected ? 'ring-2 ring-blue-500' : ''
         }`}
         style={{
+          gridColumn: gridColumnSpan,
+          gridRow: gridRowSpan,
           gridColumnStart: widget.position.x + 1,
           gridRowStart: widget.position.y + 1,
         }}
