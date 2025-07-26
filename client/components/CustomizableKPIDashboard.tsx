@@ -1001,19 +1001,61 @@ export default function CustomizableKPIDashboard() {
                 Current selection: {newWidgetForm.size.width}x{newWidgetForm.size.height}
               </div>
             </div>
-            <div>
-              <Label>Color Theme</Label>
-              <div className="flex gap-2 mt-2">
-                {['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#6b7280'].map(color => (
-                  <button
-                    key={color}
-                    className={`w-8 h-8 rounded border-2 ${
-                      newWidgetForm.color === color ? 'border-gray-800' : 'border-gray-300'
-                    }`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => setNewWidgetForm(prev => ({ ...prev, color }))}
-                  />
-                ))}
+            {(newWidgetForm.type === 'chart' || newWidgetForm.type === 'gauge') && (
+              <div>
+                <Label>Chart Type</Label>
+                <Select
+                  value={newWidgetForm.chartType || 'bar'}
+                  onValueChange={(value) => setNewWidgetForm(prev => ({ ...prev, chartType: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bar">Bar Chart</SelectItem>
+                    <SelectItem value="line">Line Chart</SelectItem>
+                    <SelectItem value="area">Area Chart</SelectItem>
+                    {newWidgetForm.type === 'gauge' && (
+                      <>
+                        <SelectItem value="donut">Donut Chart</SelectItem>
+                        <SelectItem value="pie">Pie Chart</SelectItem>
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Background Color</Label>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#6b7280', '#ec4899', '#06b6d4', '#84cc16'].map(color => (
+                    <button
+                      key={color}
+                      className={`w-8 h-8 rounded border-2 ${
+                        newWidgetForm.color === color ? 'border-gray-800' : 'border-gray-300'
+                      }`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => setNewWidgetForm(prev => ({ ...prev, color }))}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>Text Color</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {['#ffffff', '#000000', '#374151', '#6b7280'].map(color => (
+                    <button
+                      key={color}
+                      className={`w-8 h-8 rounded border-2 ${
+                        newWidgetForm.textColor === color ? 'border-blue-500' : 'border-gray-300'
+                      }`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => setNewWidgetForm(prev => ({ ...prev, textColor: color }))}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
