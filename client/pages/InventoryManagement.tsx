@@ -165,6 +165,14 @@ export default function InventoryManagement() {
         // Only show success toast on initial load or when there are items
         if (data.data && data.data.length > 0) {
           console.log(`Loaded ${data.data.length} inventory items successfully`);
+          // Check if this might be mock data (could be indicated by a flag in the response)
+          if (data.message && data.message.includes('mock')) {
+            toast({
+              title: "Using Mock Data",
+              description: "External inventory system unavailable, showing sample data",
+              variant: "default"
+            });
+          }
         }
       } else {
         throw new Error(data.error || "Failed to load inventory");
