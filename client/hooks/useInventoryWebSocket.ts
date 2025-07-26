@@ -131,10 +131,10 @@ export function useInventoryWebSocket(options: WebSocketHookOptions = {}) {
       };
 
       ws.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.warn('WebSocket connection failed (this is expected if no WebSocket server is running)');
         setState(prev => ({
           ...prev,
-          error: `WebSocket connection error: ${error.type || 'Connection failed'}`,
+          error: 'WebSocket server unavailable',
           connecting: false
         }));
       };
