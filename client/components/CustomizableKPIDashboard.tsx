@@ -210,7 +210,45 @@ export default function CustomizableKPIDashboard() {
 
   useEffect(() => {
     loadDashboardLayouts();
+    loadWidgetData();
+
+    // Set up real-time updates
+    const handleKPIUpdate = (event: CustomEvent) => {
+      const { dataSourceId, data } = event.detail;
+      setWidgets(prev => prev.map(widget =>
+        widget.dataSource === dataSourceId
+          ? { ...widget, data: { ...widget.data, ...data } }
+          : widget
+      ));
+    };
+
+    window.addEventListener('kpiUpdate', handleKPIUpdate as EventListener);
+
+    return () => {
+      window.removeEventListener('kpiUpdate', handleKPIUpdate as EventListener);
+      kpiService.current.cleanup();
+    };
   }, []);
+
+  const loadWidgetData = async () => {
+    const updatedWidgets = await Promise.all(
+      widgets.map(async (widget) => {
+        if (widget.dataSource) {
+          try {
+            const kpiData = await kpiService.current.getKPIData(widget.dataSource);
+            return {
+              ...widget,
+              data: { ...widget.data, ...kpiData }
+            };
+          } catch (error) {
+            console.error(`Failed to load data for widget ${widget.id}:`, error);
+          }
+        }
+        return widget;
+      })
+    );
+    setWidgets(updatedWidgets);
+  };
 
   const loadDashboardLayouts = () => {
     // Mock loading from localStorage/API
