@@ -307,14 +307,15 @@ export function useSyncStatus(callback: (event: InventoryWebSocketEvent) => void
   });
 
   useEffect(() => {
-    if (connected) {
+    if (connected && addEventListener) {
       const cleanup1 = addEventListener('sync_complete', callback);
       const cleanup2 = addEventListener('sync_error', callback);
-      
+
       return () => {
-        cleanup1();
-        cleanup2();
+        if (cleanup1) cleanup1();
+        if (cleanup2) cleanup2();
       };
     }
+    return () => {};
   }, [addEventListener, callback, connected]);
 }
