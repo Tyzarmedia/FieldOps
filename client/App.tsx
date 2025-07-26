@@ -33,6 +33,7 @@ import PayrollDashboardWithTab from "./pages/PayrollDashboardWithTab";
 import ITDashboard from "./pages/ITDashboard";
 import ITDashboardWithTab from "./pages/ITDashboardWithTab";
 import InventoryManagement from "./pages/InventoryManagement";
+import SystemAdministratorDashboard from "./pages/SystemAdministratorDashboard";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
