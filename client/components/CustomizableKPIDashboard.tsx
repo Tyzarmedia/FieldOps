@@ -617,16 +617,84 @@ export default function CustomizableKPIDashboard() {
           </CardContent>
         </Card>
 
-        {/* Resize handles */}
+        {/* Resize controls */}
         {isEditMode && isSelected && (
           <>
+            {/* Corner resize handle */}
             <div
-              className="absolute bottom-0 right-0 w-3 h-3 bg-blue-500 cursor-se-resize opacity-75 hover:opacity-100"
-              onMouseDown={(e) => {
-                // Implement resize logic
-                e.preventDefault();
-              }}
-            ></div>
+              className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize opacity-75 hover:opacity-100 flex items-center justify-center"
+              onMouseDown={(e) => handleMouseDownResize(widget, e)}
+            >
+              <div className="w-2 h-2 bg-white rounded-sm"></div>
+            </div>
+
+            {/* Size control buttons */}
+            <div className="absolute top-2 left-2 z-20 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded p-1">
+              {/* Width controls */}
+              <div className="flex items-center gap-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-6 w-6 p-0 text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (widget.size.width > 1) {
+                      resizeWidget(widget.id, { ...widget.size, width: widget.size.width - 1 });
+                    }
+                  }}
+                  disabled={widget.size.width <= 1}
+                >
+                  -
+                </Button>
+                <span className="text-xs font-medium w-8 text-center">{widget.size.width}x{widget.size.height}</span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-6 w-6 p-0 text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (widget.size.width < 4) {
+                      resizeWidget(widget.id, { ...widget.size, width: widget.size.width + 1 });
+                    }
+                  }}
+                  disabled={widget.size.width >= 4}
+                >
+                  +
+                </Button>
+              </div>
+
+              {/* Height controls */}
+              <div className="flex flex-col gap-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-3 w-6 p-0 text-xs leading-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (widget.size.height < 3) {
+                      resizeWidget(widget.id, { ...widget.size, height: widget.size.height + 1 });
+                    }
+                  }}
+                  disabled={widget.size.height >= 3}
+                >
+                  ▲
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-3 w-6 p-0 text-xs leading-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (widget.size.height > 1) {
+                      resizeWidget(widget.id, { ...widget.size, height: widget.size.height - 1 });
+                    }
+                  }}
+                  disabled={widget.size.height <= 1}
+                >
+                  ▼
+                </Button>
+              </div>
+            </div>
           </>
         )}
       </div>
