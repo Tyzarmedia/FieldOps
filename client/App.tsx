@@ -249,10 +249,7 @@ const App = () => (
             path="/job-analytics"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Job Analytics"
-                  description="Job completion rates, efficiency metrics, and trend analysis."
-                />
+                <JobAnalyticsPage />
               </ProtectedRoute>
             }
           />
