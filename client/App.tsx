@@ -35,6 +35,7 @@ import ITDashboardWithTab from "./pages/ITDashboardWithTab";
 import InventoryManagement from "./pages/InventoryManagement";
 import SystemAdministratorDashboard from "./pages/SystemAdministratorDashboard";
 import EnhancedManagerDashboard from "./pages/EnhancedManagerDashboard";
+import EnhancedCeoDashboard from "./pages/EnhancedCeoDashboard";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
