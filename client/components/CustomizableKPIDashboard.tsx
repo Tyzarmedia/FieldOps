@@ -181,6 +181,18 @@ export default function CustomizableKPIDashboard() {
     dataSource: '',
     color: '#3b82f6'
   });
+  const [newLayoutForm, setNewLayoutForm] = useState({
+    name: '',
+    description: '',
+    copyFrom: ''
+  });
+  const [editWidgetForm, setEditWidgetForm] = useState({
+    title: '',
+    backgroundColor: '',
+    textColor: '',
+    showTrend: false,
+    showTarget: false
+  });
 
   const { toast } = useToast();
   const gridRef = useRef<HTMLDivElement>(null);
