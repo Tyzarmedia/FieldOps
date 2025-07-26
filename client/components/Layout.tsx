@@ -319,6 +319,13 @@ function getPageTitle(pathname: string, role: string) {
     "/vehicle-inspections": "Vehicle Inspections",
     "/stock-overview": "Stock Overview",
     "/safety-overview": "Safety Overview",
+    "/admin": "System Administration",
+    "/admin/users": "User Management",
+    "/admin/settings": "System Settings",
+    "/admin/integrations": "Integration Management",
+    "/admin/monitoring": "System Monitoring",
+    "/admin/security": "Security & Compliance",
+    "/admin/data": "Data Management",
   };
 
   return pathMap[pathname] || "FieldOps";
