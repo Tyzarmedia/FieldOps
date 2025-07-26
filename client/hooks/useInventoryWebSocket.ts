@@ -279,9 +279,10 @@ export function useStockMovements(callback: (event: InventoryWebSocketEvent) => 
   });
 
   useEffect(() => {
-    if (connected) {
+    if (connected && addEventListener) {
       return addEventListener('stock_movement', callback);
     }
+    return () => {};
   }, [addEventListener, callback, connected]);
 }
 
@@ -292,9 +293,10 @@ export function useLowStockAlerts(callback: (event: InventoryWebSocketEvent) => 
   });
 
   useEffect(() => {
-    if (connected) {
+    if (connected && addEventListener) {
       return addEventListener('low_stock_alert', callback);
     }
+    return () => {};
   }, [addEventListener, callback, connected]);
 }
 
