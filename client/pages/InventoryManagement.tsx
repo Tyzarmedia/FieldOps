@@ -162,6 +162,10 @@ export default function InventoryManagement() {
 
       if (data.success) {
         setInventoryItems(data.data || []);
+        // Only show success toast on initial load or when there are items
+        if (data.data && data.data.length > 0) {
+          console.log(`Loaded ${data.data.length} inventory items successfully`);
+        }
       } else {
         throw new Error(data.error || "Failed to load inventory");
       }
