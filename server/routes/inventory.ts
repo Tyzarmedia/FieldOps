@@ -280,9 +280,16 @@ export const getLowStockItems: RequestHandler = async (req, res) => {
   try {
     const { warehouse } = req.query;
 
-    const lowStockItems = await sageX3Service.getLowStockItems(
-      warehouse as string,
-    );
+    let lowStockItems: InventoryItem[] = [];
+
+    try {
+      // Try Sage X3 service first
+      lowStockItems = await sageX3Service.getLowStockItems(warehouse as string);
+    } catch (sageError) {
+      console.warn("Sage X3 service unavailable, using mock data:", sageError.message);
+      // Fallback to mock service
+      lowStockItems = await mockService.getLowStockItems(warehouse as string);
+    }
 
     const response: ApiResponse<InventoryItem[]> = {
       success: true,
