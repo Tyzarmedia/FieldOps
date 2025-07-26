@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -106,6 +107,7 @@ interface SystemHealth {
 }
 
 export default function SystemAdministratorDashboard() {
+  const location = useLocation();
   const [users, setUsers] = useState<User[]>([]);
   const [systemSettings, setSystemSettings] = useState<SystemSettings>({
     timezone: 'Africa/Johannesburg',
@@ -118,6 +120,17 @@ export default function SystemAdministratorDashboard() {
     backupFrequency: 'daily',
     maintenanceMode: false
   });
+
+  // Determine active tab based on URL
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path.includes('/settings')) return 'settings';
+    if (path.includes('/integrations')) return 'integrations';
+    if (path.includes('/monitoring')) return 'monitoring';
+    if (path.includes('/security')) return 'security';
+    if (path.includes('/data')) return 'data';
+    return 'users';
+  };
   const [integrations, setIntegrations] = useState<IntegrationStatus[]>([
     { name: 'Sage X3', status: 'connected', lastSync: '2025-01-25 10:30:00', endpoint: 'https://sage-server.com:8124', enabled: true },
     { name: 'GPS Tracking', status: 'connected', lastSync: '2025-01-25 10:35:00', endpoint: 'https://gps-api.com/v1', enabled: true },
@@ -447,7 +460,7 @@ export default function SystemAdministratorDashboard() {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="users" className="w-full">
+      <Tabs value={getActiveTab()} className="w-full">
         <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
