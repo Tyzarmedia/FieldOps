@@ -495,6 +495,301 @@ export default function EnhancedManagerDashboard() {
           <TabsTrigger value="stock">Stock Usage</TabsTrigger>
         </TabsList>
 
+        {/* KPI Dashboard Tab */}
+        <TabsContent value="kpi" className="space-y-4">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-semibold">KPI DASHBOARD</h3>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </Button>
+            </div>
+          </div>
+
+          {/* Top Row - Key Metrics */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <Card className="border-l-4 border-l-blue-500">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-2">8</div>
+                  <div className="text-sm text-gray-600">Open Cases</div>
+                  <div className="text-xs text-gray-500 mt-1">↗ +12% from last week</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-green-500">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-2">4</div>
+                  <div className="text-sm text-gray-600">Late Appointments</div>
+                  <div className="text-xs text-gray-500 mt-1">↘ -8% from yesterday</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-purple-500">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-2">1</div>
+                  <div className="text-sm text-gray-600">Installation Maintenance</div>
+                  <div className="text-xs text-gray-500 mt-1">On schedule</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-orange-500">
+              <CardContent className="p-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-2">7</div>
+                  <div className="text-sm text-gray-600">Follow Ups</div>
+                  <div className="text-xs text-gray-500 mt-1">↗ +3 today</div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Middle Row - Charts and Analytics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {/* Open Cases Chart */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center justify-between">
+                  <span>Open Cases</span>
+                  <Button variant="ghost" size="sm">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-48 bg-gradient-to-t from-blue-100 to-blue-50 rounded flex flex-col justify-end p-4">
+                  <div className="bg-blue-500 h-24 rounded mb-2"></div>
+                  <div className="bg-blue-400 h-16 rounded mb-2"></div>
+                  <div className="bg-blue-300 h-8 rounded"></div>
+                  <div className="text-xs text-center mt-2 text-gray-600">215 - Wo EG Ex</div>
+                </div>
+                <div className="text-xs text-gray-500 mt-2">Case Status: 3.5 Open - Assigned to Monde...</div>
+              </CardContent>
+            </Card>
+
+            {/* Cases by Age */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center justify-between">
+                  <span>Cases by Age</span>
+                  <Button variant="ghost" size="sm">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-48 flex items-center justify-center">
+                  <div className="relative w-32 h-32">
+                    <div className="w-full h-full rounded-full border-8 border-blue-200"></div>
+                    <div className="absolute inset-0 w-full h-full rounded-full border-8 border-blue-500 transform rotate-45"
+                         style={{clipPath: 'polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%)'}}></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-2xl font-bold text-blue-600">7</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-center text-gray-500">Case Age: &lt;30d: ■ 47%</div>
+                <div className="text-xs text-center text-gray-500 mt-1">Record Count: 8</div>
+              </CardContent>
+            </Card>
+
+            {/* NPS Dashboard */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">NPS DASHBOARD</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">8</div>
+                    <div className="text-xs text-gray-600">Open Cases</div>
+                  </div>
+                  <div className="border-t pt-2">
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-green-600">4</div>
+                      <div className="text-xs text-gray-600">0446</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-500 mt-4">
+                  View Report (PUB-C Core) | As of 26 Jul 2024, 17:42
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Bottom Row - Performance Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* NTI EG Durations */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center justify-between">
+                  <span>NTI EG Durations</span>
+                  <Button variant="ghost" size="sm">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-32 flex items-center justify-center">
+                  <div className="relative w-24 h-24">
+                    <div className="w-full h-full rounded-full border-8 border-gray-200"></div>
+                    <div className="absolute inset-0 w-full h-full rounded-full border-8 border-blue-500 transform"
+                         style={{clipPath: 'polygon(50% 50%, 50% 0%, 85% 15%)'}}></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-lg font-bold">13.9</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-center text-gray-500">Average New FTTH Case: 215 - Wo EG Ex</div>
+              </CardContent>
+            </Card>
+
+            {/* ROC Duration by Call */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center justify-between">
+                  <span>ROC Duration by Call</span>
+                  <Button variant="ghost" size="sm">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-32 flex items-center justify-center">
+                  <div className="relative w-24 h-24">
+                    <div className="w-full h-full rounded-full border-8 border-gray-200"></div>
+                    <div className="absolute inset-0 w-full h-full rounded-full border-8 border-blue-500 transform"
+                         style={{clipPath: 'polygon(50% 50%, 50% 0%, 70% 25%)'}}></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-lg font-bold">16</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-center text-gray-500">Designated: 215 - ■</div>
+                <div className="text-xs text-center text-gray-500">Average ROC Duration</div>
+              </CardContent>
+            </Card>
+
+            {/* Unnecessary Truck */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center justify-between">
+                  <span>Unnecessary Truck Roll</span>
+                  <Button variant="ghost" size="sm">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-32 flex items-center justify-center">
+                  <div className="relative w-24 h-24">
+                    <div className="w-full h-full rounded-full border-8 border-gray-200"></div>
+                    <div className="absolute inset-0 w-full h-full rounded-full border-8 border-blue-500 transform"
+                         style={{clipPath: 'polygon(50% 50%, 50% 0%, 60% 20%)'}}></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-lg font-bold">9</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-center text-gray-500">Designated: 215 - ■</div>
+                <div className="text-xs text-center text-gray-500">Record Count</div>
+              </CardContent>
+            </Card>
+
+            {/* Follow ups by Call */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center justify-between">
+                  <span>Follow ups by Call</span>
+                  <Button variant="ghost" size="sm">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-32 flex items-center justify-center">
+                  <div className="relative w-24 h-24">
+                    <div className="w-full h-full rounded-full border-8 border-gray-200"></div>
+                    <div className="absolute inset-0 w-full h-full rounded-full border-8 border-blue-500 transform"
+                         style={{clipPath: 'polygon(50% 50%, 50% 0%, 75% 30%)'}}></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-lg font-bold">14</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-center text-gray-500">Designated: 215 - ■</div>
+                <div className="text-xs text-center text-gray-500">Record Count</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Summary Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Performance Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm">SLA Compliance:</span>
+                    <span className="text-sm font-bold text-green-600">94.2%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Customer Satisfaction:</span>
+                    <span className="text-sm font-bold text-blue-600">8.7/10</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">First Call Resolution:</span>
+                    <span className="text-sm font-bold text-purple-600">78%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Average Response Time:</span>
+                    <span className="text-sm font-bold text-orange-600">2.3 hrs</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Operational Metrics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm">Active Technicians:</span>
+                    <span className="text-sm font-bold text-green-600">{technicians.filter(t => t.status !== 'absent').length}/4</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Jobs Completed Today:</span>
+                    <span className="text-sm font-bold text-blue-600">12</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Pending Assignments:</span>
+                    <span className="text-sm font-bold text-yellow-600">3</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Equipment Utilization:</span>
+                    <span className="text-sm font-bold text-purple-600">87%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
         {/* Ticket Performance Tab */}
         <TabsContent value="performance" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
