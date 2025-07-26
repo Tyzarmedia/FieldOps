@@ -531,27 +531,51 @@ export default function CustomizableKPIDashboard() {
     setNewLayoutForm({ name: '', description: '', copyFrom: '' });
   };
 
-  const updateWidgetConfig = () => {
+  const updateWidgetConfig = async () => {
     if (!selectedWidget) return;
 
+    const updatedWidget = {
+      ...selectedWidget,
+      title: editWidgetForm.title || selectedWidget.title,
+      dataSource: editWidgetForm.dataSource || selectedWidget.dataSource,
+      config: {
+        ...selectedWidget.config,
+        backgroundColor: editWidgetForm.backgroundColor || selectedWidget.config.backgroundColor,
+        textColor: editWidgetForm.textColor || selectedWidget.config.textColor,
+        chartType: editWidgetForm.chartType || selectedWidget.config.chartType,
+        chartColor: editWidgetForm.chartColor || selectedWidget.config.chartColor,
+        showTrend: editWidgetForm.showTrend ?? selectedWidget.config.showTrend,
+        showTarget: editWidgetForm.showTarget ?? selectedWidget.config.showTarget
+      }
+    };
+
+    // Load new data if data source changed
+    if (editWidgetForm.dataSource && editWidgetForm.dataSource !== selectedWidget.dataSource) {
+      try {
+        const kpiData = await kpiService.current.getKPIData(editWidgetForm.dataSource);
+        updatedWidget.data = { ...updatedWidget.data, ...kpiData };
+      } catch (error) {
+        console.error('Failed to load new data source:', error);
+      }
+    }
+
     setWidgets(prev => prev.map(w =>
-      w.id === selectedWidget.id
-        ? {
-            ...w,
-            title: editWidgetForm.title || w.title,
-            config: {
-              ...w.config,
-              backgroundColor: editWidgetForm.backgroundColor || w.config.backgroundColor,
-              textColor: editWidgetForm.textColor || w.config.textColor,
-              showTrend: editWidgetForm.showTrend,
-              showTarget: editWidgetForm.showTarget
-            }
-          }
-        : w
+      w.id === selectedWidget.id ? updatedWidget : w
     ));
 
     setActiveModal(null);
     setSelectedWidget(null);
+    setEditWidgetForm({
+      title: '',
+      backgroundColor: '',
+      textColor: '',
+      showTrend: false,
+      showTarget: false,
+      dataSource: '',
+      chartType: 'bar',
+      chartColor: ''
+    });
+
     toast({
       title: "Widget Updated",
       description: "Widget configuration has been saved.",
