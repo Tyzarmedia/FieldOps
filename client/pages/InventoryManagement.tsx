@@ -126,8 +126,17 @@ export default function InventoryManagement() {
   const { toast } = useToast();
 
   useEffect(() => {
-    loadInventoryData();
-    loadInventoryStats();
+    const loadData = async () => {
+      try {
+        // Load data sequentially to avoid potential conflicts
+        await loadInventoryData();
+        await loadInventoryStats();
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
+    };
+
+    loadData();
   }, [selectedWarehouse, selectedCategory, showLowStockOnly]);
 
   const loadInventoryData = async () => {
