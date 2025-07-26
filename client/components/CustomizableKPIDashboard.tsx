@@ -832,45 +832,44 @@ export default function CustomizableKPIDashboard() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Width (Columns)</Label>
-                <Select
-                  value={newWidgetForm.size.width.toString()}
-                  onValueChange={(value) => setNewWidgetForm(prev => ({ 
-                    ...prev, 
-                    size: { ...prev.size, width: parseInt(value) }
-                  }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                  </SelectContent>
-                </Select>
+            <div>
+              <Label>Widget Size</Label>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                {/* Size presets */}
+                {[
+                  { width: 1, height: 1, label: '1x1' },
+                  { width: 2, height: 1, label: '2x1' },
+                  { width: 1, height: 2, label: '1x2' },
+                  { width: 2, height: 2, label: '2x2' },
+                  { width: 3, height: 1, label: '3x1' },
+                  { width: 1, height: 3, label: '1x3' },
+                  { width: 3, height: 2, label: '3x2' },
+                  { width: 4, height: 1, label: '4x1' },
+                  { width: 4, height: 2, label: '4x2' }
+                ].map((preset) => (
+                  <Button
+                    key={`${preset.width}x${preset.height}`}
+                    type="button"
+                    variant={newWidgetForm.size.width === preset.width && newWidgetForm.size.height === preset.height ? "default" : "outline"}
+                    className="h-12 flex flex-col items-center justify-center"
+                    onClick={() => setNewWidgetForm(prev => ({
+                      ...prev,
+                      size: { width: preset.width, height: preset.height }
+                    }))}
+                  >
+                    <div className="text-xs font-medium">{preset.label}</div>
+                    <div
+                      className="bg-current opacity-30 rounded-sm mt-1"
+                      style={{
+                        width: `${preset.width * 8 + 2}px`,
+                        height: `${preset.height * 4 + 2}px`
+                      }}
+                    />
+                  </Button>
+                ))}
               </div>
-              <div>
-                <Label>Height (Rows)</Label>
-                <Select
-                  value={newWidgetForm.size.height.toString()}
-                  onValueChange={(value) => setNewWidgetForm(prev => ({ 
-                    ...prev, 
-                    size: { ...prev.size, height: parseInt(value) }
-                  }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="text-xs text-gray-500 mt-2">
+                Current selection: {newWidgetForm.size.width}x{newWidgetForm.size.height}
               </div>
             </div>
             <div>
