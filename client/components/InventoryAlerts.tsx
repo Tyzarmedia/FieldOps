@@ -64,8 +64,9 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
     disconnect
   } = useInventoryWebSocket({
     subscriptions: ['inventory_updates', 'stock_movements', 'low_stock_alerts', 'sync_status'],
-    autoReconnect: true,
-    maxReconnectAttempts: 10
+    autoConnect: false, // Disable auto-connect to prevent errors when WebSocket server is not available
+    autoReconnect: false,
+    maxReconnectAttempts: 3
   });
 
   // Handle low stock alerts
