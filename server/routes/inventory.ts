@@ -6,6 +6,7 @@ import {
   StockMovement,
   PurchaseOrder,
 } from "../services/sageX3Service";
+import MockInventoryService from "../services/mockInventoryService";
 
 // Sage X3 configuration - in production, these should come from environment variables
 const sageX3Config: SageX3Config = {
