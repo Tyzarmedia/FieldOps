@@ -57,6 +57,11 @@ export function useInventoryWebSocket(options: WebSocketHookOptions = {}) {
     setState(prev => ({ ...prev, connecting: true, error: null }));
 
     try {
+      // Check if WebSocket is supported
+      if (typeof WebSocket === 'undefined') {
+        throw new Error('WebSocket is not supported in this environment');
+      }
+
       ws.current = new WebSocket(url);
 
       ws.current.onopen = () => {
