@@ -161,7 +161,7 @@ function getNavigationForRole(role: string) {
     case "CEO":
       return [
         ...baseNavigation,
-        { name: "Analytics", href: "/analytics", icon: LayoutDashboard },
+        { name: "Analytics", href: "/analytics", icon: Activity },
         { name: "Team Management", href: "/team-management", icon: Users },
         { name: "System Settings", href: "/settings", icon: Settings },
       ];
