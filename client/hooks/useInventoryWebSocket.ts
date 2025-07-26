@@ -29,10 +29,10 @@ export interface WebSocketState {
 export function useInventoryWebSocket(options: WebSocketHookOptions = {}) {
   const {
     url = 'ws://localhost:8081',
-    autoConnect = true,
-    autoReconnect = true,
+    autoConnect = false, // Disable auto-connect until WebSocket server is available
+    autoReconnect = false, // Disable auto-reconnect to prevent spam errors
     reconnectDelay = 5000,
-    maxReconnectAttempts = 5,
+    maxReconnectAttempts = 3,
     subscriptions = []
   } = options;
 
