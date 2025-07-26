@@ -484,7 +484,7 @@ export default function EnhancedManagerDashboard() {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="performance" className="w-full">
+      <Tabs defaultValue="kpi" className="w-full">
         <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="kpi">KPI Dashboard</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
