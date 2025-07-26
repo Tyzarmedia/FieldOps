@@ -61,7 +61,16 @@ export const getInventoryItems: RequestHandler = async (req, res) => {
   try {
     const { warehouse, category, status, lowStock } = req.query;
 
-    let items = await sageX3Service.getInventoryItems(warehouse as string);
+    let items: InventoryItem[] = [];
+
+    try {
+      // Try Sage X3 service first
+      items = await sageX3Service.getInventoryItems(warehouse as string);
+    } catch (sageError) {
+      console.warn("Sage X3 service unavailable, using mock data:", sageError.message);
+      // Fallback to mock service
+      items = await mockService.getInventoryItems(warehouse as string);
+    }
 
     // Apply filters
     if (category) {
