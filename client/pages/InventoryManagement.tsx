@@ -147,25 +147,33 @@ export default function InventoryManagement() {
       if (selectedCategory !== "all") params.append("category", selectedCategory);
       if (showLowStockOnly) params.append("lowStock", "true");
 
-      const response = await fetch(`/api/inventory/items?${params}`);
+      const response = await fetch(`/api/inventory/items?${params}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.success) {
         setInventoryItems(data.data || []);
       } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to load inventory",
-          variant: "destructive"
-        });
+        throw new Error(data.error || "Failed to load inventory");
       }
     } catch (error) {
       console.error("Error loading inventory:", error);
       toast({
         title: "Error",
-        description: "Failed to load inventory data",
+        description: error instanceof Error ? error.message : "Failed to load inventory data",
         variant: "destructive"
       });
+      // Set empty array as fallback
+      setInventoryItems([]);
     } finally {
       setLoading(false);
     }
