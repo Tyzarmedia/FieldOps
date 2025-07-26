@@ -102,7 +102,7 @@ function DashboardRouter() {
     case "Manager":
       return <EnhancedManagerDashboard />;
     case "Coordinator":
-      return <CoordinatorDashboard />;
+      return <CoordinatorDashboardEnhanced />;
     case "Technician":
       return <TechnicianDashboard />;
     case "AssistantTechnician":
