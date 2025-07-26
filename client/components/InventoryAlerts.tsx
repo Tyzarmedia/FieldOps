@@ -251,7 +251,7 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
               </Badge>
               {!connected && (
                 <Button size="sm" variant="outline" onClick={connect}>
-                  Reconnect
+                  Enable Real-time
                 </Button>
               )}
             </div>
