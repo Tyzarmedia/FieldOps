@@ -238,9 +238,9 @@ export default function InventoryAlerts({ onRefreshInventory, className }: Inven
                 </>
               ) : (
                 <>
-                  <WifiOff className="h-4 w-4 text-red-500" />
-                  <span className="text-sm font-medium text-red-600">
-                    Disconnected {wsError && `- ${wsError}`}
+                  <WifiOff className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-600">
+                    Real-time alerts disabled {error && `- ${error}`}
                   </span>
                 </>
               )}
