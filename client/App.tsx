@@ -23,6 +23,7 @@ import GalleryScreen from "./pages/GalleryScreen";
 import CeoDashboard from "./pages/CeoDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import CoordinatorDashboard from "./pages/CoordinatorDashboard";
+import CoordinatorDashboardEnhanced from "./pages/CoordinatorDashboardEnhanced";
 import AssistantTechnicianDashboard from "./pages/AssistantTechnicianDashboard";
 import FleetManagerDashboard from "./pages/FleetManagerDashboard";
 import HRDashboard from "./pages/HRDashboard";
