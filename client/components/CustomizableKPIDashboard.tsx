@@ -198,11 +198,15 @@ export default function CustomizableKPIDashboard() {
     backgroundColor: '',
     textColor: '',
     showTrend: false,
-    showTarget: false
+    showTarget: false,
+    dataSource: '',
+    chartType: 'bar' as const,
+    chartColor: ''
   });
 
   const { toast } = useToast();
   const gridRef = useRef<HTMLDivElement>(null);
+  const kpiService = useRef(KPIDataService.getInstance());
 
   useEffect(() => {
     loadDashboardLayouts();
