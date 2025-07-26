@@ -922,22 +922,44 @@ export default function CustomizableKPIDashboard() {
                 placeholder="Enter widget title"
               />
             </div>
-            <div>
-              <Label>Widget Type</Label>
-              <Select
-                value={newWidgetForm.type}
-                onValueChange={(value: KPIWidget['type']) => setNewWidgetForm(prev => ({ ...prev, type: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="metric">Metric</SelectItem>
-                  <SelectItem value="chart">Chart</SelectItem>
-                  <SelectItem value="gauge">Gauge</SelectItem>
-                  <SelectItem value="table">Table</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Widget Type</Label>
+                <Select
+                  value={newWidgetForm.type}
+                  onValueChange={(value: KPIWidget['type']) => setNewWidgetForm(prev => ({ ...prev, type: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="metric">Metric</SelectItem>
+                    <SelectItem value="chart">Chart</SelectItem>
+                    <SelectItem value="gauge">Gauge</SelectItem>
+                    <SelectItem value="progress">Progress Bar</SelectItem>
+                    <SelectItem value="table">Table</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Data Source</Label>
+                <Select
+                  value={newWidgetForm.dataSource}
+                  onValueChange={(value) => setNewWidgetForm(prev => ({ ...prev, dataSource: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select KPI data" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">No data source</SelectItem>
+                    {KPI_DATA_SOURCES.map(source => (
+                      <SelectItem key={source.id} value={source.id}>
+                        {source.name} ({source.category})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div>
               <Label>Widget Size</Label>
