@@ -609,11 +609,20 @@ export default function CustomizableKPIDashboard() {
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="pt-0">
+          <CardContent
+            className="pt-0"
+            style={{
+              backgroundColor: widget.config.backgroundColor,
+              color: widget.config.textColor
+            }}
+          >
             {widget.type === 'metric' && (
               <div className="text-center">
                 <div className="text-3xl font-bold mb-2" style={{ color: widget.config.textColor }}>
                   {widget.data.value}
+                  {widget.data.unit && (
+                    <span className="text-lg ml-1 opacity-75">{widget.data.unit}</span>
+                  )}
                 </div>
                 <div className="text-sm opacity-80" style={{ color: widget.config.textColor }}>
                   {widget.data.label}
@@ -623,44 +632,93 @@ export default function CustomizableKPIDashboard() {
                     {widget.data.trend}
                   </div>
                 )}
+                {widget.config.showTarget && widget.data.target && (
+                  <div className="text-xs mt-1 opacity-60" style={{ color: widget.config.textColor }}>
+                    Target: {widget.data.target}{widget.data.unit}
+                  </div>
+                )}
               </div>
             )}
 
             {widget.type === 'gauge' && (
               <div className="flex items-center justify-center h-32">
                 <div className="relative w-24 h-24">
-                  <div className="w-full h-full rounded-full border-8 border-gray-200"></div>
-                  <div 
-                    className="absolute inset-0 w-full h-full rounded-full border-8 transform"
+                  <div className="w-full h-full rounded-full border-8 border-white/20"></div>
+                  <div
+                    className="absolute inset-0 w-full h-full rounded-full border-8 transform transition-all duration-1000"
                     style={{
-                      borderColor: widget.config.backgroundColor,
-                      clipPath: `polygon(50% 50%, 50% 0%, ${50 + (widget.data.value as number) * 0.5}% ${50 - (widget.data.value as number) * 0.5}%)`
+                      borderColor: widget.config.chartColor || widget.config.textColor,
+                      clipPath: `polygon(50% 50%, 50% 0%, ${50 + Math.min(100, (widget.data.value as number) || 0) * 0.5}% ${50 - Math.min(100, (widget.data.value as number) || 0) * 0.5}%)`
                     }}
                   ></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-lg font-bold" style={{ color: widget.config.textColor }}>
                       {widget.data.value}{widget.data.unit}
                     </span>
+                    {widget.config.showTarget && widget.data.target && (
+                      <span className="text-xs opacity-70" style={{ color: widget.config.textColor }}>
+                        Target: {widget.data.target}{widget.data.unit}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
             )}
 
             {widget.type === 'chart' && (
-              <div className="h-32 bg-gradient-to-r from-blue-100 to-blue-50 rounded flex items-end justify-around p-2">
-                {widget.data.chartData?.map((data, index) => (
-                  <div key={index} className="flex flex-col items-center gap-1">
-                    <div 
-                      className="rounded-t"
-                      style={{ 
-                        backgroundColor: widget.config.backgroundColor,
-                        width: '16px',
-                        height: `${data.value}px`
-                      }}
-                    ></div>
-                    <span className="text-xs">{data.name}</span>
+              <div className="h-32 rounded flex items-end justify-around p-2" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                {widget.data.chartData?.map((data, index) => {
+                  const maxValue = Math.max(...(widget.data.chartData || []).map(d => d.value));
+                  const height = Math.max(8, (data.value / maxValue) * 80);
+
+                  return (
+                    <div key={index} className="flex flex-col items-center gap-1">
+                      <div
+                        className={`rounded-t transition-all duration-500 ${widget.config.animated ? 'animate-pulse' : ''}`}
+                        style={{
+                          backgroundColor: widget.config.chartColor || widget.config.textColor,
+                          width: widget.config.chartType === 'line' ? '2px' : '16px',
+                          height: `${height}px`,
+                          opacity: 0.8
+                        }}
+                      ></div>
+                      <span className="text-xs opacity-75" style={{ color: widget.config.textColor }}>
+                        {data.name}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {widget.type === 'progress' && (
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span style={{ color: widget.config.textColor }}>{widget.data.label}</span>
+                  <span className="font-bold" style={{ color: widget.config.textColor }}>
+                    {widget.data.value}{widget.data.unit}
+                  </span>
+                </div>
+                <div className="w-full bg-white/20 rounded-full h-2">
+                  <div
+                    className="h-2 rounded-full transition-all duration-1000"
+                    style={{
+                      width: `${Math.min(100, (widget.data.value as number) || 0)}%`,
+                      backgroundColor: widget.config.chartColor || widget.config.textColor
+                    }}
+                  ></div>
+                </div>
+                {widget.config.showTarget && widget.data.target && (
+                  <div className="text-xs opacity-70" style={{ color: widget.config.textColor }}>
+                    Target: {widget.data.target}{widget.data.unit}
                   </div>
-                ))}
+                )}
+              </div>
+            )}
+
+            {widget.data.timestamp && (
+              <div className="text-xs opacity-50 mt-2 text-right" style={{ color: widget.config.textColor }}>
+                Updated: {new Date(widget.data.timestamp).toLocaleTimeString()}
               </div>
             )}
           </CardContent>
