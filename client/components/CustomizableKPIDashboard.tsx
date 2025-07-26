@@ -37,7 +37,7 @@ import {
 interface KPIWidget {
   id: string;
   title: string;
-  type: 'metric' | 'chart' | 'table' | 'gauge' | 'heatmap';
+  type: 'metric' | 'chart' | 'table' | 'gauge' | 'heatmap' | 'progress';
   size: {
     width: number; // Grid columns (1-4)
     height: number; // Grid rows (1-3)
@@ -46,6 +46,7 @@ interface KPIWidget {
     x: number;
     y: number;
   };
+  dataSource?: string; // KPI data source ID
   data: {
     value: string | number;
     label: string;
@@ -54,6 +55,7 @@ interface KPIWidget {
     target?: number;
     unit?: string;
     chartData?: any[];
+    timestamp?: string;
   };
   config: {
     backgroundColor?: string;
@@ -62,6 +64,9 @@ interface KPIWidget {
     showTrend?: boolean;
     showTarget?: boolean;
     refreshInterval?: number;
+    chartType?: 'bar' | 'line' | 'area' | 'pie' | 'donut';
+    chartColor?: string;
+    animated?: boolean;
   };
 }
 
