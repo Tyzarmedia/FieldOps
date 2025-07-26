@@ -62,6 +62,17 @@ export function useInventoryWebSocket(options: WebSocketHookOptions = {}) {
         throw new Error('WebSocket is not supported in this environment');
       }
 
+      // Check if URL is reachable (simplified check)
+      if (!url || url.includes('localhost:8081')) {
+        console.info('WebSocket server not configured or unavailable, real-time features disabled');
+        setState(prev => ({
+          ...prev,
+          error: 'Real-time server not available',
+          connecting: false
+        }));
+        return;
+      }
+
       ws.current = new WebSocket(url);
 
       ws.current.onopen = () => {
