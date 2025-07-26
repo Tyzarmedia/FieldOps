@@ -259,7 +259,8 @@ export function useInventoryWebSocket(options: WebSocketHookOptions = {}) {
 // Helper hooks for specific event types
 export function useInventoryUpdates(callback: (event: InventoryWebSocketEvent) => void) {
   const { addEventListener, connected } = useInventoryWebSocket({
-    subscriptions: ['inventory_updates']
+    subscriptions: ['inventory_updates'],
+    autoConnect: false
   });
 
   useEffect(() => {
