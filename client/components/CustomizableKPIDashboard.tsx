@@ -90,83 +90,84 @@ const GRID_ROWS = 6;
 const DEFAULT_WIDGETS: KPIWidget[] = [
   {
     id: 'widget-1',
-    title: 'Open Cases',
+    title: 'Open Tickets',
     type: 'metric',
     size: { width: 1, height: 1 },
     position: { x: 0, y: 0 },
+    dataSource: 'open_tickets',
     data: {
       value: 8,
-      label: 'Open Cases',
+      label: 'Open Tickets',
       trend: '+12%',
-      color: 'blue',
-      unit: 'cases'
+      unit: 'tickets'
     },
     config: {
       backgroundColor: '#3b82f6',
       textColor: '#ffffff',
-      showTrend: true
+      showTrend: true,
+      animated: true
     }
   },
   {
     id: 'widget-2',
-    title: 'Late Appointments',
+    title: 'Completed Jobs',
     type: 'metric',
     size: { width: 1, height: 1 },
     position: { x: 1, y: 0 },
+    dataSource: 'completed_jobs',
     data: {
-      value: 4,
-      label: 'Late Appointments',
-      trend: '-8%',
-      color: 'green',
-      unit: 'appointments'
+      value: 12,
+      label: 'Completed Jobs',
+      trend: '+5%',
+      unit: 'jobs'
     },
     config: {
       backgroundColor: '#10b981',
       textColor: '#ffffff',
-      showTrend: true
+      showTrend: true,
+      animated: true
     }
   },
   {
     id: 'widget-3',
-    title: 'Installation Progress',
+    title: 'Team Efficiency',
     type: 'gauge',
     size: { width: 2, height: 2 },
     position: { x: 2, y: 0 },
+    dataSource: 'team_efficiency',
     data: {
-      value: 78,
-      label: 'Installation Progress',
-      target: 85,
-      color: 'purple',
+      value: 85,
+      label: 'Team Efficiency',
+      target: 90,
       unit: '%'
     },
     config: {
       backgroundColor: '#8b5cf6',
       textColor: '#ffffff',
-      showTarget: true
+      showTarget: true,
+      chartColor: '#8b5cf6',
+      animated: true
     }
   },
   {
     id: 'widget-4',
-    title: 'Team Performance',
+    title: 'Performance Trend',
     type: 'chart',
     size: { width: 2, height: 2 },
     position: { x: 0, y: 1 },
+    dataSource: 'team_efficiency',
     data: {
-      value: 94,
-      label: 'Team Performance',
-      chartData: [
-        { name: 'Mon', value: 85 },
-        { name: 'Tue', value: 92 },
-        { name: 'Wed', value: 78 },
-        { name: 'Thu', value: 96 },
-        { name: 'Fri', value: 94 }
-      ],
-      color: 'orange',
+      value: 85,
+      label: 'Performance Trend',
+      chartData: [],
       unit: '%'
     },
     config: {
       backgroundColor: '#f59e0b',
-      textColor: '#ffffff'
+      textColor: '#ffffff',
+      chartType: 'bar',
+      chartColor: '#f59e0b',
+      animated: true
     }
   }
 ];
