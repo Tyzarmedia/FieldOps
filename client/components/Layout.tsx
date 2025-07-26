@@ -278,6 +278,17 @@ function getNavigationForRole(role: string) {
         { name: "IT Reports", href: "/it-reports", icon: ClipboardList },
       ];
 
+    case "SystemAdministrator":
+      return [
+        ...baseNavigation,
+        { name: "User Management", href: "/admin/users", icon: Users },
+        { name: "System Settings", href: "/admin/settings", icon: Settings },
+        { name: "Integrations", href: "/admin/integrations", icon: Truck },
+        { name: "Monitoring", href: "/admin/monitoring", icon: Activity },
+        { name: "Security", href: "/admin/security", icon: Shield },
+        { name: "Data Management", href: "/admin/data", icon: Package },
+      ];
+
     default:
       return baseNavigation;
   }
