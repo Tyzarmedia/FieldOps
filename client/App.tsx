@@ -94,7 +94,7 @@ function DashboardRouter() {
 
   switch (userRole) {
     case "CEO":
-      return <CeoDashboard />;
+      return <EnhancedCeoDashboard />;
     case "Manager":
       return <EnhancedManagerDashboard />;
     case "Coordinator":
