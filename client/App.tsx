@@ -676,6 +676,46 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/technician-simplified"
+            element={
+              <ProtectedRoute>
+                <TechnicianDashboardSimplified />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/stock-view"
+            element={
+              <ProtectedRoute>
+                <TechnicianStockView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/stock/bulk-issue"
+            element={
+              <ProtectedRoute>
+                <BulkStockIssuing />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/stock/invoices"
+            element={
+              <ProtectedRoute>
+                <InvoiceManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/coordinator/job-assignment"
+            element={
+              <ProtectedRoute>
+                <CoordinatorJobAssignment />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
