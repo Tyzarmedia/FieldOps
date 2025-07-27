@@ -1470,7 +1470,7 @@ export default function CustomizableKPIDashboard() {
                   value={
                     editWidgetForm.dataSource ||
                     selectedWidget?.dataSource ||
-                    ""
+                    "none"
                   }
                   onValueChange={(value) =>
                     setEditWidgetForm((prev) => ({
