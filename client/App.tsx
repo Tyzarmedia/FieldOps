@@ -43,6 +43,7 @@ import JobBoardPage from "./pages/JobBoardPage";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import NetworkAssessmentPage from "./pages/NetworkAssessmentPage";
 
 const queryClient = new QueryClient();
 
