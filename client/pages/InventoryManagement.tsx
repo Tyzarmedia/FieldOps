@@ -206,16 +206,51 @@ export default function InventoryManagement() {
       }
     } catch (error) {
       console.error("Error loading inventory:", error);
+
+      // Use mock data when API is unavailable
+      const mockInventoryItems: InventoryItem[] = [
+        {
+          itemCode: "FOC-SM-50M",
+          description: "Single Mode Fiber Optic Cable 50m",
+          category: "Fiber Optic Cables",
+          quantity: 45,
+          unitCost: 125.50,
+          warehouse: "East London Central",
+          reorderLevel: 10,
+          location: "A1-15",
+          lastUpdated: new Date().toISOString()
+        },
+        {
+          itemCode: "SPL-PROT-12",
+          description: "Splice Protectors 12-pack",
+          category: "Splice Equipment",
+          quantity: 8,
+          unitCost: 45.00,
+          warehouse: "East London Central",
+          reorderLevel: 15,
+          location: "B2-08",
+          lastUpdated: new Date().toISOString()
+        },
+        {
+          itemCode: "ONT-GPON-V2",
+          description: "GPON ONT Device V2",
+          category: "Network Equipment",
+          quantity: 23,
+          unitCost: 850.00,
+          warehouse: "Port Elizabeth Hub",
+          reorderLevel: 5,
+          location: "C1-05",
+          lastUpdated: new Date().toISOString()
+        }
+      ];
+
+      setInventoryItems(mockInventoryItems);
+
       toast({
-        title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to load inventory data",
-        variant: "destructive",
+        title: "Using Mock Data",
+        description: "External inventory system unavailable, showing sample data",
+        variant: "default",
       });
-      // Set empty array as fallback
-      setInventoryItems([]);
     } finally {
       setLoading(false);
     }
