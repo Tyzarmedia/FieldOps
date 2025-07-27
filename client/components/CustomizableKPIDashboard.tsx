@@ -1482,7 +1482,7 @@ export default function CustomizableKPIDashboard() {
                     <SelectValue placeholder="Select KPI data" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No data source</SelectItem>
+                    <SelectItem value="none">No data source</SelectItem>
                     {KPI_DATA_SOURCES.map((source) => (
                       <SelectItem key={source.id} value={source.id}>
                         {source.name} ({source.category})
