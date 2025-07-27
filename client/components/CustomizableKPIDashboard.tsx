@@ -505,7 +505,7 @@ export default function CustomizableKPIDashboard() {
     };
 
     // Load initial data if data source is specified
-    if (newWidget.dataSource) {
+    if (newWidget.dataSource && newWidget.dataSource !== "none") {
       try {
         const kpiData = await kpiService.current.getKPIData(
           newWidget.dataSource,
