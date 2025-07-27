@@ -68,7 +68,11 @@ interface Invoice {
   notes: string;
 }
 
-const followUpEmailTemplate = (supplierName: string, orderDate: string, orderNumber: string) => `
+const followUpEmailTemplate = (
+  supplierName: string,
+  orderDate: string,
+  orderNumber: string,
+) => `
 Dear ${supplierName},
 
 I hope this message finds you well.
@@ -97,7 +101,8 @@ export default function InvoiceManagement() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [showAddInvoice, setShowAddInvoice] = useState(false);
   const [showEmailPreview, setShowEmailPreview] = useState(false);
-  const [selectedInvoiceForEmail, setSelectedInvoiceForEmail] = useState<Invoice | null>(null);
+  const [selectedInvoiceForEmail, setSelectedInvoiceForEmail] =
+    useState<Invoice | null>(null);
   const [newInvoice, setNewInvoice] = useState({
     invoiceNumber: "",
     supplierName: "",
@@ -125,28 +130,28 @@ export default function InvoiceManagement() {
         supplierEmail: "orders@fibertech.com",
         orderDate: "2024-01-15",
         orderNumber: "ORD-2024-015",
-        totalAmount: 15420.50,
+        totalAmount: 15420.5,
         status: "pending",
         items: [
           {
             id: "item-001",
             itemName: "Single Mode Fiber Optic Cable 100m",
             quantity: 50,
-            unitPrice: 250.50,
-            totalPrice: 12525.00,
-            category: "Fiber Optic Cables"
+            unitPrice: 250.5,
+            totalPrice: 12525.0,
+            category: "Fiber Optic Cables",
           },
           {
             id: "item-002",
             itemName: "Splice Protectors 24-pack",
             quantity: 25,
             unitPrice: 115.82,
-            totalPrice: 2895.50,
-            category: "Splice Equipment"
-          }
+            totalPrice: 2895.5,
+            category: "Splice Equipment",
+          },
         ],
         uploadedDate: new Date().toISOString(),
-        notes: "Urgent order for emergency repairs"
+        notes: "Urgent order for emergency repairs",
       },
       {
         id: "inv-002",
@@ -155,22 +160,26 @@ export default function InvoiceManagement() {
         supplierEmail: "supply@netequip.com",
         orderDate: "2024-01-10",
         orderNumber: "ORD-2024-010",
-        totalAmount: 42750.00,
+        totalAmount: 42750.0,
         status: "follow_up_sent",
         items: [
           {
             id: "item-003",
             itemName: "GPON ONT Device V3",
             quantity: 50,
-            unitPrice: 855.00,
-            totalPrice: 42750.00,
-            category: "Network Equipment"
-          }
+            unitPrice: 855.0,
+            totalPrice: 42750.0,
+            category: "Network Equipment",
+          },
         ],
-        uploadedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        followUpSentDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        notes: "Critical stock for upcoming installations"
-      }
+        uploadedDate: new Date(
+          Date.now() - 5 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
+        followUpSentDate: new Date(
+          Date.now() - 2 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
+        notes: "Critical stock for upcoming installations",
+      },
     ];
 
     setInvoices(mockInvoices);
@@ -191,7 +200,7 @@ export default function InvoiceManagement() {
           invoiceNumber: "INV-2024-" + Math.floor(Math.random() * 1000),
           supplierName: "AutoExtracted Supplier",
           supplierEmail: "supplier@example.com",
-          orderDate: new Date().toISOString().split('T')[0],
+          orderDate: new Date().toISOString().split("T")[0],
           orderNumber: "ORD-" + Math.floor(Math.random() * 10000),
           totalAmount: 0,
           notes: "Extracted from PDF upload",
@@ -202,16 +211,19 @@ export default function InvoiceManagement() {
             id: "item-" + Date.now(),
             itemName: "Extracted Item 1",
             quantity: 10,
-            unitPrice: 150.00,
-            totalPrice: 1500.00,
-            category: "General"
-          }
+            unitPrice: 150.0,
+            totalPrice: 1500.0,
+            category: "General",
+          },
         ];
 
         setInvoiceItems(extractedItems);
-        setNewInvoice(prev => ({ 
-          ...prev, 
-          totalAmount: extractedItems.reduce((sum, item) => sum + item.totalPrice, 0)
+        setNewInvoice((prev) => ({
+          ...prev,
+          totalAmount: extractedItems.reduce(
+            (sum, item) => sum + item.totalPrice,
+            0,
+          ),
         }));
 
         toast({
@@ -238,10 +250,10 @@ export default function InvoiceManagement() {
       quantity: newItem.quantity,
       unitPrice: newItem.unitPrice,
       totalPrice: newItem.quantity * newItem.unitPrice,
-      category: newItem.category || "General"
+      category: newItem.category || "General",
     };
 
-    setInvoiceItems(prev => [...prev, item]);
+    setInvoiceItems((prev) => [...prev, item]);
     setNewItem({
       itemName: "",
       quantity: 0,
@@ -250,22 +262,31 @@ export default function InvoiceManagement() {
     });
 
     // Update total amount
-    const newTotal = [...invoiceItems, item].reduce((sum, i) => sum + i.totalPrice, 0);
-    setNewInvoice(prev => ({ ...prev, totalAmount: newTotal }));
+    const newTotal = [...invoiceItems, item].reduce(
+      (sum, i) => sum + i.totalPrice,
+      0,
+    );
+    setNewInvoice((prev) => ({ ...prev, totalAmount: newTotal }));
   };
 
   const removeItemFromInvoice = (itemId: string) => {
-    setInvoiceItems(prev => prev.filter(item => item.id !== itemId));
-    const newTotal = invoiceItems.filter(item => item.id !== itemId)
+    setInvoiceItems((prev) => prev.filter((item) => item.id !== itemId));
+    const newTotal = invoiceItems
+      .filter((item) => item.id !== itemId)
       .reduce((sum, item) => sum + item.totalPrice, 0);
-    setNewInvoice(prev => ({ ...prev, totalAmount: newTotal }));
+    setNewInvoice((prev) => ({ ...prev, totalAmount: newTotal }));
   };
 
   const saveInvoice = () => {
-    if (!newInvoice.invoiceNumber || !newInvoice.supplierName || invoiceItems.length === 0) {
+    if (
+      !newInvoice.invoiceNumber ||
+      !newInvoice.supplierName ||
+      invoiceItems.length === 0
+    ) {
       toast({
         title: "Validation Error",
-        description: "Please fill all required fields and add at least one item",
+        description:
+          "Please fill all required fields and add at least one item",
         variant: "destructive",
       });
       return;
@@ -279,8 +300,8 @@ export default function InvoiceManagement() {
       uploadedDate: new Date().toISOString(),
     };
 
-    setInvoices(prev => [invoice, ...prev]);
-    
+    setInvoices((prev) => [invoice, ...prev]);
+
     // Reset form
     setNewInvoice({
       invoiceNumber: "",
@@ -301,16 +322,14 @@ export default function InvoiceManagement() {
   };
 
   const markAsDelivered = (invoiceId: string) => {
-    setInvoices(prev => 
-      prev.map(inv => 
-        inv.id === invoiceId 
-          ? { ...inv, status: "delivered" as const }
-          : inv
-      )
+    setInvoices((prev) =>
+      prev.map((inv) =>
+        inv.id === invoiceId ? { ...inv, status: "delivered" as const } : inv,
+      ),
     );
 
-    const invoice = invoices.find(inv => inv.id === invoiceId);
-    
+    const invoice = invoices.find((inv) => inv.id === invoiceId);
+
     toast({
       title: "Stock Delivered",
       description: `${invoice?.items.length} items moved to inventory`,
@@ -325,16 +344,16 @@ export default function InvoiceManagement() {
   const confirmSendFollowUp = () => {
     if (!selectedInvoiceForEmail) return;
 
-    setInvoices(prev => 
-      prev.map(inv => 
-        inv.id === selectedInvoiceForEmail.id 
-          ? { 
-              ...inv, 
+    setInvoices((prev) =>
+      prev.map((inv) =>
+        inv.id === selectedInvoiceForEmail.id
+          ? {
+              ...inv,
               status: "follow_up_sent" as const,
-              followUpSentDate: new Date().toISOString()
+              followUpSentDate: new Date().toISOString(),
             }
-          : inv
-      )
+          : inv,
+      ),
     );
 
     setShowEmailPreview(false);
@@ -346,19 +365,31 @@ export default function InvoiceManagement() {
     });
   };
 
-  const getStatusBadge = (status: Invoice['status']) => {
+  const getStatusBadge = (status: Invoice["status"]) => {
     switch (status) {
       case "pending":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return (
+          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+            Pending
+          </Badge>
+        );
       case "delivered":
-        return <Badge variant="default" className="bg-green-100 text-green-800">Delivered</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-100 text-green-800">
+            Delivered
+          </Badge>
+        );
       case "follow_up_sent":
-        return <Badge variant="outline" className="bg-blue-100 text-blue-800">Follow-up Sent</Badge>;
+        return (
+          <Badge variant="outline" className="bg-blue-100 text-blue-800">
+            Follow-up Sent
+          </Badge>
+        );
     }
   };
 
   const totalPendingValue = invoices
-    .filter(inv => inv.status === "pending")
+    .filter((inv) => inv.status === "pending")
     .reduce((sum, inv) => sum + inv.totalAmount, 0);
 
   return (
@@ -368,13 +399,15 @@ export default function InvoiceManagement() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-xl font-bold">Invoice Management</h1>
-            <p className="text-sm opacity-90">Manage stock invoices and orders</p>
+            <p className="text-sm opacity-90">
+              Manage stock invoices and orders
+            </p>
           </div>
           <Button
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-            onClick={() => navigate('/inventory')}
+            onClick={() => navigate("/inventory")}
           >
             <X className="h-6 w-6" />
           </Button>
@@ -387,11 +420,15 @@ export default function InvoiceManagement() {
             <div className="text-xs opacity-90">Total Invoices</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold">R{totalPendingValue.toFixed(0)}</div>
+            <div className="text-2xl font-bold">
+              R{totalPendingValue.toFixed(0)}
+            </div>
             <div className="text-xs opacity-90">Pending Value</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold">{invoices.filter(i => i.status === "delivered").length}</div>
+            <div className="text-2xl font-bold">
+              {invoices.filter((i) => i.status === "delivered").length}
+            </div>
             <div className="text-xs opacity-90">Delivered</div>
           </div>
         </div>
@@ -419,11 +456,17 @@ export default function InvoiceManagement() {
                       <h3 className="font-semibold">{invoice.invoiceNumber}</h3>
                       {getStatusBadge(invoice.status)}
                     </div>
-                    <p className="text-sm text-gray-600">{invoice.supplierName}</p>
-                    <p className="text-xs text-gray-500">Order: {invoice.orderNumber}</p>
+                    <p className="text-sm text-gray-600">
+                      {invoice.supplierName}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Order: {invoice.orderNumber}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-lg">R{invoice.totalAmount.toFixed(2)}</p>
+                    <p className="font-semibold text-lg">
+                      R{invoice.totalAmount.toFixed(2)}
+                    </p>
                     <p className="text-xs text-gray-500">
                       {new Date(invoice.orderDate).toLocaleDateString()}
                     </p>
@@ -432,16 +475,26 @@ export default function InvoiceManagement() {
 
                 {/* Items Summary */}
                 <div className="mb-3">
-                  <p className="text-sm text-gray-600 mb-2">{invoice.items.length} items:</p>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {invoice.items.length} items:
+                  </p>
                   <div className="space-y-1">
                     {invoice.items.slice(0, 2).map((item) => (
-                      <div key={item.id} className="flex justify-between text-xs">
+                      <div
+                        key={item.id}
+                        className="flex justify-between text-xs"
+                      >
                         <span>{item.itemName}</span>
-                        <span>Qty: {item.quantity} × R{item.unitPrice} = R{item.totalPrice.toFixed(2)}</span>
+                        <span>
+                          Qty: {item.quantity} × R{item.unitPrice} = R
+                          {item.totalPrice.toFixed(2)}
+                        </span>
                       </div>
                     ))}
                     {invoice.items.length > 2 && (
-                      <p className="text-xs text-gray-500">+{invoice.items.length - 2} more items</p>
+                      <p className="text-xs text-gray-500">
+                        +{invoice.items.length - 2} more items
+                      </p>
                     )}
                   </div>
                 </div>
@@ -469,7 +522,7 @@ export default function InvoiceManagement() {
                       </Button>
                     </>
                   )}
-                  
+
                   {invoice.status === "follow_up_sent" && (
                     <Button
                       size="sm"
@@ -492,7 +545,8 @@ export default function InvoiceManagement() {
                 {invoice.followUpSentDate && (
                   <div className="mt-3 pt-3 border-t border-gray-100">
                     <p className="text-xs text-blue-600">
-                      Follow-up sent: {new Date(invoice.followUpSentDate).toLocaleDateString()}
+                      Follow-up sent:{" "}
+                      {new Date(invoice.followUpSentDate).toLocaleDateString()}
                     </p>
                   </div>
                 )}
@@ -508,7 +562,7 @@ export default function InvoiceManagement() {
           <DialogHeader>
             <DialogTitle>Add New Invoice</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-6">
             {/* PDF Upload */}
             <div>
@@ -523,8 +577,12 @@ export default function InvoiceManagement() {
                 />
                 <label htmlFor="pdf-upload" className="cursor-pointer">
                   <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm text-gray-600">Click to upload PDF invoice</p>
-                  <p className="text-xs text-gray-500">System will auto-extract invoice data</p>
+                  <p className="text-sm text-gray-600">
+                    Click to upload PDF invoice
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    System will auto-extract invoice data
+                  </p>
                 </label>
               </div>
             </div>
@@ -535,7 +593,12 @@ export default function InvoiceManagement() {
                 <Label>Invoice Number *</Label>
                 <Input
                   value={newInvoice.invoiceNumber}
-                  onChange={(e) => setNewInvoice(prev => ({ ...prev, invoiceNumber: e.target.value }))}
+                  onChange={(e) =>
+                    setNewInvoice((prev) => ({
+                      ...prev,
+                      invoiceNumber: e.target.value,
+                    }))
+                  }
                   placeholder="Enter invoice number"
                 />
               </div>
@@ -543,7 +606,12 @@ export default function InvoiceManagement() {
                 <Label>Order Number</Label>
                 <Input
                   value={newInvoice.orderNumber}
-                  onChange={(e) => setNewInvoice(prev => ({ ...prev, orderNumber: e.target.value }))}
+                  onChange={(e) =>
+                    setNewInvoice((prev) => ({
+                      ...prev,
+                      orderNumber: e.target.value,
+                    }))
+                  }
                   placeholder="Enter order number"
                 />
               </div>
@@ -551,7 +619,12 @@ export default function InvoiceManagement() {
                 <Label>Supplier Name *</Label>
                 <Input
                   value={newInvoice.supplierName}
-                  onChange={(e) => setNewInvoice(prev => ({ ...prev, supplierName: e.target.value }))}
+                  onChange={(e) =>
+                    setNewInvoice((prev) => ({
+                      ...prev,
+                      supplierName: e.target.value,
+                    }))
+                  }
                   placeholder="Enter supplier name"
                 />
               </div>
@@ -560,7 +633,12 @@ export default function InvoiceManagement() {
                 <Input
                   type="email"
                   value={newInvoice.supplierEmail}
-                  onChange={(e) => setNewInvoice(prev => ({ ...prev, supplierEmail: e.target.value }))}
+                  onChange={(e) =>
+                    setNewInvoice((prev) => ({
+                      ...prev,
+                      supplierEmail: e.target.value,
+                    }))
+                  }
                   placeholder="Enter supplier email"
                 />
               </div>
@@ -569,7 +647,12 @@ export default function InvoiceManagement() {
                 <Input
                   type="date"
                   value={newInvoice.orderDate}
-                  onChange={(e) => setNewInvoice(prev => ({ ...prev, orderDate: e.target.value }))}
+                  onChange={(e) =>
+                    setNewInvoice((prev) => ({
+                      ...prev,
+                      orderDate: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
@@ -578,7 +661,12 @@ export default function InvoiceManagement() {
                   type="number"
                   step="0.01"
                   value={newInvoice.totalAmount}
-                  onChange={(e) => setNewInvoice(prev => ({ ...prev, totalAmount: parseFloat(e.target.value) || 0 }))}
+                  onChange={(e) =>
+                    setNewInvoice((prev) => ({
+                      ...prev,
+                      totalAmount: parseFloat(e.target.value) || 0,
+                    }))
+                  }
                   placeholder="Auto-calculated"
                   readOnly
                 />
@@ -594,31 +682,51 @@ export default function InvoiceManagement() {
                   Add Item
                 </Button>
               </div>
-              
+
               {/* New Item Form */}
               <div className="grid grid-cols-5 gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
                 <Input
                   placeholder="Item name"
                   value={newItem.itemName}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, itemName: e.target.value }))}
+                  onChange={(e) =>
+                    setNewItem((prev) => ({
+                      ...prev,
+                      itemName: e.target.value,
+                    }))
+                  }
                 />
                 <Input
                   type="number"
                   placeholder="Quantity"
                   value={newItem.quantity}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, quantity: parseInt(e.target.value) || 0 }))}
+                  onChange={(e) =>
+                    setNewItem((prev) => ({
+                      ...prev,
+                      quantity: parseInt(e.target.value) || 0,
+                    }))
+                  }
                 />
                 <Input
                   type="number"
                   step="0.01"
                   placeholder="Unit price"
                   value={newItem.unitPrice}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, unitPrice: parseFloat(e.target.value) || 0 }))}
+                  onChange={(e) =>
+                    setNewItem((prev) => ({
+                      ...prev,
+                      unitPrice: parseFloat(e.target.value) || 0,
+                    }))
+                  }
                 />
                 <Input
                   placeholder="Category"
                   value={newItem.category}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, category: e.target.value }))}
+                  onChange={(e) =>
+                    setNewItem((prev) => ({
+                      ...prev,
+                      category: e.target.value,
+                    }))
+                  }
                 />
                 <div className="text-sm font-medium self-center">
                   R{(newItem.quantity * newItem.unitPrice).toFixed(2)}
@@ -665,14 +773,20 @@ export default function InvoiceManagement() {
               <Label>Notes</Label>
               <Textarea
                 value={newInvoice.notes}
-                onChange={(e) => setNewInvoice(prev => ({ ...prev, notes: e.target.value }))}
+                onChange={(e) =>
+                  setNewInvoice((prev) => ({ ...prev, notes: e.target.value }))
+                }
                 placeholder="Additional notes about this invoice"
               />
             </div>
 
             {/* Action Buttons */}
             <div className="flex space-x-2">
-              <Button variant="outline" onClick={() => setShowAddInvoice(false)} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={() => setShowAddInvoice(false)}
+                className="flex-1"
+              >
                 Cancel
               </Button>
               <Button onClick={saveInvoice} className="flex-1">
@@ -689,26 +803,37 @@ export default function InvoiceManagement() {
           <DialogHeader>
             <DialogTitle>Follow-up Email Preview</DialogTitle>
           </DialogHeader>
-          
+
           {selectedInvoiceForEmail && (
             <div className="space-y-4">
               <div className="bg-gray-50 p-4 rounded-lg">
-                <p><strong>To:</strong> {selectedInvoiceForEmail.supplierEmail}</p>
-                <p><strong>Subject:</strong> Follow-up on Order #{selectedInvoiceForEmail.orderNumber}</p>
+                <p>
+                  <strong>To:</strong> {selectedInvoiceForEmail.supplierEmail}
+                </p>
+                <p>
+                  <strong>Subject:</strong> Follow-up on Order #
+                  {selectedInvoiceForEmail.orderNumber}
+                </p>
               </div>
-              
+
               <div className="border rounded-lg p-4 max-h-60 overflow-y-auto">
                 <pre className="whitespace-pre-wrap text-sm">
                   {followUpEmailTemplate(
                     selectedInvoiceForEmail.supplierName,
-                    new Date(selectedInvoiceForEmail.orderDate).toLocaleDateString(),
-                    selectedInvoiceForEmail.orderNumber
+                    new Date(
+                      selectedInvoiceForEmail.orderDate,
+                    ).toLocaleDateString(),
+                    selectedInvoiceForEmail.orderNumber,
                   )}
                 </pre>
               </div>
 
               <div className="flex space-x-2">
-                <Button variant="outline" onClick={() => setShowEmailPreview(false)} className="flex-1">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEmailPreview(false)}
+                  className="flex-1"
+                >
                   Cancel
                 </Button>
                 <Button onClick={confirmSendFollowUp} className="flex-1">

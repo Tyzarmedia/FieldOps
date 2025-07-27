@@ -52,7 +52,9 @@ export default function TechnicianStockView() {
   const [stockItems, setStockItems] = useState<TechnicianStockItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingItem, setEditingItem] = useState<TechnicianStockItem | null>(null);
+  const [editingItem, setEditingItem] = useState<TechnicianStockItem | null>(
+    null,
+  );
   const [addStockForm, setAddStockForm] = useState<AddStockForm>({
     itemCode: "",
     description: "",
@@ -72,10 +74,10 @@ export default function TechnicianStockView() {
         allocatedQuantity: 10,
         usedQuantity: 7,
         availableQuantity: 3,
-        unitCost: 125.50,
+        unitCost: 125.5,
         dateAllocated: new Date().toISOString(),
         jobReference: "SA-689001",
-        warehouse: "Technician-JohnDoe"
+        warehouse: "Technician-JohnDoe",
       },
       {
         id: "ts-002",
@@ -85,10 +87,10 @@ export default function TechnicianStockView() {
         allocatedQuantity: 5,
         usedQuantity: 4,
         availableQuantity: 1,
-        unitCost: 45.00,
+        unitCost: 45.0,
         dateAllocated: new Date().toISOString(),
         jobReference: "SA-689001",
-        warehouse: "Technician-JohnDoe"
+        warehouse: "Technician-JohnDoe",
       },
       {
         id: "ts-003",
@@ -98,9 +100,9 @@ export default function TechnicianStockView() {
         allocatedQuantity: 2,
         usedQuantity: 0,
         availableQuantity: 2,
-        unitCost: 850.00,
+        unitCost: 850.0,
         dateAllocated: new Date().toISOString(),
-        warehouse: "Technician-JohnDoe"
+        warehouse: "Technician-JohnDoe",
       },
       {
         id: "ts-004",
@@ -110,27 +112,31 @@ export default function TechnicianStockView() {
         allocatedQuantity: 3,
         usedQuantity: 3,
         availableQuantity: 0,
-        unitCost: 15.00,
+        unitCost: 15.0,
         dateAllocated: new Date().toISOString(),
         jobReference: "SA-689102",
-        warehouse: "Technician-JohnDoe"
-      }
+        warehouse: "Technician-JohnDoe",
+      },
     ];
-    
+
     setStockItems(mockStockItems);
   }, []);
 
-  const filteredItems = stockItems.filter(item =>
-    item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredItems = stockItems.filter(
+    (item) =>
+      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const totalValue = stockItems.reduce((sum, item) => 
-    sum + (item.availableQuantity * item.unitCost), 0
+  const totalValue = stockItems.reduce(
+    (sum, item) => sum + item.availableQuantity * item.unitCost,
+    0,
   );
 
-  const lowStockItems = stockItems.filter(item => item.availableQuantity <= 1);
+  const lowStockItems = stockItems.filter(
+    (item) => item.availableQuantity <= 1,
+  );
 
   const handleAddStock = () => {
     const newItem: TechnicianStockItem = {
@@ -144,10 +150,10 @@ export default function TechnicianStockView() {
       unitCost: addStockForm.unitCost,
       dateAllocated: new Date().toISOString(),
       jobReference: addStockForm.jobReference,
-      warehouse: "Technician-JohnDoe"
+      warehouse: "Technician-JohnDoe",
     };
 
-    setStockItems(prev => [...prev, newItem]);
+    setStockItems((prev) => [...prev, newItem]);
     setAddStockForm({
       itemCode: "",
       description: "",
@@ -170,10 +176,8 @@ export default function TechnicianStockView() {
   const handleUpdateStock = () => {
     if (!editingItem) return;
 
-    setStockItems(prev => 
-      prev.map(item => 
-        item.id === editingItem.id ? editingItem : item
-      )
+    setStockItems((prev) =>
+      prev.map((item) => (item.id === editingItem.id ? editingItem : item)),
     );
     setEditingItem(null);
 
@@ -184,8 +188,8 @@ export default function TechnicianStockView() {
   };
 
   const handleDeleteStock = (itemId: string) => {
-    const item = stockItems.find(s => s.id === itemId);
-    setStockItems(prev => prev.filter(s => s.id !== itemId));
+    const item = stockItems.find((s) => s.id === itemId);
+    setStockItems((prev) => prev.filter((s) => s.id !== itemId));
 
     toast({
       title: "Stock Removed",
@@ -195,9 +199,11 @@ export default function TechnicianStockView() {
 
   const getStockStatus = (item: TechnicianStockItem) => {
     const usagePercentage = (item.usedQuantity / item.allocatedQuantity) * 100;
-    if (usagePercentage === 100) return { color: "bg-red-500", text: "Depleted" };
+    if (usagePercentage === 100)
+      return { color: "bg-red-500", text: "Depleted" };
     if (usagePercentage >= 80) return { color: "bg-orange-500", text: "Low" };
-    if (usagePercentage >= 50) return { color: "bg-yellow-500", text: "Medium" };
+    if (usagePercentage >= 50)
+      return { color: "bg-yellow-500", text: "Medium" };
     return { color: "bg-green-500", text: "Good" };
   };
 
@@ -214,12 +220,12 @@ export default function TechnicianStockView() {
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
           >
             <X className="h-6 w-6" />
           </Button>
         </div>
-        
+
         {/* Stock Summary */}
         <div className="mt-4 grid grid-cols-3 gap-4">
           <div className="text-center">
@@ -231,7 +237,9 @@ export default function TechnicianStockView() {
             <div className="text-xs opacity-90">Total Value</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-red-200">{lowStockItems.length}</div>
+            <div className="text-2xl font-bold text-red-200">
+              {lowStockItems.length}
+            </div>
             <div className="text-xs opacity-90">Low Stock</div>
           </div>
         </div>
@@ -264,7 +272,8 @@ export default function TechnicianStockView() {
             <div className="flex items-center">
               <AlertTriangle className="h-5 w-5 text-orange-400 mr-2" />
               <p className="text-sm text-orange-700">
-                {lowStockItems.length} item(s) running low. Consider requesting replenishment.
+                {lowStockItems.length} item(s) running low. Consider requesting
+                replenishment.
               </p>
             </div>
           </div>
@@ -280,12 +289,16 @@ export default function TechnicianStockView() {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-800">{item.itemCode}</h3>
+                        <h3 className="font-semibold text-gray-800">
+                          {item.itemCode}
+                        </h3>
                         <Badge className={`${status.color} text-white text-xs`}>
                           {status.text}
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">{item.description}</p>
+                      <p className="text-sm text-gray-600 mb-2">
+                        {item.description}
+                      </p>
                       <p className="text-xs text-gray-500">{item.category}</p>
                     </div>
                     <div className="flex space-x-2">
@@ -318,29 +331,35 @@ export default function TechnicianStockView() {
                     </div>
                     <div>
                       <p className="text-gray-500">Available</p>
-                      <p className="font-medium text-green-600">{item.availableQuantity}</p>
+                      <p className="font-medium text-green-600">
+                        {item.availableQuantity}
+                      </p>
                     </div>
                   </div>
 
                   {item.jobReference && (
                     <div className="mt-3 pt-3 border-t border-gray-100">
                       <p className="text-xs text-gray-500">
-                        Job Reference: <span className="font-medium">{item.jobReference}</span>
+                        Job Reference:{" "}
+                        <span className="font-medium">{item.jobReference}</span>
                       </p>
                     </div>
                   )}
 
                   <div className="mt-3">
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
+                      <div
                         className={`h-2 rounded-full ${status.color}`}
-                        style={{ 
-                          width: `${(item.usedQuantity / item.allocatedQuantity) * 100}%` 
+                        style={{
+                          width: `${(item.usedQuantity / item.allocatedQuantity) * 100}%`,
                         }}
                       ></div>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
-                      {Math.round((item.usedQuantity / item.allocatedQuantity) * 100)}% used
+                      {Math.round(
+                        (item.usedQuantity / item.allocatedQuantity) * 100,
+                      )}
+                      % used
                     </p>
                   </div>
                 </CardContent>
@@ -352,9 +371,13 @@ export default function TechnicianStockView() {
         {filteredItems.length === 0 && (
           <div className="text-center py-12">
             <PackageSearch className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No stock items found</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No stock items found
+            </h3>
             <p className="text-gray-500">
-              {searchTerm ? "Try adjusting your search" : "Request stock allocation from your manager"}
+              {searchTerm
+                ? "Try adjusting your search"
+                : "Request stock allocation from your manager"}
             </p>
           </div>
         )}
@@ -372,7 +395,12 @@ export default function TechnicianStockView() {
               <Input
                 id="itemCode"
                 value={addStockForm.itemCode}
-                onChange={(e) => setAddStockForm(prev => ({ ...prev, itemCode: e.target.value }))}
+                onChange={(e) =>
+                  setAddStockForm((prev) => ({
+                    ...prev,
+                    itemCode: e.target.value,
+                  }))
+                }
                 placeholder="Enter item code"
               />
             </div>
@@ -381,7 +409,12 @@ export default function TechnicianStockView() {
               <Input
                 id="description"
                 value={addStockForm.description}
-                onChange={(e) => setAddStockForm(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setAddStockForm((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 placeholder="Enter item description"
               />
             </div>
@@ -391,7 +424,12 @@ export default function TechnicianStockView() {
                 id="quantity"
                 type="number"
                 value={addStockForm.quantity}
-                onChange={(e) => setAddStockForm(prev => ({ ...prev, quantity: parseInt(e.target.value) || 0 }))}
+                onChange={(e) =>
+                  setAddStockForm((prev) => ({
+                    ...prev,
+                    quantity: parseInt(e.target.value) || 0,
+                  }))
+                }
                 placeholder="Enter quantity"
               />
             </div>
@@ -400,7 +438,12 @@ export default function TechnicianStockView() {
               <Input
                 id="jobReference"
                 value={addStockForm.jobReference}
-                onChange={(e) => setAddStockForm(prev => ({ ...prev, jobReference: e.target.value }))}
+                onChange={(e) =>
+                  setAddStockForm((prev) => ({
+                    ...prev,
+                    jobReference: e.target.value,
+                  }))
+                }
                 placeholder="Enter job reference"
               />
             </div>
@@ -411,12 +454,21 @@ export default function TechnicianStockView() {
                 type="number"
                 step="0.01"
                 value={addStockForm.unitCost}
-                onChange={(e) => setAddStockForm(prev => ({ ...prev, unitCost: parseFloat(e.target.value) || 0 }))}
+                onChange={(e) =>
+                  setAddStockForm((prev) => ({
+                    ...prev,
+                    unitCost: parseFloat(e.target.value) || 0,
+                  }))
+                }
                 placeholder="Enter unit cost"
               />
             </div>
             <div className="flex space-x-2">
-              <Button variant="outline" onClick={() => setShowAddForm(false)} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={() => setShowAddForm(false)}
+                className="flex-1"
+              >
                 Cancel
               </Button>
               <Button onClick={handleAddStock} className="flex-1">
@@ -441,11 +493,15 @@ export default function TechnicianStockView() {
                   id="editUsedQuantity"
                   type="number"
                   value={editingItem.usedQuantity}
-                  onChange={(e) => setEditingItem({
-                    ...editingItem,
-                    usedQuantity: parseInt(e.target.value) || 0,
-                    availableQuantity: editingItem.allocatedQuantity - (parseInt(e.target.value) || 0)
-                  })}
+                  onChange={(e) =>
+                    setEditingItem({
+                      ...editingItem,
+                      usedQuantity: parseInt(e.target.value) || 0,
+                      availableQuantity:
+                        editingItem.allocatedQuantity -
+                        (parseInt(e.target.value) || 0),
+                    })
+                  }
                   max={editingItem.allocatedQuantity}
                 />
               </div>
@@ -454,15 +510,21 @@ export default function TechnicianStockView() {
                 <Input
                   id="editJobReference"
                   value={editingItem.jobReference || ""}
-                  onChange={(e) => setEditingItem({
-                    ...editingItem,
-                    jobReference: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setEditingItem({
+                      ...editingItem,
+                      jobReference: e.target.value,
+                    })
+                  }
                   placeholder="Enter job reference"
                 />
               </div>
               <div className="flex space-x-2">
-                <Button variant="outline" onClick={() => setEditingItem(null)} className="flex-1">
+                <Button
+                  variant="outline"
+                  onClick={() => setEditingItem(null)}
+                  className="flex-1"
+                >
                   Cancel
                 </Button>
                 <Button onClick={handleUpdateStock} className="flex-1">

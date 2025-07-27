@@ -82,16 +82,19 @@ export default function CoordinatorJobAssignment() {
   const [unassignedJobs, setUnassignedJobs] = useState<Job[]>([]);
   const [technicians, setTechnicians] = useState<Technician[]>([]);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [selectedTechnician, setSelectedTechnician] = useState<Technician | null>(null);
+  const [selectedTechnician, setSelectedTechnician] =
+    useState<Technician | null>(null);
   const [draggedJob, setDraggedJob] = useState<Job | null>(null);
   const [filters, setFilters] = useState({
     location: "all",
     jobType: "all",
     urgency: "all",
-    skills: "all"
+    skills: "all",
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentView, setCurrentView] = useState<"assignment" | "monitor" | "reports">("assignment");
+  const [currentView, setCurrentView] = useState<
+    "assignment" | "monitor" | "reports"
+  >("assignment");
   const [showAssignDialog, setShowAssignDialog] = useState(false);
 
   // Mock data
@@ -110,7 +113,7 @@ export default function CoordinatorJobAssignment() {
         longitude: 25.6447,
         status: "unassigned",
         createdDate: new Date().toISOString(),
-        scheduledDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        scheduledDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: "job-002",
@@ -124,7 +127,7 @@ export default function CoordinatorJobAssignment() {
         latitude: -33.9608,
         longitude: 25.6022,
         status: "unassigned",
-        createdDate: new Date().toISOString()
+        createdDate: new Date().toISOString(),
       },
       {
         id: "job-003",
@@ -139,8 +142,10 @@ export default function CoordinatorJobAssignment() {
         longitude: 27.8746,
         status: "unassigned",
         createdDate: new Date().toISOString(),
-        scheduledDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString()
-      }
+        scheduledDate: new Date(
+          Date.now() + 2 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
+      },
     ];
 
     const mockTechnicians: Technician[] = [
@@ -161,16 +166,16 @@ export default function CoordinatorJobAssignment() {
             jobId: "existing-job-1",
             jobTitle: "Morning Installation",
             type: "job",
-            color: "bg-blue-500"
+            color: "bg-blue-500",
           },
           {
-            id: "slot-002", 
+            id: "slot-002",
             startTime: "10:00",
             endTime: "18:00",
             type: "available",
-            color: "bg-green-200"
-          }
-        ]
+            color: "bg-green-200",
+          },
+        ],
       },
       {
         id: "tech-002",
@@ -189,23 +194,23 @@ export default function CoordinatorJobAssignment() {
             jobId: "existing-job-2",
             jobTitle: "Network Assessment",
             type: "job",
-            color: "bg-blue-500"
+            color: "bg-blue-500",
           },
           {
             id: "slot-004",
             startTime: "12:00",
             endTime: "13:00",
             type: "break",
-            color: "bg-gray-300"
+            color: "bg-gray-300",
           },
           {
             id: "slot-005",
             startTime: "13:00",
             endTime: "18:00",
             type: "available",
-            color: "bg-green-200"
-          }
-        ]
+            color: "bg-green-200",
+          },
+        ],
       },
       {
         id: "tech-003",
@@ -224,61 +229,70 @@ export default function CoordinatorJobAssignment() {
             jobId: "existing-job-3",
             jobTitle: "Complex Installation",
             type: "job",
-            color: "bg-blue-500"
+            color: "bg-blue-500",
           },
           {
             id: "slot-007",
             startTime: "15:00",
             endTime: "16:00",
             type: "available",
-            color: "bg-green-200"
+            color: "bg-green-200",
           },
           {
             id: "slot-008",
             startTime: "16:00",
             endTime: "18:00",
             type: "travel",
-            color: "bg-orange-300"
-          }
-        ]
-      }
+            color: "bg-orange-300",
+          },
+        ],
+      },
     ];
 
     setUnassignedJobs(mockJobs);
     setTechnicians(mockTechnicians);
   }, []);
 
-  const filteredJobs = unassignedJobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.location.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilters = (filters.urgency === "all" || job.urgency === filters.urgency) &&
-                          (filters.jobType === "all" || job.jobType === filters.jobType) &&
-                          (filters.location === "all" || job.location.includes(filters.location));
-    
+  const filteredJobs = unassignedJobs.filter((job) => {
+    const matchesSearch =
+      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.location.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesFilters =
+      (filters.urgency === "all" || job.urgency === filters.urgency) &&
+      (filters.jobType === "all" || job.jobType === filters.jobType) &&
+      (filters.location === "all" || job.location.includes(filters.location));
+
     return matchesSearch && matchesFilters;
   });
 
-  const filteredTechnicians = technicians.filter(tech => {
+  const filteredTechnicians = technicians.filter((tech) => {
     if (filters.skills === "all") return true;
     return tech.skills.includes(filters.skills);
   });
 
-  const getUrgencyColor = (urgency: Job['urgency']) => {
+  const getUrgencyColor = (urgency: Job["urgency"]) => {
     switch (urgency) {
-      case "low": return "bg-green-100 text-green-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "high": return "bg-orange-100 text-orange-800";
-      case "urgent": return "bg-red-100 text-red-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "urgent":
+        return "bg-red-100 text-red-800";
     }
   };
 
-  const getAvailabilityColor = (availability: Technician['availability']) => {
+  const getAvailabilityColor = (availability: Technician["availability"]) => {
     switch (availability) {
-      case "available": return "bg-green-100 text-green-800";
-      case "busy": return "bg-orange-100 text-orange-800";
-      case "offline": return "bg-red-100 text-red-800";
+      case "available":
+        return "bg-green-100 text-green-800";
+      case "busy":
+        return "bg-orange-100 text-orange-800";
+      case "offline":
+        return "bg-red-100 text-red-800";
     }
   };
 
@@ -293,11 +307,14 @@ export default function CoordinatorJobAssignment() {
   const handleDrop = (technicianId: string, timeSlot?: string) => {
     if (!draggedJob) return;
 
-    const technician = technicians.find(t => t.id === technicianId);
+    const technician = technicians.find((t) => t.id === technicianId);
     if (!technician) return;
 
     // Check if technician has capacity
-    if (technician.workload + draggedJob.estimatedTime > technician.maxCapacity) {
+    if (
+      technician.workload + draggedJob.estimatedTime >
+      technician.maxCapacity
+    ) {
       toast({
         title: "Assignment Failed",
         description: "Technician doesn't have enough capacity for this job",
@@ -307,9 +324,14 @@ export default function CoordinatorJobAssignment() {
     }
 
     // Check if technician has required skills
-    const hasRequiredSkills = draggedJob.jobType === "Emergency Repair" ? 
-      technician.skills.includes("Emergency Repair") :
-      technician.skills.some(skill => draggedJob.jobType.includes(skill) || draggedJob.title.includes(skill));
+    const hasRequiredSkills =
+      draggedJob.jobType === "Emergency Repair"
+        ? technician.skills.includes("Emergency Repair")
+        : technician.skills.some(
+            (skill) =>
+              draggedJob.jobType.includes(skill) ||
+              draggedJob.title.includes(skill),
+          );
 
     if (!hasRequiredSkills) {
       toast({
@@ -320,28 +342,38 @@ export default function CoordinatorJobAssignment() {
     }
 
     // Assign job
-    setUnassignedJobs(prev => prev.filter(j => j.id !== draggedJob.id));
-    setTechnicians(prev => prev.map(tech => 
-      tech.id === technicianId 
-        ? { 
-            ...tech, 
-            workload: tech.workload + draggedJob.estimatedTime,
-            timeline: [
-              ...tech.timeline.filter(slot => slot.type !== "available" || slot.startTime < "14:00"),
-              {
-                id: `slot-${Date.now()}`,
-                startTime: timeSlot || "14:00",
-                endTime: `${parseInt(timeSlot || "14:00") + draggedJob.estimatedTime}:00`,
-                jobId: draggedJob.id,
-                jobTitle: draggedJob.title,
-                type: "job",
-                color: "bg-blue-500"
-              },
-              ...tech.timeline.filter(slot => slot.type === "available" && slot.startTime >= `${parseInt(timeSlot || "14:00") + draggedJob.estimatedTime}:00`)
-            ]
-          }
-        : tech
-    ));
+    setUnassignedJobs((prev) => prev.filter((j) => j.id !== draggedJob.id));
+    setTechnicians((prev) =>
+      prev.map((tech) =>
+        tech.id === technicianId
+          ? {
+              ...tech,
+              workload: tech.workload + draggedJob.estimatedTime,
+              timeline: [
+                ...tech.timeline.filter(
+                  (slot) =>
+                    slot.type !== "available" || slot.startTime < "14:00",
+                ),
+                {
+                  id: `slot-${Date.now()}`,
+                  startTime: timeSlot || "14:00",
+                  endTime: `${parseInt(timeSlot || "14:00") + draggedJob.estimatedTime}:00`,
+                  jobId: draggedJob.id,
+                  jobTitle: draggedJob.title,
+                  type: "job",
+                  color: "bg-blue-500",
+                },
+                ...tech.timeline.filter(
+                  (slot) =>
+                    slot.type === "available" &&
+                    slot.startTime >=
+                      `${parseInt(timeSlot || "14:00") + draggedJob.estimatedTime}:00`,
+                ),
+              ],
+            }
+          : tech,
+      ),
+    );
 
     toast({
       title: "Job Assigned",
@@ -360,15 +392,23 @@ export default function CoordinatorJobAssignment() {
     setSelectedTechnician(null);
   };
 
-  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+  const calculateDistance = (
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number,
+  ) => {
     // Simplified distance calculation for demo
     const R = 6371; // Earth's radius in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLng = (lng2 - lng1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLng/2) * Math.sin(dLng/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
 
@@ -381,9 +421,7 @@ export default function CoordinatorJobAssignment() {
       <CardContent className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h4 className="font-semibold text-sm">{job.title}</h4>
-          <Badge className={getUrgencyColor(job.urgency)}>
-            {job.urgency}
-          </Badge>
+          <Badge className={getUrgencyColor(job.urgency)}>{job.urgency}</Badge>
         </div>
         <p className="text-xs text-gray-600 mb-2">{job.client}</p>
         <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
@@ -417,20 +455,27 @@ export default function CoordinatorJobAssignment() {
             {technician.availability}
           </Badge>
         </div>
-        
+
         {/* Workload Bar */}
         <div className="mb-3">
           <div className="flex justify-between text-xs text-gray-600 mb-1">
             <span>Workload</span>
-            <span>{technician.workload}/{technician.maxCapacity}h</span>
+            <span>
+              {technician.workload}/{technician.maxCapacity}h
+            </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
+            <div
               className={`h-2 rounded-full ${
-                technician.workload / technician.maxCapacity > 0.8 ? 'bg-red-500' :
-                technician.workload / technician.maxCapacity > 0.6 ? 'bg-orange-500' : 'bg-green-500'
+                technician.workload / technician.maxCapacity > 0.8
+                  ? "bg-red-500"
+                  : technician.workload / technician.maxCapacity > 0.6
+                    ? "bg-orange-500"
+                    : "bg-green-500"
               }`}
-              style={{ width: `${(technician.workload / technician.maxCapacity) * 100}%` }}
+              style={{
+                width: `${(technician.workload / technician.maxCapacity) * 100}%`,
+              }}
             />
           </div>
         </div>
@@ -439,7 +484,7 @@ export default function CoordinatorJobAssignment() {
         <div className="mb-3">
           <p className="text-xs text-gray-600 mb-1">Skills:</p>
           <div className="flex flex-wrap gap-1">
-            {technician.skills.slice(0, 3).map(skill => (
+            {technician.skills.slice(0, 3).map((skill) => (
               <Badge key={skill} variant="outline" className="text-xs">
                 {skill}
               </Badge>
@@ -451,14 +496,19 @@ export default function CoordinatorJobAssignment() {
         <div>
           <p className="text-xs text-gray-600 mb-2">Today's Schedule:</p>
           <div className="space-y-1">
-            {technician.timeline.map(slot => (
+            {technician.timeline.map((slot) => (
               <div
                 key={slot.id}
                 className={`text-xs p-2 rounded ${slot.color} ${
-                  slot.type === "available" ? "border-2 border-dashed border-green-400" : ""
+                  slot.type === "available"
+                    ? "border-2 border-dashed border-green-400"
+                    : ""
                 }`}
                 onDragOver={handleDragOver}
-                onDrop={() => slot.type === "available" && handleDrop(technician.id, slot.startTime)}
+                onDrop={() =>
+                  slot.type === "available" &&
+                  handleDrop(technician.id, slot.startTime)
+                }
               >
                 {slot.startTime} - {slot.endTime}
                 {slot.jobTitle && (
@@ -505,7 +555,7 @@ export default function CoordinatorJobAssignment() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
             >
               <X className="h-6 w-6" />
             </Button>
@@ -519,15 +569,29 @@ export default function CoordinatorJobAssignment() {
             <div className="text-xs opacity-90">Unassigned</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold">{technicians.filter(t => t.availability === "available").length}</div>
+            <div className="text-2xl font-bold">
+              {technicians.filter((t) => t.availability === "available").length}
+            </div>
             <div className="text-xs opacity-90">Available</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold">{unassignedJobs.filter(j => j.urgency === "urgent").length}</div>
+            <div className="text-2xl font-bold">
+              {unassignedJobs.filter((j) => j.urgency === "urgent").length}
+            </div>
             <div className="text-xs opacity-90">Urgent</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold">{Math.round(technicians.reduce((sum, t) => sum + (t.workload / t.maxCapacity), 0) / technicians.length * 100)}%</div>
+            <div className="text-2xl font-bold">
+              {Math.round(
+                (technicians.reduce(
+                  (sum, t) => sum + t.workload / t.maxCapacity,
+                  0,
+                ) /
+                  technicians.length) *
+                  100,
+              )}
+              %
+            </div>
             <div className="text-xs opacity-90">Avg Load</div>
           </div>
         </div>
@@ -558,7 +622,12 @@ export default function CoordinatorJobAssignment() {
         </div>
 
         <div className="grid grid-cols-4 gap-4">
-          <Select value={filters.location} onValueChange={(value) => setFilters(prev => ({ ...prev, location: value }))}>
+          <Select
+            value={filters.location}
+            onValueChange={(value) =>
+              setFilters((prev) => ({ ...prev, location: value }))
+            }
+          >
             <SelectTrigger>
               <SelectValue placeholder="Location" />
             </SelectTrigger>
@@ -570,7 +639,12 @@ export default function CoordinatorJobAssignment() {
             </SelectContent>
           </Select>
 
-          <Select value={filters.jobType} onValueChange={(value) => setFilters(prev => ({ ...prev, jobType: value }))}>
+          <Select
+            value={filters.jobType}
+            onValueChange={(value) =>
+              setFilters((prev) => ({ ...prev, jobType: value }))
+            }
+          >
             <SelectTrigger>
               <SelectValue placeholder="Job Type" />
             </SelectTrigger>
@@ -582,7 +656,12 @@ export default function CoordinatorJobAssignment() {
             </SelectContent>
           </Select>
 
-          <Select value={filters.urgency} onValueChange={(value) => setFilters(prev => ({ ...prev, urgency: value }))}>
+          <Select
+            value={filters.urgency}
+            onValueChange={(value) =>
+              setFilters((prev) => ({ ...prev, urgency: value }))
+            }
+          >
             <SelectTrigger>
               <SelectValue placeholder="Urgency" />
             </SelectTrigger>
@@ -595,7 +674,12 @@ export default function CoordinatorJobAssignment() {
             </SelectContent>
           </Select>
 
-          <Select value={filters.skills} onValueChange={(value) => setFilters(prev => ({ ...prev, skills: value }))}>
+          <Select
+            value={filters.skills}
+            onValueChange={(value) =>
+              setFilters((prev) => ({ ...prev, skills: value }))
+            }
+          >
             <SelectTrigger>
               <SelectValue placeholder="Skills" />
             </SelectTrigger>
@@ -615,16 +699,22 @@ export default function CoordinatorJobAssignment() {
         {/* Left Panel - Unassigned Jobs */}
         <div className="w-1/3 p-4 border-r bg-white overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Unassigned Jobs ({filteredJobs.length})</h3>
+            <h3 className="font-semibold">
+              Unassigned Jobs ({filteredJobs.length})
+            </h3>
             <Briefcase className="h-5 w-5 text-gray-400" />
           </div>
-          
+
           <div className="space-y-3">
-            {filteredJobs.map(job => (
+            {filteredJobs.map((job) => (
               <div
                 key={job.id}
                 onClick={() => setSelectedJob(job)}
-                className={selectedJob?.id === job.id ? "ring-2 ring-blue-500 rounded" : ""}
+                className={
+                  selectedJob?.id === job.id
+                    ? "ring-2 ring-blue-500 rounded"
+                    : ""
+                }
               >
                 <JobCard job={job} />
               </div>
@@ -634,8 +724,12 @@ export default function CoordinatorJobAssignment() {
           {filteredJobs.length === 0 && (
             <div className="text-center py-8">
               <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-              <h4 className="font-medium text-gray-900 mb-2">All jobs assigned!</h4>
-              <p className="text-gray-500 text-sm">No unassigned jobs matching your filters</p>
+              <h4 className="font-medium text-gray-900 mb-2">
+                All jobs assigned!
+              </h4>
+              <p className="text-gray-500 text-sm">
+                No unassigned jobs matching your filters
+              </p>
             </div>
           )}
         </div>
@@ -643,16 +737,22 @@ export default function CoordinatorJobAssignment() {
         {/* Right Panel - Technicians */}
         <div className="flex-1 p-4 bg-gray-50 overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Technicians ({filteredTechnicians.length})</h3>
+            <h3 className="font-semibold">
+              Technicians ({filteredTechnicians.length})
+            </h3>
             <Users className="h-5 w-5 text-gray-400" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {filteredTechnicians.map(technician => (
+            {filteredTechnicians.map((technician) => (
               <div
                 key={technician.id}
                 onClick={() => setSelectedTechnician(technician)}
-                className={selectedTechnician?.id === technician.id ? "ring-2 ring-blue-500 rounded" : ""}
+                className={
+                  selectedTechnician?.id === technician.id
+                    ? "ring-2 ring-blue-500 rounded"
+                    : ""
+                }
               >
                 <TechnicianCard technician={technician} />
               </div>
@@ -667,7 +767,7 @@ export default function CoordinatorJobAssignment() {
           <DialogHeader>
             <DialogTitle>Manual Job Assignment</DialogTitle>
           </DialogHeader>
-          
+
           {selectedJob && selectedTechnician && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -675,17 +775,26 @@ export default function CoordinatorJobAssignment() {
                   <Label>Selected Job</Label>
                   <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="font-medium">{selectedJob.title}</p>
-                    <p className="text-sm text-gray-600">{selectedJob.client}</p>
-                    <p className="text-xs text-gray-500">{selectedJob.estimatedTime}h • {selectedJob.urgency}</p>
+                    <p className="text-sm text-gray-600">
+                      {selectedJob.client}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {selectedJob.estimatedTime}h • {selectedJob.urgency}
+                    </p>
                   </div>
                 </div>
-                
+
                 <div>
                   <Label>Selected Technician</Label>
                   <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="font-medium">{selectedTechnician.name}</p>
-                    <p className="text-sm text-gray-600">{selectedTechnician.workload}/{selectedTechnician.maxCapacity}h capacity</p>
-                    <p className="text-xs text-gray-500">{selectedTechnician.availability}</p>
+                    <p className="text-sm text-gray-600">
+                      {selectedTechnician.workload}/
+                      {selectedTechnician.maxCapacity}h capacity
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {selectedTechnician.availability}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -693,17 +802,23 @@ export default function CoordinatorJobAssignment() {
               {/* Distance calculation */}
               <div className="p-3 bg-blue-50 rounded-lg">
                 <p className="text-sm">
-                  Distance: ~{calculateDistance(
-                    selectedJob.latitude, 
+                  Distance: ~
+                  {calculateDistance(
+                    selectedJob.latitude,
                     selectedJob.longitude,
                     selectedTechnician.currentLocation.lat,
-                    selectedTechnician.currentLocation.lng
-                  ).toFixed(1)}km from current location
+                    selectedTechnician.currentLocation.lng,
+                  ).toFixed(1)}
+                  km from current location
                 </p>
               </div>
 
               <div className="flex space-x-2">
-                <Button variant="outline" onClick={() => setShowAssignDialog(false)} className="flex-1">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAssignDialog(false)}
+                  className="flex-1"
+                >
                   Cancel
                 </Button>
                 <Button onClick={assignJobManually} className="flex-1">

@@ -89,7 +89,9 @@ export default function BulkStockIssuing() {
   const [issueNotes, setIssueNotes] = useState("");
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [showIssuedHistory, setShowIssuedHistory] = useState(false);
-  const [issuedStockHistory, setIssuedStockHistory] = useState<IssuedStock[]>([]);
+  const [issuedStockHistory, setIssuedStockHistory] = useState<IssuedStock[]>(
+    [],
+  );
 
   // Mock data
   useEffect(() => {
@@ -100,8 +102,8 @@ export default function BulkStockIssuing() {
         description: "Single Mode Fiber Optic Cable 50m",
         category: "Fiber Optic Cables",
         availableQuantity: 150,
-        unitCost: 125.50,
-        warehouse: "East London Central"
+        unitCost: 125.5,
+        warehouse: "East London Central",
       },
       {
         id: "si-002",
@@ -109,8 +111,8 @@ export default function BulkStockIssuing() {
         description: "Splice Protectors 12-pack",
         category: "Splice Equipment",
         availableQuantity: 85,
-        unitCost: 45.00,
-        warehouse: "East London Central"
+        unitCost: 45.0,
+        warehouse: "East London Central",
       },
       {
         id: "si-003",
@@ -118,8 +120,8 @@ export default function BulkStockIssuing() {
         description: "GPON ONT Device V2",
         category: "Network Equipment",
         availableQuantity: 42,
-        unitCost: 850.00,
-        warehouse: "Port Elizabeth Hub"
+        unitCost: 850.0,
+        warehouse: "Port Elizabeth Hub",
       },
       {
         id: "si-004",
@@ -127,8 +129,8 @@ export default function BulkStockIssuing() {
         description: "Cable Ties 100-pack",
         category: "Tools & Accessories",
         availableQuantity: 200,
-        unitCost: 15.00,
-        warehouse: "East London Central"
+        unitCost: 15.0,
+        warehouse: "East London Central",
       },
     ];
 
@@ -138,28 +140,28 @@ export default function BulkStockIssuing() {
         name: "John Doe",
         department: "Field Operations",
         subWarehouse: "Technician-JohnDoe",
-        status: "active"
+        status: "active",
       },
       {
         id: "tech-002",
         name: "Jane Smith",
         department: "Field Operations",
         subWarehouse: "Technician-JaneSmith",
-        status: "active"
+        status: "active",
       },
       {
         id: "tech-003",
         name: "Mike Johnson",
         department: "Field Operations",
         subWarehouse: "Technician-MikeJohnson",
-        status: "active"
+        status: "active",
       },
       {
         id: "tech-004",
         name: "Sarah Wilson",
         department: "Assistant Technician",
         subWarehouse: "Technician-SarahWilson",
-        status: "active"
+        status: "active",
       },
     ];
 
@@ -174,16 +176,16 @@ export default function BulkStockIssuing() {
             itemCode: "FOC-SM-50M",
             description: "Single Mode Fiber Optic Cable 50m",
             quantityToIssue: 10,
-            unitCost: 125.50,
-            totalCost: 1255.00
-          }
+            unitCost: 125.5,
+            totalCost: 1255.0,
+          },
         ],
-        totalValue: 1255.00,
+        totalValue: 1255.0,
         issuedDate: new Date().toISOString(),
         issuedBy: "Stock Manager",
         notes: "Emergency job allocation",
-        status: "issued"
-      }
+        status: "issued",
+      },
     ];
 
     setStockItems(mockStockItems);
@@ -191,30 +193,38 @@ export default function BulkStockIssuing() {
     setIssuedStockHistory(mockIssuedHistory);
   }, []);
 
-  const filteredStockItems = stockItems.filter(item =>
-    item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredStockItems = stockItems.filter(
+    (item) =>
+      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const selectedTechnicianData = technicians.find(t => t.id === selectedTechnician);
+  const selectedTechnicianData = technicians.find(
+    (t) => t.id === selectedTechnician,
+  );
 
-  const totalIssueValue = bulkIssueItems.reduce((sum, item) => sum + item.totalCost, 0);
+  const totalIssueValue = bulkIssueItems.reduce(
+    (sum, item) => sum + item.totalCost,
+    0,
+  );
 
   const addItemToBulkIssue = (stockItem: StockItem, quantity: number) => {
-    const existingItem = bulkIssueItems.find(item => item.stockItemId === stockItem.id);
-    
+    const existingItem = bulkIssueItems.find(
+      (item) => item.stockItemId === stockItem.id,
+    );
+
     if (existingItem) {
-      setBulkIssueItems(prev => 
-        prev.map(item => 
-          item.stockItemId === stockItem.id 
+      setBulkIssueItems((prev) =>
+        prev.map((item) =>
+          item.stockItemId === stockItem.id
             ? {
                 ...item,
                 quantityToIssue: item.quantityToIssue + quantity,
-                totalCost: (item.quantityToIssue + quantity) * item.unitCost
+                totalCost: (item.quantityToIssue + quantity) * item.unitCost,
               }
-            : item
-        )
+            : item,
+        ),
       );
     } else {
       const newItem: BulkIssueItem = {
@@ -223,28 +233,30 @@ export default function BulkStockIssuing() {
         description: stockItem.description,
         quantityToIssue: quantity,
         unitCost: stockItem.unitCost,
-        totalCost: quantity * stockItem.unitCost
+        totalCost: quantity * stockItem.unitCost,
       };
-      setBulkIssueItems(prev => [...prev, newItem]);
+      setBulkIssueItems((prev) => [...prev, newItem]);
     }
     setShowAddItemModal(false);
   };
 
   const removeItemFromBulkIssue = (stockItemId: string) => {
-    setBulkIssueItems(prev => prev.filter(item => item.stockItemId !== stockItemId));
+    setBulkIssueItems((prev) =>
+      prev.filter((item) => item.stockItemId !== stockItemId),
+    );
   };
 
   const updateItemQuantity = (stockItemId: string, newQuantity: number) => {
-    setBulkIssueItems(prev => 
-      prev.map(item => 
-        item.stockItemId === stockItemId 
+    setBulkIssueItems((prev) =>
+      prev.map((item) =>
+        item.stockItemId === stockItemId
           ? {
               ...item,
               quantityToIssue: newQuantity,
-              totalCost: newQuantity * item.unitCost
+              totalCost: newQuantity * item.unitCost,
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
@@ -267,10 +279,10 @@ export default function BulkStockIssuing() {
       issuedDate: new Date().toISOString(),
       issuedBy: "Stock Manager",
       notes: issueNotes,
-      status: "issued"
+      status: "issued",
     };
 
-    setIssuedStockHistory(prev => [newIssuedStock, ...prev]);
+    setIssuedStockHistory((prev) => [newIssuedStock, ...prev]);
 
     // Update stock quantities
     setBulkIssueItems([]);
@@ -284,17 +296,16 @@ export default function BulkStockIssuing() {
   };
 
   const revokeStockIssue = (issueId: string) => {
-    setIssuedStockHistory(prev => 
-      prev.map(issue => 
-        issue.id === issueId 
-          ? { ...issue, status: "revoked" as const }
-          : issue
-      )
+    setIssuedStockHistory((prev) =>
+      prev.map((issue) =>
+        issue.id === issueId ? { ...issue, status: "revoked" as const } : issue,
+      ),
     );
 
     toast({
       title: "Stock Issue Revoked",
-      description: "Stock allocation has been revoked and returned to main warehouse",
+      description:
+        "Stock allocation has been revoked and returned to main warehouse",
     });
   };
 
@@ -302,7 +313,7 @@ export default function BulkStockIssuing() {
     const [selectedStock, setSelectedStock] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
 
-    const stockItem = stockItems.find(s => s.id === selectedStock);
+    const stockItem = stockItems.find((s) => s.id === selectedStock);
 
     return (
       <Dialog open={showAddItemModal} onOpenChange={setShowAddItemModal}>
@@ -318,7 +329,7 @@ export default function BulkStockIssuing() {
                   <SelectValue placeholder="Select stock item" />
                 </SelectTrigger>
                 <SelectContent>
-                  {filteredStockItems.map(item => (
+                  {filteredStockItems.map((item) => (
                     <SelectItem key={item.id} value={item.id}>
                       {item.itemCode} - {item.description}
                     </SelectItem>
@@ -326,11 +337,15 @@ export default function BulkStockIssuing() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             {stockItem && (
               <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-sm text-gray-600">Available: {stockItem.availableQuantity}</p>
-                <p className="text-sm text-gray-600">Unit Cost: R{stockItem.unitCost}</p>
+                <p className="text-sm text-gray-600">
+                  Available: {stockItem.availableQuantity}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Unit Cost: R{stockItem.unitCost}
+                </p>
               </div>
             )}
 
@@ -346,11 +361,17 @@ export default function BulkStockIssuing() {
             </div>
 
             <div className="flex space-x-2">
-              <Button variant="outline" onClick={() => setShowAddItemModal(false)} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={() => setShowAddItemModal(false)}
+                className="flex-1"
+              >
                 Cancel
               </Button>
-              <Button 
-                onClick={() => stockItem && addItemToBulkIssue(stockItem, quantity)} 
+              <Button
+                onClick={() =>
+                  stockItem && addItemToBulkIssue(stockItem, quantity)
+                }
                 className="flex-1"
                 disabled={!selectedStock}
               >
@@ -385,7 +406,7 @@ export default function BulkStockIssuing() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-              onClick={() => navigate('/inventory')}
+              onClick={() => navigate("/inventory")}
             >
               <X className="h-6 w-6" />
             </Button>
@@ -399,22 +420,29 @@ export default function BulkStockIssuing() {
         <Card>
           <CardContent className="p-4">
             <h3 className="font-semibold mb-3">Select Technician</h3>
-            <Select value={selectedTechnician} onValueChange={setSelectedTechnician}>
+            <Select
+              value={selectedTechnician}
+              onValueChange={setSelectedTechnician}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Choose technician to issue stock to" />
               </SelectTrigger>
               <SelectContent>
-                {technicians.filter(t => t.status === "active").map(tech => (
-                  <SelectItem key={tech.id} value={tech.id}>
-                    <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4" />
-                      <span>{tech.name} - {tech.department}</span>
-                    </div>
-                  </SelectItem>
-                ))}
+                {technicians
+                  .filter((t) => t.status === "active")
+                  .map((tech) => (
+                    <SelectItem key={tech.id} value={tech.id}>
+                      <div className="flex items-center space-x-2">
+                        <User className="h-4 w-4" />
+                        <span>
+                          {tech.name} - {tech.department}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
-            
+
             {selectedTechnicianData && (
               <div className="mt-3 p-3 bg-blue-50 rounded-lg">
                 <p className="text-sm text-blue-800">
@@ -459,13 +487,17 @@ export default function BulkStockIssuing() {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <p className="font-medium">{item.itemCode}</p>
-                        <p className="text-sm text-gray-600">{item.description}</p>
+                        <p className="text-sm text-gray-600">
+                          {item.description}
+                        </p>
                       </div>
                       <Button
                         variant="outline"
                         size="sm"
                         className="text-red-600 border-red-200 hover:bg-red-50"
-                        onClick={() => removeItemFromBulkIssue(item.stockItemId)}
+                        onClick={() =>
+                          removeItemFromBulkIssue(item.stockItemId)
+                        }
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -477,7 +509,12 @@ export default function BulkStockIssuing() {
                           type="number"
                           min="1"
                           value={item.quantityToIssue}
-                          onChange={(e) => updateItemQuantity(item.stockItemId, parseInt(e.target.value) || 1)}
+                          onChange={(e) =>
+                            updateItemQuantity(
+                              item.stockItemId,
+                              parseInt(e.target.value) || 1,
+                            )
+                          }
                           className="w-20 h-8"
                         />
                       </div>
@@ -490,11 +527,13 @@ export default function BulkStockIssuing() {
                     </div>
                   </div>
                 ))}
-                
+
                 <div className="border-t pt-3">
                   <div className="flex justify-between items-center">
                     <p className="font-semibold">Total Value:</p>
-                    <p className="text-lg font-bold text-blue-600">R{totalIssueValue.toFixed(2)}</p>
+                    <p className="text-lg font-bold text-blue-600">
+                      R{totalIssueValue.toFixed(2)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -537,27 +576,37 @@ export default function BulkStockIssuing() {
           </DialogHeader>
           <div className="space-y-4">
             {issuedStockHistory.map((issue) => (
-              <Card key={issue.id} className={issue.status === 'revoked' ? 'opacity-60' : ''}>
+              <Card
+                key={issue.id}
+                className={issue.status === "revoked" ? "opacity-60" : ""}
+              >
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <p className="font-semibold">{issue.technicianName}</p>
                       <p className="text-sm text-gray-600">
-                        Issued: {new Date(issue.issuedDate).toLocaleDateString()}
+                        Issued:{" "}
+                        {new Date(issue.issuedDate).toLocaleDateString()}
                       </p>
-                      <p className="text-sm text-gray-600">By: {issue.issuedBy}</p>
+                      <p className="text-sm text-gray-600">
+                        By: {issue.issuedBy}
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">R{issue.totalValue.toFixed(2)}</p>
+                      <p className="font-semibold">
+                        R{issue.totalValue.toFixed(2)}
+                      </p>
                       <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          issue.status === 'issued' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            issue.status === "issued"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
                           {issue.status.toUpperCase()}
                         </span>
-                        {issue.status === 'issued' && (
+                        {issue.status === "issued" && (
                           <Button
                             size="sm"
                             variant="outline"
@@ -570,19 +619,26 @@ export default function BulkStockIssuing() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     {issue.items.map((item, index) => (
                       <div key={index} className="flex justify-between text-sm">
-                        <span>{item.itemCode} - {item.description}</span>
-                        <span>Qty: {item.quantityToIssue} × R{item.unitCost} = R{item.totalCost.toFixed(2)}</span>
+                        <span>
+                          {item.itemCode} - {item.description}
+                        </span>
+                        <span>
+                          Qty: {item.quantityToIssue} × R{item.unitCost} = R
+                          {item.totalCost.toFixed(2)}
+                        </span>
                       </div>
                     ))}
                   </div>
-                  
+
                   {issue.notes && (
                     <div className="mt-3 pt-3 border-t">
-                      <p className="text-sm text-gray-600">Notes: {issue.notes}</p>
+                      <p className="text-sm text-gray-600">
+                        Notes: {issue.notes}
+                      </p>
                     </div>
                   )}
                 </CardContent>

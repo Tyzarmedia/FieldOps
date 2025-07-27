@@ -75,24 +75,24 @@ export default function TechnicianDashboardSimplified() {
 
   useEffect(() => {
     // Check if user is clocked in
-    const clockInData = localStorage.getItem('clockInTime');
-    const isClockInStatus = localStorage.getItem('isClocked') === 'true';
-    
+    const clockInData = localStorage.getItem("clockInTime");
+    const isClockInStatus = localStorage.getItem("isClocked") === "true";
+
     if (clockInData && isClockInStatus) {
       setClockInTime(new Date(clockInData));
       setIsClocked(true);
     }
-    
+
     // Check for signed off jobs
     const signedOffJobs = Object.keys(localStorage)
-      .filter(key => key.includes('_completed'))
-      .some(key => localStorage.getItem(key) === 'true');
+      .filter((key) => key.includes("_completed"))
+      .some((key) => localStorage.getItem(key) === "true");
     setHasSignedOffJobs(signedOffJobs);
-    
+
     // Get current active job
-    const activeJob = teamJobs.find(job => job.status === 'in-progress');
+    const activeJob = teamJobs.find((job) => job.status === "in-progress");
     setCurrentJob(activeJob);
-    
+
     // Update working hours every second when clocked in
     let interval: NodeJS.Timeout;
     if (isClocked && clockInTime) {
@@ -101,7 +101,7 @@ export default function TechnicianDashboardSimplified() {
         updateDistanceTraveled();
       }, 1000);
     }
-    
+
     return () => {
       if (interval) clearInterval(interval);
     };
@@ -109,16 +109,16 @@ export default function TechnicianDashboardSimplified() {
 
   const updateWorkingHours = () => {
     if (!clockInTime) return;
-    
+
     const now = new Date();
     const diffMs = now.getTime() - clockInTime.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
     const hours = Math.floor(diffMins / 60);
     const minutes = diffMins % 60;
-    
+
     setWorkingHours(`${hours}:${minutes.toString().padStart(2, "0")}`);
   };
-  
+
   const updateDistanceTraveled = () => {
     // Simulate distance tracking - in real app this would use GPS
     const baseDistance = parseFloat(distanceTraveled);
@@ -131,8 +131,8 @@ export default function TechnicianDashboardSimplified() {
     const now = new Date();
     setClockInTime(now);
     setIsClocked(true);
-    localStorage.setItem('clockInTime', now.toISOString());
-    localStorage.setItem('isClocked', 'true');
+    localStorage.setItem("clockInTime", now.toISOString());
+    localStorage.setItem("isClocked", "true");
   };
 
   const getInitials = (name: string) => {
@@ -157,7 +157,7 @@ export default function TechnicianDashboardSimplified() {
               <p className="text-xs opacity-80">Technician</p>
             </div>
           </div>
-          
+
           {/* Only show timer when clocked in */}
           {isClocked && (
             <div className="text-right">
@@ -178,7 +178,7 @@ export default function TechnicianDashboardSimplified() {
               </Badge>
             </div>
           </div>
-          
+
           {/* Current Job Status */}
           {currentJob && (
             <div className="text-center">
@@ -189,7 +189,7 @@ export default function TechnicianDashboardSimplified() {
               </Badge>
             </div>
           )}
-          
+
           {/* Clock In Button - Only show if not clocked in */}
           {!isClocked && (
             <div className="text-center">
@@ -283,7 +283,7 @@ export default function TechnicianDashboardSimplified() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-4">
-          <Card 
+          <Card
             className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
             onClick={() => navigate("/stock-on-hand")}
           >
@@ -293,11 +293,13 @@ export default function TechnicianDashboardSimplified() {
                   <Package2 className="h-6 w-6 text-white" />
                 </div>
               </div>
-              <h3 className="font-semibold text-gray-800 text-sm">Stock on Hand</h3>
+              <h3 className="font-semibold text-gray-800 text-sm">
+                Stock on Hand
+              </h3>
             </CardContent>
           </Card>
-          
-          <Card 
+
+          <Card
             className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
             onClick={() => navigate("/network-assessment")}
           >
@@ -307,7 +309,9 @@ export default function TechnicianDashboardSimplified() {
                   <Network className="h-6 w-6 text-white" />
                 </div>
               </div>
-              <h3 className="font-semibold text-gray-800 text-sm">Network Assessment</h3>
+              <h3 className="font-semibold text-gray-800 text-sm">
+                Network Assessment
+              </h3>
             </CardContent>
           </Card>
         </div>
