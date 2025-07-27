@@ -150,11 +150,14 @@ export default function InventoryManagement() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Load data sequentially to avoid potential conflicts
-        await loadInventoryData();
-        await loadInventoryStats();
+        // Load data with individual error handling
+        await Promise.allSettled([
+          loadInventoryData(),
+          loadInventoryStats()
+        ]);
       } catch (error) {
         console.error("Error loading data:", error);
+        // Individual functions now handle their own errors with fallbacks
       }
     };
 
