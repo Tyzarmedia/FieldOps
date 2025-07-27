@@ -301,8 +301,8 @@ export default function TechnicianDashboard() {
           </div>
         </div>
 
-        {/* Clock Out Button - Only show if clocked in and not signed off */}
-        {isClocked && !hasSignedOffJobs && (
+        {/* Clock Out Button - Only show if clocked in and has signed off jobs */}
+        {isClocked && hasSignedOffJobs && (
           <div className="mt-6 text-center">
             <Button
               onClick={handleClockOut}
