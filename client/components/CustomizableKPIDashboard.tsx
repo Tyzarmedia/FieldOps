@@ -259,7 +259,7 @@ export default function CustomizableKPIDashboard() {
   const loadWidgetData = async () => {
     const updatedWidgets = await Promise.all(
       widgets.map(async (widget) => {
-        if (widget.dataSource) {
+        if (widget.dataSource && widget.dataSource !== "none") {
           try {
             const kpiData = await kpiService.current.getKPIData(
               widget.dataSource,
