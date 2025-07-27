@@ -354,7 +354,35 @@ export default function InventoryManagement() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Handle different error codes with specific messages
+        let errorMessage = "Failed to sync with Sage X3";
+
+        if (response.status === 500) {
+          errorMessage = "Sage X3 service is currently unavailable. Using local data.";
+        } else if (response.status === 503) {
+          errorMessage = "Sage X3 service is temporarily down. Please try again later.";
+        } else if (response.status === 404) {
+          errorMessage = "Sync endpoint not found. Please contact system administrator.";
+        } else if (response.status >= 400 && response.status < 500) {
+          errorMessage = "Invalid sync request. Please check your permissions.";
+        }
+
+        // For server errors, still try to refresh local data
+        if (response.status >= 500) {
+          console.warn("Server error during sync, refreshing local data");
+          loadInventoryData();
+          loadInventoryStats();
+
+          // Set a mock last sync time to show the attempt was made
+          setLastSyncTime(new Date().toISOString());
+        }
+
+        toast({
+          title: "Sync Issue",
+          description: errorMessage,
+          variant: response.status >= 500 ? "default" : "destructive",
+        });
+        return;
       }
 
       const data = await response.json();
@@ -376,9 +404,28 @@ export default function InventoryManagement() {
       }
     } catch (error) {
       console.error("Error syncing inventory:", error);
+
+      // Provide more helpful error messages based on error type
+      let errorDescription = "Failed to sync with Sage X3";
+
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorDescription = "Network connection issue. Please check your internet connection.";
+      } else if (error instanceof Error) {
+        errorDescription = `Sync error: ${error.message}`;
+      }
+
+      // Still try to refresh local data on network errors
+      try {
+        loadInventoryData();
+        loadInventoryStats();
+        errorDescription += " Local data has been refreshed.";
+      } catch (localError) {
+        console.error("Failed to load local data:", localError);
+      }
+
       toast({
         title: "Sync Failed",
-        description: "Failed to sync with Sage X3",
+        description: errorDescription,
         variant: "destructive",
       });
     } finally {
