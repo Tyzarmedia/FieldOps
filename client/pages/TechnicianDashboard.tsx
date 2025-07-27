@@ -81,6 +81,7 @@ export default function TechnicianDashboard() {
     },
   ];
 
+  // Initialize state from localStorage once on mount
   useEffect(() => {
     // Check if user is clocked in
     const clockInData = localStorage.getItem('clockInTime');
@@ -96,9 +97,12 @@ export default function TechnicianDashboard() {
       .filter(key => key.includes('_completed'))
       .some(key => localStorage.getItem(key) === 'true');
     setHasSignedOffJobs(signedOffJobs);
+  }, []); // Empty dependency array - only run once on mount
 
-    // Update working hours every second when clocked in
+  // Separate effect for interval management
+  useEffect(() => {
     let interval: NodeJS.Timeout;
+
     if (isClocked && clockInTime) {
       interval = setInterval(() => {
         updateWorkingHours();
