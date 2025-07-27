@@ -76,10 +76,20 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
   const handleClockIn = async () => {
     setIsClockingIn(true);
     setSliderPosition(100);
-    
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
+
+    // Set clock-in state
+    const now = new Date();
+    localStorage.setItem('clockInTime', now.toISOString());
+    localStorage.setItem('isClocked', 'true');
+
+    // Clear any previous sign-off states
+    Object.keys(localStorage)
+      .filter(key => key.includes('_completed'))
+      .forEach(key => localStorage.removeItem(key));
+
     // Navigate to dashboard
     navigate('/');
   };
