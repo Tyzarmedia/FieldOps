@@ -514,10 +514,7 @@ const App = () => (
             path="/network-assessment"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Network Assessment"
-                  description="Perform network diagnostics and assessments."
-                />
+                <NetworkAssessmentPage />
               </ProtectedRoute>
             }
           />
