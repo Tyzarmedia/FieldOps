@@ -319,13 +319,22 @@ export default function InventoryManagement() {
       params.append("limit", "50");
 
       const response = await fetch(`/api/inventory/movements?${params}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.success) {
         setStockMovements(data.data || []);
+      } else {
+        setStockMovements([]);
       }
     } catch (error) {
       console.error("Error loading stock movements:", error);
+      // Set empty array as fallback
+      setStockMovements([]);
     }
   };
 
