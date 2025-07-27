@@ -44,6 +44,11 @@ import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import NetworkAssessmentPage from "./pages/NetworkAssessmentPage";
+import TechnicianDashboardSimplified from "./pages/TechnicianDashboardSimplified";
+import TechnicianStockView from "./pages/TechnicianStockView";
+import BulkStockIssuing from "./pages/BulkStockIssuing";
+import InvoiceManagement from "./pages/InvoiceManagement";
+import CoordinatorJobAssignment from "./pages/CoordinatorJobAssignment";
 
 const queryClient = new QueryClient();
 
