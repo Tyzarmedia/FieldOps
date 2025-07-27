@@ -23,9 +23,12 @@ import {
 import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
 
 export default function TechnicianDashboard() {
-  const [workingHours, setWorkingHours] = useState("12:31");
-  const [distanceTraveled, setDistanceTraveled] = useState("42.7");
+  const [workingHours, setWorkingHours] = useState("0:00");
+  const [distanceTraveled, setDistanceTraveled] = useState("0.0");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [clockInTime, setClockInTime] = useState<Date | null>(null);
+  const [isClocked, setIsClocked] = useState(false);
+  const [hasSignedOffJobs, setHasSignedOffJobs] = useState(false);
   const navigate = useNavigate();
 
   const stats = {
@@ -79,19 +82,53 @@ export default function TechnicianDashboard() {
   ];
 
   useEffect(() => {
-    // Update working hours every minute
-    const interval = setInterval(() => {
-      updateWorkingHours();
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
+    // Check if user is clocked in
+    const clockInData = localStorage.getItem('clockInTime');
+    const isClockInStatus = localStorage.getItem('isClocked') === 'true';
+
+    if (clockInData && isClockInStatus) {
+      setClockInTime(new Date(clockInData));
+      setIsClocked(true);
+    }
+
+    // Check for signed off jobs
+    const signedOffJobs = Object.keys(localStorage)
+      .filter(key => key.includes('_completed'))
+      .some(key => localStorage.getItem(key) === 'true');
+    setHasSignedOffJobs(signedOffJobs);
+
+    // Update working hours every second when clocked in
+    let interval: NodeJS.Timeout;
+    if (isClocked && clockInTime) {
+      interval = setInterval(() => {
+        updateWorkingHours();
+        updateDistanceTraveled();
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isClocked, clockInTime]);
 
   const updateWorkingHours = () => {
-    const [hours, minutes] = workingHours.split(":").map(Number);
-    const totalMinutes = hours * 60 + minutes + 1;
-    const newHours = Math.floor(totalMinutes / 60);
-    const newMinutes = totalMinutes % 60;
-    setWorkingHours(`${newHours}:${newMinutes.toString().padStart(2, "0")}`);
+    if (!clockInTime) return;
+
+    const now = new Date();
+    const diffMs = now.getTime() - clockInTime.getTime();
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(diffMins / 60);
+    const minutes = diffMins % 60;
+
+    setWorkingHours(`${hours}:${minutes.toString().padStart(2, "0")}`);
+  };
+
+  const updateDistanceTraveled = () => {
+    // Simulate distance tracking - in real app this would use GPS
+    const baseDistance = parseFloat(distanceTraveled);
+    const increment = Math.random() * 0.1; // Random small increment
+    const newDistance = (baseDistance + increment).toFixed(1);
+    setDistanceTraveled(newDistance);
   };
 
   const handleMenuAction = (action: string) => {
@@ -118,6 +155,21 @@ export default function TechnicianDashboard() {
   };
 
   const handleClockOut = () => {
+    // Check if all active jobs are signed off
+    if (!hasSignedOffJobs) {
+      alert("Please sign off all completed jobs before clocking out.");
+      return;
+    }
+
+    // Stop time tracking
+    setIsClocked(false);
+    setClockInTime(null);
+    localStorage.removeItem('clockInTime');
+    localStorage.setItem('isClocked', 'false');
+
+    // Record clock out time
+    localStorage.setItem('clockOutTime', new Date().toISOString());
+
     navigate("/clock-in");
   };
 
@@ -249,17 +301,48 @@ export default function TechnicianDashboard() {
           </div>
         </div>
 
-        {/* Clock Out Button */}
-        <div className="mt-6 text-center">
-          <Button
-            onClick={handleClockOut}
-            className="w-full max-w-xs bg-white/20 text-white border-white/30 hover:bg-white/30 transition-all duration-300"
-            variant="outline"
-          >
-            <Clock className="h-4 w-4 mr-2" />
-            Clock Out
-          </Button>
-        </div>
+        {/* Clock Out Button - Only show if clocked in and not signed off */}
+        {isClocked && !hasSignedOffJobs && (
+          <div className="mt-6 text-center">
+            <Button
+              onClick={handleClockOut}
+              className="w-full max-w-xs bg-white/20 text-white border-white/30 hover:bg-white/30 transition-all duration-300"
+              variant="outline"
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              Clock Out
+            </Button>
+          </div>
+        )}
+
+        {/* Sign Off Reminder */}
+        {isClocked && !hasSignedOffJobs && (
+          <div className="mt-4 text-center">
+            <div className="bg-orange-100 text-orange-800 px-4 py-2 rounded-lg text-sm">
+              Complete and sign off jobs to enable clock out
+            </div>
+          </div>
+        )}
+
+        {/* Clock In Button - Show if not clocked in */}
+        {!isClocked && (
+          <div className="mt-6 text-center">
+            <Button
+              onClick={() => {
+                const now = new Date();
+                setClockInTime(now);
+                setIsClocked(true);
+                localStorage.setItem('clockInTime', now.toISOString());
+                localStorage.setItem('isClocked', 'true');
+              }}
+              className="w-full max-w-xs bg-green-500 text-white border-green-600 hover:bg-green-600 transition-all duration-300"
+              variant="outline"
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              Clock In
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
