@@ -639,6 +639,38 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/technician/udf"
+            element={
+              <ProtectedRoute>
+                <UDFieldsScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/gallery"
+            element={
+              <ProtectedRoute>
+                <GalleryScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/stock"
+            element={
+              <ProtectedRoute>
+                <StockScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician/signoff"
+            element={
+              <ProtectedRoute>
+                <SignOffScreen />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
