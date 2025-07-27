@@ -620,6 +620,7 @@ export default function CustomizableKPIDashboard() {
     // Load new data if data source changed
     if (
       editWidgetForm.dataSource &&
+      editWidgetForm.dataSource !== "none" &&
       editWidgetForm.dataSource !== selectedWidget.dataSource
     ) {
       try {
