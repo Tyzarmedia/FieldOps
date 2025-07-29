@@ -36,7 +36,8 @@ interface LayoutProps {
     | "HSManager"
     | "HR"
     | "Payroll"
-    | "IT";
+    | "IT"
+    | "SystemAdministrator";
 }
 
 export function Layout({ children, userRole = "Technician" }: LayoutProps) {
@@ -160,7 +161,7 @@ function getNavigationForRole(role: string) {
     case "CEO":
       return [
         ...baseNavigation,
-        { name: "Analytics", href: "/analytics", icon: LayoutDashboard },
+        { name: "Analytics", href: "/analytics", icon: Activity },
         { name: "Team Management", href: "/team-management", icon: Users },
         { name: "System Settings", href: "/settings", icon: Settings },
       ];
@@ -277,6 +278,17 @@ function getNavigationForRole(role: string) {
         { name: "IT Reports", href: "/it-reports", icon: ClipboardList },
       ];
 
+    case "SystemAdministrator":
+      return [
+        ...baseNavigation,
+        { name: "User Management", href: "/admin/users", icon: Users },
+        { name: "System Settings", href: "/admin/settings", icon: Settings },
+        { name: "Integrations", href: "/admin/integrations", icon: Truck },
+        { name: "Monitoring", href: "/admin/monitoring", icon: Activity },
+        { name: "Security", href: "/admin/security", icon: Shield },
+        { name: "Data Management", href: "/admin/data", icon: Package },
+      ];
+
     default:
       return baseNavigation;
   }
@@ -307,6 +319,13 @@ function getPageTitle(pathname: string, role: string) {
     "/vehicle-inspections": "Vehicle Inspections",
     "/stock-overview": "Stock Overview",
     "/safety-overview": "Safety Overview",
+    "/admin": "System Administration",
+    "/admin/users": "User Management",
+    "/admin/settings": "System Settings",
+    "/admin/integrations": "Integration Management",
+    "/admin/monitoring": "System Monitoring",
+    "/admin/security": "Security & Compliance",
+    "/admin/data": "Data Management",
   };
 
   return pathMap[pathname] || "FieldOps";

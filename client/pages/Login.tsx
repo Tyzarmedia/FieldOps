@@ -16,6 +16,12 @@ import { UserCheck, Building, Users, Shield } from "lucide-react";
 const userRoles = [
   { value: "CEO", label: "CEO", icon: Building, color: "text-purple-600" },
   {
+    value: "SystemAdministrator",
+    label: "System Administrator",
+    icon: Shield,
+    color: "text-red-600",
+  },
+  {
     value: "Manager",
     label: "Manager",
     icon: Users,

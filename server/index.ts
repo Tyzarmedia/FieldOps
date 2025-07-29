@@ -1,6 +1,29 @@
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import {
+  getInventoryItems,
+  getInventoryItem,
+  getStockMovements,
+  createStockMovement,
+  getPurchaseOrders,
+  getLowStockItems,
+  syncInventory,
+  getInventoryStats,
+  issueInventory,
+  returnInventory
+} from "./routes/inventory";
+import {
+  getSyncSchedules,
+  createSyncSchedule,
+  updateSyncSchedule,
+  deleteSyncSchedule,
+  triggerManualSync,
+  getSyncStatus,
+  trackStockMovement
+} from "./routes/sync";
+import { getSyncService } from "./services/syncService";
+import { createWebSocketServer } from "./routes/websocket";
 
 export function createServer() {
   const app = express();
@@ -16,6 +39,35 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
+
+  // Inventory API routes
+  app.get("/api/inventory/items", getInventoryItems);
+  app.get("/api/inventory/item/:itemCode", getInventoryItem);
+  app.get("/api/inventory/movements", getStockMovements);
+  app.post("/api/inventory/movements", createStockMovement);
+  app.get("/api/inventory/purchase-orders", getPurchaseOrders);
+  app.get("/api/inventory/low-stock", getLowStockItems);
+  app.post("/api/inventory/sync", syncInventory);
+  app.get("/api/inventory/stats", getInventoryStats);
+  app.post("/api/inventory/issue", issueInventory);
+  app.post("/api/inventory/return", returnInventory);
+
+  // Sync management routes
+  app.get("/api/sync/schedules", getSyncSchedules);
+  app.post("/api/sync/schedules", createSyncSchedule);
+  app.put("/api/sync/schedules/:id", updateSyncSchedule);
+  app.delete("/api/sync/schedules/:id", deleteSyncSchedule);
+  app.post("/api/sync/manual", triggerManualSync);
+  app.get("/api/sync/status", getSyncStatus);
+  app.post("/api/sync/track-movement", trackStockMovement);
+
+  // Initialize sync service
+  getSyncService();
+
+  // Initialize WebSocket server (runs on port 8081)
+  if (process.env.NODE_ENV !== 'test') {
+    createWebSocketServer();
+  }
 
   return app;
 }

@@ -23,6 +23,7 @@ import GalleryScreen from "./pages/GalleryScreen";
 import CeoDashboard from "./pages/CeoDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import CoordinatorDashboard from "./pages/CoordinatorDashboard";
+import CoordinatorDashboardEnhanced from "./pages/CoordinatorDashboardEnhanced";
 import AssistantTechnicianDashboard from "./pages/AssistantTechnicianDashboard";
 import FleetManagerDashboard from "./pages/FleetManagerDashboard";
 import HRDashboard from "./pages/HRDashboard";
@@ -32,6 +33,13 @@ import PayrollDashboard from "./pages/PayrollDashboard";
 import PayrollDashboardWithTab from "./pages/PayrollDashboardWithTab";
 import ITDashboard from "./pages/ITDashboard";
 import ITDashboardWithTab from "./pages/ITDashboardWithTab";
+import InventoryManagement from "./pages/InventoryManagement";
+import SystemAdministratorDashboard from "./pages/SystemAdministratorDashboard";
+import EnhancedManagerDashboard from "./pages/EnhancedManagerDashboard";
+import EnhancedCeoDashboard from "./pages/EnhancedCeoDashboard";
+import TeamTrackingPage from "./pages/TeamTrackingPage";
+import JobAnalyticsPage from "./pages/JobAnalyticsPage";
+import JobBoardPage from "./pages/JobBoardPage";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -49,7 +57,8 @@ type UserRole =
   | "HSManager"
   | "HR"
   | "Payroll"
-  | "IT";
+  | "IT"
+  | "SystemAdministrator";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
@@ -89,11 +98,11 @@ function DashboardRouter() {
 
   switch (userRole) {
     case "CEO":
-      return <CeoDashboard />;
+      return <EnhancedCeoDashboard />;
     case "Manager":
-      return <ManagerDashboard />;
+      return <EnhancedManagerDashboard />;
     case "Coordinator":
-      return <CoordinatorDashboard />;
+      return <CoordinatorDashboardEnhanced />;
     case "Technician":
       return <TechnicianDashboard />;
     case "AssistantTechnician":
@@ -101,12 +110,7 @@ function DashboardRouter() {
     case "FleetManager":
       return <FleetManagerDashboard />;
     case "StockManager":
-      return (
-        <PlaceholderPage
-          title="Stock Manager Dashboard"
-          description="Inventory management, stock allocation, and usage tracking."
-        />
-      );
+      return <InventoryManagement />;
     case "HSManager":
       return (
         <PlaceholderPage
@@ -120,6 +124,8 @@ function DashboardRouter() {
       return <PayrollDashboard />;
     case "IT":
       return <ITDashboard />;
+    case "SystemAdministrator":
+      return <SystemAdministratorDashboard />;
     default:
       return <Dashboard />;
   }
@@ -206,10 +212,7 @@ const App = () => (
             path="/stock"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Stock Management"
-                  description="Inventory tracking, stock allocation, and usage reporting."
-                />
+                <InventoryManagement />
               </ProtectedRoute>
             }
           />
@@ -239,10 +242,7 @@ const App = () => (
             path="/team-tracking"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Team Tracking"
-                  description="Real-time technician status, GPS tracking, and performance monitoring."
-                />
+                <TeamTrackingPage />
               </ProtectedRoute>
             }
           />
@@ -250,10 +250,7 @@ const App = () => (
             path="/job-analytics"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Job Analytics"
-                  description="Job completion rates, efficiency metrics, and trend analysis."
-                />
+                <JobAnalyticsPage />
               </ProtectedRoute>
             }
           />
@@ -261,10 +258,7 @@ const App = () => (
             path="/job-board"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Job Board"
-                  description="Create, edit, and manage job assignments across all technicians."
-                />
+                <JobBoardPage />
               </ProtectedRoute>
             }
           />
@@ -512,10 +506,7 @@ const App = () => (
             path="/stock-on-hand"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Stock on Hand"
-                  description="View current stock levels and available equipment."
-                />
+                <InventoryManagement />
               </ProtectedRoute>
             }
           />
@@ -590,6 +581,63 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <ITDashboardWithTab defaultTab="reports" />
+              </ProtectedRoute>
+            }
+          />
+          {/* System Administrator Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <SystemAdministratorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute>
+                <SystemAdministratorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <ProtectedRoute>
+                <SystemAdministratorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/integrations"
+            element={
+              <ProtectedRoute>
+                <SystemAdministratorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/monitoring"
+            element={
+              <ProtectedRoute>
+                <SystemAdministratorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/security"
+            element={
+              <ProtectedRoute>
+                <SystemAdministratorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/data"
+            element={
+              <ProtectedRoute>
+                <SystemAdministratorDashboard />
               </ProtectedRoute>
             }
           />
