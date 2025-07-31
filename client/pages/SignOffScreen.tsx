@@ -36,13 +36,118 @@ export default function SignOffScreen() {
   const [udfCompleted, setUdfCompleted] = useState(false);
   const [stockUpdated, setStockUpdated] = useState(false);
 
-  const handleSave = () => {
-    console.log("Saving sign off...");
+  // Digital signature functions
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+      }
+    }
+  }, []);
+
+  const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    setIsDrawing(true);
+    const rect = canvas.getBoundingClientRect();
+    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
   };
 
-  const handleComplete = () => {
-    console.log("Completing job...");
-    navigate('/');
+  const draw = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDrawing) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      setHasSigned(true);
+    }
+  };
+
+  const stopDrawing = () => {
+    setIsDrawing(false);
+  };
+
+  const clearSignature = () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        setHasSigned(false);
+      }
+    }
+  };
+
+  // Validation functions
+  const checkValidation = async () => {
+    setIsValidating(true);
+    const errors: string[] = [];
+
+    // Check UDF completion
+    if (!udfCompleted) {
+      errors.push("UDF fields must be filled and updated");
+    }
+
+    // Check stock status
+    if (!stockUpdated && !noStockUsed) {
+      errors.push("Stock must be updated or marked as 'No stock used'");
+    }
+
+    // Check digital signature
+    if (!hasSigned) {
+      errors.push("Digital signature is required");
+    }
+
+    // Check terms acceptance
+    if (!termsAccepted) {
+      errors.push("Terms & Conditions must be accepted");
+    }
+
+    setValidationErrors(errors);
+    setIsValidating(false);
+
+    return errors.length === 0;
+  };
+
+  const handleSave = async () => {
+    console.log("Saving sign off...");
+    // Save current state without full validation
+  };
+
+  const handleComplete = async () => {
+    const isValid = await checkValidation();
+
+    if (isValid) {
+      console.log("Completing job...");
+      // Get signature data
+      const canvas = canvasRef.current;
+      const signatureData = canvas?.toDataURL();
+
+      // In real app, send to API
+      console.log("Signature data:", signatureData);
+
+      navigate('/', { state: { message: "Job completed successfully!" } });
+    }
   };
 
   const handleTabChange = (tab: string) => {
