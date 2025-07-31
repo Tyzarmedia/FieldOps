@@ -177,6 +177,24 @@ export default function App() {
             <Route path="/demo-hr" element={<AutoLogin />} />
             <Route path="/clock-in" element={<ClockInScreen />} />
 
+            {/* Mobile Dashboard Routes - No Layout wrapper */}
+            <Route
+              path="/technician"
+              element={
+                <MobileProtectedRoute>
+                  <TechnicianDashboard />
+                </MobileProtectedRoute>
+              }
+            />
+            <Route
+              path="/assistant-technician"
+              element={
+                <MobileProtectedRoute>
+                  <AssistantTechnicianDashboard />
+                </MobileProtectedRoute>
+              }
+            />
+
             <Route
               path="/"
               element={
