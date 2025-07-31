@@ -179,7 +179,10 @@ export default function App() {
               path="/technician/safety"
               element={<TechnicianSafetyScreen />}
             />
-            <Route path="/technician/fleet" element={<TechnicianFleetScreen />} />
+            <Route
+              path="/technician/fleet"
+              element={<TechnicianFleetScreen />}
+            />
             <Route
               path="/technician/overtime"
               element={<TechnicianOvertimeScreen />}
