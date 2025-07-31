@@ -70,11 +70,12 @@ export default function AssistantTechnicianDashboard() {
     },
     {
       id: "overtime",
-      title: "Capture Overtime",
+      title: "View Overtime",
       icon: Timer,
-      color: "bg-orange-500",
-      description: "Log overtime hours worked",
+      color: "bg-gray-400",
+      description: "View your overtime records",
       action: () => navigate("/technician/overtime"),
+      disabled: true,
     },
   ];
 
@@ -304,8 +305,10 @@ export default function AssistantTechnicianDashboard() {
             return (
               <Card
                 key={card.id}
-                className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
-                onClick={card.action}
+                className={`bg-white transition-all duration-300 border-0 shadow-md ${
+                  card.disabled ? 'cursor-not-allowed opacity-60' : 'hover:shadow-lg cursor-pointer'
+                }`}
+                onClick={card.disabled ? undefined : card.action}
               >
                 <CardContent className="p-6 text-center">
                   <div className="flex justify-center mb-4">
