@@ -329,9 +329,14 @@ export default function CoordinatorJobBoard() {
 
   const stats = {
     totalJobs: jobs.length,
+    assigned: jobs.filter((j) => j.status === "assigned").length,
+    accepted: jobs.filter((j) => j.status === "accepted").length,
     unassigned: jobs.filter((j) => j.status === "unassigned").length,
     inProgress: jobs.filter((j) => j.status === "in-progress").length,
-    completed: jobs.filter((j) => j.status === "completed").length,
+    finished: jobs.filter((j) => j.status === "completed").length,
+    followup: jobs.filter((j) => j.status === "followup").length,
+    escalated: jobs.filter((j) => j.status === "escalated").length,
+    rocClosed: jobs.filter((j) => j.status === "roc-closed").length,
   };
 
   return (
@@ -479,7 +484,7 @@ export default function CoordinatorJobBoard() {
               <UserCheck className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{stats.assigned || 1}</div>
+              <div className="text-2xl font-bold text-purple-600">{stats.assigned}</div>
             </CardContent>
           </Card>
           <Card
@@ -494,7 +499,7 @@ export default function CoordinatorJobBoard() {
               <CheckCircle className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{stats.accepted || 1}</div>
+              <div className="text-2xl font-bold text-blue-600">{stats.accepted}</div>
             </CardContent>
           </Card>
           <Card
@@ -509,7 +514,7 @@ export default function CoordinatorJobBoard() {
               <Activity className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{stats.inProgress || 1}</div>
+              <div className="text-2xl font-bold text-yellow-600">{stats.inProgress}</div>
             </CardContent>
           </Card>
           <Card
@@ -524,7 +529,7 @@ export default function CoordinatorJobBoard() {
               <CheckCircle className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{stats.completed || 1}</div>
+              <div className="text-2xl font-bold text-green-600">{stats.finished}</div>
             </CardContent>
           </Card>
           <Card
@@ -539,7 +544,7 @@ export default function CoordinatorJobBoard() {
               <Timer className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-600">1</div>
+              <div className="text-2xl font-bold text-orange-600">{stats.followup}</div>
             </CardContent>
           </Card>
           <Card
@@ -554,7 +559,7 @@ export default function CoordinatorJobBoard() {
               <AlertTriangle className="h-4 w-4 text-red-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">1</div>
+              <div className="text-2xl font-bold text-red-600">{stats.escalated}</div>
             </CardContent>
           </Card>
           <Card
@@ -569,7 +574,7 @@ export default function CoordinatorJobBoard() {
               <CheckCircle className="h-4 w-4 text-gray-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-600">1</div>
+              <div className="text-2xl font-bold text-gray-600">{stats.rocClosed}</div>
             </CardContent>
           </Card>
         </div>
