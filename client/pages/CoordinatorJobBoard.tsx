@@ -219,11 +219,12 @@ export default function CoordinatorJobBoard() {
 
   const handleDrop = useCallback((technicianId: string, timeSlot?: string) => {
     if (draggedJob) {
-      setJobs(prev => prev.map(job => 
-        job.id === draggedJob.id 
-          ? { 
-              ...job, 
-              assignedTechnician: technicians.find(t => t.id === technicianId)?.name,
+      const targetTechnician = technicians.find(t => t.id === technicianId);
+      setJobs(prev => prev.map(job =>
+        job.id === draggedJob.id
+          ? {
+              ...job,
+              assignedTechnician: targetTechnician?.name,
               status: "assigned" as const,
               scheduledDate: selectedDate,
               scheduledTime: timeSlot || "09:00"
@@ -233,6 +234,20 @@ export default function CoordinatorJobBoard() {
       setDraggedJob(null);
     }
   }, [draggedJob, technicians, selectedDate]);
+
+  const handleJobReschedule = useCallback((jobId: string, newTechnicianId: string, newTimeSlot: string) => {
+    const targetTechnician = technicians.find(t => t.id === newTechnicianId);
+    setJobs(prev => prev.map(job =>
+      job.id === jobId
+        ? {
+            ...job,
+            assignedTechnician: targetTechnician?.name,
+            scheduledDate: selectedDate,
+            scheduledTime: newTimeSlot
+          }
+        : job
+    ));
+  }, [technicians, selectedDate]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -563,15 +578,49 @@ export default function CoordinatorJobBoard() {
                               className={`h-16 border-b p-1 transition-colors ${
                                 draggedJob ? 'border-dashed border-blue-300 bg-blue-50/50' : ''
                               }`}
-                              onDragOver={(e) => e.preventDefault()}
-                              onDrop={() => handleDrop(technician.id, time)}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                e.currentTarget.classList.add('bg-blue-100/80', 'border-blue-400');
+                              }}
+                              onDragLeave={(e) => {
+                                e.currentTarget.classList.remove('bg-blue-100/80', 'border-blue-400');
+                              }}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                e.currentTarget.classList.remove('bg-blue-100/80', 'border-blue-400');
+                                if (draggedJob) {
+                                  // If there's already a job in this slot, we need to handle the swap
+                                  if (jobAtTime && jobAtTime.id !== draggedJob.id) {
+                                    // Swap jobs - move the existing job to unassigned
+                                    setJobs(prev => prev.map(job => {
+                                      if (job.id === jobAtTime.id) {
+                                        return { ...job, status: "unassigned" as const, assignedTechnician: undefined, scheduledDate: undefined, scheduledTime: undefined };
+                                      }
+                                      return job;
+                                    }));
+                                  }
+                                  handleDrop(technician.id, time);
+                                }
+                              }}
                             >
                               {jobAtTime ? (
-                                <div className={`h-full rounded p-2 text-xs ${
-                                  jobAtTime.status === 'completed' ? 'bg-green-100 border-green-300' :
-                                  jobAtTime.status === 'in-progress' ? 'bg-blue-100 border-blue-300' :
-                                  'bg-purple-100 border-purple-300'
-                                } border-l-4`}>
+                                <div
+                                  draggable={jobAtTime.status !== 'completed'}
+                                  onDragStart={() => handleDragStart(jobAtTime)}
+                                  onDragEnd={handleDragEnd}
+                                  className={`h-full rounded p-2 text-xs cursor-move transition-all hover:shadow-md ${
+                                    draggedJob?.id === jobAtTime.id ? 'opacity-50 scale-95' : ''
+                                  } ${
+                                    jobAtTime.status === 'completed' ? 'bg-green-100 border-green-300 cursor-not-allowed' :
+                                    jobAtTime.status === 'in-progress' ? 'bg-blue-100 border-blue-300' :
+                                    'bg-purple-100 border-purple-300'
+                                  } border-l-4 relative group`}
+                                >
+                                  {jobAtTime.status !== 'completed' && (
+                                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <GripVertical className="h-3 w-3 text-gray-400" />
+                                    </div>
+                                  )}
                                   <div className="font-semibold">{jobAtTime.id}</div>
                                   <div className="truncate">{jobAtTime.title}</div>
                                   <Badge className={getStatusColor(jobAtTime.status)} variant="outline">
@@ -579,9 +628,9 @@ export default function CoordinatorJobBoard() {
                                   </Badge>
                                 </div>
                               ) : (
-                                <div className="h-full flex items-center justify-center text-gray-300 hover:bg-gray-50 rounded">
+                                <div className="h-full flex items-center justify-center text-gray-300 hover:bg-gray-50 rounded transition-colors">
                                   {draggedJob && (
-                                    <div className="text-xs text-blue-600">Drop here</div>
+                                    <div className="text-xs text-blue-600 font-medium">Drop here to reschedule</div>
                                   )}
                                 </div>
                               )}
