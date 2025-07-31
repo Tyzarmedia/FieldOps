@@ -67,7 +67,7 @@ export default function UDFieldsScreen() {
       </div>
 
       {/* Content */}
-      <div className="p-4 pb-24 space-y-4">
+      <div className="p-4 pb-32 space-y-4">
         {/* FTTH Maintenance - Fault Details */}
         <Card>
           <CardContent className="p-0">
