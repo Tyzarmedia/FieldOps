@@ -98,21 +98,91 @@ export default function GalleryScreen() {
     }
   };
 
-  const handleUpload = (
-    category:
-      | "before-light-readings"
-      | "image-fault"
-      | "image-after-work"
-      | "light-readings-after-work",
-  ) => {
-    // Simulate photo upload
-    const newPhoto: Photo = {
-      id: Date.now().toString(),
-      category,
-      url: "/placeholder.svg",
-      timestamp: new Date(),
-    };
-    setPhotos((prev) => [...prev, newPhoto]);
+  // Camera access functions
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }, // Use back camera on mobile
+        audio: false
+      });
+      setCurrentStream(stream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+      setShowCamera(true);
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      // Fallback to file input if camera access fails
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    }
+  };
+
+  const stopCamera = () => {
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop());
+      setCurrentStream(null);
+    }
+    setShowCamera(false);
+  };
+
+  const capturePhoto = (category: "before-light-readings" | "image-fault" | "image-after-work" | "light-readings-after-work") => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      if (context) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+        const newPhoto: Photo = {
+          id: Date.now().toString(),
+          category,
+          url: imageDataUrl,
+          timestamp: new Date(),
+        };
+
+        setPhotos((prev) => [...prev, newPhoto]);
+        stopCamera();
+      }
+    }
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>, category: "before-light-readings" | "image-fault" | "image-after-work" | "light-readings-after-work") => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const newPhoto: Photo = {
+          id: Date.now().toString(),
+          category,
+          url: e.target?.result as string,
+          timestamp: new Date(),
+        };
+        setPhotos((prev) => [...prev, newPhoto]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUpload = (category: "before-light-readings" | "image-fault" | "image-after-work" | "light-readings-after-work") => {
+    // Show options for camera or file selection
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      startCamera();
+      setSelectedCategory(category);
+    } else {
+      // Fallback to file input for older browsers
+      if (fileInputRef.current) {
+        fileInputRef.current.onchange = (e) => handleFileSelect(e as any, category);
+        fileInputRef.current.click();
+      }
+    }
   };
 
   const handleDeletePhoto = (photoId: string) => {
