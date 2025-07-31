@@ -282,14 +282,6 @@ const App = () => (
             }
           />
           <Route
-            path="/job-board"
-            element={
-              <ProtectedRoute>
-                <CoordinatorJobBoard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/monitor-progress"
             element={
               <ProtectedRoute>
