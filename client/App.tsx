@@ -36,6 +36,8 @@ import SystemAdminDashboard from "./pages/SystemAdminDashboard";
 import CoordinatorJobBoard from "./pages/CoordinatorJobBoard";
 import MonitorProgress from "./pages/MonitorProgress";
 import AssignJobs from "./pages/AssignJobs";
+import EnhancedJobDetailsScreen from "./pages/EnhancedJobDetailsScreen";
+import EnhancedFleetManagerDashboard from "./pages/EnhancedFleetManagerDashboard";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -106,7 +108,7 @@ function DashboardRouter() {
     case "AssistantTechnician":
       return <AssistantTechnicianDashboard />;
     case "FleetManager":
-      return <FleetManagerDashboard />;
+      return <EnhancedFleetManagerDashboard />;
     case "StockManager":
       return (
         <PlaceholderPage
@@ -188,9 +190,10 @@ export default function App() {
               element={<TechnicianOvertimeScreen />}
             />
             <Route path="/technician/udf" element={<UDFieldsScreen />} />
-            <Route path="/technician/stock" element={<StockScreen />} />
-            <Route path="/technician/gallery" element={<GalleryScreen />} />
-            <Route path="/technician/signoff" element={<SignOffScreen />} />
+          <Route path="/technician/job/:jobId" element={<EnhancedJobDetailsScreen />} />
+          <Route path="/technician/stock" element={<StockScreen />} />
+          <Route path="/technician/gallery" element={<GalleryScreen />} />
+          <Route path="/technician/signoff" element={<SignOffScreen />} />
             <Route
               path="/fleet"
               element={
