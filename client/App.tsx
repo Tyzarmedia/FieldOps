@@ -86,6 +86,35 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <Layout userRole={userRole}>{children}</Layout>;
 }
 
+function MobileProtectedRoute({ children }: { children: React.ReactNode }) {
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("userRole") as UserRole;
+    setUserRole(storedRole);
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!userRole) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // No Layout wrapper for mobile routes
+  return <>{children}</>;
+}
+
 function DashboardRouter() {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
 
