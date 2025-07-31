@@ -133,9 +133,11 @@ function DashboardRouter() {
     case "Coordinator":
       return <CoordinatorDashboard />;
     case "Technician":
-      return <TechnicianDashboard />;
+      // Redirect to mobile-first route
+      return <Navigate to="/technician" replace />;
     case "AssistantTechnician":
-      return <AssistantTechnicianDashboard />;
+      // Redirect to mobile-first route
+      return <Navigate to="/assistant-technician" replace />;
     case "FleetManager":
       return <EnhancedFleetManagerDashboard />;
     case "StockManager":
