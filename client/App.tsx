@@ -32,6 +32,7 @@ import PayrollDashboard from "./pages/PayrollDashboard";
 import PayrollDashboardWithTab from "./pages/PayrollDashboardWithTab";
 import ITDashboard from "./pages/ITDashboard";
 import ITDashboardWithTab from "./pages/ITDashboardWithTab";
+import SystemAdminDashboard from "./pages/SystemAdminDashboard";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -39,6 +40,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 type UserRole =
+  | "SystemAdmin"
   | "CEO"
   | "Manager"
   | "Coordinator"
@@ -88,6 +90,8 @@ function DashboardRouter() {
   }, []);
 
   switch (userRole) {
+    case "SystemAdmin":
+      return <SystemAdminDashboard />;
     case "CEO":
       return <CeoDashboard />;
     case "Manager":
