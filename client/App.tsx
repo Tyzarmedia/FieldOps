@@ -35,6 +35,7 @@ import ITDashboardWithTab from "./pages/ITDashboardWithTab";
 import SystemAdminDashboard from "./pages/SystemAdminDashboard";
 import CoordinatorJobBoard from "./pages/CoordinatorJobBoard";
 import MonitorProgress from "./pages/MonitorProgress";
+import AssignJobs from "./pages/AssignJobs";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -275,10 +276,7 @@ const App = () => (
             path="/assign-jobs"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Assign Jobs"
-                  description="Job assignment interface for coordinators to distribute work."
-                />
+                <AssignJobs />
               </ProtectedRoute>
             }
           />
