@@ -590,191 +590,195 @@ export default function CoordinatorJobBoard() {
           </div>
 
           {/* Schedule Grid */}
-          <div className="col-span-9">
-            <Card className="h-[800px]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-blue-600" />
-                  Schedule - {new Date(selectedDate).toLocaleDateString()}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="grid grid-cols-1 lg:grid-cols-5 h-[720px]">
-                  {/* Time slots header */}
-                  <div className="border-r bg-gray-50 p-2">
-                    <div className="font-semibold text-sm mb-3 text-center sticky top-0 bg-gray-50 py-2">
-                      Time
-                    </div>
-                    <ScrollArea className="h-[650px]">
-                      <div className="space-y-0">
-                        {timeSlots.map((time) => (
-                          <div
-                            key={time}
-                            className="h-12 flex items-center justify-center text-sm text-muted-foreground border-b"
-                          >
-                            {time}
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
+        <div className="col-span-9">
+          <Card className="h-[800px]">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-blue-600" />
+                Schedule - {new Date(selectedDate).toLocaleDateString()}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="h-[720px] flex flex-col">
+                {/* Header row with technician names */}
+                <div className="grid grid-cols-5 border-b bg-gray-50 sticky top-0 z-10">
+                  <div className="border-r p-2">
+                    <div className="font-semibold text-sm text-center">Time</div>
                   </div>
-
-                  {/* Technician columns */}
                   {technicians.slice(0, 4).map((technician) => (
-                    <div key={technician.id} className="border-r">
-                      {/* Technician header */}
-                      <div className="p-2 border-b bg-gray-50">
-                        <div className="text-center">
-                          <div className="font-semibold text-sm">
-                            {technician.name}
-                          </div>
-                          <div className="flex items-center justify-center gap-2 mt-1">
+                    <div key={technician.id} className="border-r p-2">
+                      <div className="text-center">
+                        <div className="font-semibold text-sm">
+                          {technician.name}
+                        </div>
+                        <div className="flex items-center justify-center gap-2 mt-1">
+                          <Badge
+                            className={getStatusColor(technician.status)}
+                          >
+                            {technician.status}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {technician.workload}%
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1 mt-1 justify-center">
+                          {technician.skills.slice(0, 2).map((skill) => (
                             <Badge
-                              className={getStatusColor(technician.status)}
+                              key={skill}
+                              variant="outline"
+                              className="text-xs"
                             >
-                              {technician.status}
+                              {skill}
                             </Badge>
-                            <span className="text-xs text-muted-foreground">
-                              {technician.workload}%
-                            </span>
-                          </div>
-                          <div className="flex flex-wrap gap-1 mt-1 justify-center">
-                            {technician.skills.slice(0, 2).map((skill) => (
-                              <Badge
-                                key={skill}
-                                variant="outline"
-                                className="text-xs"
-                              >
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div>
+                          ))}
                         </div>
                       </div>
-
-                      {/* Time slots */}
-                      <ScrollArea className="h-[650px]">
-                        <div className="space-y-0">
-                          {timeSlots.map((time) => {
-                            const jobAtTime = assignedJobs.find(
-                              (job) =>
-                                job.assignedTechnician === technician.name &&
-                                job.scheduledTime === time &&
-                                job.scheduledDate === selectedDate,
-                            );
-
-                            return (
-                              <div
-                                key={time}
-                                className={`h-12 border-b p-1 transition-colors ${
-                                  draggedJob
-                                    ? "border-dashed border-blue-300 bg-blue-50/50"
-                                    : ""
-                                }`}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  e.currentTarget.classList.add(
-                                    "bg-blue-100/80",
-                                    "border-blue-400",
-                                  );
-                                }}
-                                onDragLeave={(e) => {
-                                  e.currentTarget.classList.remove(
-                                    "bg-blue-100/80",
-                                    "border-blue-400",
-                                  );
-                                }}
-                                onDrop={(e) => {
-                                  e.preventDefault();
-                                  e.currentTarget.classList.remove(
-                                    "bg-blue-100/80",
-                                    "border-blue-400",
-                                  );
-                                  if (draggedJob) {
-                                    // If there's already a job in this slot, we need to handle the swap
-                                    if (
-                                      jobAtTime &&
-                                      jobAtTime.id !== draggedJob.id
-                                    ) {
-                                      // Swap jobs - move the existing job to unassigned
-                                      setJobs((prev) =>
-                                        prev.map((job) => {
-                                          if (job.id === jobAtTime.id) {
-                                            return {
-                                              ...job,
-                                              status: "unassigned" as const,
-                                              assignedTechnician: undefined,
-                                              scheduledDate: undefined,
-                                              scheduledTime: undefined,
-                                            };
-                                          }
-                                          return job;
-                                        }),
-                                      );
-                                    }
-                                    handleDrop(technician.id, time);
-                                  }
-                                }}
-                              >
-                                {jobAtTime ? (
-                                  <div
-                                    draggable={jobAtTime.status !== "completed"}
-                                    onDragStart={() =>
-                                      handleDragStart(jobAtTime)
-                                    }
-                                    onDragEnd={handleDragEnd}
-                                    className={`h-full rounded p-2 text-xs cursor-move transition-all hover:shadow-md ${
-                                      draggedJob?.id === jobAtTime.id
-                                        ? "opacity-50 scale-95"
-                                        : ""
-                                    } ${
-                                      jobAtTime.status === "completed"
-                                        ? "bg-green-100 border-green-300 cursor-not-allowed"
-                                        : jobAtTime.status === "in-progress"
-                                          ? "bg-blue-100 border-blue-300"
-                                          : "bg-purple-100 border-purple-300"
-                                    } border-l-4 relative group`}
-                                  >
-                                    {jobAtTime.status !== "completed" && (
-                                      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <GripVertical className="h-3 w-3 text-gray-400" />
-                                      </div>
-                                    )}
-                                    <div className="font-semibold">
-                                      {jobAtTime.id}
-                                    </div>
-                                    <div className="truncate">
-                                      {jobAtTime.title}
-                                    </div>
-                                    <Badge
-                                      className={getStatusColor(
-                                        jobAtTime.status,
-                                      )}
-                                      variant="outline"
-                                    >
-                                      {jobAtTime.status}
-                                    </Badge>
-                                  </div>
-                                ) : (
-                                  <div className="h-full flex items-center justify-center text-gray-300 hover:bg-gray-50 rounded transition-colors">
-                                    {draggedJob && (
-                                      <div className="text-xs text-blue-600 font-medium">
-                                        Drop here to reschedule
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </ScrollArea>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+
+                {/* Scrollable content area */}
+                <ScrollArea className="flex-1">
+                  <div className="grid grid-cols-5">
+                    {/* Time column */}
+                    <div className="border-r bg-gray-50">
+                      {timeSlots.map((time, index) => (
+                        <div
+                          key={time}
+                          className={`h-12 flex items-center justify-center text-sm text-muted-foreground border-b ${
+                            index % 2 === 0 ? 'bg-gray-50' : 'bg-gray-100'
+                          }`}
+                        >
+                          {time}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Technician columns */}
+                    {technicians.slice(0, 4).map((technician) => (
+                      <div key={technician.id} className="border-r">
+                        {timeSlots.map((time, timeIndex) => {
+                          const jobAtTime = assignedJobs.find(
+                            (job) =>
+                              job.assignedTechnician === technician.name &&
+                              job.scheduledTime === time &&
+                              job.scheduledDate === selectedDate,
+                          );
+
+                          return (
+                            <div
+                              key={time}
+                              className={`h-12 border-b p-1 transition-colors ${
+                                timeIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50'
+                              } ${
+                                draggedJob
+                                  ? "border-dashed border-blue-300 bg-blue-50/50"
+                                  : ""
+                              }`}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                e.currentTarget.classList.add(
+                                  "bg-blue-100/80",
+                                  "border-blue-400",
+                                );
+                              }}
+                              onDragLeave={(e) => {
+                                e.currentTarget.classList.remove(
+                                  "bg-blue-100/80",
+                                  "border-blue-400",
+                                );
+                              }}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                e.currentTarget.classList.remove(
+                                  "bg-blue-100/80",
+                                  "border-blue-400",
+                                );
+                                if (draggedJob) {
+                                  // If there's already a job in this slot, we need to handle the swap
+                                  if (
+                                    jobAtTime &&
+                                    jobAtTime.id !== draggedJob.id
+                                  ) {
+                                    // Swap jobs - move the existing job to unassigned
+                                    setJobs((prev) =>
+                                      prev.map((job) => {
+                                        if (job.id === jobAtTime.id) {
+                                          return {
+                                            ...job,
+                                            status: "unassigned" as const,
+                                            assignedTechnician: undefined,
+                                            scheduledDate: undefined,
+                                            scheduledTime: undefined,
+                                          };
+                                        }
+                                        return job;
+                                      }),
+                                    );
+                                  }
+                                  handleDrop(technician.id, time);
+                                }
+                              }}
+                            >
+                              {jobAtTime ? (
+                                <div
+                                  draggable={jobAtTime.status !== "completed"}
+                                  onDragStart={() =>
+                                    handleDragStart(jobAtTime)
+                                  }
+                                  onDragEnd={handleDragEnd}
+                                  className={`h-full rounded p-2 text-xs cursor-move transition-all hover:shadow-md ${
+                                    draggedJob?.id === jobAtTime.id
+                                      ? "opacity-50 scale-95"
+                                      : ""
+                                  } ${
+                                    jobAtTime.status === "completed"
+                                      ? "bg-green-100 border-green-300 cursor-not-allowed"
+                                      : jobAtTime.status === "in-progress"
+                                        ? "bg-blue-100 border-blue-300"
+                                        : "bg-purple-100 border-purple-300"
+                                  } border-l-4 relative group`}
+                                >
+                                  {jobAtTime.status !== "completed" && (
+                                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <GripVertical className="h-3 w-3 text-gray-400" />
+                                    </div>
+                                  )}
+                                  <div className="font-semibold">
+                                    {jobAtTime.id}
+                                  </div>
+                                  <div className="truncate">
+                                    {jobAtTime.title}
+                                  </div>
+                                  <Badge
+                                    className={getStatusColor(
+                                      jobAtTime.status,
+                                    )}
+                                    variant="outline"
+                                  >
+                                    {jobAtTime.status}
+                                  </Badge>
+                                </div>
+                              ) : (
+                                <div className="h-full flex items-center justify-center text-gray-300 hover:bg-gray-50 rounded transition-colors">
+                                  {draggedJob && (
+                                    <div className="text-xs text-blue-600 font-medium">
+                                      Drop here to reschedule
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         </div>
 
         {/* Enhanced Instructions */}
