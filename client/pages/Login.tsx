@@ -14,6 +14,12 @@ import {
 import { UserCheck, Building, Users, Shield } from "lucide-react";
 
 const userRoles = [
+  {
+    value: "SystemAdmin",
+    label: "System Administrator",
+    icon: Shield,
+    color: "text-red-800",
+  },
   { value: "CEO", label: "CEO", icon: Building, color: "text-purple-600" },
   {
     value: "Manager",
@@ -194,6 +200,10 @@ export default function Login() {
           </CardHeader>
           <CardContent className="text-xs text-muted-foreground space-y-2">
             <div className="grid grid-cols-1 gap-2">
+              <div>
+                <strong className="text-red-800">System Admin:</strong> Full
+                system control, user management, security
+              </div>
               <div>
                 <strong className="text-purple-600">CEO:</strong> Full access +
                 dashboard customization
