@@ -461,8 +461,35 @@ export default function CoordinatorJobBoard() {
                   <Badge variant="secondary">{unassignedJobs.length}</Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0">
+              <CardContent
+                className={`p-0 transition-colors ${draggedJob && draggedJob.status !== "unassigned" ? 'bg-orange-50 border-orange-200' : ''}`}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  if (draggedJob && draggedJob.status !== "unassigned") {
+                    setJobs(prev => prev.map(job =>
+                      job.id === draggedJob.id
+                        ? {
+                            ...job,
+                            status: "unassigned" as const,
+                            assignedTechnician: undefined,
+                            scheduledDate: undefined,
+                            scheduledTime: undefined
+                          }
+                        : job
+                    ));
+                    setDraggedJob(null);
+                  }
+                }}
+              >
                 <ScrollArea className="h-[520px] px-4">
+                  {draggedJob && draggedJob.status !== "unassigned" && (
+                    <div className="sticky top-0 bg-orange-100 border border-orange-300 rounded-lg p-3 mb-3 text-center">
+                      <div className="text-sm font-medium text-orange-800">
+                        Drop here to unassign "{draggedJob.title}"
+                      </div>
+                    </div>
+                  )}
                   <div className="space-y-3">
                     {unassignedJobs.map((job) => (
                       <div
