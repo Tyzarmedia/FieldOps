@@ -332,12 +332,22 @@ export default function SignOffScreen() {
         </Card>
 
         {/* Terms and Conditions */}
-        <div className="flex items-center space-x-3">
-          <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-            <CheckCircle className="h-4 w-4 text-white" />
-          </div>
-          <span className="text-gray-800 font-medium">I accept the Terms & Conditions</span>
-        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-start space-x-3">
+              <Checkbox
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(!!checked)}
+              />
+              <div>
+                <p className="text-gray-800 font-medium mb-2">I accept the Terms & Conditions</p>
+                <p className="text-sm text-gray-600">
+                  By checking this box, I confirm that I have completed all required tasks for this job and accept responsibility for the work performed.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Action Buttons */}
         <div className="flex space-x-4">
@@ -345,16 +355,27 @@ export default function SignOffScreen() {
             variant="outline"
             className="flex-1 py-4 text-lg font-semibold border-2"
             onClick={handleSave}
+            disabled={isValidating}
           >
             <Save className="h-5 w-5 mr-2" />
             Save
           </Button>
           <Button
-            className="flex-1 py-4 text-lg font-semibold bg-green-500 hover:bg-green-600 text-white"
+            className="flex-1 py-4 text-lg font-semibold bg-green-500 hover:bg-green-600 text-white disabled:bg-gray-400"
             onClick={handleComplete}
+            disabled={isValidating || validationErrors.length > 0}
           >
-            Complete
-            <CheckCircle className="h-5 w-5 ml-2" />
+            {isValidating ? (
+              <>
+                <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
+                Validating...
+              </>
+            ) : (
+              <>
+                Complete
+                <CheckCircle className="h-5 w-5 ml-2" />
+              </>
+            )}
           </Button>
         </div>
       </div>
