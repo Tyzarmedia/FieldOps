@@ -285,9 +285,8 @@ export default function CoordinatorJobBoard() {
   const unassignedJobs = filteredJobs.filter(job => job.status === "unassigned");
   const assignedJobs = filteredJobs.filter(job => job.status !== "unassigned");
 
-  const timeSlots = Array.from({ length: 10 }, (_, i) => {
-    const hour = 8 + i;
-    return `${hour.toString().padStart(2, '0')}:00`;
+  const timeSlots = Array.from({ length: 24 }, (_, i) => {
+    return `${i.toString().padStart(2, '0')}:00`;
   });
 
   const stats = {
