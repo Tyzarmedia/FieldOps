@@ -181,24 +181,24 @@ export default function AssignJobs() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
   const assignJob = (jobId: string, technicianId: string) => {
-    setJobs(prev => prev.map(job => 
-      job.id === jobId 
-        ? { ...job, status: "assigned" as const }
-        : job
-    ));
+    setJobs((prev) =>
+      prev.map((job) =>
+        job.id === jobId ? { ...job, status: "assigned" as const } : job,
+      ),
+    );
     // In a real app, this would make an API call
     console.log(`Assigned job ${jobId} to technician ${technicianId}`);
   };
 
   const getSkillMatch = (jobSkills: string[], techSkills: string[]) => {
-    const matches = jobSkills.filter(skill => techSkills.includes(skill));
+    const matches = jobSkills.filter((skill) => techSkills.includes(skill));
     return (matches.length / jobSkills.length) * 100;
   };
 
   const getRecommendedTechnicians = (job: Job) => {
     return technicians
-      .filter(tech => tech.status === "available")
-      .map(tech => ({
+      .filter((tech) => tech.status === "available")
+      .map((tech) => ({
         ...tech,
         skillMatch: getSkillMatch(job.requiredSkills, tech.skills),
       }))
@@ -241,29 +241,37 @@ export default function AssignJobs() {
 
   const filteredJobs = jobs.filter((job) => {
     if (job.status !== "unassigned") return false;
-    
+
     const matchesSearch =
       job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPriority = filterPriority === "all" || job.priority === filterPriority;
-    const matchesSkills = filterSkills === "all" || job.requiredSkills.includes(filterSkills);
-    
+    const matchesPriority =
+      filterPriority === "all" || job.priority === filterPriority;
+    const matchesSkills =
+      filterSkills === "all" || job.requiredSkills.includes(filterSkills);
+
     return matchesSearch && matchesPriority && matchesSkills;
   });
 
-  const urgentJobs = filteredJobs.filter(job => job.priority === "urgent");
-  const highPriorityJobs = filteredJobs.filter(job => job.priority === "high");
-  const normalJobs = filteredJobs.filter(job => job.priority === "medium" || job.priority === "low");
+  const urgentJobs = filteredJobs.filter((job) => job.priority === "urgent");
+  const highPriorityJobs = filteredJobs.filter(
+    (job) => job.priority === "high",
+  );
+  const normalJobs = filteredJobs.filter(
+    (job) => job.priority === "medium" || job.priority === "low",
+  );
 
   const stats = {
-    unassigned: jobs.filter(j => j.status === "unassigned").length,
+    unassigned: jobs.filter((j) => j.status === "unassigned").length,
     urgent: urgentJobs.length,
-    availableTechs: technicians.filter(t => t.status === "available").length,
-    busyTechs: technicians.filter(t => t.status === "busy").length,
+    availableTechs: technicians.filter((t) => t.status === "available").length,
+    busyTechs: technicians.filter((t) => t.status === "busy").length,
   };
 
-  const allSkills = Array.from(new Set(jobs.flatMap(job => job.requiredSkills)));
+  const allSkills = Array.from(
+    new Set(jobs.flatMap((job) => job.requiredSkills)),
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 p-6">
@@ -299,11 +307,15 @@ export default function AssignJobs() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Unassigned Jobs</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Unassigned Jobs
+              </CardTitle>
               <AlertTriangle className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{stats.unassigned}</div>
+              <div className="text-2xl font-bold text-orange-600">
+                {stats.unassigned}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -312,16 +324,22 @@ export default function AssignJobs() {
               <AlertTriangle className="h-4 w-4 text-red-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">{stats.urgent}</div>
+              <div className="text-2xl font-bold text-red-600">
+                {stats.urgent}
+              </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Available Techs</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Available Techs
+              </CardTitle>
               <UserCheck className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{stats.availableTechs}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {stats.availableTechs}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -330,7 +348,9 @@ export default function AssignJobs() {
               <Timer className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{stats.busyTechs}</div>
+              <div className="text-2xl font-bold text-yellow-600">
+                {stats.busyTechs}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -370,7 +390,9 @@ export default function AssignJobs() {
                 <SelectContent>
                   <SelectItem value="all">All Skills</SelectItem>
                   {allSkills.map((skill) => (
-                    <SelectItem key={skill} value={skill}>{skill}</SelectItem>
+                    <SelectItem key={skill} value={skill}>
+                      {skill}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -399,7 +421,9 @@ export default function AssignJobs() {
                             <Badge variant="outline" className="text-xs mb-1">
                               {job.id}
                             </Badge>
-                            <h4 className="font-semibold text-sm">{job.title}</h4>
+                            <h4 className="font-semibold text-sm">
+                              {job.title}
+                            </h4>
                           </div>
                           <Badge className={getPriorityColor(job.priority)}>
                             {job.priority}
@@ -422,8 +446,8 @@ export default function AssignJobs() {
                         </div>
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               className="w-full bg-red-600 hover:bg-red-700"
                               onClick={() => setSelectedJob(job)}
                             >
@@ -436,27 +460,38 @@ export default function AssignJobs() {
                             </DialogHeader>
                             <div className="space-y-4 py-4">
                               <div>
-                                <h4 className="font-semibold mb-2">Recommended Technicians</h4>
+                                <h4 className="font-semibold mb-2">
+                                  Recommended Technicians
+                                </h4>
                                 <div className="space-y-2">
-                                  {getRecommendedTechnicians(job).map((tech) => (
-                                    <div key={tech.id} className="flex items-center justify-between p-2 border rounded">
-                                      <div>
-                                        <div className="font-medium">{tech.name}</div>
-                                        <div className="text-xs text-muted-foreground">
-                                          Match: {tech.skillMatch.toFixed(0)}% • Workload: {tech.workload}% • Rating: {tech.rating}
-                                        </div>
-                                      </div>
-                                      <Button 
-                                        size="sm"
-                                        onClick={() => {
-                                          assignJob(job.id, tech.id);
-                                          setSelectedJob(null);
-                                        }}
+                                  {getRecommendedTechnicians(job).map(
+                                    (tech) => (
+                                      <div
+                                        key={tech.id}
+                                        className="flex items-center justify-between p-2 border rounded"
                                       >
-                                        Assign
-                                      </Button>
-                                    </div>
-                                  ))}
+                                        <div>
+                                          <div className="font-medium">
+                                            {tech.name}
+                                          </div>
+                                          <div className="text-xs text-muted-foreground">
+                                            Match: {tech.skillMatch.toFixed(0)}%
+                                            • Workload: {tech.workload}% •
+                                            Rating: {tech.rating}
+                                          </div>
+                                        </div>
+                                        <Button
+                                          size="sm"
+                                          onClick={() => {
+                                            assignJob(job.id, tech.id);
+                                            setSelectedJob(null);
+                                          }}
+                                        >
+                                          Assign
+                                        </Button>
+                                      </div>
+                                    ),
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -489,7 +524,9 @@ export default function AssignJobs() {
                             <Badge variant="outline" className="text-xs mb-1">
                               {job.id}
                             </Badge>
-                            <h4 className="font-semibold text-sm">{job.title}</h4>
+                            <h4 className="font-semibold text-sm">
+                              {job.title}
+                            </h4>
                           </div>
                           <Badge className={getPriorityColor(job.priority)}>
                             {job.priority}
@@ -507,8 +544,8 @@ export default function AssignJobs() {
                         </div>
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               className="w-full"
                               variant="outline"
                               onClick={() => setSelectedJob(job)}
@@ -522,27 +559,38 @@ export default function AssignJobs() {
                             </DialogHeader>
                             <div className="space-y-4 py-4">
                               <div>
-                                <h4 className="font-semibold mb-2">Recommended Technicians</h4>
+                                <h4 className="font-semibold mb-2">
+                                  Recommended Technicians
+                                </h4>
                                 <div className="space-y-2">
-                                  {getRecommendedTechnicians(job).map((tech) => (
-                                    <div key={tech.id} className="flex items-center justify-between p-2 border rounded">
-                                      <div>
-                                        <div className="font-medium">{tech.name}</div>
-                                        <div className="text-xs text-muted-foreground">
-                                          Match: {tech.skillMatch.toFixed(0)}% • Workload: {tech.workload}% • Rating: {tech.rating}
-                                        </div>
-                                      </div>
-                                      <Button 
-                                        size="sm"
-                                        onClick={() => {
-                                          assignJob(job.id, tech.id);
-                                          setSelectedJob(null);
-                                        }}
+                                  {getRecommendedTechnicians(job).map(
+                                    (tech) => (
+                                      <div
+                                        key={tech.id}
+                                        className="flex items-center justify-between p-2 border rounded"
                                       >
-                                        Assign
-                                      </Button>
-                                    </div>
-                                  ))}
+                                        <div>
+                                          <div className="font-medium">
+                                            {tech.name}
+                                          </div>
+                                          <div className="text-xs text-muted-foreground">
+                                            Match: {tech.skillMatch.toFixed(0)}%
+                                            • Workload: {tech.workload}% •
+                                            Rating: {tech.rating}
+                                          </div>
+                                        </div>
+                                        <Button
+                                          size="sm"
+                                          onClick={() => {
+                                            assignJob(job.id, tech.id);
+                                            setSelectedJob(null);
+                                          }}
+                                        >
+                                          Assign
+                                        </Button>
+                                      </div>
+                                    ),
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -592,8 +640,8 @@ export default function AssignJobs() {
                       </div>
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             className="w-full"
                             variant="outline"
                             onClick={() => setSelectedJob(job)}
@@ -607,17 +655,26 @@ export default function AssignJobs() {
                           </DialogHeader>
                           <div className="space-y-4 py-4">
                             <div>
-                              <h4 className="font-semibold mb-2">Recommended Technicians</h4>
+                              <h4 className="font-semibold mb-2">
+                                Recommended Technicians
+                              </h4>
                               <div className="space-y-2">
                                 {getRecommendedTechnicians(job).map((tech) => (
-                                  <div key={tech.id} className="flex items-center justify-between p-2 border rounded">
+                                  <div
+                                    key={tech.id}
+                                    className="flex items-center justify-between p-2 border rounded"
+                                  >
                                     <div>
-                                      <div className="font-medium">{tech.name}</div>
+                                      <div className="font-medium">
+                                        {tech.name}
+                                      </div>
                                       <div className="text-xs text-muted-foreground">
-                                        Match: {tech.skillMatch.toFixed(0)}% • Workload: {tech.workload}% • Rating: {tech.rating}
+                                        Match: {tech.skillMatch.toFixed(0)}% •
+                                        Workload: {tech.workload}% • Rating:{" "}
+                                        {tech.rating}
                                       </div>
                                     </div>
-                                    <Button 
+                                    <Button
                                       size="sm"
                                       onClick={() => {
                                         assignJob(job.id, tech.id);
