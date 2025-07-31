@@ -203,7 +203,9 @@ export default function CoordinatorJobBoard() {
 
   const [draggedJob, setDraggedJob] = useState<Job | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
 
@@ -217,83 +219,115 @@ export default function CoordinatorJobBoard() {
     setDraggedJob(null);
   }, []);
 
-  const handleDrop = useCallback((technicianId: string, timeSlot?: string) => {
-    if (draggedJob) {
-      const targetTechnician = technicians.find(t => t.id === technicianId);
-      setJobs(prev => prev.map(job =>
-        job.id === draggedJob.id
-          ? {
-              ...job,
-              assignedTechnician: targetTechnician?.name,
-              status: "assigned" as const,
-              scheduledDate: selectedDate,
-              scheduledTime: timeSlot || "09:00"
-            }
-          : job
-      ));
-      setDraggedJob(null);
-    }
-  }, [draggedJob, technicians, selectedDate]);
+  const handleDrop = useCallback(
+    (technicianId: string, timeSlot?: string) => {
+      if (draggedJob) {
+        const targetTechnician = technicians.find((t) => t.id === technicianId);
+        setJobs((prev) =>
+          prev.map((job) =>
+            job.id === draggedJob.id
+              ? {
+                  ...job,
+                  assignedTechnician: targetTechnician?.name,
+                  status: "assigned" as const,
+                  scheduledDate: selectedDate,
+                  scheduledTime: timeSlot || "09:00",
+                }
+              : job,
+          ),
+        );
+        setDraggedJob(null);
+      }
+    },
+    [draggedJob, technicians, selectedDate],
+  );
 
-  const handleJobReschedule = useCallback((jobId: string, newTechnicianId: string, newTimeSlot: string) => {
-    const targetTechnician = technicians.find(t => t.id === newTechnicianId);
-    setJobs(prev => prev.map(job =>
-      job.id === jobId
-        ? {
-            ...job,
-            assignedTechnician: targetTechnician?.name,
-            scheduledDate: selectedDate,
-            scheduledTime: newTimeSlot
-          }
-        : job
-    ));
-  }, [technicians, selectedDate]);
+  const handleJobReschedule = useCallback(
+    (jobId: string, newTechnicianId: string, newTimeSlot: string) => {
+      const targetTechnician = technicians.find(
+        (t) => t.id === newTechnicianId,
+      );
+      setJobs((prev) =>
+        prev.map((job) =>
+          job.id === jobId
+            ? {
+                ...job,
+                assignedTechnician: targetTechnician?.name,
+                scheduledDate: selectedDate,
+                scheduledTime: newTimeSlot,
+              }
+            : job,
+        ),
+      );
+    },
+    [technicians, selectedDate],
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed": return "bg-green-100 text-green-800";
-      case "in-progress": return "bg-blue-100 text-blue-800";
-      case "assigned": return "bg-purple-100 text-purple-800";
-      case "unassigned": return "bg-gray-100 text-gray-800";
-      case "overdue": return "bg-red-100 text-red-800";
-      case "available": return "bg-green-100 text-green-800";
-      case "busy": return "bg-yellow-100 text-yellow-800";
-      case "offline": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "in-progress":
+        return "bg-blue-100 text-blue-800";
+      case "assigned":
+        return "bg-purple-100 text-purple-800";
+      case "unassigned":
+        return "bg-gray-100 text-gray-800";
+      case "overdue":
+        return "bg-red-100 text-red-800";
+      case "available":
+        return "bg-green-100 text-green-800";
+      case "busy":
+        return "bg-yellow-100 text-yellow-800";
+      case "offline":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "urgent": return "bg-red-500 text-white";
-      case "high": return "bg-orange-100 text-orange-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "low": return "bg-blue-100 text-blue-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "urgent":
+        return "bg-red-500 text-white";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const filteredJobs = jobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.location.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearch =
+      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.location.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === "all" || job.status === filterStatus;
-    const matchesPriority = filterPriority === "all" || job.priority === filterPriority;
+    const matchesPriority =
+      filterPriority === "all" || job.priority === filterPriority;
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
-  const unassignedJobs = filteredJobs.filter(job => job.status === "unassigned");
-  const assignedJobs = filteredJobs.filter(job => job.status !== "unassigned");
+  const unassignedJobs = filteredJobs.filter(
+    (job) => job.status === "unassigned",
+  );
+  const assignedJobs = filteredJobs.filter(
+    (job) => job.status !== "unassigned",
+  );
 
   const timeSlots = Array.from({ length: 24 }, (_, i) => {
-    return `${i.toString().padStart(2, '0')}:00`;
+    return `${i.toString().padStart(2, "0")}:00`;
   });
 
   const stats = {
     totalJobs: jobs.length,
-    unassigned: jobs.filter(j => j.status === "unassigned").length,
-    inProgress: jobs.filter(j => j.status === "in-progress").length,
-    completed: jobs.filter(j => j.status === "completed").length,
+    unassigned: jobs.filter((j) => j.status === "unassigned").length,
+    inProgress: jobs.filter((j) => j.status === "in-progress").length,
+    completed: jobs.filter((j) => j.status === "completed").length,
   };
 
   return (
@@ -369,7 +403,9 @@ export default function CoordinatorJobBoard() {
               <AlertTriangle className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{stats.unassigned}</div>
+              <div className="text-2xl font-bold text-orange-600">
+                {stats.unassigned}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -378,7 +414,9 @@ export default function CoordinatorJobBoard() {
               <Activity className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {stats.inProgress}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -387,7 +425,9 @@ export default function CoordinatorJobBoard() {
               <CheckCircle className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{stats.completed}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {stats.completed}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -461,22 +501,24 @@ export default function CoordinatorJobBoard() {
                 </CardTitle>
               </CardHeader>
               <CardContent
-                className={`p-0 transition-colors ${draggedJob && draggedJob.status !== "unassigned" ? 'bg-orange-50 border-orange-200' : ''}`}
+                className={`p-0 transition-colors ${draggedJob && draggedJob.status !== "unassigned" ? "bg-orange-50 border-orange-200" : ""}`}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
                   e.preventDefault();
                   if (draggedJob && draggedJob.status !== "unassigned") {
-                    setJobs(prev => prev.map(job =>
-                      job.id === draggedJob.id
-                        ? {
-                            ...job,
-                            status: "unassigned" as const,
-                            assignedTechnician: undefined,
-                            scheduledDate: undefined,
-                            scheduledTime: undefined
-                          }
-                        : job
-                    ));
+                    setJobs((prev) =>
+                      prev.map((job) =>
+                        job.id === draggedJob.id
+                          ? {
+                              ...job,
+                              status: "unassigned" as const,
+                              assignedTechnician: undefined,
+                              scheduledDate: undefined,
+                              scheduledTime: undefined,
+                            }
+                          : job,
+                      ),
+                    );
                     setDraggedJob(null);
                   }
                 }}
@@ -497,7 +539,7 @@ export default function CoordinatorJobBoard() {
                         onDragStart={() => handleDragStart(job)}
                         onDragEnd={handleDragEnd}
                         className={`p-3 border rounded-lg cursor-move hover:shadow-md transition-all ${
-                          draggedJob?.id === job.id ? 'opacity-50 scale-95' : ''
+                          draggedJob?.id === job.id ? "opacity-50 scale-95" : ""
                         }`}
                       >
                         <div className="flex items-start justify-between mb-2">
@@ -511,7 +553,9 @@ export default function CoordinatorJobBoard() {
                             {job.priority}
                           </Badge>
                         </div>
-                        <h4 className="font-semibold text-sm mb-1">{job.title}</h4>
+                        <h4 className="font-semibold text-sm mb-1">
+                          {job.title}
+                        </h4>
                         <div className="space-y-1 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <MapPin className="h-3 w-3" />
@@ -528,7 +572,11 @@ export default function CoordinatorJobBoard() {
                         </div>
                         <div className="mt-2 flex flex-wrap gap-1">
                           {job.requiredSkills.map((skill) => (
-                            <Badge key={skill} variant="outline" className="text-xs">
+                            <Badge
+                              key={skill}
+                              variant="outline"
+                              className="text-xs"
+                            >
                               {skill}
                             </Badge>
                           ))}
@@ -554,11 +602,16 @@ export default function CoordinatorJobBoard() {
                 <div className="grid grid-cols-1 lg:grid-cols-5 h-[720px]">
                   {/* Time slots header */}
                   <div className="border-r bg-gray-50 p-2">
-                    <div className="font-semibold text-sm mb-3 text-center sticky top-0 bg-gray-50 py-2">Time</div>
+                    <div className="font-semibold text-sm mb-3 text-center sticky top-0 bg-gray-50 py-2">
+                      Time
+                    </div>
                     <ScrollArea className="h-[650px]">
                       <div className="space-y-0">
                         {timeSlots.map((time) => (
-                          <div key={time} className="h-12 flex items-center justify-center text-sm text-muted-foreground border-b">
+                          <div
+                            key={time}
+                            className="h-12 flex items-center justify-center text-sm text-muted-foreground border-b"
+                          >
                             {time}
                           </div>
                         ))}
@@ -572,9 +625,13 @@ export default function CoordinatorJobBoard() {
                       {/* Technician header */}
                       <div className="p-2 border-b bg-gray-50">
                         <div className="text-center">
-                          <div className="font-semibold text-sm">{technician.name}</div>
+                          <div className="font-semibold text-sm">
+                            {technician.name}
+                          </div>
                           <div className="flex items-center justify-center gap-2 mt-1">
-                            <Badge className={getStatusColor(technician.status)}>
+                            <Badge
+                              className={getStatusColor(technician.status)}
+                            >
                               {technician.status}
                             </Badge>
                             <span className="text-xs text-muted-foreground">
@@ -583,7 +640,11 @@ export default function CoordinatorJobBoard() {
                           </div>
                           <div className="flex flex-wrap gap-1 mt-1 justify-center">
                             {technician.skills.slice(0, 2).map((skill) => (
-                              <Badge key={skill} variant="outline" className="text-xs">
+                              <Badge
+                                key={skill}
+                                variant="outline"
+                                className="text-xs"
+                              >
                                 {skill}
                               </Badge>
                             ))}
@@ -596,73 +657,113 @@ export default function CoordinatorJobBoard() {
                         <div className="space-y-0">
                           {timeSlots.map((time) => {
                             const jobAtTime = assignedJobs.find(
-                              job => job.assignedTechnician === technician.name &&
-                                     job.scheduledTime === time &&
-                                     job.scheduledDate === selectedDate
+                              (job) =>
+                                job.assignedTechnician === technician.name &&
+                                job.scheduledTime === time &&
+                                job.scheduledDate === selectedDate,
                             );
 
                             return (
                               <div
                                 key={time}
                                 className={`h-12 border-b p-1 transition-colors ${
-                                  draggedJob ? 'border-dashed border-blue-300 bg-blue-50/50' : ''
+                                  draggedJob
+                                    ? "border-dashed border-blue-300 bg-blue-50/50"
+                                    : ""
                                 }`}
-                              onDragOver={(e) => {
-                                e.preventDefault();
-                                e.currentTarget.classList.add('bg-blue-100/80', 'border-blue-400');
-                              }}
-                              onDragLeave={(e) => {
-                                e.currentTarget.classList.remove('bg-blue-100/80', 'border-blue-400');
-                              }}
-                              onDrop={(e) => {
-                                e.preventDefault();
-                                e.currentTarget.classList.remove('bg-blue-100/80', 'border-blue-400');
-                                if (draggedJob) {
-                                  // If there's already a job in this slot, we need to handle the swap
-                                  if (jobAtTime && jobAtTime.id !== draggedJob.id) {
-                                    // Swap jobs - move the existing job to unassigned
-                                    setJobs(prev => prev.map(job => {
-                                      if (job.id === jobAtTime.id) {
-                                        return { ...job, status: "unassigned" as const, assignedTechnician: undefined, scheduledDate: undefined, scheduledTime: undefined };
-                                      }
-                                      return job;
-                                    }));
+                                onDragOver={(e) => {
+                                  e.preventDefault();
+                                  e.currentTarget.classList.add(
+                                    "bg-blue-100/80",
+                                    "border-blue-400",
+                                  );
+                                }}
+                                onDragLeave={(e) => {
+                                  e.currentTarget.classList.remove(
+                                    "bg-blue-100/80",
+                                    "border-blue-400",
+                                  );
+                                }}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  e.currentTarget.classList.remove(
+                                    "bg-blue-100/80",
+                                    "border-blue-400",
+                                  );
+                                  if (draggedJob) {
+                                    // If there's already a job in this slot, we need to handle the swap
+                                    if (
+                                      jobAtTime &&
+                                      jobAtTime.id !== draggedJob.id
+                                    ) {
+                                      // Swap jobs - move the existing job to unassigned
+                                      setJobs((prev) =>
+                                        prev.map((job) => {
+                                          if (job.id === jobAtTime.id) {
+                                            return {
+                                              ...job,
+                                              status: "unassigned" as const,
+                                              assignedTechnician: undefined,
+                                              scheduledDate: undefined,
+                                              scheduledTime: undefined,
+                                            };
+                                          }
+                                          return job;
+                                        }),
+                                      );
+                                    }
+                                    handleDrop(technician.id, time);
                                   }
-                                  handleDrop(technician.id, time);
-                                }
-                              }}
-                            >
-                              {jobAtTime ? (
-                                <div
-                                  draggable={jobAtTime.status !== 'completed'}
-                                  onDragStart={() => handleDragStart(jobAtTime)}
-                                  onDragEnd={handleDragEnd}
-                                  className={`h-full rounded p-2 text-xs cursor-move transition-all hover:shadow-md ${
-                                    draggedJob?.id === jobAtTime.id ? 'opacity-50 scale-95' : ''
-                                  } ${
-                                    jobAtTime.status === 'completed' ? 'bg-green-100 border-green-300 cursor-not-allowed' :
-                                    jobAtTime.status === 'in-progress' ? 'bg-blue-100 border-blue-300' :
-                                    'bg-purple-100 border-purple-300'
-                                  } border-l-4 relative group`}
-                                >
-                                  {jobAtTime.status !== 'completed' && (
-                                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <GripVertical className="h-3 w-3 text-gray-400" />
+                                }}
+                              >
+                                {jobAtTime ? (
+                                  <div
+                                    draggable={jobAtTime.status !== "completed"}
+                                    onDragStart={() =>
+                                      handleDragStart(jobAtTime)
+                                    }
+                                    onDragEnd={handleDragEnd}
+                                    className={`h-full rounded p-2 text-xs cursor-move transition-all hover:shadow-md ${
+                                      draggedJob?.id === jobAtTime.id
+                                        ? "opacity-50 scale-95"
+                                        : ""
+                                    } ${
+                                      jobAtTime.status === "completed"
+                                        ? "bg-green-100 border-green-300 cursor-not-allowed"
+                                        : jobAtTime.status === "in-progress"
+                                          ? "bg-blue-100 border-blue-300"
+                                          : "bg-purple-100 border-purple-300"
+                                    } border-l-4 relative group`}
+                                  >
+                                    {jobAtTime.status !== "completed" && (
+                                      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <GripVertical className="h-3 w-3 text-gray-400" />
+                                      </div>
+                                    )}
+                                    <div className="font-semibold">
+                                      {jobAtTime.id}
                                     </div>
-                                  )}
-                                  <div className="font-semibold">{jobAtTime.id}</div>
-                                  <div className="truncate">{jobAtTime.title}</div>
-                                  <Badge className={getStatusColor(jobAtTime.status)} variant="outline">
-                                    {jobAtTime.status}
-                                  </Badge>
-                                </div>
-                              ) : (
-                                <div className="h-full flex items-center justify-center text-gray-300 hover:bg-gray-50 rounded transition-colors">
-                                  {draggedJob && (
-                                    <div className="text-xs text-blue-600 font-medium">Drop here to reschedule</div>
-                                  )}
-                                </div>
-                              )}
+                                    <div className="truncate">
+                                      {jobAtTime.title}
+                                    </div>
+                                    <Badge
+                                      className={getStatusColor(
+                                        jobAtTime.status,
+                                      )}
+                                      variant="outline"
+                                    >
+                                      {jobAtTime.status}
+                                    </Badge>
+                                  </div>
+                                ) : (
+                                  <div className="h-full flex items-center justify-center text-gray-300 hover:bg-gray-50 rounded transition-colors">
+                                    {draggedJob && (
+                                      <div className="text-xs text-blue-600 font-medium">
+                                        Drop here to reschedule
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             );
                           })}
@@ -681,17 +782,33 @@ export default function CoordinatorJobBoard() {
           <CardContent className="pt-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-lg">How to Use the Job Board</h3>
+                <h3 className="font-semibold text-lg">
+                  How to Use the Job Board
+                </h3>
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setJobs(prev => prev.map(job => ({
-                      ...job,
-                      status: job.status === "completed" ? job.status : "unassigned" as const,
-                      assignedTechnician: job.status === "completed" ? job.assignedTechnician : undefined,
-                      scheduledDate: job.status === "completed" ? job.scheduledDate : undefined,
-                      scheduledTime: job.status === "completed" ? job.scheduledTime : undefined
-                    })));
+                    setJobs((prev) =>
+                      prev.map((job) => ({
+                        ...job,
+                        status:
+                          job.status === "completed"
+                            ? job.status
+                            : ("unassigned" as const),
+                        assignedTechnician:
+                          job.status === "completed"
+                            ? job.assignedTechnician
+                            : undefined,
+                        scheduledDate:
+                          job.status === "completed"
+                            ? job.scheduledDate
+                            : undefined,
+                        scheduledTime:
+                          job.status === "completed"
+                            ? job.scheduledTime
+                            : undefined,
+                      })),
+                    );
                   }}
                 >
                   Clear All Schedules
@@ -704,8 +821,13 @@ export default function CoordinatorJobBoard() {
                     <GripVertical className="h-4 w-4 text-blue-600" />
                   </div>
                   <div>
-                    <div className="font-medium text-blue-900">1. Assign New Jobs</div>
-                    <div className="text-blue-700">Drag unassigned jobs from the left panel and drop them on any technician's time slot</div>
+                    <div className="font-medium text-blue-900">
+                      1. Assign New Jobs
+                    </div>
+                    <div className="text-blue-700">
+                      Drag unassigned jobs from the left panel and drop them on
+                      any technician's time slot
+                    </div>
                   </div>
                 </div>
 
@@ -714,8 +836,13 @@ export default function CoordinatorJobBoard() {
                     <RefreshCw className="h-4 w-4 text-purple-600" />
                   </div>
                   <div>
-                    <div className="font-medium text-purple-900">2. Reschedule Jobs</div>
-                    <div className="text-purple-700">Drag assigned jobs between technicians or time slots to reschedule (except completed jobs)</div>
+                    <div className="font-medium text-purple-900">
+                      2. Reschedule Jobs
+                    </div>
+                    <div className="text-purple-700">
+                      Drag assigned jobs between technicians or time slots to
+                      reschedule (except completed jobs)
+                    </div>
                   </div>
                 </div>
 
@@ -724,8 +851,13 @@ export default function CoordinatorJobBoard() {
                     <ArrowRight className="h-4 w-4 text-green-600" />
                   </div>
                   <div>
-                    <div className="font-medium text-green-900">3. Swap & Unassign</div>
-                    <div className="text-green-700">Drop on occupied slots to swap jobs, or drag back to unassigned panel</div>
+                    <div className="font-medium text-green-900">
+                      3. Swap & Unassign
+                    </div>
+                    <div className="text-green-700">
+                      Drop on occupied slots to swap jobs, or drag back to
+                      unassigned panel
+                    </div>
                   </div>
                 </div>
               </div>
