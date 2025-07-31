@@ -206,7 +206,7 @@ export default function TechnicianDashboard() {
       </div>
 
       {/* Mobile Header */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-b-3xl sm:-my-1">
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-b-3xl">
         {/* Top Navigation */}
         <div className="flex justify-between items-center mb-8">
           <Button
@@ -265,7 +265,7 @@ export default function TechnicianDashboard() {
       {/* Main Content */}
       <div className="p-6">
         {/* Job Status Summary - Moved to top */}
-        <div className="bg-white rounded-2xl p-6 shadow-md mb-6 sm:pb-12">
+        <div className="bg-white rounded-2xl p-6 shadow-md mb-6">
           <h3 className="font-semibold text-gray-800 mb-4">
             Today's Job Status
           </h3>
