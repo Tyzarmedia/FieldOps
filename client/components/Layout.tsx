@@ -180,6 +180,7 @@ function getNavigationForRole(role: string) {
     case "Coordinator":
       return [
         ...baseNavigation,
+        { name: "Job Board", href: "/job-board", icon: ClipboardList },
         { name: "Assign Jobs", href: "/assign-jobs", icon: ClipboardList },
         {
           name: "Monitor Progress",

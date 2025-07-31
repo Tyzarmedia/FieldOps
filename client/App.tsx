@@ -34,6 +34,7 @@ import ITDashboard from "./pages/ITDashboard";
 import ITDashboardWithTab from "./pages/ITDashboardWithTab";
 import SystemAdminDashboard from "./pages/SystemAdminDashboard";
 import CoordinatorJobBoard from "./pages/CoordinatorJobBoard";
+import MonitorProgress from "./pages/MonitorProgress";
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -285,10 +286,7 @@ const App = () => (
             path="/monitor-progress"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Progress Monitoring"
-                  description="Track job progress, technician status, and completion rates."
-                />
+                <MonitorProgress />
               </ProtectedRoute>
             }
           />
