@@ -19,8 +19,22 @@ import {
 
 export default function SignOffScreen() {
   const navigate = useNavigate();
-  const [termsAccepted, setTermsAccepted] = useState(true);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [currentTab, setCurrentTab] = useState("signoff");
+
+  // Digital signature state
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [hasSigned, setHasSigned] = useState(false);
+
+  // Validation state
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [isValidating, setIsValidating] = useState(false);
+  const [noStockUsed, setNoStockUsed] = useState(false);
+
+  // Mock validation data - in real app this would come from API/state
+  const [udfCompleted, setUdfCompleted] = useState(false);
+  const [stockUpdated, setStockUpdated] = useState(false);
 
   const handleSave = () => {
     console.log("Saving sign off...");
