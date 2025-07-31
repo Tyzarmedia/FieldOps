@@ -467,93 +467,173 @@ export default function CoordinatorJobBoard() {
                   <DialogTitle>Create New Job</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Work Order Number</Label>
-                      <Input placeholder="WO-2024-0001" />
+                  {/* Basic Information Section */}
+                  <div className="border-b pb-4">
+                    <h3 className="text-lg font-semibold mb-3">Basic Information</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Work Order Number</Label>
+                        <Input placeholder="WO-2024-0001" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Appointment Number</Label>
+                        <Input placeholder="APP-2024-0001" />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label>Priority</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select priority" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="low">Low</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
-                          <SelectItem value="urgent">Urgent</SelectItem>
-                        </SelectContent>
-                      </Select>
+
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div className="space-y-2">
+                        <Label>Service Request/Change Number/INC</Label>
+                        <Input placeholder="00766624" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Priority</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select priority" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="urgent">Urgent</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-4">
+                      <Label>Job Title</Label>
+                      <Input placeholder="Enter job title..." />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Job Title</Label>
-                    <Input placeholder="Enter job title..." />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Client Name</Label>
-                    <Input placeholder="Enter client name..." />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Client Address</Label>
-                    <Input placeholder="Enter full client address..." />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
+                  {/* Client Information Section */}
+                  <div className="border-b pb-4">
+                    <h3 className="text-lg font-semibold mb-3">Client Information</h3>
                     <div className="space-y-2">
+                      <Label>Client Name</Label>
+                      <Input placeholder="Enter client name..." />
+                    </div>
+
+                    <div className="space-y-2 mt-4">
+                      <Label>Client Address</Label>
+                      <Input placeholder="Enter full client address..." />
+                    </div>
+
+                    <div className="space-y-2 mt-4">
                       <Label>Client Contact</Label>
                       <Input placeholder="+1 (555) 123-4567" type="tel" />
                     </div>
-                    <div className="space-y-2">
-                      <Label>Estimated Duration</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select duration" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1h">1 hour</SelectItem>
-                          <SelectItem value="2h">2 hours</SelectItem>
-                          <SelectItem value="3h">3 hours</SelectItem>
-                          <SelectItem value="4h">4 hours</SelectItem>
-                          <SelectItem value="6h">6 hours</SelectItem>
-                          <SelectItem value="8h">8 hours</SelectItem>
-                        </SelectContent>
-                      </Select>
+                  </div>
+
+                  {/* Date and Scheduling Section */}
+                  <div className="border-b pb-4">
+                    <h3 className="text-lg font-semibold mb-3">Scheduling</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Start Date</Label>
+                        <Input type="date" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>End Date</Label>
+                        <Input type="date" />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div className="space-y-2">
+                        <Label>Estimated Duration</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select duration" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1h">1 hour</SelectItem>
+                            <SelectItem value="2h">2 hours</SelectItem>
+                            <SelectItem value="3h">3 hours</SelectItem>
+                            <SelectItem value="4h">4 hours</SelectItem>
+                            <SelectItem value="6h">6 hours</SelectItem>
+                            <SelectItem value="8h">8 hours</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Date Created</Label>
+                        <Input type="date" defaultValue={new Date().toISOString().split('T')[0]} />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Geo Location</Label>
-                    <div className="flex gap-2">
-                      <Input placeholder="Latitude" className="flex-1" />
-                      <Input placeholder="Longitude" className="flex-1" />
-                      <Button variant="outline" type="button">
-                        <MapPin className="h-4 w-4" />
-                      </Button>
+                  {/* Location and Facility Section */}
+                  <div className="border-b pb-4">
+                    <h3 className="text-lg font-semibold mb-3">Location & Facility</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Facility</Label>
+                        <Input placeholder="Building/facility name..." />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Location</Label>
+                        <Input placeholder="120 - East London" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-4">
+                      <Label>Geo Location (Latitude, Longitude)</Label>
+                      <div className="flex gap-2">
+                        <Input placeholder="Latitude" className="flex-1" />
+                        <Input placeholder="Longitude" className="flex-1" />
+                        <Button variant="outline" type="button">
+                          <MapPin className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Job Comments</Label>
-                    <textarea
-                      className="w-full min-h-[100px] p-3 border rounded-md resize-none"
-                      placeholder="Enter detailed job description, special instructions, or notes..."
-                    />
-                  </div>
+                  {/* Work Details Section */}
+                  <div className="border-b pb-4">
+                    <h3 className="text-lg font-semibold mb-3">Work Details</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Work Type</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select work type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="installation">Installation</SelectItem>
+                            <SelectItem value="maintenance">Maintenance</SelectItem>
+                            <SelectItem value="repair">Repair</SelectItem>
+                            <SelectItem value="inspection">Inspection</SelectItem>
+                            <SelectItem value="troubleshooting">Troubleshooting</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>ROC</Label>
+                        <Input placeholder="ROC number or reference..." />
+                      </div>
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label>Required Skills</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {["HVAC", "Electrical", "Plumbing", "Network", "Safety", "General"].map((skill) => (
-                        <label key={skill} className="flex items-center space-x-2 cursor-pointer">
-                          <input type="checkbox" className="rounded" />
-                          <span className="text-sm">{skill}</span>
-                        </label>
-                      ))}
+                    <div className="space-y-2 mt-4">
+                      <Label>Required Skills</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {["HVAC", "Electrical", "Plumbing", "Network", "Safety", "General"].map((skill) => (
+                          <label key={skill} className="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" className="rounded" />
+                            <span className="text-sm">{skill}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-4">
+                      <Label>Job Comments</Label>
+                      <textarea
+                        className="w-full min-h-[100px] p-3 border rounded-md resize-none"
+                        placeholder="Enter detailed job description, special instructions, or notes..."
+                      />
                     </div>
                   </div>
 
