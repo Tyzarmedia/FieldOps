@@ -209,11 +209,124 @@ export default function SignOffScreen() {
 
       {/* Content */}
       <div className="p-4 pb-32 space-y-6">
+        {/* Validation Errors */}
+        {validationErrors.length > 0 && (
+          <Card className="border-red-200 bg-red-50">
+            <CardContent className="p-4">
+              <div className="flex items-start space-x-3">
+                <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
+                <div>
+                  <h3 className="font-medium text-red-800 mb-2">Please complete the following:</h3>
+                  <ul className="text-sm text-red-700 space-y-1">
+                    {validationErrors.map((error, index) => (
+                      <li key={index}>• {error}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Signature Area */}
         <Card>
           <CardContent className="p-6">
-            <div className="border-2 border-dashed border-gray-300 rounded-lg h-40 flex items-center justify-center bg-gray-50">
-              <p className="text-gray-500 text-lg">TAP TO SIGN</p>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-gray-800">Digital Signature</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearSignature}
+                  disabled={!hasSigned}
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Clear
+                </Button>
+              </div>
+              <div className={`border-2 border-dashed rounded-lg bg-white relative ${hasSigned ? 'border-green-500' : 'border-gray-300'}`}>
+                <canvas
+                  ref={canvasRef}
+                  width={300}
+                  height={150}
+                  className="w-full h-40 cursor-crosshair"
+                  onMouseDown={startDrawing}
+                  onMouseMove={draw}
+                  onMouseUp={stopDrawing}
+                  onMouseLeave={stopDrawing}
+                  onTouchStart={startDrawing}
+                  onTouchMove={draw}
+                  onTouchEnd={stopDrawing}
+                />
+                {!hasSigned && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <p className="text-gray-500 text-lg">Sign here</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Validation Checklist */}
+        <Card>
+          <CardContent className="p-6 space-y-4">
+            <h3 className="font-semibold text-gray-800">Pre-completion Checklist</h3>
+
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${udfCompleted ? 'bg-green-500' : 'bg-gray-300'}`}>
+                  <CheckCircle className={`h-4 w-4 ${udfCompleted ? 'text-white' : 'text-gray-500'}`} />
+                </div>
+                <span className={`${udfCompleted ? 'text-gray-800' : 'text-gray-500'} font-medium`}>
+                  UDF fields completed and updated
+                </span>
+                {!udfCompleted && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/technician/udf')}
+                  >
+                    Go to UDF
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${stockUpdated || noStockUsed ? 'bg-green-500' : 'bg-gray-300'}`}>
+                  <CheckCircle className={`h-4 w-4 ${stockUpdated || noStockUsed ? 'text-white' : 'text-gray-500'}`} />
+                </div>
+                <span className={`${stockUpdated || noStockUsed ? 'text-gray-800' : 'text-gray-500'} font-medium`}>
+                  Stock status confirmed
+                </span>
+                {!stockUpdated && !noStockUsed && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/technician/stock')}
+                  >
+                    Go to Stock
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-3 ml-8">
+                <Checkbox
+                  checked={noStockUsed}
+                  onCheckedChange={(checked) => setNoStockUsed(!!checked)}
+                  disabled={stockUpdated}
+                />
+                <span className="text-sm text-gray-600">No stock used for this job</span>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${hasSigned ? 'bg-green-500' : 'bg-gray-300'}`}>
+                  <CheckCircle className={`h-4 w-4 ${hasSigned ? 'text-white' : 'text-gray-500'}`} />
+                </div>
+                <span className={`${hasSigned ? 'text-gray-800' : 'text-gray-500'} font-medium`}>
+                  Digital signature provided
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
