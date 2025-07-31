@@ -543,7 +543,7 @@ export default function CoordinatorJobBoard() {
 
           {/* Schedule Grid */}
           <div className="col-span-9">
-            <Card className="h-[600px]">
+            <Card className="h-[800px]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-blue-600" />
@@ -551,17 +551,19 @@ export default function CoordinatorJobBoard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="grid grid-cols-1 lg:grid-cols-5 h-[520px]">
+                <div className="grid grid-cols-1 lg:grid-cols-5 h-[720px]">
                   {/* Time slots header */}
                   <div className="border-r bg-gray-50 p-2">
-                    <div className="font-semibold text-sm mb-3 text-center">Time</div>
-                    <div className="space-y-2">
-                      {timeSlots.map((time) => (
-                        <div key={time} className="h-16 flex items-center justify-center text-sm text-muted-foreground border-b">
-                          {time}
-                        </div>
-                      ))}
-                    </div>
+                    <div className="font-semibold text-sm mb-3 text-center sticky top-0 bg-gray-50 py-2">Time</div>
+                    <ScrollArea className="h-[650px]">
+                      <div className="space-y-0">
+                        {timeSlots.map((time) => (
+                          <div key={time} className="h-12 flex items-center justify-center text-sm text-muted-foreground border-b">
+                            {time}
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </div>
 
                   {/* Technician columns */}
@@ -590,20 +592,21 @@ export default function CoordinatorJobBoard() {
                       </div>
 
                       {/* Time slots */}
-                      <div className="space-y-0">
-                        {timeSlots.map((time) => {
-                          const jobAtTime = assignedJobs.find(
-                            job => job.assignedTechnician === technician.name && 
-                                   job.scheduledTime === time &&
-                                   job.scheduledDate === selectedDate
-                          );
+                      <ScrollArea className="h-[650px]">
+                        <div className="space-y-0">
+                          {timeSlots.map((time) => {
+                            const jobAtTime = assignedJobs.find(
+                              job => job.assignedTechnician === technician.name &&
+                                     job.scheduledTime === time &&
+                                     job.scheduledDate === selectedDate
+                            );
 
-                          return (
-                            <div
-                              key={time}
-                              className={`h-16 border-b p-1 transition-colors ${
-                                draggedJob ? 'border-dashed border-blue-300 bg-blue-50/50' : ''
-                              }`}
+                            return (
+                              <div
+                                key={time}
+                                className={`h-12 border-b p-1 transition-colors ${
+                                  draggedJob ? 'border-dashed border-blue-300 bg-blue-50/50' : ''
+                                }`}
                               onDragOver={(e) => {
                                 e.preventDefault();
                                 e.currentTarget.classList.add('bg-blue-100/80', 'border-blue-400');
@@ -660,10 +663,11 @@ export default function CoordinatorJobBoard() {
                                   )}
                                 </div>
                               )}
-                            </div>
-                          );
-                        })}
-                      </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </ScrollArea>
                     </div>
                   ))}
                 </div>
