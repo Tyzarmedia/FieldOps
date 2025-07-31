@@ -41,6 +41,8 @@ import {
   Edit,
   Trash2,
   RefreshCw,
+  UserCheck,
+  X,
 } from "lucide-react";
 
 interface Job {
