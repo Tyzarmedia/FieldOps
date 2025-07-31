@@ -41,7 +41,9 @@ interface Inspection {
 
 export default function EnhancedFleetManagerDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState("week");
-  const [missingInspections, setMissingInspections] = useState<MissingInspection[]>([]);
+  const [missingInspections, setMissingInspections] = useState<
+    MissingInspection[]
+  >([]);
   const [inspections, setInspections] = useState<Inspection[]>([]);
 
   const fleetStats = {
@@ -60,25 +62,33 @@ export default function EnhancedFleetManagerDashboard() {
     const fetchInspectionData = async () => {
       try {
         const [missingResponse, inspectionsResponse] = await Promise.all([
-          fetch('/api/inspections/missing'),
-          fetch('/api/inspections')
+          fetch("/api/inspections/missing"),
+          fetch("/api/inspections"),
         ]);
-        
+
         if (missingResponse.ok) {
           const missingData = await missingResponse.json();
           setMissingInspections(missingData.missingInspections || []);
         }
-        
+
         if (inspectionsResponse.ok) {
           const inspectionsData = await inspectionsResponse.json();
           setInspections(inspectionsData.inspections || []);
         }
       } catch (error) {
-        console.error('Failed to fetch inspection data:', error);
+        console.error("Failed to fetch inspection data:", error);
         // Set mock data for demo
         setMissingInspections([
-          { technicianId: "E001", technicianName: "John Smith", lastInspection: "2024-01-19" },
-          { technicianId: "E003", technicianName: "Mike Chen", lastInspection: null }
+          {
+            technicianId: "E001",
+            technicianName: "John Smith",
+            lastInspection: "2024-01-19",
+          },
+          {
+            technicianId: "E003",
+            technicianName: "Mike Chen",
+            lastInspection: null,
+          },
         ]);
         setInspections([
           {
@@ -88,9 +98,9 @@ export default function EnhancedFleetManagerDashboard() {
             submittedAt: "2024-01-21T07:30:00Z",
             items: [
               { name: "Tires", status: "good", notes: "" },
-              { name: "Brakes", status: "attention", notes: "Minor squeaking" }
-            ]
-          }
+              { name: "Brakes", status: "attention", notes: "Minor squeaking" },
+            ],
+          },
         ]);
       }
     };
@@ -112,9 +122,10 @@ export default function EnhancedFleetManagerDashboard() {
       title: "Inspections",
       icon: CheckCircle,
       color: missingInspections.length > 0 ? "bg-red-500" : "bg-green-500",
-      description: missingInspections.length > 0 ? 
-        `${missingInspections.length} missing inspections` : 
-        "All inspections up to date",
+      description:
+        missingInspections.length > 0
+          ? `${missingInspections.length} missing inspections`
+          : "All inspections up to date",
       action: () => handleCardAction("inspections"),
       alert: missingInspections.length > 0,
     },
@@ -201,15 +212,22 @@ export default function EnhancedFleetManagerDashboard() {
         <Alert className="mb-6 border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-800">
-            <strong>Missing Inspections Alert:</strong> {missingInspections.length} technician(s) have not submitted their daily inspections.
+            <strong>Missing Inspections Alert:</strong>{" "}
+            {missingInspections.length} technician(s) have not submitted their
+            daily inspections.
             <div className="mt-2 space-y-1">
               {missingInspections.slice(0, 3).map((missing) => (
                 <div key={missing.technicianId} className="text-sm">
-                  • {missing.technicianName} - {missing.lastInspection ? `Last: ${new Date(missing.lastInspection).toLocaleDateString()}` : 'Never submitted'}
+                  • {missing.technicianName} -{" "}
+                  {missing.lastInspection
+                    ? `Last: ${new Date(missing.lastInspection).toLocaleDateString()}`
+                    : "Never submitted"}
                 </div>
               ))}
               {missingInspections.length > 3 && (
-                <div className="text-sm">... and {missingInspections.length - 3} more</div>
+                <div className="text-sm">
+                  ... and {missingInspections.length - 3} more
+                </div>
               )}
             </div>
           </AlertDescription>
@@ -244,11 +262,15 @@ export default function EnhancedFleetManagerDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Missing Inspections</p>
-              <p className={`text-2xl font-bold ${missingInspections.length > 0 ? 'text-red-600' : 'text-green-600'}`}>
+              <p
+                className={`text-2xl font-bold ${missingInspections.length > 0 ? "text-red-600" : "text-green-600"}`}
+              >
                 {missingInspections.length}
               </p>
             </div>
-            <FileX className={`h-8 w-8 ${missingInspections.length > 0 ? 'text-red-500' : 'text-green-500'}`} />
+            <FileX
+              className={`h-8 w-8 ${missingInspections.length > 0 ? "text-red-500" : "text-green-500"}`}
+            />
           </div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-md">
@@ -275,15 +297,24 @@ export default function EnhancedFleetManagerDashboard() {
         <CardContent>
           <div className="space-y-3">
             {inspections.slice(0, 5).map((inspection) => (
-              <div key={inspection.id} className="flex items-center justify-between p-3 border rounded-lg">
+              <div
+                key={inspection.id}
+                className="flex items-center justify-between p-3 border rounded-lg"
+              >
                 <div>
-                  <div className="font-medium">{inspection.type === 'vehicle' ? 'Vehicle' : 'Tool'} Inspection</div>
+                  <div className="font-medium">
+                    {inspection.type === "vehicle" ? "Vehicle" : "Tool"}{" "}
+                    Inspection
+                  </div>
                   <div className="text-sm text-gray-500">
-                    ID: {inspection.id} • {new Date(inspection.submittedAt).toLocaleDateString()}
+                    ID: {inspection.id} •{" "}
+                    {new Date(inspection.submittedAt).toLocaleDateString()}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  {inspection.items?.some((item) => item.status === 'attention') ? (
+                  {inspection.items?.some(
+                    (item) => item.status === "attention",
+                  ) ? (
                     <Badge className="bg-orange-100 text-orange-800">
                       <AlertTriangle className="h-3 w-3 mr-1" />
                       Needs Attention
@@ -314,7 +345,7 @@ export default function EnhancedFleetManagerDashboard() {
             <Card
               key={card.id}
               className={`bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md ${
-                card.alert ? 'ring-2 ring-red-200 ring-opacity-50' : ''
+                card.alert ? "ring-2 ring-red-200 ring-opacity-50" : ""
               }`}
               onClick={card.action}
             >

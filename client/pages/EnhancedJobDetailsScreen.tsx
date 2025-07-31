@@ -13,22 +13,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  X, 
-  ChevronUp, 
-  ChevronDown, 
-  Trash2, 
-  RefreshCw, 
-  Play, 
-  Pause, 
-  Square, 
-  Camera, 
+import {
+  X,
+  ChevronUp,
+  ChevronDown,
+  Trash2,
+  RefreshCw,
+  Play,
+  Pause,
+  Square,
+  Camera,
   Package,
   Clock,
   MapPin,
   User,
   FileText,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
 
 interface JobDetails {
@@ -92,7 +92,7 @@ export default function EnhancedJobDetailsScreen() {
     client: {
       name: "Acme Corp",
       address: "123 Business St, Downtown",
-      phone: "+1 (555) 123-4567"
+      phone: "+1 (555) 123-4567",
     },
     status: "assigned",
     priority: "medium",
@@ -114,7 +114,7 @@ export default function EnhancedJobDetailsScreen() {
   useEffect(() => {
     if (isNearClient && !trackingStarted) {
       const interval = setInterval(() => {
-        setNearClientTimer(prev => {
+        setNearClientTimer((prev) => {
           if (prev >= 150) {
             setTrackingStarted(true);
             startJobTracking();
@@ -132,7 +132,7 @@ export default function EnhancedJobDetailsScreen() {
   useEffect(() => {
     if (trackingStarted && !isPaused) {
       const interval = setInterval(() => {
-        setTimeSpent(prev => prev + 1);
+        setTimeSpent((prev) => prev + 1);
       }, 1000);
 
       return () => clearInterval(interval);
@@ -144,12 +144,12 @@ export default function EnhancedJobDetailsScreen() {
     // API call to start tracking
     try {
       await fetch(`/api/jobs/${jobId}/start-tracking`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           location: "Near client location",
-          startTime: new Date().toISOString()
-        })
+          startTime: new Date().toISOString(),
+        }),
       });
     } catch (error) {
       console.error("Failed to start tracking:", error);
@@ -160,11 +160,11 @@ export default function EnhancedJobDetailsScreen() {
     setIsPaused(!isPaused);
     try {
       await fetch(`/api/jobs/${jobId}/toggle-tracking`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: isPaused ? "resume" : "pause"
-        })
+          action: isPaused ? "resume" : "pause",
+        }),
       });
     } catch (error) {
       console.error("Failed to toggle tracking:", error);
@@ -181,17 +181,17 @@ export default function EnhancedJobDetailsScreen() {
   const closeJob = async () => {
     try {
       await fetch(`/api/jobs/${jobId}/close`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           timeSpent: Math.round(timeSpent / 60), // Convert to minutes
           maintenanceIssueClass: formData.maintenanceIssueClass,
           images: jobPhotos,
           udfData: formData,
-          location: "Job completion location"
-        })
+          location: "Job completion location",
+        }),
       });
-      
+
       navigate("/", { state: { message: "Job completed successfully!" } });
     } catch (error) {
       console.error("Failed to close job:", error);
@@ -215,14 +215,14 @@ export default function EnhancedJobDetailsScreen() {
   const handleUpdate = async () => {
     try {
       await fetch(`/api/jobs/${jobId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           udfData: formData,
-          updatedAt: new Date().toISOString()
-        })
+          updatedAt: new Date().toISOString(),
+        }),
       });
-      
+
       console.log("UDF Fields updated:", formData);
     } catch (error) {
       console.error("Failed to update UDF:", error);
@@ -233,16 +233,21 @@ export default function EnhancedJobDetailsScreen() {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "urgent": return "bg-red-500 text-white";
-      case "high": return "bg-orange-100 text-orange-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "low": return "bg-blue-100 text-blue-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "urgent":
+        return "bg-red-500 text-white";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -279,10 +284,9 @@ export default function EnhancedJobDetailsScreen() {
             <div className="bg-white/20 rounded-lg p-2 mt-2">
               <div className="text-center">
                 <span className="text-sm">
-                  {!trackingStarted ? 
-                    `Auto-start in ${150 - nearClientTimer}s` : 
-                    `Time: ${formatTime(timeSpent)}`
-                  }
+                  {!trackingStarted
+                    ? `Auto-start in ${150 - nearClientTimer}s`
+                    : `Time: ${formatTime(timeSpent)}`}
                 </span>
               </div>
             </div>
@@ -362,12 +366,18 @@ export default function EnhancedJobDetailsScreen() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <Clock className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium">Estimated Duration:</span>
-                    <span className="text-sm">{jobDetails.estimatedDuration}</span>
+                    <span className="text-sm font-medium">
+                      Estimated Duration:
+                    </span>
+                    <span className="text-sm">
+                      {jobDetails.estimatedDuration}
+                    </span>
                   </div>
                   <div className="mt-4">
                     <span className="text-sm font-medium">Description:</span>
-                    <p className="text-sm text-gray-600 mt-1">{jobDetails.description}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {jobDetails.description}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -383,7 +393,9 @@ export default function EnhancedJobDetailsScreen() {
                   className="flex items-center justify-between p-4 cursor-pointer"
                   onClick={() => toggleSection("faultDetails")}
                 >
-                  <h3 className="font-semibold">FTTH Maintenance - Fault Details</h3>
+                  <h3 className="font-semibold">
+                    FTTH Maintenance - Fault Details
+                  </h3>
                   <div className="flex items-center space-x-2">
                     <Button
                       variant="ghost"
@@ -409,7 +421,9 @@ export default function EnhancedJobDetailsScreen() {
                       </label>
                       <Select
                         value={formData.resolution}
-                        onValueChange={(value) => handleInputChange("resolution", value)}
+                        onValueChange={(value) =>
+                          handleInputChange("resolution", value)
+                        }
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select" />
@@ -428,7 +442,9 @@ export default function EnhancedJobDetailsScreen() {
                       </label>
                       <Select
                         value={formData.fixType}
-                        onValueChange={(value) => handleInputChange("fixType", value)}
+                        onValueChange={(value) =>
+                          handleInputChange("fixType", value)
+                        }
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select" />
@@ -447,16 +463,26 @@ export default function EnhancedJobDetailsScreen() {
                       </label>
                       <Select
                         value={formData.maintenanceIssueClass}
-                        onValueChange={(value) => handleInputChange("maintenanceIssueClass", value)}
+                        onValueChange={(value) =>
+                          handleInputChange("maintenanceIssueClass", value)
+                        }
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="isp-exposed-cables">ISP - Exposed Cables</SelectItem>
-                          <SelectItem value="isp-drop-cable-broken">ISP - Drop Cable Broken</SelectItem>
-                          <SelectItem value="osp-high-losses">OSP - High Losses</SelectItem>
-                          <SelectItem value="no-fault-handed-back">No Fault Handed Back</SelectItem>
+                          <SelectItem value="isp-exposed-cables">
+                            ISP - Exposed Cables
+                          </SelectItem>
+                          <SelectItem value="isp-drop-cable-broken">
+                            ISP - Drop Cable Broken
+                          </SelectItem>
+                          <SelectItem value="osp-high-losses">
+                            OSP - High Losses
+                          </SelectItem>
+                          <SelectItem value="no-fault-handed-back">
+                            No Fault Handed Back
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -469,7 +495,12 @@ export default function EnhancedJobDetailsScreen() {
                       <Textarea
                         placeholder="Write here..."
                         value={formData.resolutionComments}
-                        onChange={(e) => handleInputChange("resolutionComments", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "resolutionComments",
+                            e.target.value,
+                          )
+                        }
                         className="min-h-[80px] resize-none"
                       />
                     </div>
@@ -486,13 +517,18 @@ export default function EnhancedJobDetailsScreen() {
                 <h3 className="font-semibold mb-4">Job Photos</h3>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   {jobPhotos.map((photo, index) => (
-                    <div key={index} className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                    <div
+                      key={index}
+                      className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center"
+                    >
                       <span className="text-gray-500">Photo {index + 1}</span>
                     </div>
                   ))}
                 </div>
                 <Button
-                  onClick={() => setJobPhotos([...jobPhotos, `photo-${Date.now()}`])}
+                  onClick={() =>
+                    setJobPhotos([...jobPhotos, `photo-${Date.now()}`])
+                  }
                   className="w-full"
                   variant="outline"
                 >
@@ -510,18 +546,25 @@ export default function EnhancedJobDetailsScreen() {
                 <h3 className="font-semibold mb-4">Stock Usage</h3>
                 <div className="space-y-4">
                   {stockItems.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div>
                         <div className="font-medium">{item.name}</div>
-                        <div className="text-sm text-gray-500">Available: {item.available}</div>
+                        <div className="text-sm text-gray-500">
+                          Available: {item.available}
+                        </div>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Input
                           type="number"
                           value={item.used}
                           onChange={(e) => {
-                            const newItems = stockItems.map(i =>
-                              i.id === item.id ? { ...i, used: parseInt(e.target.value) || 0 } : i
+                            const newItems = stockItems.map((i) =>
+                              i.id === item.id
+                                ? { ...i, used: parseInt(e.target.value) || 0 }
+                                : i,
                             );
                             setStockItems(newItems);
                           }}
@@ -553,14 +596,18 @@ export default function EnhancedJobDetailsScreen() {
                       {formatTime(timeSpent)}
                     </div>
                   </div>
-                  
+
                   {formData.maintenanceIssueClass && (
                     <div className="bg-green-50 p-4 rounded-lg">
                       <div className="flex items-center space-x-2 mb-2">
                         <FileText className="h-4 w-4 text-green-600" />
-                        <span className="font-medium">Maintenance Issue Class</span>
+                        <span className="font-medium">
+                          Maintenance Issue Class
+                        </span>
                       </div>
-                      <div className="text-green-800">{formData.maintenanceIssueClass}</div>
+                      <div className="text-green-800">
+                        {formData.maintenanceIssueClass}
+                      </div>
                     </div>
                   )}
 

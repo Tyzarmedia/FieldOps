@@ -11,7 +11,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X, ChevronUp, ChevronDown, Trash2, RefreshCw, FileText, Settings, Camera, Package, PenTool } from "lucide-react";
+import {
+  X,
+  ChevronUp,
+  ChevronDown,
+  Trash2,
+  RefreshCw,
+  FileText,
+  Settings,
+  Camera,
+  Package,
+  PenTool,
+} from "lucide-react";
 
 export default function UDFieldsScreen() {
   const navigate = useNavigate();

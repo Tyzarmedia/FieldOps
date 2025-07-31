@@ -9,10 +9,15 @@ interface ClockInScreenProps {
   userName?: string;
 }
 
-export default function ClockInScreen({ userRole: propUserRole, userName: propUserName }: ClockInScreenProps = {}) {
+export default function ClockInScreen({
+  userRole: propUserRole,
+  userName: propUserName,
+}: ClockInScreenProps = {}) {
   // Get user info from localStorage if not provided as props
-  const userRole = propUserRole || localStorage.getItem("userRole") || "Technician";
-  const userName = propUserName || localStorage.getItem("userName") || "John Doe";
+  const userRole =
+    propUserRole || localStorage.getItem("userRole") || "Technician";
+  const userName =
+    propUserName || localStorage.getItem("userName") || "John Doe";
   const [isClockingIn, setIsClockingIn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [workingHours, setWorkingHours] = useState("0:00");
@@ -24,7 +29,11 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
   // Get user initials
   const getInitials = (name: string) => {
     if (!name) return "JD";
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   };
 
   // Update time every second
@@ -37,10 +46,10 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
 
   // Format current date
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long' 
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
     });
   };
 
@@ -52,14 +61,17 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
 
   const handleSliderMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDragging) return;
-    
+
     const slider = e.currentTarget as HTMLElement;
     const rect = slider.getBoundingClientRect();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const position = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
-    
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const position = Math.max(
+      0,
+      Math.min(100, ((clientX - rect.left) / rect.width) * 100),
+    );
+
     setSliderPosition(position);
-    
+
     // Auto clock-in when slider reaches 80%
     if (position > 80 && !isClockingIn) {
       handleClockIn();
@@ -76,20 +88,20 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
   const handleClockIn = async () => {
     setIsClockingIn(true);
     setSliderPosition(100);
-    
+
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     // Navigate to dashboard
-    navigate('/');
+    navigate("/");
   };
 
   const handleClose = () => {
     // Navigate to appropriate dashboard based on user role
     if (userRole === "Assistant Technician") {
-      navigate('/assistant-technician');
+      navigate("/assistant-technician");
     } else {
-      navigate('/technician');
+      navigate("/technician");
     }
   };
 
@@ -161,21 +173,23 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
             onTouchEnd={handleSliderEnd}
           >
             {/* Slider Track */}
-            <div 
+            <div
               className={`absolute left-0 top-0 h-full transition-all duration-300 rounded-2xl ${
-                isClockingIn ? 'bg-green-500' : 'bg-white/30'
+                isClockingIn ? "bg-green-500" : "bg-white/30"
               }`}
               style={{ width: `${sliderPosition}%` }}
             />
-            
+
             {/* Slider Handle */}
             <div
               className={`absolute top-2 left-2 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                isClockingIn ? 'bg-white text-green-500' : 'bg-white text-orange-500'
+                isClockingIn
+                  ? "bg-white text-green-500"
+                  : "bg-white text-orange-500"
               }`}
-              style={{ 
+              style={{
                 transform: `translateX(${Math.max(0, (sliderPosition / 100) * (100 - 20))}%)`,
-                cursor: isDragging ? 'grabbing' : 'grab'
+                cursor: isDragging ? "grabbing" : "grab",
               }}
               onMouseDown={handleSliderStart}
               onTouchStart={handleSliderStart}
@@ -186,11 +200,13 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
                 <div className="w-6 h-6 rounded bg-orange-500" />
               )}
             </div>
-            
+
             {/* Slider Text */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className={`font-medium transition-opacity ${sliderPosition > 20 ? 'opacity-0' : 'opacity-100'}`}>
-                {isClockingIn ? 'Clocking In...' : 'Clock In'}
+              <span
+                className={`font-medium transition-opacity ${sliderPosition > 20 ? "opacity-0" : "opacity-100"}`}
+              >
+                {isClockingIn ? "Clocking In..." : "Clock In"}
               </span>
             </div>
           </div>
@@ -205,7 +221,9 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20"
-            onClick={() => {/* Handle edit */}}
+            onClick={() => {
+              /* Handle edit */
+            }}
           >
             <Edit3 className="h-5 w-5" />
           </Button>
@@ -218,7 +236,7 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
         <div className="w-8 h-8 border-2 border-white/30 rounded" />
         <div className="w-6 h-6 text-white/50">
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
           </svg>
         </div>
       </div>

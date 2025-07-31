@@ -264,7 +264,7 @@ export default function CoordinatorJobBoard() {
   useEffect(() => {
     const loadJobs = async () => {
       try {
-        const response = await fetch('/api/jobs');
+        const response = await fetch("/api/jobs");
         if (response.ok) {
           const data = await response.json();
           if (data.jobs && data.jobs.length > 0) {
@@ -273,19 +273,20 @@ export default function CoordinatorJobBoard() {
               ...job,
               status: job.status || "unassigned",
               assignedTechnician: job.assignedTo || job.assignedTechnician,
-              scheduledDate: job.scheduledDate || new Date().toISOString().split('T')[0],
+              scheduledDate:
+                job.scheduledDate || new Date().toISOString().split("T")[0],
               scheduledTime: job.scheduledTime || "09:00",
               requiredSkills: job.requiredSkills || ["General"],
               customer: job.customer || "Unknown Client",
               location: job.location || "TBD",
               estimatedDuration: job.estimatedDuration || "2h",
-              priority: job.priority || "medium"
+              priority: job.priority || "medium",
             }));
             setJobs(formattedJobs);
           }
         }
       } catch (error) {
-        console.error('Failed to load jobs:', error);
+        console.error("Failed to load jobs:", error);
         // Keep the demo data if API fails
       }
     };
@@ -297,12 +298,12 @@ export default function CoordinatorJobBoard() {
   const updateJobInBackend = async (jobId: string, updates: Partial<Job>) => {
     try {
       await fetch(`/api/jobs/${jobId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
       });
     } catch (error) {
-      console.error('Failed to update job:', error);
+      console.error("Failed to update job:", error);
     }
   };
 
@@ -327,9 +328,7 @@ export default function CoordinatorJobBoard() {
 
         setJobs((prev) =>
           prev.map((job) =>
-            job.id === draggedJob.id
-              ? { ...job, ...updates }
-              : job,
+            job.id === draggedJob.id ? { ...job, ...updates } : job,
           ),
         );
 
@@ -353,9 +352,7 @@ export default function CoordinatorJobBoard() {
       };
 
       setJobs((prev) =>
-        prev.map((job) =>
-          job.id === jobId ? { ...job, ...updates } : job,
-        ),
+        prev.map((job) => (job.id === jobId ? { ...job, ...updates } : job)),
       );
 
       // Save to backend
@@ -469,7 +466,9 @@ export default function CoordinatorJobBoard() {
                 <div className="space-y-4 py-4">
                   {/* Basic Information Section */}
                   <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-3">Basic Information</h3>
+                    <h3 className="text-lg font-semibold mb-3">
+                      Basic Information
+                    </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Work Order Number</Label>
@@ -510,7 +509,9 @@ export default function CoordinatorJobBoard() {
 
                   {/* Client Information Section */}
                   <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-3">Client Information</h3>
+                    <h3 className="text-lg font-semibold mb-3">
+                      Client Information
+                    </h3>
                     <div className="space-y-2">
                       <Label>Client Name</Label>
                       <Input placeholder="Enter client name..." />
@@ -560,14 +561,19 @@ export default function CoordinatorJobBoard() {
                       </div>
                       <div className="space-y-2">
                         <Label>Date Created</Label>
-                        <Input type="date" defaultValue={new Date().toISOString().split('T')[0]} />
+                        <Input
+                          type="date"
+                          defaultValue={new Date().toISOString().split("T")[0]}
+                        />
                       </div>
                     </div>
                   </div>
 
                   {/* Location and Facility Section */}
                   <div className="border-b pb-4">
-                    <h3 className="text-lg font-semibold mb-3">Location & Facility</h3>
+                    <h3 className="text-lg font-semibold mb-3">
+                      Location & Facility
+                    </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Facility</Label>
@@ -602,11 +608,19 @@ export default function CoordinatorJobBoard() {
                             <SelectValue placeholder="Select work type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="installation">Installation</SelectItem>
-                            <SelectItem value="maintenance">Maintenance</SelectItem>
+                            <SelectItem value="installation">
+                              Installation
+                            </SelectItem>
+                            <SelectItem value="maintenance">
+                              Maintenance
+                            </SelectItem>
                             <SelectItem value="repair">Repair</SelectItem>
-                            <SelectItem value="inspection">Inspection</SelectItem>
-                            <SelectItem value="troubleshooting">Troubleshooting</SelectItem>
+                            <SelectItem value="inspection">
+                              Inspection
+                            </SelectItem>
+                            <SelectItem value="troubleshooting">
+                              Troubleshooting
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -619,8 +633,18 @@ export default function CoordinatorJobBoard() {
                     <div className="space-y-2 mt-4">
                       <Label>Required Skills</Label>
                       <div className="flex flex-wrap gap-2">
-                        {["HVAC", "Electrical", "Plumbing", "Network", "Safety", "General"].map((skill) => (
-                          <label key={skill} className="flex items-center space-x-2 cursor-pointer">
+                        {[
+                          "HVAC",
+                          "Electrical",
+                          "Plumbing",
+                          "Network",
+                          "Safety",
+                          "General",
+                        ].map((skill) => (
+                          <label
+                            key={skill}
+                            className="flex items-center space-x-2 cursor-pointer"
+                          >
                             <input type="checkbox" className="rounded" />
                             <span className="text-sm">{skill}</span>
                           </label>
@@ -639,7 +663,9 @@ export default function CoordinatorJobBoard() {
 
                   <div className="flex gap-4 pt-4">
                     <Button className="flex-1">Create Job</Button>
-                    <Button variant="outline" className="flex-1">Save as Draft</Button>
+                    <Button variant="outline" className="flex-1">
+                      Save as Draft
+                    </Button>
                   </div>
                 </div>
               </DialogContent>
@@ -661,7 +687,9 @@ export default function CoordinatorJobBoard() {
               <UserCheck className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{stats.assigned}</div>
+              <div className="text-2xl font-bold text-purple-600">
+                {stats.assigned}
+              </div>
             </CardContent>
           </Card>
           <Card
@@ -676,7 +704,9 @@ export default function CoordinatorJobBoard() {
               <CheckCircle className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{stats.accepted}</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {stats.accepted}
+              </div>
             </CardContent>
           </Card>
           <Card
@@ -691,7 +721,9 @@ export default function CoordinatorJobBoard() {
               <Activity className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{stats.inProgress}</div>
+              <div className="text-2xl font-bold text-yellow-600">
+                {stats.inProgress}
+              </div>
             </CardContent>
           </Card>
           <Card
@@ -706,7 +738,9 @@ export default function CoordinatorJobBoard() {
               <CheckCircle className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{stats.finished}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {stats.finished}
+              </div>
             </CardContent>
           </Card>
           <Card
@@ -721,7 +755,9 @@ export default function CoordinatorJobBoard() {
               <Timer className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{stats.followup}</div>
+              <div className="text-2xl font-bold text-orange-600">
+                {stats.followup}
+              </div>
             </CardContent>
           </Card>
           <Card
@@ -736,7 +772,9 @@ export default function CoordinatorJobBoard() {
               <AlertTriangle className="h-4 w-4 text-red-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">{stats.escalated}</div>
+              <div className="text-2xl font-bold text-red-600">
+                {stats.escalated}
+              </div>
             </CardContent>
           </Card>
           <Card
@@ -751,7 +789,9 @@ export default function CoordinatorJobBoard() {
               <CheckCircle className="h-4 w-4 text-gray-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-600">{stats.rocClosed}</div>
+              <div className="text-2xl font-bold text-gray-600">
+                {stats.rocClosed}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -914,195 +954,199 @@ export default function CoordinatorJobBoard() {
           </div>
 
           {/* Schedule Grid */}
-        <div className="col-span-9">
-          <Card className="h-[800px]">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-blue-600" />
-                Schedule - {new Date(selectedDate).toLocaleDateString()}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="h-[720px] flex flex-col">
-                {/* Header row with technician names */}
-                <div className="grid grid-cols-5 border-b bg-gray-50 sticky top-0 z-10">
-                  <div className="border-r p-2">
-                    <div className="font-semibold text-sm text-center">Time</div>
-                  </div>
-                  {technicians.slice(0, 4).map((technician) => (
-                    <div key={technician.id} className="border-r p-2">
-                      <div className="text-center">
-                        <div className="font-semibold text-sm">
-                          {technician.name}
-                        </div>
-                        <div className="flex items-center justify-center gap-2 mt-1">
-                          <Badge
-                            className={getStatusColor(technician.status)}
-                          >
-                            {technician.status}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {technician.workload}%
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap gap-1 mt-1 justify-center">
-                          {technician.skills.slice(0, 2).map((skill) => (
-                            <Badge
-                              key={skill}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {skill}
-                            </Badge>
-                          ))}
-                        </div>
+          <div className="col-span-9">
+            <Card className="h-[800px]">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-blue-600" />
+                  Schedule - {new Date(selectedDate).toLocaleDateString()}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="h-[720px] flex flex-col">
+                  {/* Header row with technician names */}
+                  <div className="grid grid-cols-5 border-b bg-gray-50 sticky top-0 z-10">
+                    <div className="border-r p-2">
+                      <div className="font-semibold text-sm text-center">
+                        Time
                       </div>
                     </div>
-                  ))}
-                </div>
-
-                {/* Scrollable content area */}
-                <ScrollArea className="flex-1">
-                  <div className="grid grid-cols-5">
-                    {/* Time column */}
-                    <div className="border-r bg-gray-50">
-                      {timeSlots.map((time, index) => (
-                        <div
-                          key={time}
-                          className={`h-12 flex items-center justify-center text-sm text-muted-foreground border-b ${
-                            index % 2 === 0 ? 'bg-gray-50' : 'bg-gray-100'
-                          }`}
-                        >
-                          {time}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Technician columns */}
                     {technicians.slice(0, 4).map((technician) => (
-                      <div key={technician.id} className="border-r">
-                        {timeSlots.map((time, timeIndex) => {
-                          const jobAtTime = assignedJobs.find(
-                            (job) =>
-                              job.assignedTechnician === technician.name &&
-                              job.scheduledTime === time &&
-                              job.scheduledDate === selectedDate,
-                          );
-
-                          return (
-                            <div
-                              key={time}
-                              className={`h-12 border-b p-1 transition-colors ${
-                                timeIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50'
-                              } ${
-                                draggedJob
-                                  ? "border-dashed border-blue-300 bg-blue-50/50"
-                                  : ""
-                              }`}
-                              onDragOver={(e) => {
-                                e.preventDefault();
-                                e.currentTarget.classList.add(
-                                  "bg-blue-100/80",
-                                  "border-blue-400",
-                                );
-                              }}
-                              onDragLeave={(e) => {
-                                e.currentTarget.classList.remove(
-                                  "bg-blue-100/80",
-                                  "border-blue-400",
-                                );
-                              }}
-                              onDrop={(e) => {
-                                e.preventDefault();
-                                e.currentTarget.classList.remove(
-                                  "bg-blue-100/80",
-                                  "border-blue-400",
-                                );
-                                if (draggedJob) {
-                                  // If there's already a job in this slot, we need to handle the swap
-                                  if (
-                                    jobAtTime &&
-                                    jobAtTime.id !== draggedJob.id
-                                  ) {
-                                    // Swap jobs - move the existing job to unassigned
-                                    setJobs((prev) =>
-                                      prev.map((job) => {
-                                        if (job.id === jobAtTime.id) {
-                                          return {
-                                            ...job,
-                                            status: "unassigned" as const,
-                                            assignedTechnician: undefined,
-                                            scheduledDate: undefined,
-                                            scheduledTime: undefined,
-                                          };
-                                        }
-                                        return job;
-                                      }),
-                                    );
-                                  }
-                                  handleDrop(technician.id, time);
-                                }
-                              }}
+                      <div key={technician.id} className="border-r p-2">
+                        <div className="text-center">
+                          <div className="font-semibold text-sm">
+                            {technician.name}
+                          </div>
+                          <div className="flex items-center justify-center gap-2 mt-1">
+                            <Badge
+                              className={getStatusColor(technician.status)}
                             >
-                              {jobAtTime ? (
-                                <div
-                                  draggable={jobAtTime.status !== "completed"}
-                                  onDragStart={() =>
-                                    handleDragStart(jobAtTime)
-                                  }
-                                  onDragEnd={handleDragEnd}
-                                  className={`h-full rounded p-2 text-xs cursor-move transition-all hover:shadow-md ${
-                                    draggedJob?.id === jobAtTime.id
-                                      ? "opacity-50 scale-95"
-                                      : ""
-                                  } ${
-                                    jobAtTime.status === "completed"
-                                      ? "bg-green-100 border-green-300 cursor-not-allowed"
-                                      : jobAtTime.status === "in-progress"
-                                        ? "bg-blue-100 border-blue-300"
-                                        : "bg-purple-100 border-purple-300"
-                                  } border-l-4 relative group`}
-                                >
-                                  {jobAtTime.status !== "completed" && (
-                                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <GripVertical className="h-3 w-3 text-gray-400" />
-                                    </div>
-                                  )}
-                                  <div className="font-semibold">
-                                    {jobAtTime.id}
-                                  </div>
-                                  <div className="truncate">
-                                    {jobAtTime.title}
-                                  </div>
-                                  <Badge
-                                    className={getStatusColor(
-                                      jobAtTime.status,
-                                    )}
-                                    variant="outline"
-                                  >
-                                    {jobAtTime.status}
-                                  </Badge>
-                                </div>
-                              ) : (
-                                <div className="h-full flex items-center justify-center text-gray-300 hover:bg-gray-50 rounded transition-colors">
-                                  {draggedJob && (
-                                    <div className="text-xs text-blue-600 font-medium">
-                                      Drop here to reschedule
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
+                              {technician.status}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {technician.workload}%
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-1 mt-1 justify-center">
+                            {technician.skills.slice(0, 2).map((skill) => (
+                              <Badge
+                                key={skill}
+                                variant="outline"
+                                className="text-xs"
+                              >
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
-                </ScrollArea>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+
+                  {/* Scrollable content area */}
+                  <ScrollArea className="flex-1">
+                    <div className="grid grid-cols-5">
+                      {/* Time column */}
+                      <div className="border-r bg-gray-50">
+                        {timeSlots.map((time, index) => (
+                          <div
+                            key={time}
+                            className={`h-12 flex items-center justify-center text-sm text-muted-foreground border-b ${
+                              index % 2 === 0 ? "bg-gray-50" : "bg-gray-100"
+                            }`}
+                          >
+                            {time}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Technician columns */}
+                      {technicians.slice(0, 4).map((technician) => (
+                        <div key={technician.id} className="border-r">
+                          {timeSlots.map((time, timeIndex) => {
+                            const jobAtTime = assignedJobs.find(
+                              (job) =>
+                                job.assignedTechnician === technician.name &&
+                                job.scheduledTime === time &&
+                                job.scheduledDate === selectedDate,
+                            );
+
+                            return (
+                              <div
+                                key={time}
+                                className={`h-12 border-b p-1 transition-colors ${
+                                  timeIndex % 2 === 0
+                                    ? "bg-white"
+                                    : "bg-slate-50"
+                                } ${
+                                  draggedJob
+                                    ? "border-dashed border-blue-300 bg-blue-50/50"
+                                    : ""
+                                }`}
+                                onDragOver={(e) => {
+                                  e.preventDefault();
+                                  e.currentTarget.classList.add(
+                                    "bg-blue-100/80",
+                                    "border-blue-400",
+                                  );
+                                }}
+                                onDragLeave={(e) => {
+                                  e.currentTarget.classList.remove(
+                                    "bg-blue-100/80",
+                                    "border-blue-400",
+                                  );
+                                }}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  e.currentTarget.classList.remove(
+                                    "bg-blue-100/80",
+                                    "border-blue-400",
+                                  );
+                                  if (draggedJob) {
+                                    // If there's already a job in this slot, we need to handle the swap
+                                    if (
+                                      jobAtTime &&
+                                      jobAtTime.id !== draggedJob.id
+                                    ) {
+                                      // Swap jobs - move the existing job to unassigned
+                                      setJobs((prev) =>
+                                        prev.map((job) => {
+                                          if (job.id === jobAtTime.id) {
+                                            return {
+                                              ...job,
+                                              status: "unassigned" as const,
+                                              assignedTechnician: undefined,
+                                              scheduledDate: undefined,
+                                              scheduledTime: undefined,
+                                            };
+                                          }
+                                          return job;
+                                        }),
+                                      );
+                                    }
+                                    handleDrop(technician.id, time);
+                                  }
+                                }}
+                              >
+                                {jobAtTime ? (
+                                  <div
+                                    draggable={jobAtTime.status !== "completed"}
+                                    onDragStart={() =>
+                                      handleDragStart(jobAtTime)
+                                    }
+                                    onDragEnd={handleDragEnd}
+                                    className={`h-full rounded p-2 text-xs cursor-move transition-all hover:shadow-md ${
+                                      draggedJob?.id === jobAtTime.id
+                                        ? "opacity-50 scale-95"
+                                        : ""
+                                    } ${
+                                      jobAtTime.status === "completed"
+                                        ? "bg-green-100 border-green-300 cursor-not-allowed"
+                                        : jobAtTime.status === "in-progress"
+                                          ? "bg-blue-100 border-blue-300"
+                                          : "bg-purple-100 border-purple-300"
+                                    } border-l-4 relative group`}
+                                  >
+                                    {jobAtTime.status !== "completed" && (
+                                      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <GripVertical className="h-3 w-3 text-gray-400" />
+                                      </div>
+                                    )}
+                                    <div className="font-semibold">
+                                      {jobAtTime.id}
+                                    </div>
+                                    <div className="truncate">
+                                      {jobAtTime.title}
+                                    </div>
+                                    <Badge
+                                      className={getStatusColor(
+                                        jobAtTime.status,
+                                      )}
+                                      variant="outline"
+                                    >
+                                      {jobAtTime.status}
+                                    </Badge>
+                                  </div>
+                                ) : (
+                                  <div className="h-full flex items-center justify-center text-gray-300 hover:bg-gray-50 rounded transition-colors">
+                                    {draggedJob && (
+                                      <div className="text-xs text-blue-600 font-medium">
+                                        Drop here to reschedule
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Enhanced Instructions */}
@@ -1218,7 +1262,7 @@ export default function CoordinatorJobBoard() {
             <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
               <div className="flex items-center justify-between p-6 border-b">
                 <h2 className="text-xl font-semibold capitalize">
-                  {selectedStatusFilter.replace('-', ' ')} Jobs
+                  {selectedStatusFilter.replace("-", " ")} Jobs
                 </h2>
                 <Button
                   variant="ghost"
@@ -1233,8 +1277,10 @@ export default function CoordinatorJobBoard() {
                 <div className="space-y-4">
                   {jobs
                     .filter((job) => {
-                      if (selectedStatusFilter === "finished") return job.status === "completed";
-                      if (selectedStatusFilter === "roc-closed") return job.status === "completed";
+                      if (selectedStatusFilter === "finished")
+                        return job.status === "completed";
+                      if (selectedStatusFilter === "roc-closed")
+                        return job.status === "completed";
                       return job.status === selectedStatusFilter;
                     })
                     .map((job) => (
@@ -1251,7 +1297,9 @@ export default function CoordinatorJobBoard() {
                               </Badge>
                             </div>
                             <h3 className="font-semibold">{job.title}</h3>
-                            <p className="text-sm text-gray-600">{job.description}</p>
+                            <p className="text-sm text-gray-600">
+                              {job.description}
+                            </p>
                             <div className="flex items-center gap-4 text-sm text-gray-500">
                               <div className="flex items-center gap-1">
                                 <User className="h-3 w-3" />
@@ -1285,12 +1333,15 @@ export default function CoordinatorJobBoard() {
                     ))}
 
                   {jobs.filter((job) => {
-                    if (selectedStatusFilter === "finished") return job.status === "completed";
-                    if (selectedStatusFilter === "roc-closed") return job.status === "completed";
+                    if (selectedStatusFilter === "finished")
+                      return job.status === "completed";
+                    if (selectedStatusFilter === "roc-closed")
+                      return job.status === "completed";
                     return job.status === selectedStatusFilter;
                   }).length === 0 && (
                     <div className="text-center py-8 text-gray-500">
-                      No jobs found with status: {selectedStatusFilter.replace('-', ' ')}
+                      No jobs found with status:{" "}
+                      {selectedStatusFilter.replace("-", " ")}
                     </div>
                   )}
                 </div>
@@ -1299,11 +1350,17 @@ export default function CoordinatorJobBoard() {
               <div className="p-6 border-t bg-gray-50">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">
-                    Total: {jobs.filter((job) => {
-                      if (selectedStatusFilter === "finished") return job.status === "completed";
-                      if (selectedStatusFilter === "roc-closed") return job.status === "completed";
-                      return job.status === selectedStatusFilter;
-                    }).length} jobs
+                    Total:{" "}
+                    {
+                      jobs.filter((job) => {
+                        if (selectedStatusFilter === "finished")
+                          return job.status === "completed";
+                        if (selectedStatusFilter === "roc-closed")
+                          return job.status === "completed";
+                        return job.status === selectedStatusFilter;
+                      }).length
+                    }{" "}
+                    jobs
                   </span>
                   <Button onClick={() => setShowStatusModal(false)}>
                     Close

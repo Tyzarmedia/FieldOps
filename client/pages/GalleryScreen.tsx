@@ -81,7 +81,7 @@ export default function GalleryScreen() {
   useEffect(() => {
     return () => {
       if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
+        currentStream.getTracks().forEach((track) => track.stop());
       }
     };
   }, [currentStream]);
@@ -111,8 +111,8 @@ export default function GalleryScreen() {
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }, // Use back camera on mobile
-        audio: false
+        video: { facingMode: "environment" }, // Use back camera on mobile
+        audio: false,
       });
       setCurrentStream(stream);
       if (videoRef.current) {
@@ -131,24 +131,30 @@ export default function GalleryScreen() {
 
   const stopCamera = () => {
     if (currentStream) {
-      currentStream.getTracks().forEach(track => track.stop());
+      currentStream.getTracks().forEach((track) => track.stop());
       setCurrentStream(null);
     }
     setShowCamera(false);
   };
 
-  const capturePhoto = (category: "before-light-readings" | "image-fault" | "image-after-work" | "light-readings-after-work") => {
+  const capturePhoto = (
+    category:
+      | "before-light-readings"
+      | "image-fault"
+      | "image-after-work"
+      | "light-readings-after-work",
+  ) => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
+      const context = canvas.getContext("2d");
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
 
       if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        const imageDataUrl = canvas.toDataURL("image/jpeg", 0.8);
 
         const newPhoto: Photo = {
           id: Date.now().toString(),
@@ -163,7 +169,14 @@ export default function GalleryScreen() {
     }
   };
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>, category: "before-light-readings" | "image-fault" | "image-after-work" | "light-readings-after-work") => {
+  const handleFileSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    category:
+      | "before-light-readings"
+      | "image-fault"
+      | "image-after-work"
+      | "light-readings-after-work",
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -180,7 +193,13 @@ export default function GalleryScreen() {
     }
   };
 
-  const handleUpload = (category: "before-light-readings" | "image-fault" | "image-after-work" | "light-readings-after-work") => {
+  const handleUpload = (
+    category:
+      | "before-light-readings"
+      | "image-fault"
+      | "image-after-work"
+      | "light-readings-after-work",
+  ) => {
     // Show options for camera or file selection
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       startCamera();
@@ -188,7 +207,8 @@ export default function GalleryScreen() {
     } else {
       // Fallback to file input for older browsers
       if (fileInputRef.current) {
-        fileInputRef.current.onchange = (e) => handleFileSelect(e as any, category);
+        fileInputRef.current.onchange = (e) =>
+          handleFileSelect(e as any, category);
         fileInputRef.current.click();
       }
     }
@@ -225,11 +245,11 @@ export default function GalleryScreen() {
         type="file"
         accept="image/*"
         capture="environment"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
 
       {/* Hidden canvas for photo capture */}
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
 
       {/* Camera Modal */}
       {showCamera && (

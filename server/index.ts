@@ -13,7 +13,7 @@ import {
   submitOvertime,
   getInspections,
   submitInspection,
-  getMissingInspections
+  getMissingInspections,
 } from "./routes/jobs";
 
 export function createServer() {

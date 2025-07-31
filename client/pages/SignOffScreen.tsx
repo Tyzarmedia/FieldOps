@@ -40,11 +40,11 @@ export default function SignOffScreen() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (ctx) {
-        ctx.strokeStyle = '#000';
+        ctx.strokeStyle = "#000";
         ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
+        ctx.lineCap = "round";
       }
     }
   }, []);
@@ -55,10 +55,12 @@ export default function SignOffScreen() {
 
     setIsDrawing(true);
     const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    const x =
+      "touches" in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    const y =
+      "touches" in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.beginPath();
       ctx.moveTo(x, y);
@@ -72,10 +74,12 @@ export default function SignOffScreen() {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    const x =
+      "touches" in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    const y =
+      "touches" in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.lineTo(x, y);
       ctx.stroke();
@@ -90,7 +94,7 @@ export default function SignOffScreen() {
   const clearSignature = () => {
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         setHasSigned(false);
@@ -146,7 +150,7 @@ export default function SignOffScreen() {
       // In real app, send to API
       console.log("Signature data:", signatureData);
 
-      navigate('/', { state: { message: "Job completed successfully!" } });
+      navigate("/", { state: { message: "Job completed successfully!" } });
     }
   };
 
@@ -154,7 +158,7 @@ export default function SignOffScreen() {
     setCurrentTab(tab);
     switch (tab) {
       case "details":
-        navigate('/technician/jobs');
+        navigate("/technician/jobs");
         break;
       case "udf":
         // Navigate to UDF screen when implemented
@@ -199,7 +203,7 @@ export default function SignOffScreen() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
             >
               <X className="h-6 w-6" />
             </Button>
@@ -216,7 +220,9 @@ export default function SignOffScreen() {
               <div className="flex items-start space-x-3">
                 <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
                 <div>
-                  <h3 className="font-medium text-red-800 mb-2">Please complete the following:</h3>
+                  <h3 className="font-medium text-red-800 mb-2">
+                    Please complete the following:
+                  </h3>
                   <ul className="text-sm text-red-700 space-y-1">
                     {validationErrors.map((error, index) => (
                       <li key={index}>• {error}</li>
@@ -233,7 +239,9 @@ export default function SignOffScreen() {
           <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">Digital Signature</h3>
+                <h3 className="font-semibold text-gray-800">
+                  Digital Signature
+                </h3>
                 <Button
                   variant="outline"
                   size="sm"
@@ -244,7 +252,9 @@ export default function SignOffScreen() {
                   Clear
                 </Button>
               </div>
-              <div className={`border-2 border-dashed rounded-lg bg-white relative ${hasSigned ? 'border-green-500' : 'border-gray-300'}`}>
+              <div
+                className={`border-2 border-dashed rounded-lg bg-white relative ${hasSigned ? "border-green-500" : "border-gray-300"}`}
+              >
                 <canvas
                   ref={canvasRef}
                   width={300}
@@ -271,21 +281,29 @@ export default function SignOffScreen() {
         {/* Validation Checklist */}
         <Card>
           <CardContent className="p-6 space-y-4">
-            <h3 className="font-semibold text-gray-800">Pre-completion Checklist</h3>
+            <h3 className="font-semibold text-gray-800">
+              Pre-completion Checklist
+            </h3>
 
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${udfCompleted ? 'bg-green-500' : 'bg-gray-300'}`}>
-                  <CheckCircle className={`h-4 w-4 ${udfCompleted ? 'text-white' : 'text-gray-500'}`} />
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center ${udfCompleted ? "bg-green-500" : "bg-gray-300"}`}
+                >
+                  <CheckCircle
+                    className={`h-4 w-4 ${udfCompleted ? "text-white" : "text-gray-500"}`}
+                  />
                 </div>
-                <span className={`${udfCompleted ? 'text-gray-800' : 'text-gray-500'} font-medium`}>
+                <span
+                  className={`${udfCompleted ? "text-gray-800" : "text-gray-500"} font-medium`}
+                >
                   UDF fields completed and updated
                 </span>
                 {!udfCompleted && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate('/technician/udf')}
+                    onClick={() => navigate("/technician/udf")}
                   >
                     Go to UDF
                   </Button>
@@ -293,17 +311,23 @@ export default function SignOffScreen() {
               </div>
 
               <div className="flex items-center space-x-3">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${stockUpdated || noStockUsed ? 'bg-green-500' : 'bg-gray-300'}`}>
-                  <CheckCircle className={`h-4 w-4 ${stockUpdated || noStockUsed ? 'text-white' : 'text-gray-500'}`} />
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center ${stockUpdated || noStockUsed ? "bg-green-500" : "bg-gray-300"}`}
+                >
+                  <CheckCircle
+                    className={`h-4 w-4 ${stockUpdated || noStockUsed ? "text-white" : "text-gray-500"}`}
+                  />
                 </div>
-                <span className={`${stockUpdated || noStockUsed ? 'text-gray-800' : 'text-gray-500'} font-medium`}>
+                <span
+                  className={`${stockUpdated || noStockUsed ? "text-gray-800" : "text-gray-500"} font-medium`}
+                >
                   Stock status confirmed
                 </span>
                 {!stockUpdated && !noStockUsed && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate('/technician/stock')}
+                    onClick={() => navigate("/technician/stock")}
                   >
                     Go to Stock
                   </Button>
@@ -316,14 +340,22 @@ export default function SignOffScreen() {
                   onCheckedChange={(checked) => setNoStockUsed(!!checked)}
                   disabled={stockUpdated}
                 />
-                <span className="text-sm text-gray-600">No stock used for this job</span>
+                <span className="text-sm text-gray-600">
+                  No stock used for this job
+                </span>
               </div>
 
               <div className="flex items-center space-x-3">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${hasSigned ? 'bg-green-500' : 'bg-gray-300'}`}>
-                  <CheckCircle className={`h-4 w-4 ${hasSigned ? 'text-white' : 'text-gray-500'}`} />
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center ${hasSigned ? "bg-green-500" : "bg-gray-300"}`}
+                >
+                  <CheckCircle
+                    className={`h-4 w-4 ${hasSigned ? "text-white" : "text-gray-500"}`}
+                  />
                 </div>
-                <span className={`${hasSigned ? 'text-gray-800' : 'text-gray-500'} font-medium`}>
+                <span
+                  className={`${hasSigned ? "text-gray-800" : "text-gray-500"} font-medium`}
+                >
                   Digital signature provided
                 </span>
               </div>
@@ -340,9 +372,13 @@ export default function SignOffScreen() {
                 onCheckedChange={(checked) => setTermsAccepted(!!checked)}
               />
               <div>
-                <p className="text-gray-800 font-medium mb-2">I accept the Terms & Conditions</p>
+                <p className="text-gray-800 font-medium mb-2">
+                  I accept the Terms & Conditions
+                </p>
                 <p className="text-sm text-gray-600">
-                  By checking this box, I confirm that I have completed all required tasks for this job and accept responsibility for the work performed.
+                  By checking this box, I confirm that I have completed all
+                  required tasks for this job and accept responsibility for the
+                  work performed.
                 </p>
               </div>
             </div>
@@ -352,7 +388,9 @@ export default function SignOffScreen() {
         {/* Demo/Testing Controls - Remove in production */}
         <Card className="border-blue-200 bg-blue-50">
           <CardContent className="p-4">
-            <h4 className="font-medium text-blue-800 mb-3">Demo Controls (Testing Only)</h4>
+            <h4 className="font-medium text-blue-800 mb-3">
+              Demo Controls (Testing Only)
+            </h4>
             <div className="flex space-x-2">
               <Button
                 variant="outline"
@@ -360,7 +398,7 @@ export default function SignOffScreen() {
                 onClick={() => setUdfCompleted(!udfCompleted)}
                 className="text-blue-700 border-blue-300"
               >
-                Toggle UDF: {udfCompleted ? 'Complete' : 'Incomplete'}
+                Toggle UDF: {udfCompleted ? "Complete" : "Incomplete"}
               </Button>
               <Button
                 variant="outline"
@@ -368,7 +406,7 @@ export default function SignOffScreen() {
                 onClick={() => setStockUpdated(!stockUpdated)}
                 className="text-blue-700 border-blue-300"
               >
-                Toggle Stock: {stockUpdated ? 'Updated' : 'Pending'}
+                Toggle Stock: {stockUpdated ? "Updated" : "Pending"}
               </Button>
             </div>
           </CardContent>

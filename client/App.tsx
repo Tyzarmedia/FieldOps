@@ -239,10 +239,13 @@ export default function App() {
               element={<TechnicianOvertimeScreen />}
             />
             <Route path="/technician/udf" element={<UDFieldsScreen />} />
-          <Route path="/technician/job/:jobId" element={<EnhancedJobDetailsScreen />} />
-          <Route path="/technician/stock" element={<StockScreen />} />
-          <Route path="/technician/gallery" element={<GalleryScreen />} />
-          <Route path="/technician/signoff" element={<SignOffScreen />} />
+            <Route
+              path="/technician/job/:jobId"
+              element={<EnhancedJobDetailsScreen />}
+            />
+            <Route path="/technician/stock" element={<StockScreen />} />
+            <Route path="/technician/gallery" element={<GalleryScreen />} />
+            <Route path="/technician/signoff" element={<SignOffScreen />} />
             <Route
               path="/fleet"
               element={

@@ -249,8 +249,6 @@ export default function AssistantTechnicianDashboard() {
             </div>
           </div>
         </div>
-
-
       </div>
 
       {/* Main Content */}
@@ -296,7 +294,9 @@ export default function AssistantTechnicianDashboard() {
               <Card
                 key={card.id}
                 className={`bg-white transition-all duration-300 border-0 shadow-md ${
-                  card.disabled ? 'cursor-not-allowed opacity-60' : 'hover:shadow-lg cursor-pointer'
+                  card.disabled
+                    ? "cursor-not-allowed opacity-60"
+                    : "hover:shadow-lg cursor-pointer"
                 }`}
                 onClick={card.disabled ? undefined : card.action}
               >
