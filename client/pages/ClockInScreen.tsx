@@ -85,7 +85,12 @@ export default function ClockInScreen({ userRole: propUserRole, userName: propUs
   };
 
   const handleClose = () => {
-    navigate('/login');
+    // Navigate to appropriate dashboard based on user role
+    if (userRole === "Assistant Technician") {
+      navigate('/assistant-technician');
+    } else {
+      navigate('/technician');
+    }
   };
 
   return (
