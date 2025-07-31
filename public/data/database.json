@@ -438,7 +438,10 @@
       "address": "123 Business Ave, Downtown",
       "manager": "Sarah Wilson",
       "employees": 25,
-      "departments": ["Field Operations", "IT Support"],
+      "departments": [
+        "Field Operations",
+        "IT Support"
+      ],
       "performance": {
         "efficiency": 92.1,
         "revenue": 450000,
@@ -451,7 +454,11 @@
       "address": "456 Corporate Blvd, Midtown",
       "manager": "David Brown",
       "employees": 30,
-      "departments": ["Fleet Management", "Network Operations", "HR"],
+      "departments": [
+        "Fleet Management",
+        "Network Operations",
+        "HR"
+      ],
       "performance": {
         "efficiency": 89.3,
         "revenue": 520000,
@@ -464,7 +471,10 @@
       "address": "789 Service St, Uptown",
       "manager": "Lisa Garcia",
       "employees": 20,
-      "departments": ["Customer Service", "Sales"],
+      "departments": [
+        "Customer Service",
+        "Sales"
+      ],
       "performance": {
         "efficiency": 91.8,
         "revenue": 380000,
@@ -524,22 +534,30 @@
     {
       "id": "J002",
       "title": "Network Installation",
-      "status": "in-progress",
+      "status": "assigned",
       "priority": "high",
       "assignedTo": "Mike Chen",
       "department": "Field Operations",
       "startDate": "2024-01-21",
-      "estimatedDuration": 4
+      "estimatedDuration": 4,
+      "assignedTechnician": "John Smith",
+      "scheduledDate": "2025-07-31",
+      "scheduledTime": "11:00",
+      "updatedAt": "2025-07-31T19:33:09.607Z"
     },
     {
       "id": "J003",
       "title": "Emergency Repair",
-      "status": "failed",
+      "status": "assigned",
       "priority": "urgent",
       "assignedTo": "Sarah Johnson",
       "department": "Field Operations",
       "failedDate": "2024-01-20",
-      "reason": "Equipment failure"
+      "reason": "Equipment failure",
+      "assignedTechnician": "John Smith",
+      "scheduledDate": "2025-07-31",
+      "scheduledTime": "12:00",
+      "updatedAt": "2025-07-31T19:33:07.053Z"
     }
   ],
   "overtime": [
@@ -568,9 +586,21 @@
       "submittedBy": "E001",
       "submittedAt": "2024-01-21T07:30:00Z",
       "items": [
-        {"name": "Tires", "status": "good", "notes": ""},
-        {"name": "Engine Oil", "status": "good", "notes": ""},
-        {"name": "Brakes", "status": "attention", "notes": "Minor squeaking"}
+        {
+          "name": "Tires",
+          "status": "good",
+          "notes": ""
+        },
+        {
+          "name": "Engine Oil",
+          "status": "good",
+          "notes": ""
+        },
+        {
+          "name": "Brakes",
+          "status": "attention",
+          "notes": "Minor squeaking"
+        }
       ]
     }
   ],
