@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,10 +30,13 @@ import {
   Users,
   Activity,
   Timer,
+  ArrowRight,
+  Zap,
 } from "lucide-react";
 
 export default function CoordinatorDashboard() {
   const [selectedTechnician, setSelectedTechnician] = useState("");
+  const navigate = useNavigate();
 
   const myStats = {
     totalAssigned: 45,
@@ -253,6 +257,34 @@ export default function CoordinatorDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Job Board CTA */}
+      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <Zap className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg text-gray-900">
+                  Interactive Job Board
+                </h3>
+                <p className="text-gray-600">
+                  Drag and drop jobs to assign technicians and manage schedules in real-time
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() => navigate("/job-board")}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Open Job Board
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="jobs" className="space-y-4">
