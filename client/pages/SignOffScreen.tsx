@@ -349,6 +349,31 @@ export default function SignOffScreen() {
           </CardContent>
         </Card>
 
+        {/* Demo/Testing Controls - Remove in production */}
+        <Card className="border-blue-200 bg-blue-50">
+          <CardContent className="p-4">
+            <h4 className="font-medium text-blue-800 mb-3">Demo Controls (Testing Only)</h4>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setUdfCompleted(!udfCompleted)}
+                className="text-blue-700 border-blue-300"
+              >
+                Toggle UDF: {udfCompleted ? 'Complete' : 'Incomplete'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setStockUpdated(!stockUpdated)}
+                className="text-blue-700 border-blue-300"
+              >
+                Toggle Stock: {stockUpdated ? 'Updated' : 'Pending'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Action Buttons */}
         <div className="flex space-x-4">
           <Button
