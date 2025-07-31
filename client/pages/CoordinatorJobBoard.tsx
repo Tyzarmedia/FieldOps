@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -260,6 +260,52 @@ export default function CoordinatorJobBoard() {
 
   const dragOverRef = useRef<HTMLDivElement>(null);
 
+  // Load jobs from backend
+  useEffect(() => {
+    const loadJobs = async () => {
+      try {
+        const response = await fetch('/api/jobs');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.jobs && data.jobs.length > 0) {
+            // Convert backend jobs to frontend format
+            const formattedJobs = data.jobs.map((job: any) => ({
+              ...job,
+              status: job.status || "unassigned",
+              assignedTechnician: job.assignedTo || job.assignedTechnician,
+              scheduledDate: job.scheduledDate || new Date().toISOString().split('T')[0],
+              scheduledTime: job.scheduledTime || "09:00",
+              requiredSkills: job.requiredSkills || ["General"],
+              customer: job.customer || "Unknown Client",
+              location: job.location || "TBD",
+              estimatedDuration: job.estimatedDuration || "2h",
+              priority: job.priority || "medium"
+            }));
+            setJobs(formattedJobs);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load jobs:', error);
+        // Keep the demo data if API fails
+      }
+    };
+
+    loadJobs();
+  }, []);
+
+  // Save job changes to backend
+  const updateJobInBackend = async (jobId: string, updates: Partial<Job>) => {
+    try {
+      await fetch(`/api/jobs/${jobId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
+    } catch (error) {
+      console.error('Failed to update job:', error);
+    }
+  };
+
   const handleDragStart = useCallback((job: Job) => {
     setDraggedJob(job);
   }, []);
@@ -272,19 +318,23 @@ export default function CoordinatorJobBoard() {
     (technicianId: string, timeSlot?: string) => {
       if (draggedJob) {
         const targetTechnician = technicians.find((t) => t.id === technicianId);
+        const updates = {
+          assignedTechnician: targetTechnician?.name,
+          status: "assigned" as const,
+          scheduledDate: selectedDate,
+          scheduledTime: timeSlot || "09:00",
+        };
+
         setJobs((prev) =>
           prev.map((job) =>
             job.id === draggedJob.id
-              ? {
-                  ...job,
-                  assignedTechnician: targetTechnician?.name,
-                  status: "assigned" as const,
-                  scheduledDate: selectedDate,
-                  scheduledTime: timeSlot || "09:00",
-                }
+              ? { ...job, ...updates }
               : job,
           ),
         );
+
+        // Save to backend
+        updateJobInBackend(draggedJob.id, updates);
         setDraggedJob(null);
       }
     },
@@ -296,18 +346,20 @@ export default function CoordinatorJobBoard() {
       const targetTechnician = technicians.find(
         (t) => t.id === newTechnicianId,
       );
+      const updates = {
+        assignedTechnician: targetTechnician?.name,
+        scheduledDate: selectedDate,
+        scheduledTime: newTimeSlot,
+      };
+
       setJobs((prev) =>
         prev.map((job) =>
-          job.id === jobId
-            ? {
-                ...job,
-                assignedTechnician: targetTechnician?.name,
-                scheduledDate: selectedDate,
-                scheduledTime: newTimeSlot,
-              }
-            : job,
+          job.id === jobId ? { ...job, ...updates } : job,
         ),
       );
+
+      // Save to backend
+      updateJobInBackend(jobId, updates);
     },
     [technicians, selectedDate],
   );
