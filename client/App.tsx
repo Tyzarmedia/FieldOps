@@ -266,10 +266,7 @@ const App = () => (
             path="/job-board"
             element={
               <ProtectedRoute>
-                <PlaceholderPage
-                  title="Job Board"
-                  description="Create, edit, and manage job assignments across all technicians."
-                />
+                <CoordinatorJobBoard />
               </ProtectedRoute>
             }
           />
