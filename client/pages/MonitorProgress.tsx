@@ -44,14 +44,7 @@ interface Job {
   title: string;
   description: string;
   priority: "low" | "medium" | "high" | "urgent";
-  status:
-    | "assigned"
-    | "accepted"
-    | "in-progress"
-    | "finished"
-    | "followup"
-    | "escalated"
-    | "roc-closed";
+  status: "assigned" | "accepted" | "in-progress" | "finished" | "followup" | "escalated" | "roc-closed";
   estimatedDuration: string;
   location: string;
   requiredSkills: string[];
@@ -306,21 +299,13 @@ export default function MonitorProgress() {
         job.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.assignedTechnician.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus =
-        filterStatus === "all" || job.status === filterStatus;
+      const matchesStatus = filterStatus === "all" || job.status === filterStatus;
       const matchesPriority =
         filterPriority === "all" || job.priority === filterPriority;
       const matchesTechnician =
-        filterTechnician === "all" ||
-        job.assignedTechnician === filterTechnician;
+        filterTechnician === "all" || job.assignedTechnician === filterTechnician;
       const matchesDate = job.scheduledDate === selectedDate;
-      return (
-        matchesSearch &&
-        matchesStatus &&
-        matchesPriority &&
-        matchesTechnician &&
-        matchesDate
-      );
+      return matchesSearch && matchesStatus && matchesPriority && matchesTechnician && matchesDate;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -407,9 +392,7 @@ export default function MonitorProgress() {
               <UserCheck className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-600">
-                {stats.assigned}
-              </div>
+              <div className="text-2xl font-bold text-purple-600">{stats.assigned}</div>
             </CardContent>
           </Card>
           <Card>
@@ -418,9 +401,7 @@ export default function MonitorProgress() {
               <CheckCircle className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">
-                {stats.accepted}
-              </div>
+              <div className="text-2xl font-bold text-blue-600">{stats.accepted}</div>
             </CardContent>
           </Card>
           <Card>
@@ -429,9 +410,7 @@ export default function MonitorProgress() {
               <Activity className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">
-                {stats.inProgress}
-              </div>
+              <div className="text-2xl font-bold text-yellow-600">{stats.inProgress}</div>
             </CardContent>
           </Card>
           <Card>
@@ -440,9 +419,7 @@ export default function MonitorProgress() {
               <CheckCircle className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                {stats.finished}
-              </div>
+              <div className="text-2xl font-bold text-green-600">{stats.finished}</div>
             </CardContent>
           </Card>
           <Card>
@@ -451,9 +428,7 @@ export default function MonitorProgress() {
               <Timer className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-600">
-                {stats.followup}
-              </div>
+              <div className="text-2xl font-bold text-orange-600">{stats.followup}</div>
             </CardContent>
           </Card>
           <Card>
@@ -462,9 +437,7 @@ export default function MonitorProgress() {
               <AlertCircle className="h-4 w-4 text-red-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">
-                {stats.escalated}
-              </div>
+              <div className="text-2xl font-bold text-red-600">{stats.escalated}</div>
             </CardContent>
           </Card>
           <Card>
@@ -473,9 +446,7 @@ export default function MonitorProgress() {
               <CheckCircle className="h-4 w-4 text-gray-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-600">
-                {stats.rocClosed}
-              </div>
+              <div className="text-2xl font-bold text-gray-600">{stats.rocClosed}</div>
             </CardContent>
           </Card>
         </div>
@@ -535,10 +506,7 @@ export default function MonitorProgress() {
                   <SelectItem value="low">Low</SelectItem>
                 </SelectContent>
               </Select>
-              <Select
-                value={filterTechnician}
-                onValueChange={setFilterTechnician}
-              >
+              <Select value={filterTechnician} onValueChange={setFilterTechnician}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="All Technicians" />
                 </SelectTrigger>
@@ -581,55 +549,32 @@ export default function MonitorProgress() {
                 <ScrollArea className="h-[620px] px-4">
                   <div className="space-y-3">
                     {technicians.map((technician) => (
-                      <div
-                        key={technician.id}
-                        className="p-3 border rounded-lg"
-                      >
+                      <div key={technician.id} className="p-3 border rounded-lg">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold text-sm">
-                            {technician.name}
-                          </h4>
-                          <Badge
-                            className={`${technician.status === "available" ? "bg-green-100 text-green-800" : technician.status === "busy" ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"}`}
-                          >
+                          <h4 className="font-semibold text-sm">{technician.name}</h4>
+                          <Badge className={`${technician.status === 'available' ? 'bg-green-100 text-green-800' : technician.status === 'busy' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}`}>
                             {technician.status}
                           </Badge>
                         </div>
                         <div className="space-y-2 text-xs">
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              Workload:
-                            </span>
-                            <span className="font-medium">
-                              {technician.workload}%
-                            </span>
+                            <span className="text-muted-foreground">Workload:</span>
+                            <span className="font-medium">{technician.workload}%</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              Productivity:
-                            </span>
-                            <span
-                              className={`font-medium ${getProductivityColor(technician.productivity)}`}
-                            >
+                            <span className="text-muted-foreground">Productivity:</span>
+                            <span className={`font-medium ${getProductivityColor(technician.productivity)}`}>
                               {technician.productivity}%
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              Location:
-                            </span>
-                            <span className="font-medium">
-                              {technician.currentLocation}
-                            </span>
+                            <span className="text-muted-foreground">Location:</span>
+                            <span className="font-medium">{technician.currentLocation}</span>
                           </div>
                         </div>
                         <div className="mt-2 flex flex-wrap gap-1">
                           {technician.skills.slice(0, 3).map((skill) => (
-                            <Badge
-                              key={skill}
-                              variant="outline"
-                              className="text-xs"
-                            >
+                            <Badge key={skill} variant="outline" className="text-xs">
                               {skill}
                             </Badge>
                           ))}
@@ -655,76 +600,73 @@ export default function MonitorProgress() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="grid grid-cols-1 lg:grid-cols-6 h-[620px]">
-                  {/* Time slots column */}
-                  <div className="border-r bg-gray-50 p-2">
-                    <div className="font-semibold text-sm mb-3 text-center sticky top-0 bg-gray-50 py-2">
-                      Time
+                <div className="h-[620px] flex flex-col">
+                  {/* Header row with technician names */}
+                  <div className="grid grid-cols-6 border-b bg-gray-50 sticky top-0 z-10">
+                    <div className="border-r p-2">
+                      <div className="font-semibold text-sm text-center">Time</div>
                     </div>
-                    <ScrollArea className="h-[550px]">
-                      <div className="space-y-0">
-                        {timeSlots.map((time) => (
-                          <div
-                            key={time}
-                            className="h-16 flex items-center justify-center text-sm text-muted-foreground border-b"
-                          >
-                            {time}
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  </div>
-
-                  {/* Technician columns */}
-                  {technicians.slice(0, 5).map((technician) => (
-                    <div key={technician.id} className="border-r">
-                      {/* Technician header */}
-                      <div className="p-2 border-b bg-gray-50">
+                    {technicians.slice(0, 5).map((technician) => (
+                      <div key={technician.id} className="border-r p-2">
                         <div className="text-center">
                           <div className="font-semibold text-sm">
                             {technician.name}
                           </div>
                           <div className="flex items-center justify-center gap-2 mt-1">
                             <Badge
-                              className={`${technician.status === "available" ? "bg-green-100 text-green-800" : technician.status === "busy" ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"}`}
+                              className={`${technician.status === 'available' ? 'bg-green-100 text-green-800' : technician.status === 'busy' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}`}
                             >
                               {technician.status}
                             </Badge>
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">
-                            Productivity:{" "}
-                            <span
-                              className={getProductivityColor(
-                                technician.productivity,
-                              )}
-                            >
+                            Productivity: <span className={getProductivityColor(technician.productivity)}>
                               {technician.productivity}%
                             </span>
                           </div>
                         </div>
                       </div>
+                    ))}
+                  </div>
 
-                      {/* Time slots */}
-                      <ScrollArea className="h-[550px]">
-                        <div className="space-y-0">
-                          {timeSlots.map((time) => {
+                  {/* Scrollable content area */}
+                  <ScrollArea className="flex-1">
+                    <div className="grid grid-cols-6">
+                      {/* Time column */}
+                      <div className="border-r bg-gray-50">
+                        {timeSlots.map((time, index) => (
+                          <div
+                            key={time}
+                            className={`h-16 flex items-center justify-center text-sm text-muted-foreground border-b ${
+                              index % 2 === 0 ? 'bg-gray-50' : 'bg-gray-100'
+                            }`}
+                          >
+                            {time}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Technician columns */}
+                      {technicians.slice(0, 5).map((technician, techIndex) => (
+                        <div key={technician.id} className="border-r">
+                          {timeSlots.map((time, timeIndex) => {
                             const jobAtTime = filteredJobs.find(
                               (job) =>
                                 job.assignedTechnician === technician.name &&
-                                job.scheduledTime === time,
+                                job.scheduledTime === time
                             );
 
                             return (
                               <div
                                 key={time}
-                                className="h-16 border-b p-1 transition-colors"
+                                className={`h-16 border-b p-1 transition-colors ${
+                                  timeIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50'
+                                }`}
                               >
                                 {jobAtTime ? (
                                   <Dialog>
                                     <DialogTrigger asChild>
-                                      <div
-                                        className={`h-full rounded p-2 text-xs cursor-pointer transition-all hover:shadow-md border-l-4 ${getStatusColor(jobAtTime.status)}`}
-                                      >
+                                      <div className={`h-full rounded p-2 text-xs cursor-pointer transition-all hover:shadow-md border-l-4 ${getStatusColor(jobAtTime.status)}`}>
                                         <div className="font-semibold text-xs mb-1">
                                           {jobAtTime.id}
                                         </div>
@@ -733,36 +675,26 @@ export default function MonitorProgress() {
                                         </div>
                                         <div className="flex items-center justify-between mt-1">
                                           <Badge
-                                            className={getPriorityColor(
-                                              jobAtTime.priority,
-                                            )}
+                                            className={getPriorityColor(jobAtTime.priority)}
                                             variant="outline"
                                           >
                                             {jobAtTime.priority}
                                           </Badge>
-                                          {jobAtTime.productivity !==
-                                            undefined &&
-                                            jobAtTime.productivity > 0 && (
-                                              <span
-                                                className={`text-xs font-medium ${getProductivityColor(jobAtTime.productivity)}`}
-                                              >
-                                                {jobAtTime.productivity}%
-                                              </span>
-                                            )}
+                                          {jobAtTime.productivity !== undefined && jobAtTime.productivity > 0 && (
+                                            <span className={`text-xs font-medium ${getProductivityColor(jobAtTime.productivity)}`}>
+                                              {jobAtTime.productivity}%
+                                            </span>
+                                          )}
                                         </div>
                                       </div>
                                     </DialogTrigger>
                                     <DialogContent className="max-w-md">
                                       <DialogHeader>
-                                        <DialogTitle>
-                                          Job Details - {jobAtTime.id}
-                                        </DialogTitle>
+                                        <DialogTitle>Job Details - {jobAtTime.id}</DialogTitle>
                                       </DialogHeader>
                                       <div className="space-y-4 py-4">
                                         <div>
-                                          <h4 className="font-semibold">
-                                            {jobAtTime.title}
-                                          </h4>
+                                          <h4 className="font-semibold">{jobAtTime.title}</h4>
                                           <p className="text-sm text-muted-foreground">
                                             {jobAtTime.description}
                                           </p>
@@ -771,9 +703,7 @@ export default function MonitorProgress() {
                                           <div>
                                             <div className="flex items-center gap-1 mb-1">
                                               <User className="h-3 w-3" />
-                                              <span className="font-medium">
-                                                Technician:
-                                              </span>
+                                              <span className="font-medium">Technician:</span>
                                             </div>
                                             <span className="text-muted-foreground">
                                               {jobAtTime.assignedTechnician}
@@ -782,9 +712,7 @@ export default function MonitorProgress() {
                                           <div>
                                             <div className="flex items-center gap-1 mb-1">
                                               <MapPin className="h-3 w-3" />
-                                              <span className="font-medium">
-                                                Location:
-                                              </span>
+                                              <span className="font-medium">Location:</span>
                                             </div>
                                             <span className="text-muted-foreground">
                                               {jobAtTime.location}
@@ -793,9 +721,7 @@ export default function MonitorProgress() {
                                           <div>
                                             <div className="flex items-center gap-1 mb-1">
                                               <Clock className="h-3 w-3" />
-                                              <span className="font-medium">
-                                                Duration:
-                                              </span>
+                                              <span className="font-medium">Duration:</span>
                                             </div>
                                             <span className="text-muted-foreground">
                                               {jobAtTime.estimatedDuration}
@@ -804,15 +730,9 @@ export default function MonitorProgress() {
                                           <div>
                                             <div className="flex items-center gap-1 mb-1">
                                               <AlertTriangle className="h-3 w-3" />
-                                              <span className="font-medium">
-                                                Priority:
-                                              </span>
+                                              <span className="font-medium">Priority:</span>
                                             </div>
-                                            <Badge
-                                              className={getPriorityColor(
-                                                jobAtTime.priority,
-                                              )}
-                                            >
+                                            <Badge className={getPriorityColor(jobAtTime.priority)}>
                                               {jobAtTime.priority}
                                             </Badge>
                                           </div>
@@ -820,47 +740,30 @@ export default function MonitorProgress() {
                                         <div>
                                           <div className="flex items-center gap-1 mb-1">
                                             <Activity className="h-3 w-3" />
-                                            <span className="font-medium">
-                                              Status:
-                                            </span>
+                                            <span className="font-medium">Status:</span>
                                           </div>
-                                          <Badge
-                                            className={getStatusColor(
-                                              jobAtTime.status,
-                                            )}
-                                          >
+                                          <Badge className={getStatusColor(jobAtTime.status)}>
                                             {jobAtTime.status}
                                           </Badge>
                                         </div>
-                                        {jobAtTime.productivity !== undefined &&
-                                          jobAtTime.productivity > 0 && (
-                                            <div>
-                                              <div className="flex items-center gap-1 mb-1">
-                                                <TrendingUp className="h-3 w-3" />
-                                                <span className="font-medium">
-                                                  Productivity:
-                                                </span>
-                                              </div>
-                                              <span
-                                                className={`font-medium ${getProductivityColor(jobAtTime.productivity)}`}
-                                              >
-                                                {jobAtTime.productivity}%
-                                              </span>
+                                        {jobAtTime.productivity !== undefined && jobAtTime.productivity > 0 && (
+                                          <div>
+                                            <div className="flex items-center gap-1 mb-1">
+                                              <TrendingUp className="h-3 w-3" />
+                                              <span className="font-medium">Productivity:</span>
                                             </div>
-                                          )}
+                                            <span className={`font-medium ${getProductivityColor(jobAtTime.productivity)}`}>
+                                              {jobAtTime.productivity}%
+                                            </span>
+                                          </div>
+                                        )}
                                         <div className="mt-4 pt-4 border-t">
                                           <div className="flex flex-wrap gap-1">
-                                            {jobAtTime.requiredSkills.map(
-                                              (skill) => (
-                                                <Badge
-                                                  key={skill}
-                                                  variant="outline"
-                                                  className="text-xs"
-                                                >
-                                                  {skill}
-                                                </Badge>
-                                              ),
-                                            )}
+                                            {jobAtTime.requiredSkills.map((skill) => (
+                                              <Badge key={skill} variant="outline" className="text-xs">
+                                                {skill}
+                                              </Badge>
+                                            ))}
                                           </div>
                                         </div>
                                       </div>
@@ -873,9 +776,9 @@ export default function MonitorProgress() {
                             );
                           })}
                         </div>
-                      </ScrollArea>
+                      ))}
                     </div>
-                  ))}
+                  </ScrollArea>
                 </div>
               </CardContent>
             </Card>
