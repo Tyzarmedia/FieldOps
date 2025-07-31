@@ -11,7 +11,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X, ChevronUp, ChevronDown, Trash2, RefreshCw } from "lucide-react";
+import {
+  X,
+  ChevronUp,
+  ChevronDown,
+  Trash2,
+  RefreshCw,
+  FileText,
+  Settings,
+  Camera,
+  Package,
+  PenTool,
+} from "lucide-react";
 
 export default function UDFieldsScreen() {
   const navigate = useNavigate();
@@ -67,7 +78,7 @@ export default function UDFieldsScreen() {
       </div>
 
       {/* Content */}
-      <div className="p-4 pb-24 space-y-4">
+      <div className="p-4 pb-32 space-y-4">
         {/* FTTH Maintenance - Fault Details */}
         <Card>
           <CardContent className="p-0">
@@ -345,8 +356,8 @@ export default function UDFieldsScreen() {
         </Card>
       </div>
 
-      {/* Fixed Bottom Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
+      {/* Update Button - moved above bottom navigation */}
+      <div className="p-4 bg-white border-t">
         <Button
           onClick={handleUpdate}
           className="w-full bg-green-500 hover:bg-green-600 text-white py-4 text-lg font-semibold"
@@ -354,6 +365,51 @@ export default function UDFieldsScreen() {
           <RefreshCw className="h-5 w-5 mr-2" />
           Update
         </Button>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+        <div className="flex justify-around py-2">
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center space-y-1 p-3 text-gray-600"
+            onClick={() => navigate("/technician/jobs")}
+          >
+            <FileText className="h-6 w-6" />
+            <span className="text-xs font-medium">Details</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center space-y-1 p-3 text-blue-600"
+          >
+            <Settings className="h-6 w-6" />
+            <span className="text-xs font-medium">UDF</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center space-y-1 p-3 text-gray-600"
+            onClick={() => navigate("/technician/gallery")}
+          >
+            <Camera className="h-6 w-6" />
+            <span className="text-xs font-medium">Gallery</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center space-y-1 p-3 text-gray-600"
+            onClick={() => navigate("/technician/stock")}
+          >
+            <Package className="h-6 w-6" />
+            <span className="text-xs font-medium">Stocks</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center space-y-1 p-3 text-gray-600"
+            onClick={() => navigate("/technician/signoff")}
+          >
+            <PenTool className="h-6 w-6" />
+            <span className="text-xs font-medium">Sign Off</span>
+          </Button>
+        </div>
       </div>
     </div>
   );

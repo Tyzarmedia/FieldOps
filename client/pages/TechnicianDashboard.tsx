@@ -106,7 +106,7 @@ export default function TechnicianDashboard() {
         // Sync data
         break;
       case "close":
-        navigate("/login");
+        navigate("/clock-in");
         break;
     }
   };
@@ -206,7 +206,7 @@ export default function TechnicianDashboard() {
       </div>
 
       {/* Mobile Header */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-b-3xl sm:-my-1">
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-b-3xl">
         {/* Top Navigation */}
         <div className="flex justify-between items-center mb-8">
           <Button
@@ -248,24 +248,12 @@ export default function TechnicianDashboard() {
             </div>
           </div>
         </div>
-
-        {/* Clock Out Button */}
-        <div className="mt-6 text-center">
-          <Button
-            onClick={handleClockOut}
-            className="w-full max-w-xs bg-white/20 text-white border-white/30 hover:bg-white/30 transition-all duration-300"
-            variant="outline"
-          >
-            <Clock className="h-4 w-4 mr-2" />
-            Clock Out
-          </Button>
-        </div>
       </div>
 
       {/* Main Content */}
       <div className="p-6">
         {/* Job Status Summary - Moved to top */}
-        <div className="bg-white rounded-2xl p-6 shadow-md mb-6 sm:pb-12">
+        <div className="bg-white rounded-2xl p-6 shadow-md mb-6">
           <h3 className="font-semibold text-gray-800 mb-4">
             Today's Job Status
           </h3>

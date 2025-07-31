@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,6 +70,22 @@ export default function GalleryScreen() {
     },
   ];
 
+  // Camera functionality
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const [currentStream, setCurrentStream] = useState<MediaStream | null>(null);
+
+  // Cleanup camera stream on component unmount
+  useEffect(() => {
+    return () => {
+      if (currentStream) {
+        currentStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [currentStream]);
+
   const handleTabChange = (tab: string) => {
     setCurrentTab(tab);
     switch (tab) {
@@ -91,6 +107,92 @@ export default function GalleryScreen() {
     }
   };
 
+  // Camera access functions
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }, // Use back camera on mobile
+        audio: false,
+      });
+      setCurrentStream(stream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+      setShowCamera(true);
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      // Fallback to file input if camera access fails
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    }
+  };
+
+  const stopCamera = () => {
+    if (currentStream) {
+      currentStream.getTracks().forEach((track) => track.stop());
+      setCurrentStream(null);
+    }
+    setShowCamera(false);
+  };
+
+  const capturePhoto = (
+    category:
+      | "before-light-readings"
+      | "image-fault"
+      | "image-after-work"
+      | "light-readings-after-work",
+  ) => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      if (context) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+
+        const newPhoto: Photo = {
+          id: Date.now().toString(),
+          category,
+          url: imageDataUrl,
+          timestamp: new Date(),
+        };
+
+        setPhotos((prev) => [...prev, newPhoto]);
+        stopCamera();
+      }
+    }
+  };
+
+  const handleFileSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    category:
+      | "before-light-readings"
+      | "image-fault"
+      | "image-after-work"
+      | "light-readings-after-work",
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const newPhoto: Photo = {
+          id: Date.now().toString(),
+          category,
+          url: e.target?.result as string,
+          timestamp: new Date(),
+        };
+        setPhotos((prev) => [...prev, newPhoto]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleUpload = (
     category:
       | "before-light-readings"
@@ -98,14 +200,18 @@ export default function GalleryScreen() {
       | "image-after-work"
       | "light-readings-after-work",
   ) => {
-    // Simulate photo upload
-    const newPhoto: Photo = {
-      id: Date.now().toString(),
-      category,
-      url: "/placeholder.svg",
-      timestamp: new Date(),
-    };
-    setPhotos((prev) => [...prev, newPhoto]);
+    // Show options for camera or file selection
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      startCamera();
+      setSelectedCategory(category);
+    } else {
+      // Fallback to file input for older browsers
+      if (fileInputRef.current) {
+        fileInputRef.current.onchange = (e) =>
+          handleFileSelect(e as any, category);
+        fileInputRef.current.click();
+      }
+    }
   };
 
   const handleDeletePhoto = (photoId: string) => {
@@ -132,6 +238,61 @@ export default function GalleryScreen() {
           </Button>
         </div>
       </div>
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        style={{ display: "none" }}
+      />
+
+      {/* Hidden canvas for photo capture */}
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+
+      {/* Camera Modal */}
+      {showCamera && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex flex-col">
+          <div className="flex justify-between items-center p-4 text-white">
+            <h2 className="text-lg font-semibold">Take Photo</h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20"
+              onClick={stopCamera}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </div>
+
+          <div className="flex-1 flex items-center justify-center p-4">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className="w-full h-full object-cover rounded-lg max-w-md max-h-96"
+            />
+          </div>
+
+          <div className="p-4 flex justify-center space-x-4">
+            <Button
+              variant="outline"
+              className="text-white border-white hover:bg-white/20"
+              onClick={stopCamera}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-white text-black hover:bg-gray-200"
+              onClick={() => capturePhoto(selectedCategory)}
+            >
+              <Camera className="h-5 w-5 mr-2" />
+              Capture
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="p-4 pb-20">

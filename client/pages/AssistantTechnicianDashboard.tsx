@@ -70,11 +70,12 @@ export default function AssistantTechnicianDashboard() {
     },
     {
       id: "overtime",
-      title: "Capture Overtime",
+      title: "View Overtime",
       icon: Timer,
-      color: "bg-orange-500",
-      description: "Log overtime hours worked",
+      color: "bg-gray-400",
+      description: "View your overtime records",
       action: () => navigate("/technician/overtime"),
+      disabled: true,
     },
   ];
 
@@ -106,7 +107,7 @@ export default function AssistantTechnicianDashboard() {
         // Sync data
         break;
       case "close":
-        navigate("/login");
+        navigate("/clock-in");
         break;
     }
   };
@@ -248,18 +249,6 @@ export default function AssistantTechnicianDashboard() {
             </div>
           </div>
         </div>
-
-        {/* Clock Out Button */}
-        <div className="mt-6 text-center">
-          <Button
-            onClick={handleClockOut}
-            className="w-full max-w-xs bg-white/20 text-white border-white/30 hover:bg-white/30 transition-all duration-300"
-            variant="outline"
-          >
-            <Clock className="h-4 w-4 mr-2" />
-            Clock Out
-          </Button>
-        </div>
       </div>
 
       {/* Main Content */}
@@ -304,8 +293,12 @@ export default function AssistantTechnicianDashboard() {
             return (
               <Card
                 key={card.id}
-                className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
-                onClick={card.action}
+                className={`bg-white transition-all duration-300 border-0 shadow-md ${
+                  card.disabled
+                    ? "cursor-not-allowed opacity-60"
+                    : "hover:shadow-lg cursor-pointer"
+                }`}
+                onClick={card.disabled ? undefined : card.action}
               >
                 <CardContent className="p-6 text-center">
                   <div className="flex justify-center mb-4">

@@ -524,22 +524,74 @@
     {
       "id": "J002",
       "title": "Network Installation",
-      "status": "in-progress",
+      "status": "assigned",
       "priority": "high",
       "assignedTo": "Mike Chen",
       "department": "Field Operations",
       "startDate": "2024-01-21",
-      "estimatedDuration": 4
+      "estimatedDuration": 4,
+      "assignedTechnician": "John Smith",
+      "scheduledDate": "2025-07-31",
+      "scheduledTime": "11:00",
+      "updatedAt": "2025-07-31T19:33:09.607Z"
     },
     {
       "id": "J003",
       "title": "Emergency Repair",
-      "status": "failed",
+      "status": "assigned",
       "priority": "urgent",
       "assignedTo": "Sarah Johnson",
       "department": "Field Operations",
       "failedDate": "2024-01-20",
-      "reason": "Equipment failure"
+      "reason": "Equipment failure",
+      "assignedTechnician": "John Smith",
+      "scheduledDate": "2025-07-31",
+      "scheduledTime": "12:00",
+      "updatedAt": "2025-07-31T19:33:07.053Z"
+    }
+  ],
+  "overtime": [
+    {
+      "id": "OT001",
+      "employeeId": "E001",
+      "employee": "John Smith",
+      "date": "2024-01-20",
+      "startTime": "17:00",
+      "endTime": "21:30",
+      "totalHours": 4.5,
+      "reason": "Emergency fiber repair - customer outage",
+      "assistantWorkedWith": "Mike Chen",
+      "workedAlone": false,
+      "status": "approved",
+      "submittedAt": "2024-01-21T08:00:00Z",
+      "approvedBy": "Sarah Johnson",
+      "notes": "Critical customer affecting 200+ users"
+    }
+  ],
+  "inspections": [
+    {
+      "id": "INS001",
+      "type": "vehicle",
+      "vehicleId": "V001",
+      "submittedBy": "E001",
+      "submittedAt": "2024-01-21T07:30:00Z",
+      "items": [
+        {
+          "name": "Tires",
+          "status": "good",
+          "notes": ""
+        },
+        {
+          "name": "Engine Oil",
+          "status": "good",
+          "notes": ""
+        },
+        {
+          "name": "Brakes",
+          "status": "attention",
+          "notes": "Minor squeaking"
+        }
+      ]
     }
   ],
   "compliance": {
