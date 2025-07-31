@@ -271,7 +271,8 @@ export default function CoordinatorDashboard() {
                   Interactive Job Board
                 </h3>
                 <p className="text-gray-600">
-                  Drag and drop jobs to assign technicians and manage schedules in real-time
+                  Drag and drop jobs to assign technicians and manage schedules
+                  in real-time
                 </p>
               </div>
             </div>

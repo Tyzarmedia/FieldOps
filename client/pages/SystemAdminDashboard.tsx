@@ -263,9 +263,18 @@ export default function SystemAdminDashboard() {
     const interval = setInterval(() => {
       setSystemMetrics((prev) => ({
         ...prev,
-        cpuUsage: Math.max(10, Math.min(90, prev.cpuUsage + (Math.random() - 0.5) * 10)),
-        memoryUsage: Math.max(20, Math.min(95, prev.memoryUsage + (Math.random() - 0.5) * 5)),
-        networkLatency: Math.max(5, Math.min(100, prev.networkLatency + (Math.random() - 0.5) * 10)),
+        cpuUsage: Math.max(
+          10,
+          Math.min(90, prev.cpuUsage + (Math.random() - 0.5) * 10),
+        ),
+        memoryUsage: Math.max(
+          20,
+          Math.min(95, prev.memoryUsage + (Math.random() - 0.5) * 5),
+        ),
+        networkLatency: Math.max(
+          5,
+          Math.min(100, prev.networkLatency + (Math.random() - 0.5) * 10),
+        ),
       }));
     }, 3000);
 
@@ -274,51 +283,72 @@ export default function SystemAdminDashboard() {
 
   const getHealthColor = (health: string) => {
     switch (health) {
-      case "excellent": return "text-green-600";
-      case "good": return "text-blue-600";
-      case "warning": return "text-yellow-600";
-      case "critical": return "text-red-600";
-      default: return "text-gray-600";
+      case "excellent":
+        return "text-green-600";
+      case "good":
+        return "text-blue-600";
+      case "warning":
+        return "text-yellow-600";
+      case "critical":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active": return "bg-green-100 text-green-800";
-      case "inactive": return "bg-gray-100 text-gray-800";
-      case "suspended": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "inactive":
+        return "bg-gray-100 text-gray-800";
+      case "suspended":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getAuditStatusColor = (status: string) => {
     switch (status) {
-      case "success": return "text-green-600";
-      case "failed": return "text-red-600";
-      case "warning": return "text-yellow-600";
-      default: return "text-gray-600";
+      case "success":
+        return "text-green-600";
+      case "failed":
+        return "text-red-600";
+      case "warning":
+        return "text-yellow-600";
+      default:
+        return "text-gray-600";
     }
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "low": return "bg-blue-100 text-blue-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "high": return "bg-orange-100 text-orange-800";
-      case "critical": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "low":
+        return "bg-blue-100 text-blue-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "critical":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = selectedRole === "all" || user.role === selectedRole;
     return matchesSearch && matchesRole;
   });
 
-  const unresolvedAlerts = systemAlerts.filter(alert => !alert.resolved);
-  const criticalAlerts = unresolvedAlerts.filter(alert => alert.severity === "critical");
+  const unresolvedAlerts = systemAlerts.filter((alert) => !alert.resolved);
+  const criticalAlerts = unresolvedAlerts.filter(
+    (alert) => alert.severity === "critical",
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 p-6">
@@ -347,7 +377,8 @@ export default function SystemAdminDashboard() {
               <Alert className="bg-red-50 border-red-200 px-4 py-2">
                 <AlertTriangle className="h-4 w-4 text-red-600" />
                 <AlertDescription className="text-red-800 font-medium">
-                  {criticalAlerts.length} Critical Alert{criticalAlerts.length > 1 ? 's' : ''}
+                  {criticalAlerts.length} Critical Alert
+                  {criticalAlerts.length > 1 ? "s" : ""}
                 </AlertDescription>
               </Alert>
             )}
@@ -358,12 +389,19 @@ export default function SystemAdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">System Health</CardTitle>
-              <Activity className={`h-4 w-4 ${getHealthColor(systemMetrics.systemHealth)}`} />
+              <CardTitle className="text-sm font-medium">
+                System Health
+              </CardTitle>
+              <Activity
+                className={`h-4 w-4 ${getHealthColor(systemMetrics.systemHealth)}`}
+              />
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${getHealthColor(systemMetrics.systemHealth)}`}>
-                {systemMetrics.systemHealth.charAt(0).toUpperCase() + systemMetrics.systemHealth.slice(1)}
+              <div
+                className={`text-2xl font-bold ${getHealthColor(systemMetrics.systemHealth)}`}
+              >
+                {systemMetrics.systemHealth.charAt(0).toUpperCase() +
+                  systemMetrics.systemHealth.slice(1)}
               </div>
               <p className="text-xs text-muted-foreground">
                 Uptime: {systemMetrics.uptime}
@@ -373,11 +411,15 @@ export default function SystemAdminDashboard() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Active Users
+              </CardTitle>
               <Users className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{systemMetrics.activeUsers}</div>
+              <div className="text-2xl font-bold">
+                {systemMetrics.activeUsers}
+              </div>
               <p className="text-xs text-muted-foreground">
                 of {systemMetrics.totalUsers} total users
               </p>
@@ -390,25 +432,35 @@ export default function SystemAdminDashboard() {
               <Cpu className="h-4 w-4 text-orange-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{systemMetrics.cpuUsage}%</div>
+              <div className="text-2xl font-bold">
+                {systemMetrics.cpuUsage}%
+              </div>
               <Progress value={systemMetrics.cpuUsage} className="mt-2" />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Memory Usage</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Memory Usage
+              </CardTitle>
               <MemoryStick className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{systemMetrics.memoryUsage}%</div>
+              <div className="text-2xl font-bold">
+                {systemMetrics.memoryUsage}%
+              </div>
               <Progress value={systemMetrics.memoryUsage} className="mt-2" />
             </CardContent>
           </Card>
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">User Management</TabsTrigger>
@@ -432,14 +484,20 @@ export default function SystemAdminDashboard() {
                   <ScrollArea className="h-80">
                     <div className="space-y-4">
                       {auditLogs.slice(0, 10).map((log) => (
-                        <div key={log.id} className="flex items-center justify-between border-b pb-2">
+                        <div
+                          key={log.id}
+                          className="flex items-center justify-between border-b pb-2"
+                        >
                           <div>
                             <p className="text-sm font-medium">{log.action}</p>
                             <p className="text-xs text-muted-foreground">
                               {log.user} - {log.timestamp}
                             </p>
                           </div>
-                          <Badge variant="outline" className={getAuditStatusColor(log.status)}>
+                          <Badge
+                            variant="outline"
+                            className={getAuditStatusColor(log.status)}
+                          >
                             {log.status}
                           </Badge>
                         </div>
@@ -456,7 +514,9 @@ export default function SystemAdminDashboard() {
                     <Bell className="h-5 w-5" />
                     System Alerts
                     {unresolvedAlerts.length > 0 && (
-                      <Badge variant="destructive">{unresolvedAlerts.length}</Badge>
+                      <Badge variant="destructive">
+                        {unresolvedAlerts.length}
+                      </Badge>
                     )}
                   </CardTitle>
                 </CardHeader>
@@ -464,11 +524,16 @@ export default function SystemAdminDashboard() {
                   <ScrollArea className="h-80">
                     <div className="space-y-4">
                       {systemAlerts.map((alert) => (
-                        <div key={alert.id} className={`p-3 rounded-lg border ${alert.resolved ? 'opacity-50' : ''}`}>
+                        <div
+                          key={alert.id}
+                          className={`p-3 rounded-lg border ${alert.resolved ? "opacity-50" : ""}`}
+                        >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <Badge className={getSeverityColor(alert.severity)}>
+                                <Badge
+                                  className={getSeverityColor(alert.severity)}
+                                >
                                   {alert.severity}
                                 </Badge>
                                 <span className="text-xs text-muted-foreground">
@@ -510,7 +575,10 @@ export default function SystemAdminDashboard() {
                         className="w-64"
                       />
                     </div>
-                    <Select value={selectedRole} onValueChange={setSelectedRole}>
+                    <Select
+                      value={selectedRole}
+                      onValueChange={setSelectedRole}
+                    >
                       <SelectTrigger className="w-40">
                         <SelectValue placeholder="Filter by role" />
                       </SelectTrigger>
@@ -545,7 +613,9 @@ export default function SystemAdminDashboard() {
                   <TableBody>
                     {filteredUsers.map((user) => (
                       <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.name}</TableCell>
+                        <TableCell className="font-medium">
+                          {user.name}
+                        </TableCell>
                         <TableCell>{user.email}</TableCell>
                         <TableCell>{user.role}</TableCell>
                         <TableCell>
@@ -570,9 +640,12 @@ export default function SystemAdminDashboard() {
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete User</AlertDialogTitle>
+                                  <AlertDialogTitle>
+                                    Delete User
+                                  </AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    Are you sure you want to delete {user.name}? This action cannot be undone.
+                                    Are you sure you want to delete {user.name}?
+                                    This action cannot be undone.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
@@ -604,19 +677,27 @@ export default function SystemAdminDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="two-factor">Two-Factor Authentication</Label>
+                    <Label htmlFor="two-factor">
+                      Two-Factor Authentication
+                    </Label>
                     <Switch id="two-factor" defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="session-timeout">Auto Session Timeout</Label>
+                    <Label htmlFor="session-timeout">
+                      Auto Session Timeout
+                    </Label>
                     <Switch id="session-timeout" defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="ip-restriction">IP Address Restrictions</Label>
+                    <Label htmlFor="ip-restriction">
+                      IP Address Restrictions
+                    </Label>
                     <Switch id="ip-restriction" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="audit-logging">Enhanced Audit Logging</Label>
+                    <Label htmlFor="audit-logging">
+                      Enhanced Audit Logging
+                    </Label>
                     <Switch id="audit-logging" defaultChecked />
                   </div>
                   <div className="space-y-2">
@@ -626,9 +707,15 @@ export default function SystemAdminDashboard() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="basic">Basic (8+ characters)</SelectItem>
-                        <SelectItem value="medium">Medium (12+ chars, mixed case)</SelectItem>
-                        <SelectItem value="strong">Strong (16+ chars, symbols)</SelectItem>
+                        <SelectItem value="basic">
+                          Basic (8+ characters)
+                        </SelectItem>
+                        <SelectItem value="medium">
+                          Medium (12+ chars, mixed case)
+                        </SelectItem>
+                        <SelectItem value="strong">
+                          Strong (16+ chars, symbols)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -686,21 +773,27 @@ export default function SystemAdminDashboard() {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">CPU Usage</span>
-                      <span className="text-sm text-muted-foreground">{systemMetrics.cpuUsage}%</span>
+                      <span className="text-sm text-muted-foreground">
+                        {systemMetrics.cpuUsage}%
+                      </span>
                     </div>
                     <Progress value={systemMetrics.cpuUsage} />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">Memory Usage</span>
-                      <span className="text-sm text-muted-foreground">{systemMetrics.memoryUsage}%</span>
+                      <span className="text-sm text-muted-foreground">
+                        {systemMetrics.memoryUsage}%
+                      </span>
                     </div>
                     <Progress value={systemMetrics.memoryUsage} />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">Disk Usage</span>
-                      <span className="text-sm text-muted-foreground">{systemMetrics.diskUsage}%</span>
+                      <span className="text-sm text-muted-foreground">
+                        {systemMetrics.diskUsage}%
+                      </span>
                     </div>
                     <Progress value={systemMetrics.diskUsage} />
                   </div>
@@ -708,7 +801,9 @@ export default function SystemAdminDashboard() {
                     <div className="text-center">
                       <Network className="h-6 w-6 mx-auto mb-1 text-blue-600" />
                       <p className="text-sm text-muted-foreground">Network</p>
-                      <p className="font-semibold">{systemMetrics.networkLatency}ms</p>
+                      <p className="font-semibold">
+                        {systemMetrics.networkLatency}ms
+                      </p>
                     </div>
                     <div className="text-center">
                       <Wifi className="h-6 w-6 mx-auto mb-1 text-green-600" />
@@ -805,8 +900,8 @@ export default function SystemAdminDashboard() {
                         <TableCell>{log.action}</TableCell>
                         <TableCell>{log.resource}</TableCell>
                         <TableCell>
-                          <Badge 
-                            variant="outline" 
+                          <Badge
+                            variant="outline"
                             className={getAuditStatusColor(log.status)}
                           >
                             {log.status}
@@ -850,8 +945,14 @@ export default function SystemAdminDashboard() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="session-timeout">Session Timeout (minutes)</Label>
-                    <Input id="session-timeout" type="number" defaultValue="60" />
+                    <Label htmlFor="session-timeout">
+                      Session Timeout (minutes)
+                    </Label>
+                    <Input
+                      id="session-timeout"
+                      type="number"
+                      defaultValue="60"
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <Label htmlFor="maintenance-mode">Maintenance Mode</Label>
@@ -873,19 +974,23 @@ export default function SystemAdminDashboard() {
                     <Switch id="email-alerts" defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="security-notifications">Security Notifications</Label>
+                    <Label htmlFor="security-notifications">
+                      Security Notifications
+                    </Label>
                     <Switch id="security-notifications" defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="system-updates">System Update Notifications</Label>
+                    <Label htmlFor="system-updates">
+                      System Update Notifications
+                    </Label>
                     <Switch id="system-updates" defaultChecked />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="admin-email">Administrator Email</Label>
-                    <Input 
-                      id="admin-email" 
-                      type="email" 
-                      defaultValue="admin@fieldops.com" 
+                    <Input
+                      id="admin-email"
+                      type="email"
+                      defaultValue="admin@fieldops.com"
                     />
                   </div>
                   <Button className="w-full">
