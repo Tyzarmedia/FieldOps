@@ -77,6 +77,15 @@ export default function GalleryScreen() {
   const [showCamera, setShowCamera] = useState(false);
   const [currentStream, setCurrentStream] = useState<MediaStream | null>(null);
 
+  // Cleanup camera stream on component unmount
+  useEffect(() => {
+    return () => {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [currentStream]);
+
   const handleTabChange = (tab: string) => {
     setCurrentTab(tab);
     switch (tab) {
