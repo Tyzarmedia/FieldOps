@@ -208,6 +208,8 @@ export default function CoordinatorJobBoard() {
   );
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState("");
 
   const dragOverRef = useRef<HTMLDivElement>(null);
 
@@ -356,78 +358,216 @@ export default function CoordinatorJobBoard() {
                   New Job
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Create New Job</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Work Order Number</Label>
+                      <Input placeholder="WO-2024-0001" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Priority</Label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="urgent">Urgent</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
                     <Label>Job Title</Label>
                     <Input placeholder="Enter job title..." />
                   </div>
+
                   <div className="space-y-2">
-                    <Label>Priority</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select priority" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="urgent">Urgent</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label>Client Name</Label>
+                    <Input placeholder="Enter client name..." />
                   </div>
-                  <Button className="w-full">Create Job</Button>
+
+                  <div className="space-y-2">
+                    <Label>Client Address</Label>
+                    <Input placeholder="Enter full client address..." />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Client Contact</Label>
+                      <Input placeholder="+1 (555) 123-4567" type="tel" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Estimated Duration</Label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select duration" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1h">1 hour</SelectItem>
+                          <SelectItem value="2h">2 hours</SelectItem>
+                          <SelectItem value="3h">3 hours</SelectItem>
+                          <SelectItem value="4h">4 hours</SelectItem>
+                          <SelectItem value="6h">6 hours</SelectItem>
+                          <SelectItem value="8h">8 hours</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Geo Location</Label>
+                    <div className="flex gap-2">
+                      <Input placeholder="Latitude" className="flex-1" />
+                      <Input placeholder="Longitude" className="flex-1" />
+                      <Button variant="outline" type="button">
+                        <MapPin className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Job Comments</Label>
+                    <textarea
+                      className="w-full min-h-[100px] p-3 border rounded-md resize-none"
+                      placeholder="Enter detailed job description, special instructions, or notes..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Required Skills</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {["HVAC", "Electrical", "Plumbing", "Network", "Safety", "General"].map((skill) => (
+                        <label key={skill} className="flex items-center space-x-2 cursor-pointer">
+                          <input type="checkbox" className="rounded" />
+                          <span className="text-sm">{skill}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 pt-4">
+                    <Button className="flex-1">Create Job</Button>
+                    <Button variant="outline" className="flex-1">Save as Draft</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
           </div>
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card>
+        {/* Stats Overview - Clickable */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-all duration-300"
+            onClick={() => {
+              setSelectedStatusFilter("assigned");
+              setShowStatusModal(true);
+            }}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
-              <ClipboardList className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Assigned</CardTitle>
+              <UserCheck className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalJobs}</div>
+              <div className="text-2xl font-bold text-purple-600">{stats.assigned || 1}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-all duration-300"
+            onClick={() => {
+              setSelectedStatusFilter("accepted");
+              setShowStatusModal(true);
+            }}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Unassigned</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-orange-600" />
+              <CardTitle className="text-sm font-medium">Accepted</CardTitle>
+              <CheckCircle className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-600">
-                {stats.unassigned}
-              </div>
+              <div className="text-2xl font-bold text-blue-600">{stats.accepted || 1}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-all duration-300"
+            onClick={() => {
+              setSelectedStatusFilter("in-progress");
+              setShowStatusModal(true);
+            }}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-              <Activity className="h-4 w-4 text-blue-600" />
+              <Activity className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">
-                {stats.inProgress}
-              </div>
+              <div className="text-2xl font-bold text-yellow-600">{stats.inProgress || 1}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-all duration-300"
+            onClick={() => {
+              setSelectedStatusFilter("finished");
+              setShowStatusModal(true);
+            }}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed</CardTitle>
+              <CardTitle className="text-sm font-medium">Finished</CardTitle>
               <CheckCircle className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                {stats.completed}
-              </div>
+              <div className="text-2xl font-bold text-green-600">{stats.completed || 1}</div>
+            </CardContent>
+          </Card>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-all duration-300"
+            onClick={() => {
+              setSelectedStatusFilter("followup");
+              setShowStatusModal(true);
+            }}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Follow-up</CardTitle>
+              <Timer className="h-4 w-4 text-orange-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-orange-600">1</div>
+            </CardContent>
+          </Card>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-all duration-300"
+            onClick={() => {
+              setSelectedStatusFilter("escalated");
+              setShowStatusModal(true);
+            }}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Escalated</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">1</div>
+            </CardContent>
+          </Card>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-all duration-300"
+            onClick={() => {
+              setSelectedStatusFilter("roc-closed");
+              setShowStatusModal(true);
+            }}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">ROC Closed</CardTitle>
+              <CheckCircle className="h-4 w-4 text-gray-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-600">1</div>
             </CardContent>
           </Card>
         </div>
