@@ -1027,6 +1027,108 @@ export default function CoordinatorJobBoard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Status Modal Overlay */}
+        {showStatusModal && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+              <div className="flex items-center justify-between p-6 border-b">
+                <h2 className="text-xl font-semibold capitalize">
+                  {selectedStatusFilter.replace('-', ' ')} Jobs
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowStatusModal(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="p-6 overflow-y-auto max-h-[70vh]">
+                <div className="space-y-4">
+                  {jobs
+                    .filter((job) => {
+                      if (selectedStatusFilter === "finished") return job.status === "completed";
+                      if (selectedStatusFilter === "roc-closed") return job.status === "completed";
+                      return job.status === selectedStatusFilter;
+                    })
+                    .map((job) => (
+                      <Card key={job.id} className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">{job.id}</Badge>
+                              <Badge className={getPriorityColor(job.priority)}>
+                                {job.priority}
+                              </Badge>
+                              <Badge className={getStatusColor(job.status)}>
+                                {job.status}
+                              </Badge>
+                            </div>
+                            <h3 className="font-semibold">{job.title}</h3>
+                            <p className="text-sm text-gray-600">{job.description}</p>
+                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                              <div className="flex items-center gap-1">
+                                <User className="h-3 w-3" />
+                                {job.assignedTechnician || "Unassigned"}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <MapPin className="h-3 w-3" />
+                                {job.location}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {job.estimatedDuration}
+                              </div>
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              Customer: {job.customer}
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <Button size="sm" variant="outline">
+                              <Eye className="h-3 w-3 mr-1" />
+                              View
+                            </Button>
+                            <Button size="sm" variant="outline">
+                              <Edit className="h-3 w-3 mr-1" />
+                              Edit
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+
+                  {jobs.filter((job) => {
+                    if (selectedStatusFilter === "finished") return job.status === "completed";
+                    if (selectedStatusFilter === "roc-closed") return job.status === "completed";
+                    return job.status === selectedStatusFilter;
+                  }).length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No jobs found with status: {selectedStatusFilter.replace('-', ' ')}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-6 border-t bg-gray-50">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">
+                    Total: {jobs.filter((job) => {
+                      if (selectedStatusFilter === "finished") return job.status === "completed";
+                      if (selectedStatusFilter === "roc-closed") return job.status === "completed";
+                      return job.status === selectedStatusFilter;
+                    }).length} jobs
+                  </span>
+                  <Button onClick={() => setShowStatusModal(false)}>
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
