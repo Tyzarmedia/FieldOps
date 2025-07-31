@@ -70,6 +70,13 @@ export default function GalleryScreen() {
     },
   ];
 
+  // Camera functionality
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const [currentStream, setCurrentStream] = useState<MediaStream | null>(null);
+
   const handleTabChange = (tab: string) => {
     setCurrentTab(tab);
     switch (tab) {
