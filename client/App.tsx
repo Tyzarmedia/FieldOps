@@ -41,6 +41,9 @@ import EnhancedFleetManagerDashboard from "./pages/EnhancedFleetManagerDashboard
 import AutoLogin from "./pages/AutoLogin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import ApplyLeaveScreen from "./pages/ApplyLeaveScreen";
+import NetworkAssessmentScreen from "./pages/NetworkAssessmentScreen";
+import TechnicianSettingsScreen from "./pages/TechnicianSettingsScreen";
 
 const queryClient = new QueryClient();
 
