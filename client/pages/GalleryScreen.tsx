@@ -195,10 +195,6 @@ export default function GalleryScreen() {
     }
   };
 
-  const handleDeletePhoto = (photoId: string) => {
-    setPhotos((prev) => prev.filter((photo) => photo.id !== photoId));
-  };
-
   const filteredPhotos = photos.filter(
     (photo) => photo.category === selectedCategory,
   );
