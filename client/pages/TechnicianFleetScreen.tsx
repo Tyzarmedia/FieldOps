@@ -271,11 +271,27 @@ export default function TechnicianFleetScreen() {
     }));
   };
 
+  const canCompleteInspection = (inspection: Inspection) => {
+    return inspection.items.every(item => {
+      if (!item.checked) return false;
+      if (item.requiresImage && !item.image) return false;
+      if (item.requiresSerial && !item.serialNumber) return false;
+      if (item.requiresExpiry && !item.expiryDate) return false;
+      return true;
+    });
+  };
+
   const handleCompleteInspection = (inspectionId: string) => {
+    const inspection = inspections.find(i => i.id === inspectionId);
+    if (!inspection || !canCompleteInspection(inspection)) {
+      alert('Please complete all required fields, serial numbers, expiry dates, and images before submitting.');
+      return;
+    }
+
     setInspections(prev => prev.map(inspection => {
       if (inspection.id === inspectionId) {
-        return { 
-          ...inspection, 
+        return {
+          ...inspection,
           status: 'completed',
           lastCompleted: new Date().toLocaleString()
         };
