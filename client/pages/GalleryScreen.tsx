@@ -93,16 +93,16 @@ export default function GalleryScreen() {
         navigate("/technician/jobs");
         break;
       case "udf":
-        // Navigate to UDF screen when routes are set up
+        navigate("/technician/udf");
         break;
       case "gallery":
         // Already on gallery screen
         break;
       case "stocks":
-        // Navigate to Stocks screen when routes are set up
+        navigate("/technician/stock");
         break;
       case "signoff":
-        // Navigate to Sign Off screen when routes are set up
+        navigate("/technician/signoff");
         break;
     }
   };
