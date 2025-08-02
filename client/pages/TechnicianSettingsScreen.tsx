@@ -31,19 +31,19 @@ export default function TechnicianSettingsScreen() {
     name: "John Doe",
     email: "john.doe@company.com",
     phone: "+1 (555) 123-4567",
-    
+
     // Notification settings
     pushNotifications: true,
     emailNotifications: false,
     smsNotifications: true,
     jobAlerts: true,
     emergencyAlerts: true,
-    
+
     // Location settings
     locationSharing: true,
     autoClockIn: false,
     gpsTracking: true,
-    
+
     // App settings
     theme: "light",
     language: "en",
@@ -100,7 +100,9 @@ export default function TechnicianSettingsScreen() {
               <Label>Full Name</Label>
               <Input
                 value={settings.name}
-                onChange={(e) => setSettings({...settings, name: e.target.value})}
+                onChange={(e) =>
+                  setSettings({ ...settings, name: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -108,7 +110,9 @@ export default function TechnicianSettingsScreen() {
               <Input
                 type="email"
                 value={settings.email}
-                onChange={(e) => setSettings({...settings, email: e.target.value})}
+                onChange={(e) =>
+                  setSettings({ ...settings, email: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -116,7 +120,9 @@ export default function TechnicianSettingsScreen() {
               <Input
                 type="tel"
                 value={settings.phone}
-                onChange={(e) => setSettings({...settings, phone: e.target.value})}
+                onChange={(e) =>
+                  setSettings({ ...settings, phone: e.target.value })
+                }
               />
             </div>
           </CardContent>
@@ -134,31 +140,43 @@ export default function TechnicianSettingsScreen() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">Push Notifications</div>
-                <div className="text-sm text-gray-600">Receive app notifications</div>
+                <div className="text-sm text-gray-600">
+                  Receive app notifications
+                </div>
               </div>
               <Switch
                 checked={settings.pushNotifications}
-                onCheckedChange={(checked) => setSettings({...settings, pushNotifications: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, pushNotifications: checked })
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">Email Notifications</div>
-                <div className="text-sm text-gray-600">Receive email updates</div>
+                <div className="text-sm text-gray-600">
+                  Receive email updates
+                </div>
               </div>
               <Switch
                 checked={settings.emailNotifications}
-                onCheckedChange={(checked) => setSettings({...settings, emailNotifications: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, emailNotifications: checked })
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">SMS Notifications</div>
-                <div className="text-sm text-gray-600">Receive text messages</div>
+                <div className="text-sm text-gray-600">
+                  Receive text messages
+                </div>
               </div>
               <Switch
                 checked={settings.smsNotifications}
-                onCheckedChange={(checked) => setSettings({...settings, smsNotifications: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, smsNotifications: checked })
+                }
               />
             </div>
             <div className="flex items-center justify-between">
@@ -168,17 +186,23 @@ export default function TechnicianSettingsScreen() {
               </div>
               <Switch
                 checked={settings.jobAlerts}
-                onCheckedChange={(checked) => setSettings({...settings, jobAlerts: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, jobAlerts: checked })
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">Emergency Alerts</div>
-                <div className="text-sm text-gray-600">Critical notifications</div>
+                <div className="text-sm text-gray-600">
+                  Critical notifications
+                </div>
               </div>
               <Switch
                 checked={settings.emergencyAlerts}
-                onCheckedChange={(checked) => setSettings({...settings, emergencyAlerts: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, emergencyAlerts: checked })
+                }
               />
             </div>
           </CardContent>
@@ -196,31 +220,43 @@ export default function TechnicianSettingsScreen() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">Location Sharing</div>
-                <div className="text-sm text-gray-600">Share location with dispatch</div>
+                <div className="text-sm text-gray-600">
+                  Share location with dispatch
+                </div>
               </div>
               <Switch
                 checked={settings.locationSharing}
-                onCheckedChange={(checked) => setSettings({...settings, locationSharing: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, locationSharing: checked })
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">Auto Clock-In</div>
-                <div className="text-sm text-gray-600">Automatically clock in at job sites</div>
+                <div className="text-sm text-gray-600">
+                  Automatically clock in at job sites
+                </div>
               </div>
               <Switch
                 checked={settings.autoClockIn}
-                onCheckedChange={(checked) => setSettings({...settings, autoClockIn: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, autoClockIn: checked })
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">GPS Tracking</div>
-                <div className="text-sm text-gray-600">Enable GPS for job tracking</div>
+                <div className="text-sm text-gray-600">
+                  Enable GPS for job tracking
+                </div>
               </div>
               <Switch
                 checked={settings.gpsTracking}
-                onCheckedChange={(checked) => setSettings({...settings, gpsTracking: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, gpsTracking: checked })
+                }
               />
             </div>
           </CardContent>
@@ -237,7 +273,12 @@ export default function TechnicianSettingsScreen() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Theme</Label>
-              <Select value={settings.theme} onValueChange={(value) => setSettings({...settings, theme: value})}>
+              <Select
+                value={settings.theme}
+                onValueChange={(value) =>
+                  setSettings({ ...settings, theme: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -250,7 +291,12 @@ export default function TechnicianSettingsScreen() {
             </div>
             <div className="space-y-2">
               <Label>Language</Label>
-              <Select value={settings.language} onValueChange={(value) => setSettings({...settings, language: value})}>
+              <Select
+                value={settings.language}
+                onValueChange={(value) =>
+                  setSettings({ ...settings, language: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -264,21 +310,29 @@ export default function TechnicianSettingsScreen() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">Auto Sync</div>
-                <div className="text-sm text-gray-600">Sync data automatically</div>
+                <div className="text-sm text-gray-600">
+                  Sync data automatically
+                </div>
               </div>
               <Switch
                 checked={settings.autoSync}
-                onCheckedChange={(checked) => setSettings({...settings, autoSync: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, autoSync: checked })
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-medium">Offline Mode</div>
-                <div className="text-sm text-gray-600">Work without internet</div>
+                <div className="text-sm text-gray-600">
+                  Work without internet
+                </div>
               </div>
               <Switch
                 checked={settings.offlineMode}
-                onCheckedChange={(checked) => setSettings({...settings, offlineMode: checked})}
+                onCheckedChange={(checked) =>
+                  setSettings({ ...settings, offlineMode: checked })
+                }
               />
             </div>
           </CardContent>
@@ -313,7 +367,7 @@ export default function TechnicianSettingsScreen() {
             <Save className="h-5 w-5 mr-2" />
             Save Settings
           </Button>
-          
+
           <Button
             onClick={handleLogout}
             variant="outline"

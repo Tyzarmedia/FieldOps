@@ -91,10 +91,10 @@ export default function ClockInScreen({
 
     // Start work timer
     const clockInTime = new Date().toISOString();
-    localStorage.setItem('clockInTime', clockInTime);
-    localStorage.setItem('workingHours', '0:00');
-    localStorage.setItem('distanceTraveled', '0.0');
-    localStorage.setItem('isClockedIn', 'true');
+    localStorage.setItem("clockInTime", clockInTime);
+    localStorage.setItem("workingHours", "0:00");
+    localStorage.setItem("distanceTraveled", "0.0");
+    localStorage.setItem("isClockedIn", "true");
 
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -151,7 +151,9 @@ export default function ClockInScreen({
 
         {/* User Name */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white text-center">{userName}</h2>
+          <h2 className="text-2xl font-bold text-white text-center">
+            {userName}
+          </h2>
           <p className="text-white/80 text-center">{userRole}</p>
         </div>
 

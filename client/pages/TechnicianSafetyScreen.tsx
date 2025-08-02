@@ -46,7 +46,7 @@ interface SafetyChecklist {
   description: string;
   items: ChecklistItem[];
   lastCompleted?: string;
-  status: 'pending' | 'in-progress' | 'completed';
+  status: "pending" | "in-progress" | "completed";
   globalExpiryDate?: string;
   globalSerialNumber?: string;
   locationImage?: string;
@@ -55,10 +55,15 @@ interface SafetyChecklist {
 
 export default function TechnicianSafetyScreen() {
   const navigate = useNavigate();
-  const [selectedChecklist, setSelectedChecklist] = useState<SafetyChecklist | null>(null);
+  const [selectedChecklist, setSelectedChecklist] =
+    useState<SafetyChecklist | null>(null);
   const [showIncidentForm, setShowIncidentForm] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-  const [currentItemForImage, setCurrentItemForImage] = useState<{checklistId: string, type: 'location' | 'item', itemId?: string} | null>(null);
+  const [currentItemForImage, setCurrentItemForImage] = useState<{
+    checklistId: string;
+    type: "location" | "item";
+    itemId?: string;
+  } | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -74,15 +79,71 @@ export default function TechnicianSafetyScreen() {
       status: "pending",
       requiresLocationImage: false,
       items: [
-        { id: "h1", item: "Full body harness condition", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
-        { id: "h2", item: "Webbing straps for cuts, frays or damage", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
-        { id: "h3", item: "Hardware (buckles, D-rings) for damage", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
-        { id: "h4", item: "Stitching integrity on all connections", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
-        { id: "h5", item: "Lanyard condition and connections", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
-        { id: "h6", item: "Shock absorber pack inspection", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
-        { id: "h7", item: "Carabiner gate function and locking", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
-        { id: "h8", item: "Labels and certification tags present", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
-      ]
+        {
+          id: "h1",
+          item: "Full body harness condition",
+          checked: false,
+          required: true,
+          requiresSerial: true,
+          requiresExpiry: true,
+        },
+        {
+          id: "h2",
+          item: "Webbing straps for cuts, frays or damage",
+          checked: false,
+          required: true,
+          requiresSerial: true,
+          requiresExpiry: true,
+        },
+        {
+          id: "h3",
+          item: "Hardware (buckles, D-rings) for damage",
+          checked: false,
+          required: true,
+          requiresSerial: true,
+          requiresExpiry: true,
+        },
+        {
+          id: "h4",
+          item: "Stitching integrity on all connections",
+          checked: false,
+          required: true,
+          requiresSerial: true,
+          requiresExpiry: true,
+        },
+        {
+          id: "h5",
+          item: "Lanyard condition and connections",
+          checked: false,
+          required: true,
+          requiresSerial: true,
+          requiresExpiry: true,
+        },
+        {
+          id: "h6",
+          item: "Shock absorber pack inspection",
+          checked: false,
+          required: true,
+          requiresSerial: true,
+          requiresExpiry: true,
+        },
+        {
+          id: "h7",
+          item: "Carabiner gate function and locking",
+          checked: false,
+          required: true,
+          requiresSerial: true,
+          requiresExpiry: true,
+        },
+        {
+          id: "h8",
+          item: "Labels and certification tags present",
+          checked: false,
+          required: true,
+          requiresSerial: true,
+          requiresExpiry: true,
+        },
+      ],
     },
     {
       id: "fire-extinguisher-checklist",
@@ -93,14 +154,49 @@ export default function TechnicianSafetyScreen() {
       status: "pending",
       requiresLocationImage: true,
       items: [
-        { id: "fe1", item: "Pressure gauge reading in green zone", checked: false, required: true },
-        { id: "fe2", item: "Safety pin and tamper seal intact", checked: false, required: true },
-        { id: "fe3", item: "Cylinder exterior condition (no dents/corrosion)", checked: false, required: true },
-        { id: "fe4", item: "Hose and nozzle condition", checked: false, required: true },
-        { id: "fe5", item: "Mounting bracket secure", checked: false, required: true },
-        { id: "fe6", item: "Inspection tag up to date", checked: false, required: true },
-        { id: "fe7", item: "Location accessible and unobstructed", checked: false, required: true },
-      ]
+        {
+          id: "fe1",
+          item: "Pressure gauge reading in green zone",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe2",
+          item: "Safety pin and tamper seal intact",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe3",
+          item: "Cylinder exterior condition (no dents/corrosion)",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe4",
+          item: "Hose and nozzle condition",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe5",
+          item: "Mounting bracket secure",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe6",
+          item: "Inspection tag up to date",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe7",
+          item: "Location accessible and unobstructed",
+          checked: false,
+          required: true,
+        },
+      ],
     },
     {
       id: "first-aid-checklist",
@@ -111,16 +207,56 @@ export default function TechnicianSafetyScreen() {
       status: "pending",
       requiresLocationImage: true,
       items: [
-        { id: "fa1", item: "Adhesive bandages (various sizes)", checked: false, required: true },
-        { id: "fa2", item: "Sterile gauze pads and rolls", checked: false, required: true },
+        {
+          id: "fa1",
+          item: "Adhesive bandages (various sizes)",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fa2",
+          item: "Sterile gauze pads and rolls",
+          checked: false,
+          required: true,
+        },
         { id: "fa3", item: "Medical tape", checked: false, required: true },
-        { id: "fa4", item: "Antiseptic wipes/solution", checked: false, required: true },
-        { id: "fa5", item: "Disposable gloves", checked: false, required: true },
-        { id: "fa6", item: "Scissors and tweezers", checked: false, required: true },
-        { id: "fa7", item: "Instant cold compress", checked: false, required: true },
-        { id: "fa8", item: "Emergency contact information", checked: false, required: true },
-        { id: "fa9", item: "First aid manual/instructions", checked: false, required: true },
-      ]
+        {
+          id: "fa4",
+          item: "Antiseptic wipes/solution",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fa5",
+          item: "Disposable gloves",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fa6",
+          item: "Scissors and tweezers",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fa7",
+          item: "Instant cold compress",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fa8",
+          item: "Emergency contact information",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fa9",
+          item: "First aid manual/instructions",
+          checked: false,
+          required: true,
+        },
+      ],
     },
     {
       id: "electrical-tools",
@@ -130,15 +266,55 @@ export default function TechnicianSafetyScreen() {
       description: "Daily electrical equipment safety check",
       status: "pending",
       items: [
-        { id: "et1", item: "All tools are properly insulated", checked: false, required: true },
-        { id: "et2", item: "No damaged cables or plugs", checked: false, required: true },
-        { id: "et3", item: "Voltage tester is functioning", checked: false, required: true },
-        { id: "et4", item: "Multimeter calibration is current", checked: false, required: true },
-        { id: "et5", item: "Personal protective equipment available", checked: false, required: true },
-        { id: "et6", item: "Lockout/tagout devices present", checked: false, required: true },
-        { id: "et7", item: "Emergency contact numbers posted", checked: false, required: false },
-        { id: "et8", item: "First aid kit accessible", checked: false, required: true },
-      ]
+        {
+          id: "et1",
+          item: "All tools are properly insulated",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "et2",
+          item: "No damaged cables or plugs",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "et3",
+          item: "Voltage tester is functioning",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "et4",
+          item: "Multimeter calibration is current",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "et5",
+          item: "Personal protective equipment available",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "et6",
+          item: "Lockout/tagout devices present",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "et7",
+          item: "Emergency contact numbers posted",
+          checked: false,
+          required: false,
+        },
+        {
+          id: "et8",
+          item: "First aid kit accessible",
+          checked: false,
+          required: true,
+        },
+      ],
     },
     {
       id: "working-heights",
@@ -148,15 +324,55 @@ export default function TechnicianSafetyScreen() {
       description: "Safety check for elevated work",
       status: "pending",
       items: [
-        { id: "wh1", item: "Weather conditions are suitable", checked: false, required: true },
-        { id: "wh2", item: "Work area is secured and marked", checked: false, required: true },
-        { id: "wh3", item: "Ladder is in good condition", checked: false, required: true },
-        { id: "wh4", item: "Ladder is positioned at correct angle", checked: false, required: true },
-        { id: "wh5", item: "Three points of contact maintained", checked: false, required: true },
-        { id: "wh6", item: "No overhead power lines in vicinity", checked: false, required: true },
-        { id: "wh7", item: "Spotter/observer assigned if required", checked: false, required: false },
-        { id: "wh8", item: "Emergency evacuation plan in place", checked: false, required: true },
-      ]
+        {
+          id: "wh1",
+          item: "Weather conditions are suitable",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "wh2",
+          item: "Work area is secured and marked",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "wh3",
+          item: "Ladder is in good condition",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "wh4",
+          item: "Ladder is positioned at correct angle",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "wh5",
+          item: "Three points of contact maintained",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "wh6",
+          item: "No overhead power lines in vicinity",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "wh7",
+          item: "Spotter/observer assigned if required",
+          checked: false,
+          required: false,
+        },
+        {
+          id: "wh8",
+          item: "Emergency evacuation plan in place",
+          checked: false,
+          required: true,
+        },
+      ],
     },
     {
       id: "risk-assessment",
@@ -166,15 +382,55 @@ export default function TechnicianSafetyScreen() {
       description: "General workplace risk assessment",
       status: "pending",
       items: [
-        { id: "ra1", item: "Site hazards identified and documented", checked: false, required: true },
-        { id: "ra2", item: "Control measures implemented", checked: false, required: true },
-        { id: "ra3", item: "Emergency procedures communicated", checked: false, required: true },
-        { id: "ra4", item: "Personal protective equipment specified", checked: false, required: true },
-        { id: "ra5", item: "Work permits obtained if required", checked: false, required: true },
-        { id: "ra6", item: "Environmental factors considered", checked: false, required: true },
-        { id: "ra7", item: "Team members briefed on risks", checked: false, required: true },
-        { id: "ra8", item: "Risk assessment signed off", checked: false, required: true },
-      ]
+        {
+          id: "ra1",
+          item: "Site hazards identified and documented",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "ra2",
+          item: "Control measures implemented",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "ra3",
+          item: "Emergency procedures communicated",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "ra4",
+          item: "Personal protective equipment specified",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "ra5",
+          item: "Work permits obtained if required",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "ra6",
+          item: "Environmental factors considered",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "ra7",
+          item: "Team members briefed on risks",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "ra8",
+          item: "Risk assessment signed off",
+          checked: false,
+          required: true,
+        },
+      ],
     },
     {
       id: "fiber-equipment",
@@ -184,24 +440,64 @@ export default function TechnicianSafetyScreen() {
       description: "Splicing machine, PON meter, VFL and OTDR/iOLM check",
       status: "pending",
       items: [
-        { id: "fe1", item: "Splicing machine calibration current", checked: false, required: true },
-        { id: "fe2", item: "Fusion splicer electrodes clean", checked: false, required: true },
-        { id: "fe3", item: "PON meter functioning correctly", checked: false, required: true },
-        { id: "fe4", item: "VFL (Visual Fault Locator) operational", checked: false, required: true },
-        { id: "fe5", item: "OTDR/iOLM measurement accuracy verified", checked: false, required: true },
-        { id: "fe6", item: "Fiber cleaving tool sharp and clean", checked: false, required: true },
-        { id: "fe7", item: "Connector cleaning supplies available", checked: false, required: true },
-        { id: "fe8", item: "Safety glasses for laser equipment", checked: false, required: true },
-      ]
-    }
+        {
+          id: "fe1",
+          item: "Splicing machine calibration current",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe2",
+          item: "Fusion splicer electrodes clean",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe3",
+          item: "PON meter functioning correctly",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe4",
+          item: "VFL (Visual Fault Locator) operational",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe5",
+          item: "OTDR/iOLM measurement accuracy verified",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe6",
+          item: "Fiber cleaving tool sharp and clean",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe7",
+          item: "Connector cleaning supplies available",
+          checked: false,
+          required: true,
+        },
+        {
+          id: "fe8",
+          item: "Safety glasses for laser equipment",
+          checked: false,
+          required: true,
+        },
+      ],
+    },
   ]);
 
   // Camera functions
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
-        audio: false
+        video: { facingMode: "environment" },
+        audio: false,
       });
       setCurrentStream(stream);
       if (videoRef.current) {
@@ -219,7 +515,7 @@ export default function TechnicianSafetyScreen() {
 
   const stopCamera = () => {
     if (currentStream) {
-      currentStream.getTracks().forEach(track => track.stop());
+      currentStream.getTracks().forEach((track) => track.stop());
       setCurrentStream(null);
     }
     setShowCamera(false);
@@ -230,105 +526,165 @@ export default function TechnicianSafetyScreen() {
     if (videoRef.current && canvasRef.current && currentItemForImage) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
+      const context = canvas.getContext("2d");
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
 
       if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        const imageDataUrl = canvas.toDataURL("image/jpeg", 0.8);
 
-        if (currentItemForImage.type === 'location') {
-          handleLocationImageUpdate(currentItemForImage.checklistId, imageDataUrl);
+        if (currentItemForImage.type === "location") {
+          handleLocationImageUpdate(
+            currentItemForImage.checklistId,
+            imageDataUrl,
+          );
         }
         stopCamera();
       }
     }
   };
 
-  const handleImageCapture = (checklistId: string, type: 'location' | 'item', itemId?: string) => {
+  const handleImageCapture = (
+    checklistId: string,
+    type: "location" | "item",
+    itemId?: string,
+  ) => {
     setCurrentItemForImage({ checklistId, type, itemId });
     startCamera();
   };
 
   const handleChecklistItemToggle = (checklistId: string, itemId: string) => {
-    setSafetyChecklists(prev => prev.map(checklist => {
-      if (checklist.id === checklistId) {
-        const updatedItems = checklist.items.map(item =>
-          item.id === itemId ? { ...item, checked: !item.checked } : item
-        );
-        const completedItems = updatedItems.filter(item => item.checked).length;
-        const totalItems = updatedItems.length;
-        const status = completedItems === 0 ? 'pending' :
-                     completedItems === totalItems ? 'completed' : 'in-progress';
+    setSafetyChecklists((prev) =>
+      prev.map((checklist) => {
+        if (checklist.id === checklistId) {
+          const updatedItems = checklist.items.map((item) =>
+            item.id === itemId ? { ...item, checked: !item.checked } : item,
+          );
+          const completedItems = updatedItems.filter(
+            (item) => item.checked,
+          ).length;
+          const totalItems = updatedItems.length;
+          const status =
+            completedItems === 0
+              ? "pending"
+              : completedItems === totalItems
+                ? "completed"
+                : "in-progress";
 
-        return { ...checklist, items: updatedItems, status };
-      }
-      return checklist;
-    }));
+          return { ...checklist, items: updatedItems, status };
+        }
+        return checklist;
+      }),
+    );
   };
 
-  const handleGlobalSerialNumberUpdate = (checklistId: string, serialNumber: string) => {
-    setSafetyChecklists(prev => prev.map(checklist =>
-      checklist.id === checklistId ? { ...checklist, globalSerialNumber: serialNumber } : checklist
-    ));
+  const handleGlobalSerialNumberUpdate = (
+    checklistId: string,
+    serialNumber: string,
+  ) => {
+    setSafetyChecklists((prev) =>
+      prev.map((checklist) =>
+        checklist.id === checklistId
+          ? { ...checklist, globalSerialNumber: serialNumber }
+          : checklist,
+      ),
+    );
   };
 
-  const handleGlobalExpiryDateUpdate = (checklistId: string, expiryDate: string) => {
-    setSafetyChecklists(prev => prev.map(checklist =>
-      checklist.id === checklistId ? { ...checklist, globalExpiryDate: expiryDate } : checklist
-    ));
+  const handleGlobalExpiryDateUpdate = (
+    checklistId: string,
+    expiryDate: string,
+  ) => {
+    setSafetyChecklists((prev) =>
+      prev.map((checklist) =>
+        checklist.id === checklistId
+          ? { ...checklist, globalExpiryDate: expiryDate }
+          : checklist,
+      ),
+    );
   };
 
   const handleLocationImageUpdate = (checklistId: string, image: string) => {
-    setSafetyChecklists(prev => prev.map(checklist =>
-      checklist.id === checklistId ? { ...checklist, locationImage: image } : checklist
-    ));
+    setSafetyChecklists((prev) =>
+      prev.map((checklist) =>
+        checklist.id === checklistId
+          ? { ...checklist, locationImage: image }
+          : checklist,
+      ),
+    );
   };
 
   const canCompleteChecklist = (checklist: SafetyChecklist) => {
-    const allItemsChecked = checklist.items.every(item => !item.required || item.checked);
-    const hasRequiredGlobalSerial = (checklist.id === 'fire-extinguisher-checklist') ? checklist.globalSerialNumber : true;
-    const hasRequiredGlobalExpiry = ['fire-extinguisher-checklist', 'first-aid-checklist'].includes(checklist.id) ? checklist.globalExpiryDate : true;
-    const hasRequiredLocationImage = checklist.requiresLocationImage ? checklist.locationImage : true;
+    const allItemsChecked = checklist.items.every(
+      (item) => !item.required || item.checked,
+    );
+    const hasRequiredGlobalSerial =
+      checklist.id === "fire-extinguisher-checklist"
+        ? checklist.globalSerialNumber
+        : true;
+    const hasRequiredGlobalExpiry = [
+      "fire-extinguisher-checklist",
+      "first-aid-checklist",
+    ].includes(checklist.id)
+      ? checklist.globalExpiryDate
+      : true;
+    const hasRequiredLocationImage = checklist.requiresLocationImage
+      ? checklist.locationImage
+      : true;
 
-    return allItemsChecked && hasRequiredGlobalSerial && hasRequiredGlobalExpiry && hasRequiredLocationImage;
+    return (
+      allItemsChecked &&
+      hasRequiredGlobalSerial &&
+      hasRequiredGlobalExpiry &&
+      hasRequiredLocationImage
+    );
   };
 
   const handleCompleteChecklist = (checklistId: string) => {
-    const checklist = safetyChecklists.find(c => c.id === checklistId);
+    const checklist = safetyChecklists.find((c) => c.id === checklistId);
     if (!checklist || !canCompleteChecklist(checklist)) {
-      alert('Please complete all required fields, serial numbers, expiry dates, and images before submitting.');
+      alert(
+        "Please complete all required fields, serial numbers, expiry dates, and images before submitting.",
+      );
       return;
     }
 
-    setSafetyChecklists(prev => prev.map(checklist => {
-      if (checklist.id === checklistId) {
-        return {
-          ...checklist,
-          status: 'completed',
-          lastCompleted: new Date().toLocaleString()
-        };
-      }
-      return checklist;
-    }));
+    setSafetyChecklists((prev) =>
+      prev.map((checklist) => {
+        if (checklist.id === checklistId) {
+          return {
+            ...checklist,
+            status: "completed",
+            lastCompleted: new Date().toLocaleString(),
+          };
+        }
+        return checklist;
+      }),
+    );
     setSelectedChecklist(null);
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-500';
-      case 'in-progress': return 'bg-orange-500';
-      default: return 'bg-gray-500';
+      case "completed":
+        return "bg-green-500";
+      case "in-progress":
+        return "bg-orange-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return CheckCircle;
-      case 'in-progress': return Clock;
-      default: return ClipboardList;
+      case "completed":
+        return CheckCircle;
+      case "in-progress":
+        return Clock;
+      default:
+        return ClipboardList;
     }
   };
 
@@ -362,7 +718,9 @@ export default function TechnicianSafetyScreen() {
             <CardContent className="p-6">
               <form className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Incident Type</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Incident Type
+                  </label>
                   <select className="w-full p-2 border rounded-lg">
                     <option>Near Miss</option>
                     <option>Minor Injury</option>
@@ -373,45 +731,74 @@ export default function TechnicianSafetyScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Date and Time</label>
-                  <input type="datetime-local" className="w-full p-2 border rounded-lg" />
+                  <label className="block text-sm font-medium mb-2">
+                    Date and Time
+                  </label>
+                  <input
+                    type="datetime-local"
+                    className="w-full p-2 border rounded-lg"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Location</label>
-                  <input type="text" placeholder="Incident location" className="w-full p-2 border rounded-lg" />
+                  <label className="block text-sm font-medium mb-2">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Incident location"
+                    className="w-full p-2 border rounded-lg"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Description</label>
-                  <textarea 
-                    placeholder="Describe what happened..." 
+                  <label className="block text-sm font-medium mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    placeholder="Describe what happened..."
                     rows={4}
                     className="w-full p-2 border rounded-lg"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Injured Person(s)</label>
-                  <input type="text" placeholder="Name(s) of injured person(s)" className="w-full p-2 border rounded-lg" />
+                  <label className="block text-sm font-medium mb-2">
+                    Injured Person(s)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Name(s) of injured person(s)"
+                    className="w-full p-2 border rounded-lg"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Witnesses</label>
-                  <input type="text" placeholder="Name(s) of witnesses" className="w-full p-2 border rounded-lg" />
+                  <label className="block text-sm font-medium mb-2">
+                    Witnesses
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Name(s) of witnesses"
+                    className="w-full p-2 border rounded-lg"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Immediate Actions Taken</label>
-                  <textarea 
-                    placeholder="What actions were taken immediately after the incident?" 
+                  <label className="block text-sm font-medium mb-2">
+                    Immediate Actions Taken
+                  </label>
+                  <textarea
+                    placeholder="What actions were taken immediately after the incident?"
                     rows={3}
                     className="w-full p-2 border rounded-lg"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Photos</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Photos
+                  </label>
                   <Button type="button" variant="outline" className="w-full">
                     <Camera className="h-4 w-4 mr-2" />
                     Take Photos
@@ -419,12 +806,15 @@ export default function TechnicianSafetyScreen() {
                 </div>
 
                 <div className="flex space-x-4 pt-4">
-                  <Button type="submit" className="flex-1 bg-red-600 hover:bg-red-700">
+                  <Button
+                    type="submit"
+                    className="flex-1 bg-red-600 hover:bg-red-700"
+                  >
                     Submit Report
                   </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     className="flex-1"
                     onClick={() => setShowIncidentForm(false)}
                   >
@@ -441,7 +831,9 @@ export default function TechnicianSafetyScreen() {
 
   // Checklist Detail View
   if (selectedChecklist) {
-    const completedItems = selectedChecklist.items.filter(item => item.checked).length;
+    const completedItems = selectedChecklist.items.filter(
+      (item) => item.checked,
+    ).length;
     const totalItems = selectedChecklist.items.length;
     const progress = (completedItems / totalItems) * 100;
 
@@ -468,11 +860,13 @@ export default function TechnicianSafetyScreen() {
           </div>
 
           <div className="text-center mb-4">
-            <div className="text-2xl font-bold">{completedItems}/{totalItems}</div>
+            <div className="text-2xl font-bold">
+              {completedItems}/{totalItems}
+            </div>
             <div className="text-sm opacity-90">Items Completed</div>
             <div className="w-full bg-white/20 rounded-full h-2 mt-2">
-              <div 
-                className="bg-white h-2 rounded-full transition-all duration-300" 
+              <div
+                className="bg-white h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -484,24 +878,38 @@ export default function TechnicianSafetyScreen() {
             <CardContent className="p-4">
               <div className="space-y-3">
                 {selectedChecklist.items.map((item) => (
-                  <div 
+                  <div
                     key={item.id}
                     className={`flex items-start space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                      item.checked ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200'
+                      item.checked
+                        ? "bg-green-50 border-green-200"
+                        : "bg-white border-gray-200"
                     }`}
-                    onClick={() => handleChecklistItemToggle(selectedChecklist.id, item.id)}
+                    onClick={() =>
+                      handleChecklistItemToggle(selectedChecklist.id, item.id)
+                    }
                   >
-                    <div className={`w-6 h-6 rounded border-2 flex items-center justify-center ${
-                      item.checked ? 'bg-green-500 border-green-500' : 'border-gray-300'
-                    }`}>
-                      {item.checked && <CheckCircle className="h-4 w-4 text-white" />}
+                    <div
+                      className={`w-6 h-6 rounded border-2 flex items-center justify-center ${
+                        item.checked
+                          ? "bg-green-500 border-green-500"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {item.checked && (
+                        <CheckCircle className="h-4 w-4 text-white" />
+                      )}
                     </div>
                     <div className="flex-1">
-                      <p className={`${item.checked ? 'text-green-800 line-through' : 'text-gray-800'}`}>
+                      <p
+                        className={`${item.checked ? "text-green-800 line-through" : "text-gray-800"}`}
+                      >
                         {item.item}
                       </p>
                       {item.required && (
-                        <Badge className="bg-red-100 text-red-800 text-xs mt-1">Required</Badge>
+                        <Badge className="bg-red-100 text-red-800 text-xs mt-1">
+                          Required
+                        </Badge>
                       )}
                     </div>
                   </div>
@@ -509,16 +917,19 @@ export default function TechnicianSafetyScreen() {
               </div>
 
               <div className="mt-6 flex space-x-4">
-                <Button 
+                <Button
                   onClick={() => handleCompleteChecklist(selectedChecklist.id)}
                   className="flex-1 bg-green-600 hover:bg-green-700"
-                  disabled={completedItems < selectedChecklist.items.filter(i => i.required).length}
+                  disabled={
+                    completedItems <
+                    selectedChecklist.items.filter((i) => i.required).length
+                  }
                 >
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Complete Checklist
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex-1"
                   onClick={() => setSelectedChecklist(null)}
                 >
@@ -542,7 +953,7 @@ export default function TechnicianSafetyScreen() {
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
           >
             <X className="h-6 w-6" />
           </Button>
@@ -555,7 +966,9 @@ export default function TechnicianSafetyScreen() {
             <Shield className="h-6 w-6" />
           </Button>
         </div>
-        <p className="text-center text-white/90">Safety checklists and incident reporting</p>
+        <p className="text-center text-white/90">
+          Safety checklists and incident reporting
+        </p>
       </div>
 
       {/* Safety Checklists */}
@@ -563,12 +976,14 @@ export default function TechnicianSafetyScreen() {
         {safetyChecklists.map((checklist) => {
           const IconComponent = checklist.icon;
           const StatusIcon = getStatusIcon(checklist.status);
-          const completedItems = checklist.items.filter(item => item.checked).length;
+          const completedItems = checklist.items.filter(
+            (item) => item.checked,
+          ).length;
           const totalItems = checklist.items.length;
 
           return (
-            <Card 
-              key={checklist.id} 
+            <Card
+              key={checklist.id}
               className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer"
               onClick={() => setSelectedChecklist(checklist)}
             >
@@ -579,12 +994,18 @@ export default function TechnicianSafetyScreen() {
                       <IconComponent className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-800">{checklist.title}</h3>
-                      <p className="text-sm text-gray-600">{checklist.description}</p>
+                      <h3 className="font-semibold text-gray-800">
+                        {checklist.title}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {checklist.description}
+                      </p>
                     </div>
                   </div>
                   <div className="flex flex-col items-end">
-                    <Badge className={`${getStatusColor(checklist.status)} text-white mb-2`}>
+                    <Badge
+                      className={`${getStatusColor(checklist.status)} text-white mb-2`}
+                    >
                       <StatusIcon className="h-3 w-3 mr-1" />
                       {checklist.status}
                     </Badge>
@@ -593,7 +1014,7 @@ export default function TechnicianSafetyScreen() {
                     </div>
                   </div>
                 </div>
-                
+
                 {checklist.lastCompleted && (
                   <div className="text-xs text-gray-500">
                     Last completed: {checklist.lastCompleted}
@@ -605,7 +1026,7 @@ export default function TechnicianSafetyScreen() {
         })}
 
         {/* Incident Report Button */}
-        <Card 
+        <Card
           className="bg-red-50 border-red-200 hover:shadow-lg transition-all duration-300 cursor-pointer"
           onClick={() => setShowIncidentForm(true)}
         >
@@ -615,8 +1036,12 @@ export default function TechnicianSafetyScreen() {
                 <AlertTriangle className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-red-800">Incident Report Form</h3>
-                <p className="text-sm text-red-600">Report injuries or other incidents</p>
+                <h3 className="font-semibold text-red-800">
+                  Incident Report Form
+                </h3>
+                <p className="text-sm text-red-600">
+                  Report injuries or other incidents
+                </p>
               </div>
             </div>
           </CardContent>

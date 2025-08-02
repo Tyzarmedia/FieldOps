@@ -40,8 +40,8 @@ export default function NetworkAssessmentScreen() {
   const runAssessment = async () => {
     setIsAssessing(true);
     // Simulate network test
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     // Generate random realistic values
     setAssessmentData({
       ...assessmentData,
@@ -51,14 +51,17 @@ export default function NetworkAssessmentScreen() {
       latency: Math.floor(Math.random() * 40 + 15),
       packetLoss: Math.round(Math.random() * 2 * 10) / 10,
     });
-    
+
     setIsAssessing(false);
   };
 
   const getSignalStatus = (strength: number) => {
-    if (strength > -50) return { status: "Excellent", color: "bg-green-500", icon: CheckCircle };
-    if (strength > -60) return { status: "Good", color: "bg-blue-500", icon: TrendingUp };
-    if (strength > -70) return { status: "Fair", color: "bg-yellow-500", icon: TrendingDown };
+    if (strength > -50)
+      return { status: "Excellent", color: "bg-green-500", icon: CheckCircle };
+    if (strength > -60)
+      return { status: "Good", color: "bg-blue-500", icon: TrendingUp };
+    if (strength > -70)
+      return { status: "Fair", color: "bg-yellow-500", icon: TrendingDown };
     return { status: "Poor", color: "bg-red-500", icon: AlertTriangle };
   };
 
@@ -76,7 +79,9 @@ export default function NetworkAssessmentScreen() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-xl font-bold">Network Assessment</h1>
-            <p className="text-sm opacity-90">Test and analyze network performance</p>
+            <p className="text-sm opacity-90">
+              Test and analyze network performance
+            </p>
           </div>
           <Button
             variant="ghost"
@@ -105,12 +110,22 @@ export default function NetworkAssessmentScreen() {
               <Input
                 placeholder="Enter test location"
                 value={assessmentData.location}
-                onChange={(e) => setAssessmentData({...assessmentData, location: e.target.value})}
+                onChange={(e) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    location: e.target.value,
+                  })
+                }
               />
             </div>
             <div className="space-y-2">
               <Label>Test Type</Label>
-              <Select value={assessmentData.testType} onValueChange={(value) => setAssessmentData({...assessmentData, testType: value})}>
+              <Select
+                value={assessmentData.testType}
+                onValueChange={(value) =>
+                  setAssessmentData({ ...assessmentData, testType: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select test type" />
                 </SelectTrigger>
@@ -124,7 +139,11 @@ export default function NetworkAssessmentScreen() {
             </div>
             <Button
               onClick={runAssessment}
-              disabled={isAssessing || !assessmentData.location || !assessmentData.testType}
+              disabled={
+                isAssessing ||
+                !assessmentData.location ||
+                !assessmentData.testType
+              }
               className="w-full bg-blue-500 hover:bg-blue-600 text-white"
             >
               {isAssessing ? (
@@ -157,7 +176,9 @@ export default function NetworkAssessmentScreen() {
                 <signalInfo.icon className="h-5 w-5 text-gray-600" />
                 <div>
                   <div className="font-medium">Signal Strength</div>
-                  <div className="text-sm text-gray-600">{assessmentData.signalStrength} dBm</div>
+                  <div className="text-sm text-gray-600">
+                    {assessmentData.signalStrength} dBm
+                  </div>
                 </div>
               </div>
               <Badge className={`${signalInfo.color} text-white`}>
@@ -171,10 +192,19 @@ export default function NetworkAssessmentScreen() {
                 <TrendingDown className="h-5 w-5 text-gray-600" />
                 <div>
                   <div className="font-medium">Download Speed</div>
-                  <div className="text-sm text-gray-600">{assessmentData.downloadSpeed} Mbps</div>
+                  <div className="text-sm text-gray-600">
+                    {assessmentData.downloadSpeed} Mbps
+                  </div>
                 </div>
               </div>
-              <Badge className={getSpeedStatus(assessmentData.downloadSpeed, "download") === "Good" ? "bg-green-500 text-white" : "bg-yellow-500 text-white"}>
+              <Badge
+                className={
+                  getSpeedStatus(assessmentData.downloadSpeed, "download") ===
+                  "Good"
+                    ? "bg-green-500 text-white"
+                    : "bg-yellow-500 text-white"
+                }
+              >
                 {getSpeedStatus(assessmentData.downloadSpeed, "download")}
               </Badge>
             </div>
@@ -185,10 +215,19 @@ export default function NetworkAssessmentScreen() {
                 <TrendingUp className="h-5 w-5 text-gray-600" />
                 <div>
                   <div className="font-medium">Upload Speed</div>
-                  <div className="text-sm text-gray-600">{assessmentData.uploadSpeed} Mbps</div>
+                  <div className="text-sm text-gray-600">
+                    {assessmentData.uploadSpeed} Mbps
+                  </div>
                 </div>
               </div>
-              <Badge className={getSpeedStatus(assessmentData.uploadSpeed, "upload") === "Good" ? "bg-green-500 text-white" : "bg-yellow-500 text-white"}>
+              <Badge
+                className={
+                  getSpeedStatus(assessmentData.uploadSpeed, "upload") ===
+                  "Good"
+                    ? "bg-green-500 text-white"
+                    : "bg-yellow-500 text-white"
+                }
+              >
                 {getSpeedStatus(assessmentData.uploadSpeed, "upload")}
               </Badge>
             </div>
@@ -199,10 +238,18 @@ export default function NetworkAssessmentScreen() {
                 <Activity className="h-5 w-5 text-gray-600" />
                 <div>
                   <div className="font-medium">Latency</div>
-                  <div className="text-sm text-gray-600">{assessmentData.latency} ms</div>
+                  <div className="text-sm text-gray-600">
+                    {assessmentData.latency} ms
+                  </div>
                 </div>
               </div>
-              <Badge className={assessmentData.latency < 50 ? "bg-green-500 text-white" : "bg-yellow-500 text-white"}>
+              <Badge
+                className={
+                  assessmentData.latency < 50
+                    ? "bg-green-500 text-white"
+                    : "bg-yellow-500 text-white"
+                }
+              >
                 {assessmentData.latency < 50 ? "Good" : "High"}
               </Badge>
             </div>
@@ -213,10 +260,18 @@ export default function NetworkAssessmentScreen() {
                 <AlertTriangle className="h-5 w-5 text-gray-600" />
                 <div>
                   <div className="font-medium">Packet Loss</div>
-                  <div className="text-sm text-gray-600">{assessmentData.packetLoss}%</div>
+                  <div className="text-sm text-gray-600">
+                    {assessmentData.packetLoss}%
+                  </div>
                 </div>
               </div>
-              <Badge className={assessmentData.packetLoss < 1 ? "bg-green-500 text-white" : "bg-red-500 text-white"}>
+              <Badge
+                className={
+                  assessmentData.packetLoss < 1
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
+                }
+              >
                 {assessmentData.packetLoss < 1 ? "Normal" : "High"}
               </Badge>
             </div>
@@ -233,38 +288,46 @@ export default function NetworkAssessmentScreen() {
               {assessmentData.signalStrength < -70 && (
                 <div className="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
                   <p className="text-sm text-yellow-800">
-                    <strong>Signal Strength:</strong> Consider repositioning equipment or checking for obstructions.
+                    <strong>Signal Strength:</strong> Consider repositioning
+                    equipment or checking for obstructions.
                   </p>
                 </div>
               )}
               {assessmentData.downloadSpeed < 25 && (
                 <div className="p-3 bg-orange-50 border-l-4 border-orange-400 rounded">
                   <p className="text-sm text-orange-800">
-                    <strong>Download Speed:</strong> Speed below recommended threshold. Check for network congestion.
+                    <strong>Download Speed:</strong> Speed below recommended
+                    threshold. Check for network congestion.
                   </p>
                 </div>
               )}
               {assessmentData.latency > 50 && (
                 <div className="p-3 bg-red-50 border-l-4 border-red-400 rounded">
                   <p className="text-sm text-red-800">
-                    <strong>High Latency:</strong> Network response time is elevated. Check routing and infrastructure.
+                    <strong>High Latency:</strong> Network response time is
+                    elevated. Check routing and infrastructure.
                   </p>
                 </div>
               )}
               {assessmentData.packetLoss > 1 && (
                 <div className="p-3 bg-red-50 border-l-4 border-red-400 rounded">
                   <p className="text-sm text-red-800">
-                    <strong>Packet Loss:</strong> Significant packet loss detected. Check connections and hardware.
+                    <strong>Packet Loss:</strong> Significant packet loss
+                    detected. Check connections and hardware.
                   </p>
                 </div>
               )}
-              {assessmentData.signalStrength > -60 && assessmentData.downloadSpeed > 25 && assessmentData.latency < 50 && assessmentData.packetLoss < 1 && (
-                <div className="p-3 bg-green-50 border-l-4 border-green-400 rounded">
-                  <p className="text-sm text-green-800">
-                    <strong>Network Status:</strong> All metrics are within acceptable ranges. Network performance is good.
-                  </p>
-                </div>
-              )}
+              {assessmentData.signalStrength > -60 &&
+                assessmentData.downloadSpeed > 25 &&
+                assessmentData.latency < 50 &&
+                assessmentData.packetLoss < 1 && (
+                  <div className="p-3 bg-green-50 border-l-4 border-green-400 rounded">
+                    <p className="text-sm text-green-800">
+                      <strong>Network Status:</strong> All metrics are within
+                      acceptable ranges. Network performance is good.
+                    </p>
+                  </div>
+                )}
             </div>
           </CardContent>
         </Card>
