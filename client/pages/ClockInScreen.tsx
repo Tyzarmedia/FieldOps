@@ -89,11 +89,29 @@ export default function ClockInScreen({
     setIsClockingIn(true);
     setSliderPosition(100);
 
+    // Start work timer
+    const clockInTime = new Date().toISOString();
+    localStorage.setItem('clockInTime', clockInTime);
+    localStorage.setItem('workingHours', '0:00');
+    localStorage.setItem('distanceTraveled', '0.0');
+    localStorage.setItem('isClockedIn', 'true');
+
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // Navigate to dashboard
-    navigate("/");
+    // Navigate to appropriate dashboard
+    if (userRole === "Assistant Technician") {
+      navigate("/assistant-technician");
+    } else {
+      navigate("/technician");
+    }
+  };
+
+  // Make the entire slider clickable
+  const handleSliderClick = (e: React.MouseEvent) => {
+    if (!isClockingIn && !isDragging) {
+      handleClockIn();
+    }
   };
 
   const handleClose = () => {
