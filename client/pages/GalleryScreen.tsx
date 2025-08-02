@@ -31,15 +31,12 @@ export default function GalleryScreen() {
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState("gallery");
   const [selectedCategory, setSelectedCategory] = useState<
-    | "job-site-before"
-    | "fault-images"
-    | "work-progress"
-    | "job-completed"
+    "job-site-before" | "fault-images" | "work-progress" | "job-completed"
   >("job-site-before");
   const [photos, setPhotos] = useState<Photo[]>([]);
 
   const handleDeletePhoto = (photoId: string) => {
-    setPhotos(prev => prev.filter(photo => photo.id !== photoId));
+    setPhotos((prev) => prev.filter((photo) => photo.id !== photoId));
   };
 
   const categories = [
@@ -51,7 +48,7 @@ export default function GalleryScreen() {
     {
       id: "fault-images",
       label: "Fault Images",
-      color: "bg-red-500"
+      color: "bg-red-500",
     },
     {
       id: "work-progress",
@@ -133,7 +130,11 @@ export default function GalleryScreen() {
   };
 
   const capturePhoto = (
-    category: "job-site-before" | "fault-images" | "work-progress" | "job-completed",
+    category:
+      | "job-site-before"
+      | "fault-images"
+      | "work-progress"
+      | "job-completed",
   ) => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
@@ -162,7 +163,11 @@ export default function GalleryScreen() {
 
   const handleFileSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
-    category: "job-site-before" | "fault-images" | "work-progress" | "job-completed",
+    category:
+      | "job-site-before"
+      | "fault-images"
+      | "work-progress"
+      | "job-completed",
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -180,7 +185,13 @@ export default function GalleryScreen() {
     }
   };
 
-  const handleUpload = (category: "job-site-before" | "fault-images" | "work-progress" | "job-completed") => {
+  const handleUpload = (
+    category:
+      | "job-site-before"
+      | "fault-images"
+      | "work-progress"
+      | "job-completed",
+  ) => {
     // Show options for camera or file selection
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       startCamera();
@@ -300,7 +311,8 @@ export default function GalleryScreen() {
           >
             <Camera className="h-6 w-6 mr-2" />
             <span className="font-medium">
-              Add Photo to {categories.find(c => c.id === selectedCategory)?.label}
+              Add Photo to{" "}
+              {categories.find((c) => c.id === selectedCategory)?.label}
             </span>
           </Button>
         </div>
@@ -310,7 +322,9 @@ export default function GalleryScreen() {
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-gray-800">
               {categories.find((c) => c.id === selectedCategory)?.label}
-              <span className="ml-2 text-sm text-gray-500">({filteredPhotos.length})</span>
+              <span className="ml-2 text-sm text-gray-500">
+                ({filteredPhotos.length})
+              </span>
             </h3>
             {filteredPhotos.length > 0 && (
               <Button
@@ -329,9 +343,12 @@ export default function GalleryScreen() {
             <Card>
               <CardContent className="p-8 text-center">
                 <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-500 mb-1">No photos in this category yet</p>
+                <p className="text-gray-500 mb-1">
+                  No photos in this category yet
+                </p>
                 <p className="text-sm text-gray-400 mb-4">
-                  Capture or upload photos for {categories.find(c => c.id === selectedCategory)?.label}
+                  Capture or upload photos for{" "}
+                  {categories.find((c) => c.id === selectedCategory)?.label}
                 </p>
                 <Button
                   variant="outline"
