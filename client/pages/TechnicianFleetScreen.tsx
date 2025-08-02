@@ -387,7 +387,7 @@ export default function TechnicianFleetScreen() {
     startCamera();
   };
 
-  const handleConditionUpdate = (inspectionId: string, itemId: string, condition: 'good' | 'damaged' | 'stolen' | 'dont-have') => {
+  const handleConditionUpdate = (inspectionId: string, itemId: string, condition: string) => {
     setInspections(prev => prev.map(inspection => {
       if (inspection.id === inspectionId) {
         const updatedItems = inspection.items.map(item =>
@@ -399,11 +399,54 @@ export default function TechnicianFleetScreen() {
     }));
   };
 
-  const handleInspectionItemUpdate = (inspectionId: string, itemId: string, status: 'ok' | 'needs-attention', image?: string) => {
+  const handleExpiryDateUpdate = (inspectionId: string, itemId: string, expiryDate: string) => {
     setInspections(prev => prev.map(inspection => {
       if (inspection.id === inspectionId) {
         const updatedItems = inspection.items.map(item =>
-          item.id === itemId ? { ...item, checked: true, status, ...(image && { image }) } : item
+          item.id === itemId ? { ...item, expiryDate } : item
+        );
+        return { ...inspection, items: updatedItems };
+      }
+      return inspection;
+    }));
+  };
+
+  const handleImageAdd = (inspectionId: string, itemId: string, imageDataUrl: string) => {
+    setInspections(prev => prev.map(inspection => {
+      if (inspection.id === inspectionId) {
+        const updatedItems = inspection.items.map(item => {
+          if (item.id === itemId) {
+            const currentImages = item.images || [];
+            const maxImages = item.maxImages || 1;
+            if (currentImages.length < maxImages) {
+              return { ...item, images: [...currentImages, imageDataUrl] };
+            }
+          }
+          return item;
+        });
+        return { ...inspection, items: updatedItems };
+      }
+      return inspection;
+    }));
+  };
+
+  const handleVideoAdd = (inspectionId: string, itemId: string, videoDataUrl: string) => {
+    setInspections(prev => prev.map(inspection => {
+      if (inspection.id === inspectionId) {
+        const updatedItems = inspection.items.map(item =>
+          item.id === itemId ? { ...item, video: videoDataUrl } : item
+        );
+        return { ...inspection, items: updatedItems };
+      }
+      return inspection;
+    }));
+  };
+
+  const handleInspectionItemUpdate = (inspectionId: string, itemId: string, status: 'ok' | 'needs-attention') => {
+    setInspections(prev => prev.map(inspection => {
+      if (inspection.id === inspectionId) {
+        const updatedItems = inspection.items.map(item =>
+          item.id === itemId ? { ...item, checked: true, status } : item
         );
         const completedItems = updatedItems.filter(item => item.checked).length;
         const totalItems = updatedItems.length;
