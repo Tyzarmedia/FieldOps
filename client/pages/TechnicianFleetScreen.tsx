@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   X,
   Truck,
@@ -15,6 +17,11 @@ import {
   Fuel,
   Settings,
   Shield,
+  Calendar,
+  Hash,
+  Upload,
+  Play,
+  Heart,
 } from "lucide-react";
 
 interface InspectionItem {
@@ -23,6 +30,12 @@ interface InspectionItem {
   checked: boolean;
   status: 'ok' | 'needs-attention' | 'not-checked';
   notes?: string;
+  requiresImage?: boolean;
+  image?: string;
+  serialNumber?: string;
+  expiryDate?: string;
+  requiresSerial?: boolean;
+  requiresExpiry?: boolean;
 }
 
 interface Inspection {
