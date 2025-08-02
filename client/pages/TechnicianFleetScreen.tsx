@@ -53,6 +53,12 @@ export default function TechnicianFleetScreen() {
   const navigate = useNavigate();
   const [selectedInspection, setSelectedInspection] = useState<Inspection | null>(null);
   const [showIncidentForm, setShowIncidentForm] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [currentItemForImage, setCurrentItemForImage] = useState<{inspectionId: string, itemId: string} | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [currentStream, setCurrentStream] = useState<MediaStream | null>(null);
 
   const [inspections, setInspections] = useState<Inspection[]>([
     {
