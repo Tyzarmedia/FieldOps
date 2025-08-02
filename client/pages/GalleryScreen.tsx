@@ -19,10 +19,10 @@ import {
 interface Photo {
   id: string;
   category:
-    | "before-light-readings"
-    | "image-fault"
-    | "image-after-work"
-    | "light-readings-after-work";
+    | "job-site-before"
+    | "fault-images"
+    | "work-progress"
+    | "job-completed";
   url: string;
   timestamp: Date;
 }
