@@ -72,30 +72,238 @@ export default function TechnicianFleetScreen() {
       description: "Daily vehicle safety and condition check",
       status: "pending",
       items: [
-        { id: "vi1", item: "Driver's License", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi2", item: "License Disk for the car", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi3", item: "Check tire pressure and condition", checked: false, status: 'not-checked' },
-        { id: "vi4", item: "Front and rear lights", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi5", item: "Canopy condition", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi6", item: "Canopy lock", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi7", item: "Spare wheel lock", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi8", item: "Left side of the car", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi9", item: "Right side of the car", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi10", item: "Front view of car", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi11", item: "Rear view of car", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi12", item: "Hazard lights video (front and rear)", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi13", item: "Images of damaged items (if any)", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi14", item: "Odometer reading", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi15", item: "Driver tag with tag number", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi16", item: "Windscreen condition", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi17", item: "Passenger and driver windows", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi18", item: "Side mirrors condition", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi19", item: "Service book last dated stamp", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi20", item: "Opened canopy with packed tools", checked: false, status: 'not-checked', requiresImage: true },
-        { id: "vi21", item: "Test brakes functionality", checked: false, status: 'not-checked' },
-        { id: "vi22", item: "Check fluid levels (oil, coolant, brake fluid)", checked: false, status: 'not-checked' },
-        { id: "vi23", item: "Interior cleanliness and condition", checked: false, status: 'not-checked' },
-        { id: "vi24", item: "Exterior condition and cleanliness", checked: false, status: 'not-checked' },
+        {
+          id: "vi1",
+          item: "Driver's License",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          requiresExpiry: true,
+          conditionOptions: ['Valid', 'Expiring', 'Expired'],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi2",
+          item: "License Disk for the car",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          requiresExpiry: true,
+          conditionOptions: ['Valid', 'Expiring', 'Expired'],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi3",
+          item: "Check tire pressure and condition",
+          checked: false,
+          status: 'not-checked',
+          conditionOptions: ['In Spec', 'Needs Attention'],
+          requiresImage: false
+        },
+        {
+          id: "vi4",
+          item: "Front and rear lights",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 2
+        },
+        {
+          id: "vi5",
+          item: "Canopy condition",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi6",
+          item: "Canopy lock",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi7",
+          item: "Spare wheel lock",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi8",
+          item: "Left side of the car",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi9",
+          item: "Right side of the car",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi10",
+          item: "Front image of the car",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi11",
+          item: "Rear image of the car",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi12",
+          item: "Hazard lights video (front and rear)",
+          checked: false,
+          status: 'not-checked',
+          requiresVideo: true,
+          conditionOptions: ['All Working', 'All Faulty', 'Front Faulty', 'Rear Faulty']
+        },
+        {
+          id: "vi13",
+          item: "Images of damaged items (if any)",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['None', 'Minor Damage', 'Major Damage'],
+          images: [],
+          maxImages: 5
+        },
+        {
+          id: "vi14",
+          item: "Odometer reading",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Due for Service', 'Faulty', 'Good'],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi15",
+          item: "Driver tag with tag number",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi16",
+          item: "Windscreen condition",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi17",
+          item: "Passenger and driver windows",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 2
+        },
+        {
+          id: "vi18",
+          item: "Side mirrors condition",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen'],
+          images: [],
+          maxImages: 2
+        },
+        {
+          id: "vi19",
+          item: "Service book last dated stamp",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Current', 'Overdue', 'Missing'],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi20",
+          item: "Opened canopy with packed tools",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Cleaned', 'Dirty'],
+          images: [],
+          maxImages: 1
+        },
+        {
+          id: "vi21",
+          item: "Test brakes functionality",
+          checked: false,
+          status: 'not-checked',
+          conditionOptions: ['Good', 'Needs Attention', 'Faulty'],
+          requiresImage: false
+        },
+        {
+          id: "vi22",
+          item: "Check fluid levels (oil, coolant, brake fluid)",
+          checked: false,
+          status: 'not-checked',
+          conditionOptions: ['All Good', 'Low Levels', 'Critical'],
+          requiresImage: false
+        },
+        {
+          id: "vi23",
+          item: "Interior cleanliness and condition",
+          checked: false,
+          status: 'not-checked',
+          conditionOptions: ['Clean', 'Needs Cleaning', 'Damaged'],
+          requiresImage: false
+        },
+        {
+          id: "vi24",
+          item: "Exterior condition and cleanliness",
+          checked: false,
+          status: 'not-checked',
+          requiresImage: true,
+          conditionOptions: ['Good', 'Damaged', 'Stolen', "Don't Have"],
+          images: [],
+          maxImages: 4
+        },
       ]
     },
     {
