@@ -814,67 +814,99 @@ export default function TechnicianFleetScreen() {
                       )}
                     </div>
 
+                    {/* Expiry Date Input */}
+                    {item.requiresExpiry && (
+                      <div className="mb-3">
+                        <Label className="text-sm font-medium mb-1 flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          Expiry Date
+                        </Label>
+                        <Input
+                          type="date"
+                          value={item.expiryDate || ''}
+                          onChange={(e) => handleExpiryDateUpdate(selectedInspection.id, item.id, e.target.value)}
+                          className="text-sm"
+                        />
+                      </div>
+                    )}
+
                     {/* Condition Selection */}
                     <div className="mb-3">
                       <Label className="text-sm font-medium mb-1">
                         Condition
                       </Label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button
-                          variant={item.condition === 'good' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => handleConditionUpdate(selectedInspection.id, item.id, 'good')}
-                          className="text-xs"
-                        >
-                          Good
-                        </Button>
-                        <Button
-                          variant={item.condition === 'damaged' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => handleConditionUpdate(selectedInspection.id, item.id, 'damaged')}
-                          className="text-xs"
-                        >
-                          Damaged
-                        </Button>
-                        <Button
-                          variant={item.condition === 'stolen' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => handleConditionUpdate(selectedInspection.id, item.id, 'stolen')}
-                          className="text-xs"
-                        >
-                          Stolen
-                        </Button>
-                        <Button
-                          variant={item.condition === 'dont-have' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => handleConditionUpdate(selectedInspection.id, item.id, 'dont-have')}
-                          className="text-xs"
-                        >
-                          Don't Have
-                        </Button>
+                      <div className={`grid gap-2 ${item.conditionOptions?.length === 2 ? 'grid-cols-2' : 'grid-cols-2'}`}>
+                        {item.conditionOptions?.map((option) => (
+                          <Button
+                            key={option}
+                            variant={item.condition === option ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => handleConditionUpdate(selectedInspection.id, item.id, option)}
+                            className="text-xs"
+                          >
+                            {option}
+                          </Button>
+                        ))}
                       </div>
                     </div>
 
-                    {/* Image Capture - Only shown if condition is damaged */}
-                    {item.requiresImage && item.condition === 'damaged' && (
+                    {/* Video Capture */}
+                    {item.requiresVideo && (
                       <div className="mb-3">
                         <Label className="text-sm font-medium mb-1 flex items-center">
-                          <Camera className="h-4 w-4 mr-1" />
-                          Required Image (Damaged Item)
+                          <Play className="h-4 w-4 mr-1" />
+                          Required 10sec Video
                         </Label>
-                        {item.image ? (
+                        {item.video ? (
                           <div className="relative">
-                            <img src={item.image} alt="Captured" className="w-full h-32 object-cover rounded border" />
+                            <video src={item.video} controls className="w-full h-32 object-cover rounded border" />
                             <Button
                               size="sm"
                               variant="outline"
                               className="absolute top-2 right-2 bg-white/80"
-                              onClick={() => handleImageCapture(selectedInspection.id, item.id)}
+                              onClick={() => handleVideoCapture(selectedInspection.id, item.id)}
                             >
-                              <Camera className="h-4 w-4" />
+                              <Play className="h-4 w-4" />
                             </Button>
                           </div>
                         ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleVideoCapture(selectedInspection.id, item.id)}
+                            className="w-full border-dashed border-2"
+                          >
+                            <Play className="h-4 w-4 mr-2" />
+                            Record Video
+                          </Button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Image Capture - Multiple Images Support */}
+                    {item.requiresImage && (
+                      <div className="mb-3">
+                        <Label className="text-sm font-medium mb-1 flex items-center">
+                          <Camera className="h-4 w-4 mr-1" />
+                          Required Images ({item.images?.length || 0}/{item.maxImages || 1})
+                        </Label>
+
+                        {/* Display existing images */}
+                        {item.images && item.images.length > 0 && (
+                          <div className="grid grid-cols-2 gap-2 mb-2">
+                            {item.images.map((image, index) => (
+                              <div key={index} className="relative">
+                                <img src={image} alt={`Captured ${index + 1}`} className="w-full h-24 object-cover rounded border" />
+                                <div className="absolute top-1 right-1 bg-black/50 text-white rounded px-1 text-xs">
+                                  {index + 1}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Add more images button */}
+                        {(!item.images || item.images.length < (item.maxImages || 1)) && (
                           <Button
                             variant="outline"
                             size="sm"
@@ -882,7 +914,7 @@ export default function TechnicianFleetScreen() {
                             className="w-full border-dashed border-2"
                           >
                             <Camera className="h-4 w-4 mr-2" />
-                            Take Photo
+                            {item.images?.length ? 'Add Another Image' : 'Take Photo'}
                           </Button>
                         )}
                       </div>
