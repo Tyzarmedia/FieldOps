@@ -473,30 +473,170 @@ export default function TechnicianFleetScreen() {
           </div>
         </div>
 
-        <div className="p-4">
+        {/* Hidden Camera Elements */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file && currentItemForImage) {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                handleInspectionItemUpdate(
+                  currentItemForImage.inspectionId,
+                  currentItemForImage.itemId,
+                  'ok',
+                  event.target?.result as string
+                );
+                setCurrentItemForImage(null);
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+        />
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+        {/* Camera Modal */}
+        {showCamera && (
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex flex-col">
+            <div className="flex justify-between items-center p-4 text-white">
+              <h2 className="text-lg font-semibold">Take Photo</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20"
+                onClick={stopCamera}
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
+
+            <div className="flex-1 flex items-center justify-center p-4">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="w-full h-full object-cover rounded-lg max-w-md max-h-96"
+              />
+            </div>
+
+            <div className="p-4 flex justify-center space-x-4">
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-white/20"
+                onClick={stopCamera}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-white text-black hover:bg-gray-200"
+                onClick={capturePhoto}
+              >
+                <Camera className="h-5 w-5 mr-2" />
+                Capture
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <div className="p-4 pb-20">
           <Card>
             <CardContent className="p-4">
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {selectedInspection.items.map((item) => (
-                  <div 
+                  <div
                     key={item.id}
-                    className={`p-3 rounded-lg border ${getItemStatusColor(item.status)}`}
+                    className={`p-4 rounded-lg border ${getItemStatusColor(item.status)}`}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <p className="text-gray-800 flex-1">{item.item}</p>
+                    <div className="flex items-start justify-between mb-3">
+                      <p className="text-gray-800 flex-1 font-medium">{item.item}</p>
                       {item.checked && (
                         <Badge className={item.status === 'ok' ? 'bg-green-500' : 'bg-orange-500'}>
                           {item.status === 'ok' ? 'OK' : 'Needs Attention'}
                         </Badge>
                       )}
                     </div>
-                    
+
+                    {/* Serial Number Input */}
+                    {item.requiresSerial && (
+                      <div className="mb-3">
+                        <Label className="text-sm font-medium mb-1 flex items-center">
+                          <Hash className="h-4 w-4 mr-1" />
+                          Serial Number
+                        </Label>
+                        <Input
+                          placeholder="Enter serial number"
+                          value={item.serialNumber || ''}
+                          onChange={(e) => handleSerialNumberUpdate(selectedInspection.id, item.id, e.target.value)}
+                          className="text-sm"
+                        />
+                      </div>
+                    )}
+
+                    {/* Expiry Date Input */}
+                    {item.requiresExpiry && (
+                      <div className="mb-3">
+                        <Label className="text-sm font-medium mb-1 flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          Expiry Date
+                        </Label>
+                        <Input
+                          type="date"
+                          value={item.expiryDate || ''}
+                          onChange={(e) => handleExpiryDateUpdate(selectedInspection.id, item.id, e.target.value)}
+                          className="text-sm"
+                        />
+                      </div>
+                    )}
+
+                    {/* Image Capture */}
+                    {item.requiresImage && (
+                      <div className="mb-3">
+                        <Label className="text-sm font-medium mb-1 flex items-center">
+                          <Camera className="h-4 w-4 mr-1" />
+                          Required Image
+                        </Label>
+                        {item.image ? (
+                          <div className="relative">
+                            <img src={item.image} alt="Captured" className="w-full h-32 object-cover rounded border" />
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="absolute top-2 right-2 bg-white/80"
+                              onClick={() => handleImageCapture(selectedInspection.id, item.id)}
+                            >
+                              <Camera className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleImageCapture(selectedInspection.id, item.id)}
+                            className="w-full border-dashed border-2"
+                          >
+                            <Camera className="h-4 w-4 mr-2" />
+                            Take Photo
+                          </Button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Status Buttons */}
                     {!item.checked && (
-                      <div className="flex space-x-2 mt-2">
+                      <div className="flex space-x-2 mt-3">
                         <Button
                           size="sm"
                           onClick={() => handleInspectionItemUpdate(selectedInspection.id, item.id, 'ok')}
-                          className="bg-green-600 hover:bg-green-700 text-white"
+                          className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                          disabled={
+                            (item.requiresSerial && !item.serialNumber) ||
+                            (item.requiresExpiry && !item.expiryDate) ||
+                            (item.requiresImage && !item.image)
+                          }
                         >
                           <CheckCircle className="h-4 w-4 mr-1" />
                           OK
@@ -504,11 +644,27 @@ export default function TechnicianFleetScreen() {
                         <Button
                           size="sm"
                           onClick={() => handleInspectionItemUpdate(selectedInspection.id, item.id, 'needs-attention')}
-                          className="bg-orange-600 hover:bg-orange-700 text-white"
+                          className="bg-orange-600 hover:bg-orange-700 text-white flex-1"
+                          disabled={
+                            (item.requiresSerial && !item.serialNumber) ||
+                            (item.requiresExpiry && !item.expiryDate) ||
+                            (item.requiresImage && !item.image)
+                          }
                         >
                           <AlertTriangle className="h-4 w-4 mr-1" />
                           Needs Attention
                         </Button>
+                      </div>
+                    )}
+
+                    {/* Required Fields Warning */}
+                    {!item.checked && (
+                      (item.requiresSerial && !item.serialNumber) ||
+                      (item.requiresExpiry && !item.expiryDate) ||
+                      (item.requiresImage && !item.image)
+                    ) && (
+                      <div className="mt-2 text-xs text-orange-600 bg-orange-50 p-2 rounded">
+                        Please complete all required fields before marking status
                       </div>
                     )}
                   </div>
@@ -516,22 +672,28 @@ export default function TechnicianFleetScreen() {
               </div>
 
               <div className="mt-6 flex space-x-4">
-                <Button 
+                <Button
                   onClick={() => handleCompleteInspection(selectedInspection.id)}
                   className="flex-1 bg-green-600 hover:bg-green-700"
-                  disabled={completedItems < totalItems}
+                  disabled={!canCompleteInspection(selectedInspection)}
                 >
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Complete Inspection
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex-1"
                   onClick={() => setSelectedInspection(null)}
                 >
                   Cancel
                 </Button>
               </div>
+
+              {!canCompleteInspection(selectedInspection) && completedItems === totalItems && (
+                <div className="mt-3 text-sm text-orange-600 bg-orange-50 p-3 rounded-lg">
+                  Please complete all required fields, serial numbers, expiry dates, and images before submitting.
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
