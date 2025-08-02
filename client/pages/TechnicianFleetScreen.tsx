@@ -59,65 +59,11 @@ export default function TechnicianFleetScreen() {
 
   const [inspections, setInspections] = useState<Inspection[]>([
     {
-      id: "harness-checklist",
-      title: "Harness Checklist",
-      icon: Shield,
-      color: "bg-red-500",
-      description: "Safety harness and fall protection equipment check",
-      status: "pending",
-      items: [
-        { id: "h1", item: "Full body harness condition", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "h2", item: "Webbing straps for cuts, frays or damage", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "h3", item: "Hardware (buckles, D-rings) for damage", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "h4", item: "Stitching integrity on all connections", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "h5", item: "Lanyard condition and connections", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "h6", item: "Shock absorber pack inspection", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "h7", item: "Carabiner gate function and locking", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "h8", item: "Labels and certification tags present", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-      ]
-    },
-    {
-      id: "fire-extinguisher-checklist",
-      title: "Fire Extinguisher Checklist",
-      icon: AlertTriangle,
-      color: "bg-red-600",
-      description: "Fire extinguisher safety and condition check",
-      status: "pending",
-      items: [
-        { id: "fe1", item: "Pressure gauge reading in green zone", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "fe2", item: "Safety pin and tamper seal intact", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "fe3", item: "Cylinder exterior condition (no dents/corrosion)", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "fe4", item: "Hose and nozzle condition", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "fe5", item: "Mounting bracket secure", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "fe6", item: "Inspection tag up to date", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-        { id: "fe7", item: "Location accessible and unobstructed", checked: false, status: 'not-checked', requiresSerial: true, requiresExpiry: true },
-      ]
-    },
-    {
-      id: "first-aid-checklist",
-      title: "First Aid Kit Checklist",
-      icon: Heart,
-      color: "bg-green-600",
-      description: "First aid kit contents and expiry check",
-      status: "pending",
-      items: [
-        { id: "fa1", item: "Adhesive bandages (various sizes)", checked: false, status: 'not-checked', requiresExpiry: true },
-        { id: "fa2", item: "Sterile gauze pads and rolls", checked: false, status: 'not-checked', requiresExpiry: true },
-        { id: "fa3", item: "Medical tape", checked: false, status: 'not-checked', requiresExpiry: true },
-        { id: "fa4", item: "Antiseptic wipes/solution", checked: false, status: 'not-checked', requiresExpiry: true },
-        { id: "fa5", item: "Disposable gloves", checked: false, status: 'not-checked', requiresExpiry: true },
-        { id: "fa6", item: "Scissors and tweezers", checked: false, status: 'not-checked', requiresExpiry: true },
-        { id: "fa7", item: "Instant cold compress", checked: false, status: 'not-checked', requiresExpiry: true },
-        { id: "fa8", item: "Emergency contact information", checked: false, status: 'not-checked', requiresExpiry: true },
-        { id: "fa9", item: "First aid manual/instructions", checked: false, status: 'not-checked', requiresExpiry: true },
-      ]
-    },
-    {
       id: "vehicle-inspection",
       title: "Vehicle Inspection",
       icon: Truck,
       color: "bg-blue-500",
-      description: "Daily vehicle safety and condition check with images",
+      description: "Daily vehicle safety and condition check",
       status: "pending",
       items: [
         { id: "vi1", item: "Driver's License", checked: false, status: 'not-checked', requiresImage: true },
@@ -151,7 +97,7 @@ export default function TechnicianFleetScreen() {
       title: "Tool Inspection",
       icon: Wrench,
       color: "bg-green-500",
-      description: "Tool and equipment safety check with images",
+      description: "Tool and equipment condition check",
       status: "pending",
       items: [
         { id: "ti1", item: "Ladder condition and stability", checked: false, status: 'not-checked', requiresImage: true },
