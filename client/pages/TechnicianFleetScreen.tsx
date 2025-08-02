@@ -205,9 +205,18 @@ export default function TechnicianFleetScreen() {
   const canCompleteInspection = (inspection: Inspection) => {
     return inspection.items.every(item => {
       if (!item.checked) return false;
-      if (item.requiresImage && !item.image) return false;
-      if (item.requiresSerial && !item.serialNumber) return false;
-      if (item.requiresExpiry && !item.expiryDate) return false;
+      if (!item.condition) return false;
+
+      // If condition is stolen, don't have, or good - image not required
+      if (['stolen', 'dont-have', 'good'].includes(item.condition)) {
+        return true;
+      }
+
+      // If condition is damaged and requires image, image must be present
+      if (item.condition === 'damaged' && item.requiresImage && !item.image) {
+        return false;
+      }
+
       return true;
     });
   };
