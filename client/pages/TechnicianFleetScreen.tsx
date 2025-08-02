@@ -785,13 +785,35 @@ export default function TechnicianFleetScreen() {
               >
                 Cancel
               </Button>
-              <Button
-                className="bg-white text-black hover:bg-gray-200"
-                onClick={capturePhoto}
-              >
-                <Camera className="h-5 w-5 mr-2" />
-                Capture
-              </Button>
+              {currentItemForImage?.type === 'video' ? (
+                <>
+                  {!isRecording ? (
+                    <Button
+                      className="bg-red-600 text-white hover:bg-red-700"
+                      onClick={startVideoRecording}
+                    >
+                      <Play className="h-5 w-5 mr-2" />
+                      Start Recording (10s)
+                    </Button>
+                  ) : (
+                    <Button
+                      className="bg-red-600 text-white hover:bg-red-700"
+                      onClick={stopVideoRecording}
+                    >
+                      <Square className="h-5 w-5 mr-2" />
+                      Stop Recording
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <Button
+                  className="bg-white text-black hover:bg-gray-200"
+                  onClick={capturePhoto}
+                >
+                  <Camera className="h-5 w-5 mr-2" />
+                  Capture
+                </Button>
+              )}
             </div>
           </div>
         )}
