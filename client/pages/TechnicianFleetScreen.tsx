@@ -950,7 +950,17 @@ export default function TechnicianFleetScreen() {
                           onClick={() => handleInspectionItemUpdate(selectedInspection.id, item.id, 'ok')}
                           className="bg-green-600 hover:bg-green-700 text-white flex-1"
                           disabled={
-                            item.condition === 'damaged' && item.requiresImage && !item.image
+                            // Check expiry date requirement
+                            (item.requiresExpiry && !item.expiryDate) ||
+                            // Check video requirement
+                            (item.requiresVideo && !item.video) ||
+                            // Check image requirements
+                            (item.requiresImage && (
+                              // Always required for certain items
+                              (['vi1', 'vi2', 'vi20'].includes(item.id) && (!item.images || item.images.length < (item.maxImages || 1))) ||
+                              // Required for non-stolen/don't have conditions
+                              (!['Stolen', "Don't Have"].includes(item.condition) && (!item.images || item.images.length < (item.maxImages || 1)))
+                            ))
                           }
                         >
                           <CheckCircle className="h-4 w-4 mr-1" />
@@ -961,7 +971,13 @@ export default function TechnicianFleetScreen() {
                           onClick={() => handleInspectionItemUpdate(selectedInspection.id, item.id, 'needs-attention')}
                           className="bg-orange-600 hover:bg-orange-700 text-white flex-1"
                           disabled={
-                            item.condition === 'damaged' && item.requiresImage && !item.image
+                            // Same validation as OK button
+                            (item.requiresExpiry && !item.expiryDate) ||
+                            (item.requiresVideo && !item.video) ||
+                            (item.requiresImage && (
+                              (['vi1', 'vi2', 'vi20'].includes(item.id) && (!item.images || item.images.length < (item.maxImages || 1))) ||
+                              (!['Stolen', "Don't Have"].includes(item.condition) && (!item.images || item.images.length < (item.maxImages || 1)))
+                            ))
                           }
                         >
                           <AlertTriangle className="h-4 w-4 mr-1" />
@@ -971,16 +987,34 @@ export default function TechnicianFleetScreen() {
                     )}
 
                     {/* Required Fields Warning */}
-                    {!item.checked && !item.condition && (
-                      <div className="mt-2 text-xs text-orange-600 bg-orange-50 p-2 rounded">
-                        Please select item condition first
-                      </div>
-                    )}
-
-                    {!item.checked && item.condition === 'damaged' && item.requiresImage && !item.image && (
-                      <div className="mt-2 text-xs text-orange-600 bg-orange-50 p-2 rounded">
-                        Image required for damaged items
-                      </div>
+                    {!item.checked && (
+                      <>
+                        {!item.condition && (
+                          <div className="mt-2 text-xs text-orange-600 bg-orange-50 p-2 rounded">
+                            Please select item condition first
+                          </div>
+                        )}
+                        {item.condition && item.requiresExpiry && !item.expiryDate && (
+                          <div className="mt-2 text-xs text-orange-600 bg-orange-50 p-2 rounded">
+                            Expiry date is required
+                          </div>
+                        )}
+                        {item.condition && item.requiresVideo && !item.video && (
+                          <div className="mt-2 text-xs text-orange-600 bg-orange-50 p-2 rounded">
+                            Video recording is required
+                          </div>
+                        )}
+                        {item.condition && item.requiresImage && (!item.images || item.images.length < (item.maxImages || 1)) && (
+                          !['Stolen', "Don't Have"].includes(item.condition) || ['vi1', 'vi2', 'vi20'].includes(item.id)
+                        ) && (
+                          <div className="mt-2 text-xs text-orange-600 bg-orange-50 p-2 rounded">
+                            {(item.maxImages || 1) > 1 ?
+                              `${item.maxImages || 1} images required` :
+                              'Image is required'
+                            }
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 ))}
