@@ -313,18 +313,20 @@ export default function GalleryScreen() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-gray-800">
-              {categories.find((c) => c.id === selectedCategory)?.label} Photos
-              ({filteredPhotos.length})
+              {categories.find((c) => c.id === selectedCategory)?.label}
+              <span className="ml-2 text-sm text-gray-500">({filteredPhotos.length})</span>
             </h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-blue-600 hover:bg-blue-50"
-              onClick={() => handleUpload(selectedCategory)}
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Add
-            </Button>
+            {filteredPhotos.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-blue-600 hover:bg-blue-50"
+                onClick={() => handleUpload(selectedCategory)}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add More
+              </Button>
+            )}
           </div>
 
           {filteredPhotos.length === 0 ? (
