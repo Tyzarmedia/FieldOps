@@ -176,18 +176,96 @@ export default function TechnicianFleetScreen() {
     }
   ]);
 
-  const handleInspectionItemUpdate = (inspectionId: string, itemId: string, status: 'ok' | 'needs-attention') => {
+  // Camera functions
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+        audio: false
+      });
+      setCurrentStream(stream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+      setShowCamera(true);
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    }
+  };
+
+  const stopCamera = () => {
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop());
+      setCurrentStream(null);
+    }
+    setShowCamera(false);
+    setCurrentItemForImage(null);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current && currentItemForImage) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      if (context) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+        handleInspectionItemUpdate(currentItemForImage.inspectionId, currentItemForImage.itemId, 'ok', imageDataUrl);
+        stopCamera();
+      }
+    }
+  };
+
+  const handleImageCapture = (inspectionId: string, itemId: string) => {
+    setCurrentItemForImage({ inspectionId, itemId });
+    startCamera();
+  };
+
+  const handleInspectionItemUpdate = (inspectionId: string, itemId: string, status: 'ok' | 'needs-attention', image?: string) => {
     setInspections(prev => prev.map(inspection => {
       if (inspection.id === inspectionId) {
-        const updatedItems = inspection.items.map(item => 
-          item.id === itemId ? { ...item, checked: true, status } : item
+        const updatedItems = inspection.items.map(item =>
+          item.id === itemId ? { ...item, checked: true, status, ...(image && { image }) } : item
         );
         const completedItems = updatedItems.filter(item => item.checked).length;
         const totalItems = updatedItems.length;
-        const inspectionStatus = completedItems === 0 ? 'pending' : 
+        const inspectionStatus = completedItems === 0 ? 'pending' :
                                completedItems === totalItems ? 'completed' : 'in-progress';
-        
+
         return { ...inspection, items: updatedItems, status: inspectionStatus };
+      }
+      return inspection;
+    }));
+  };
+
+  const handleSerialNumberUpdate = (inspectionId: string, itemId: string, serialNumber: string) => {
+    setInspections(prev => prev.map(inspection => {
+      if (inspection.id === inspectionId) {
+        const updatedItems = inspection.items.map(item =>
+          item.id === itemId ? { ...item, serialNumber } : item
+        );
+        return { ...inspection, items: updatedItems };
+      }
+      return inspection;
+    }));
+  };
+
+  const handleExpiryDateUpdate = (inspectionId: string, itemId: string, expiryDate: string) => {
+    setInspections(prev => prev.map(inspection => {
+      if (inspection.id === inspectionId) {
+        const updatedItems = inspection.items.map(item =>
+          item.id === itemId ? { ...item, expiryDate } : item
+        );
+        return { ...inspection, items: updatedItems };
       }
       return inspection;
     }));
