@@ -31,11 +31,11 @@ export default function GalleryScreen() {
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState("gallery");
   const [selectedCategory, setSelectedCategory] = useState<
-    | "before-light-readings"
-    | "image-fault"
-    | "image-after-work"
-    | "light-readings-after-work"
-  >("before-light-readings");
+    | "job-site-before"
+    | "fault-images"
+    | "work-progress"
+    | "job-completed"
+  >("job-site-before");
   const [photos, setPhotos] = useState<Photo[]>([]);
 
   const handleDeletePhoto = (photoId: string) => {
