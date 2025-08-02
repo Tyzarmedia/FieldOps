@@ -184,13 +184,7 @@ export default function GalleryScreen() {
     }
   };
 
-  const handleUpload = (
-    category:
-      | "before-light-readings"
-      | "image-fault"
-      | "image-after-work"
-      | "light-readings-after-work",
-  ) => {
+  const handleUpload = (category: "job-site-before" | "fault-images" | "work-progress" | "job-completed") => {
     // Show options for camera or file selection
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       startCamera();
