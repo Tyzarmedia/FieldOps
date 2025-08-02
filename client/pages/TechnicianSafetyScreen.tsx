@@ -47,12 +47,22 @@ interface SafetyChecklist {
   items: ChecklistItem[];
   lastCompleted?: string;
   status: 'pending' | 'in-progress' | 'completed';
+  globalExpiryDate?: string;
+  globalSerialNumber?: string;
+  locationImage?: string;
+  requiresLocationImage?: boolean;
 }
 
 export default function TechnicianSafetyScreen() {
   const navigate = useNavigate();
   const [selectedChecklist, setSelectedChecklist] = useState<SafetyChecklist | null>(null);
   const [showIncidentForm, setShowIncidentForm] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [currentItemForImage, setCurrentItemForImage] = useState<{checklistId: string, type: 'location' | 'item', itemId?: string} | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [currentStream, setCurrentStream] = useState<MediaStream | null>(null);
 
   const [safetyChecklists, setSafetyChecklists] = useState<SafetyChecklist[]>([
     {
