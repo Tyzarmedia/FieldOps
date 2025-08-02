@@ -196,28 +196,117 @@ export default function TechnicianSafetyScreen() {
     }
   ]);
 
+  // Camera functions
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+        audio: false
+      });
+      setCurrentStream(stream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+      setShowCamera(true);
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    }
+  };
+
+  const stopCamera = () => {
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop());
+      setCurrentStream(null);
+    }
+    setShowCamera(false);
+    setCurrentItemForImage(null);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current && currentItemForImage) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      if (context) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+        if (currentItemForImage.type === 'location') {
+          handleLocationImageUpdate(currentItemForImage.checklistId, imageDataUrl);
+        }
+        stopCamera();
+      }
+    }
+  };
+
+  const handleImageCapture = (checklistId: string, type: 'location' | 'item', itemId?: string) => {
+    setCurrentItemForImage({ checklistId, type, itemId });
+    startCamera();
+  };
+
   const handleChecklistItemToggle = (checklistId: string, itemId: string) => {
     setSafetyChecklists(prev => prev.map(checklist => {
       if (checklist.id === checklistId) {
-        const updatedItems = checklist.items.map(item => 
+        const updatedItems = checklist.items.map(item =>
           item.id === itemId ? { ...item, checked: !item.checked } : item
         );
         const completedItems = updatedItems.filter(item => item.checked).length;
         const totalItems = updatedItems.length;
-        const status = completedItems === 0 ? 'pending' : 
+        const status = completedItems === 0 ? 'pending' :
                      completedItems === totalItems ? 'completed' : 'in-progress';
-        
+
         return { ...checklist, items: updatedItems, status };
       }
       return checklist;
     }));
   };
 
+  const handleGlobalSerialNumberUpdate = (checklistId: string, serialNumber: string) => {
+    setSafetyChecklists(prev => prev.map(checklist =>
+      checklist.id === checklistId ? { ...checklist, globalSerialNumber: serialNumber } : checklist
+    ));
+  };
+
+  const handleGlobalExpiryDateUpdate = (checklistId: string, expiryDate: string) => {
+    setSafetyChecklists(prev => prev.map(checklist =>
+      checklist.id === checklistId ? { ...checklist, globalExpiryDate: expiryDate } : checklist
+    ));
+  };
+
+  const handleLocationImageUpdate = (checklistId: string, image: string) => {
+    setSafetyChecklists(prev => prev.map(checklist =>
+      checklist.id === checklistId ? { ...checklist, locationImage: image } : checklist
+    ));
+  };
+
+  const canCompleteChecklist = (checklist: SafetyChecklist) => {
+    const allItemsChecked = checklist.items.every(item => !item.required || item.checked);
+    const hasRequiredGlobalSerial = (checklist.id === 'fire-extinguisher-checklist') ? checklist.globalSerialNumber : true;
+    const hasRequiredGlobalExpiry = ['fire-extinguisher-checklist', 'first-aid-checklist'].includes(checklist.id) ? checklist.globalExpiryDate : true;
+    const hasRequiredLocationImage = checklist.requiresLocationImage ? checklist.locationImage : true;
+
+    return allItemsChecked && hasRequiredGlobalSerial && hasRequiredGlobalExpiry && hasRequiredLocationImage;
+  };
+
   const handleCompleteChecklist = (checklistId: string) => {
+    const checklist = safetyChecklists.find(c => c.id === checklistId);
+    if (!checklist || !canCompleteChecklist(checklist)) {
+      alert('Please complete all required fields, serial numbers, expiry dates, and images before submitting.');
+      return;
+    }
+
     setSafetyChecklists(prev => prev.map(checklist => {
       if (checklist.id === checklistId) {
-        return { 
-          ...checklist, 
+        return {
+          ...checklist,
           status: 'completed',
           lastCompleted: new Date().toLocaleString()
         };
