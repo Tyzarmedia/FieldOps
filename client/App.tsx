@@ -247,8 +247,13 @@ export default function App() {
               element={<EnhancedJobDetailsScreen />}
             />
             <Route path="/technician/stock" element={<StockScreen />} />
-            <Route path="/technician/gallery" element={<GalleryScreen />} />
-            <Route path="/technician/signoff" element={<SignOffScreen />} />
+          <Route path="/technician/gallery" element={<GalleryScreen />} />
+          <Route path="/technician/signoff" element={<SignOffScreen />} />
+          <Route path="/apply-leave" element={<ApplyLeaveScreen />} />
+          <Route path="/stock-on-hand" element={<StockScreen />} />
+          <Route path="/network-assessment" element={<NetworkAssessmentScreen />} />
+          <Route path="/overtime-list" element={<TechnicianOvertimeScreen />} />
+          <Route path="/technician-settings" element={<TechnicianSettingsScreen />} />
             <Route
               path="/fleet"
               element={
