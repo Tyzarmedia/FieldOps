@@ -331,14 +331,17 @@ export default function GalleryScreen() {
             <Card>
               <CardContent className="p-8 text-center">
                 <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-500">No photos in this category yet</p>
+                <p className="text-gray-500 mb-1">No photos in this category yet</p>
+                <p className="text-sm text-gray-400 mb-4">
+                  Capture or upload photos for {categories.find(c => c.id === selectedCategory)?.label}
+                </p>
                 <Button
                   variant="outline"
                   className="mt-3"
                   onClick={() => handleUpload(selectedCategory)}
                 >
                   <Camera className="h-4 w-4 mr-2" />
-                  Take Photo
+                  Add First Photo
                 </Button>
               </CardContent>
             </Card>
