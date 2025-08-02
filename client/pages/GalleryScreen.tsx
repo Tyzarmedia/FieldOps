@@ -53,20 +53,24 @@ export default function GalleryScreen() {
 
   const categories = [
     {
-      id: "before-light-readings",
-      label: "Before Light Readings",
+      id: "job-site-before",
+      label: "Job Site Before",
       color: "bg-blue-500",
     },
-    { id: "image-fault", label: "Image Fault", color: "bg-red-500" },
     {
-      id: "image-after-work",
-      label: "Image After Work",
-      color: "bg-green-500",
+      id: "fault-images",
+      label: "Fault Images",
+      color: "bg-red-500"
     },
     {
-      id: "light-readings-after-work",
-      label: "Light Readings After Work",
-      color: "bg-purple-500",
+      id: "work-progress",
+      label: "Work Progress",
+      color: "bg-orange-500",
+    },
+    {
+      id: "job-completed",
+      label: "Job Completed",
+      color: "bg-green-500",
     },
   ];
 
