@@ -29,13 +29,10 @@ interface InspectionItem {
   item: string;
   checked: boolean;
   status: 'ok' | 'needs-attention' | 'not-checked';
+  condition?: 'good' | 'damaged' | 'stolen' | 'dont-have';
   notes?: string;
   requiresImage?: boolean;
   image?: string;
-  serialNumber?: string;
-  expiryDate?: string;
-  requiresSerial?: boolean;
-  requiresExpiry?: boolean;
 }
 
 interface Inspection {
