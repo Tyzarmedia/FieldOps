@@ -133,11 +133,7 @@ export default function GalleryScreen() {
   };
 
   const capturePhoto = (
-    category:
-      | "before-light-readings"
-      | "image-fault"
-      | "image-after-work"
-      | "light-readings-after-work",
+    category: "job-site-before" | "fault-images" | "work-progress" | "job-completed",
   ) => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
