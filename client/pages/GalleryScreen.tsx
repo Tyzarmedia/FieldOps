@@ -36,20 +36,11 @@ export default function GalleryScreen() {
     | "image-after-work"
     | "light-readings-after-work"
   >("before-light-readings");
-  const [photos, setPhotos] = useState<Photo[]>([
-    {
-      id: "1",
-      category: "before-light-readings",
-      url: "/placeholder.svg",
-      timestamp: new Date("2024-01-15T10:30:00"),
-    },
-    {
-      id: "2",
-      category: "image-fault",
-      url: "/placeholder.svg",
-      timestamp: new Date("2024-01-15T11:15:00"),
-    },
-  ]);
+  const [photos, setPhotos] = useState<Photo[]>([]);
+
+  const handleDeletePhoto = (photoId: string) => {
+    setPhotos(prev => prev.filter(photo => photo.id !== photoId));
+  };
 
   const categories = [
     {
