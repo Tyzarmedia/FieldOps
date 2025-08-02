@@ -21,6 +21,7 @@ import {
   Hash,
   Upload,
   Play,
+  Square,
   Heart,
 } from "lucide-react";
 
