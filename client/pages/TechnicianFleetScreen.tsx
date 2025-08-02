@@ -29,10 +29,16 @@ interface InspectionItem {
   item: string;
   checked: boolean;
   status: 'ok' | 'needs-attention' | 'not-checked';
-  condition?: 'good' | 'damaged' | 'stolen' | 'dont-have';
+  condition?: string;
+  conditionOptions?: string[];
   notes?: string;
   requiresImage?: boolean;
-  image?: string;
+  images?: string[];
+  maxImages?: number;
+  requiresVideo?: boolean;
+  video?: string;
+  requiresExpiry?: boolean;
+  expiryDate?: string;
 }
 
 interface Inspection {
