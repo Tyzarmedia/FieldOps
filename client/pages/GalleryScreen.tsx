@@ -166,11 +166,7 @@ export default function GalleryScreen() {
 
   const handleFileSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
-    category:
-      | "before-light-readings"
-      | "image-fault"
-      | "image-after-work"
-      | "light-readings-after-work",
+    category: "job-site-before" | "fault-images" | "work-progress" | "job-completed",
   ) => {
     const file = event.target.files?.[0];
     if (file) {
