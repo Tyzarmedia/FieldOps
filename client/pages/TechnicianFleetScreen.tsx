@@ -500,44 +500,53 @@ export default function TechnicianFleetScreen() {
                       )}
                     </div>
 
-                    {/* Serial Number Input */}
-                    {item.requiresSerial && (
-                      <div className="mb-3">
-                        <Label className="text-sm font-medium mb-1 flex items-center">
-                          <Hash className="h-4 w-4 mr-1" />
-                          Serial Number
-                        </Label>
-                        <Input
-                          placeholder="Enter serial number"
-                          value={item.serialNumber || ''}
-                          onChange={(e) => handleSerialNumberUpdate(selectedInspection.id, item.id, e.target.value)}
-                          className="text-sm"
-                        />
+                    {/* Condition Selection */}
+                    <div className="mb-3">
+                      <Label className="text-sm font-medium mb-1">
+                        Condition
+                      </Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          variant={item.condition === 'good' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => handleConditionUpdate(selectedInspection.id, item.id, 'good')}
+                          className="text-xs"
+                        >
+                          Good
+                        </Button>
+                        <Button
+                          variant={item.condition === 'damaged' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => handleConditionUpdate(selectedInspection.id, item.id, 'damaged')}
+                          className="text-xs"
+                        >
+                          Damaged
+                        </Button>
+                        <Button
+                          variant={item.condition === 'stolen' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => handleConditionUpdate(selectedInspection.id, item.id, 'stolen')}
+                          className="text-xs"
+                        >
+                          Stolen
+                        </Button>
+                        <Button
+                          variant={item.condition === 'dont-have' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => handleConditionUpdate(selectedInspection.id, item.id, 'dont-have')}
+                          className="text-xs"
+                        >
+                          Don't Have
+                        </Button>
                       </div>
-                    )}
+                    </div>
 
-                    {/* Expiry Date Input */}
-                    {item.requiresExpiry && (
-                      <div className="mb-3">
-                        <Label className="text-sm font-medium mb-1 flex items-center">
-                          <Calendar className="h-4 w-4 mr-1" />
-                          Expiry Date
-                        </Label>
-                        <Input
-                          type="date"
-                          value={item.expiryDate || ''}
-                          onChange={(e) => handleExpiryDateUpdate(selectedInspection.id, item.id, e.target.value)}
-                          className="text-sm"
-                        />
-                      </div>
-                    )}
-
-                    {/* Image Capture */}
-                    {item.requiresImage && (
+                    {/* Image Capture - Only shown if condition is damaged */}
+                    {item.requiresImage && item.condition === 'damaged' && (
                       <div className="mb-3">
                         <Label className="text-sm font-medium mb-1 flex items-center">
                           <Camera className="h-4 w-4 mr-1" />
-                          Required Image
+                          Required Image (Damaged Item)
                         </Label>
                         {item.image ? (
                           <div className="relative">
@@ -566,16 +575,14 @@ export default function TechnicianFleetScreen() {
                     )}
 
                     {/* Status Buttons */}
-                    {!item.checked && (
+                    {!item.checked && item.condition && (
                       <div className="flex space-x-2 mt-3">
                         <Button
                           size="sm"
                           onClick={() => handleInspectionItemUpdate(selectedInspection.id, item.id, 'ok')}
                           className="bg-green-600 hover:bg-green-700 text-white flex-1"
                           disabled={
-                            (item.requiresSerial && !item.serialNumber) ||
-                            (item.requiresExpiry && !item.expiryDate) ||
-                            (item.requiresImage && !item.image)
+                            item.condition === 'damaged' && item.requiresImage && !item.image
                           }
                         >
                           <CheckCircle className="h-4 w-4 mr-1" />
@@ -586,9 +593,7 @@ export default function TechnicianFleetScreen() {
                           onClick={() => handleInspectionItemUpdate(selectedInspection.id, item.id, 'needs-attention')}
                           className="bg-orange-600 hover:bg-orange-700 text-white flex-1"
                           disabled={
-                            (item.requiresSerial && !item.serialNumber) ||
-                            (item.requiresExpiry && !item.expiryDate) ||
-                            (item.requiresImage && !item.image)
+                            item.condition === 'damaged' && item.requiresImage && !item.image
                           }
                         >
                           <AlertTriangle className="h-4 w-4 mr-1" />
@@ -598,13 +603,15 @@ export default function TechnicianFleetScreen() {
                     )}
 
                     {/* Required Fields Warning */}
-                    {!item.checked && (
-                      (item.requiresSerial && !item.serialNumber) ||
-                      (item.requiresExpiry && !item.expiryDate) ||
-                      (item.requiresImage && !item.image)
-                    ) && (
+                    {!item.checked && !item.condition && (
                       <div className="mt-2 text-xs text-orange-600 bg-orange-50 p-2 rounded">
-                        Please complete all required fields before marking status
+                        Please select item condition first
+                      </div>
+                    )}
+
+                    {!item.checked && item.condition === 'damaged' && item.requiresImage && !item.image && (
+                      <div className="mt-2 text-xs text-orange-600 bg-orange-50 p-2 rounded">
+                        Image required for damaged items
                       </div>
                     )}
                   </div>
