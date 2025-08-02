@@ -378,14 +378,58 @@ export default function TechnicianFleetScreen() {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
 
-        handleInspectionItemUpdate(currentItemForImage.inspectionId, currentItemForImage.itemId, 'ok', imageDataUrl);
+        handleImageAdd(currentItemForImage.inspectionId, currentItemForImage.itemId, imageDataUrl);
         stopCamera();
       }
     }
   };
 
+  const startVideoRecording = async () => {
+    if (currentStream && currentItemForImage) {
+      const recorder = new MediaRecorder(currentStream, { mimeType: 'video/webm' });
+      const chunks: BlobPart[] = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const videoDataUrl = URL.createObjectURL(blob);
+        handleVideoAdd(currentItemForImage.inspectionId, currentItemForImage.itemId, videoDataUrl);
+        stopCamera();
+      };
+
+      setMediaRecorder(recorder);
+      recorder.start();
+      setIsRecording(true);
+
+      // Auto-stop after 10 seconds
+      setTimeout(() => {
+        if (recorder.state === 'recording') {
+          recorder.stop();
+          setIsRecording(false);
+        }
+      }, 10000);
+    }
+  };
+
+  const stopVideoRecording = () => {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+
   const handleImageCapture = (inspectionId: string, itemId: string) => {
-    setCurrentItemForImage({ inspectionId, itemId });
+    setCurrentItemForImage({ inspectionId, itemId, type: 'image' });
+    startCamera();
+  };
+
+  const handleVideoCapture = (inspectionId: string, itemId: string) => {
+    setCurrentItemForImage({ inspectionId, itemId, type: 'video' });
     startCamera();
   };
 
