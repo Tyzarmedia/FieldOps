@@ -173,6 +173,18 @@ export default function TechnicianFleetScreen() {
     startCamera();
   };
 
+  const handleConditionUpdate = (inspectionId: string, itemId: string, condition: 'good' | 'damaged' | 'stolen' | 'dont-have') => {
+    setInspections(prev => prev.map(inspection => {
+      if (inspection.id === inspectionId) {
+        const updatedItems = inspection.items.map(item =>
+          item.id === itemId ? { ...item, condition } : item
+        );
+        return { ...inspection, items: updatedItems };
+      }
+      return inspection;
+    }));
+  };
+
   const handleInspectionItemUpdate = (inspectionId: string, itemId: string, status: 'ok' | 'needs-attention', image?: string) => {
     setInspections(prev => prev.map(inspection => {
       if (inspection.id === inspectionId) {
@@ -185,30 +197,6 @@ export default function TechnicianFleetScreen() {
                                completedItems === totalItems ? 'completed' : 'in-progress';
 
         return { ...inspection, items: updatedItems, status: inspectionStatus };
-      }
-      return inspection;
-    }));
-  };
-
-  const handleSerialNumberUpdate = (inspectionId: string, itemId: string, serialNumber: string) => {
-    setInspections(prev => prev.map(inspection => {
-      if (inspection.id === inspectionId) {
-        const updatedItems = inspection.items.map(item =>
-          item.id === itemId ? { ...item, serialNumber } : item
-        );
-        return { ...inspection, items: updatedItems };
-      }
-      return inspection;
-    }));
-  };
-
-  const handleExpiryDateUpdate = (inspectionId: string, itemId: string, expiryDate: string) => {
-    setInspections(prev => prev.map(inspection => {
-      if (inspection.id === inspectionId) {
-        const updatedItems = inspection.items.map(item =>
-          item.id === itemId ? { ...item, expiryDate } : item
-        );
-        return { ...inspection, items: updatedItems };
       }
       return inspection;
     }));
