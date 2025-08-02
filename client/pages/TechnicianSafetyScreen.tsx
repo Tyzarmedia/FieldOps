@@ -66,21 +66,60 @@ export default function TechnicianSafetyScreen() {
 
   const [safetyChecklists, setSafetyChecklists] = useState<SafetyChecklist[]>([
     {
-      id: "fire-extinguisher",
+      id: "harness-checklist",
+      title: "Harness Checklist",
+      icon: Shield,
+      color: "bg-red-500",
+      description: "Safety harness and fall protection equipment check",
+      status: "pending",
+      requiresLocationImage: false,
+      items: [
+        { id: "h1", item: "Full body harness condition", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
+        { id: "h2", item: "Webbing straps for cuts, frays or damage", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
+        { id: "h3", item: "Hardware (buckles, D-rings) for damage", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
+        { id: "h4", item: "Stitching integrity on all connections", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
+        { id: "h5", item: "Lanyard condition and connections", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
+        { id: "h6", item: "Shock absorber pack inspection", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
+        { id: "h7", item: "Carabiner gate function and locking", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
+        { id: "h8", item: "Labels and certification tags present", checked: false, required: true, requiresSerial: true, requiresExpiry: true },
+      ]
+    },
+    {
+      id: "fire-extinguisher-checklist",
       title: "Fire Extinguisher Checklist",
       icon: Flame,
-      color: "bg-red-500",
-      description: "Monthly fire extinguisher inspection",
+      color: "bg-red-600",
+      description: "Fire extinguisher safety and condition check",
       status: "pending",
+      requiresLocationImage: true,
       items: [
-        { id: "fe1", item: "Fire extinguisher is visible and accessible", checked: false, required: true },
-        { id: "fe2", item: "Safety pin is intact and seal is not broken", checked: false, required: true },
-        { id: "fe3", item: "Pressure gauge shows normal pressure", checked: false, required: true },
-        { id: "fe4", item: "No visible damage or corrosion", checked: false, required: true },
-        { id: "fe5", item: "Inspection tag is current and attached", checked: false, required: true },
-        { id: "fe6", item: "Extinguisher is properly mounted", checked: false, required: true },
-        { id: "fe7", item: "Area around extinguisher is clear", checked: false, required: true },
-        { id: "fe8", item: "Instructions are visible and legible", checked: false, required: false },
+        { id: "fe1", item: "Pressure gauge reading in green zone", checked: false, required: true },
+        { id: "fe2", item: "Safety pin and tamper seal intact", checked: false, required: true },
+        { id: "fe3", item: "Cylinder exterior condition (no dents/corrosion)", checked: false, required: true },
+        { id: "fe4", item: "Hose and nozzle condition", checked: false, required: true },
+        { id: "fe5", item: "Mounting bracket secure", checked: false, required: true },
+        { id: "fe6", item: "Inspection tag up to date", checked: false, required: true },
+        { id: "fe7", item: "Location accessible and unobstructed", checked: false, required: true },
+      ]
+    },
+    {
+      id: "first-aid-checklist",
+      title: "First Aid Kit Checklist",
+      icon: Heart,
+      color: "bg-green-600",
+      description: "First aid kit contents and condition check",
+      status: "pending",
+      requiresLocationImage: true,
+      items: [
+        { id: "fa1", item: "Adhesive bandages (various sizes)", checked: false, required: true },
+        { id: "fa2", item: "Sterile gauze pads and rolls", checked: false, required: true },
+        { id: "fa3", item: "Medical tape", checked: false, required: true },
+        { id: "fa4", item: "Antiseptic wipes/solution", checked: false, required: true },
+        { id: "fa5", item: "Disposable gloves", checked: false, required: true },
+        { id: "fa6", item: "Scissors and tweezers", checked: false, required: true },
+        { id: "fa7", item: "Instant cold compress", checked: false, required: true },
+        { id: "fa8", item: "Emergency contact information", checked: false, required: true },
+        { id: "fa9", item: "First aid manual/instructions", checked: false, required: true },
       ]
     },
     {
@@ -117,24 +156,6 @@ export default function TechnicianSafetyScreen() {
         { id: "wh6", item: "No overhead power lines in vicinity", checked: false, required: true },
         { id: "wh7", item: "Spotter/observer assigned if required", checked: false, required: false },
         { id: "wh8", item: "Emergency evacuation plan in place", checked: false, required: true },
-      ]
-    },
-    {
-      id: "harness-check",
-      title: "Harness Checklist",
-      icon: HardHat,
-      color: "bg-green-500",
-      description: "Personal fall protection equipment",
-      status: "pending",
-      items: [
-        { id: "hc1", item: "Harness is within certification date", checked: false, required: true },
-        { id: "hc2", item: "No cuts, tears, or burns in webbing", checked: false, required: true },
-        { id: "hc3", item: "Hardware is free from cracks and corrosion", checked: false, required: true },
-        { id: "hc4", item: "Buckles function properly", checked: false, required: true },
-        { id: "hc5", item: "D-rings are secure and undamaged", checked: false, required: true },
-        { id: "hc6", item: "Lanyard is in good condition", checked: false, required: true },
-        { id: "hc7", item: "Shock absorber is not deployed", checked: false, required: true },
-        { id: "hc8", item: "Proper fit confirmed", checked: false, required: true },
       ]
     },
     {
