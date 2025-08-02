@@ -510,15 +510,26 @@ export default function TechnicianFleetScreen() {
       if (!item.checked) return false;
       if (!item.condition) return false;
 
-      // If condition is stolen, don't have, or good - image not required
-      if (['stolen', 'dont-have', 'good'].includes(item.condition)) {
-        return true;
+      // Check expiry date requirement
+      if (item.requiresExpiry && !item.expiryDate) return false;
+
+      // Check image requirements based on condition and item type
+      if (item.requiresImage) {
+        const requiredImages = item.maxImages || 1;
+        const currentImages = item.images?.length || 0;
+
+        // Special cases where images are always required
+        if (['vi1', 'vi2', 'vi20'].includes(item.id)) { // Driver's License, License Disk, Opened canopy
+          if (currentImages < requiredImages) return false;
+        }
+        // For other items, check if condition requires images
+        else if (!['Stolen', "Don't Have"].includes(item.condition) && currentImages < requiredImages) {
+          return false;
+        }
       }
 
-      // If condition is damaged and requires image, image must be present
-      if (item.condition === 'damaged' && item.requiresImage && !item.image) {
-        return false;
-      }
+      // Check video requirement
+      if (item.requiresVideo && !item.video) return false;
 
       return true;
     });
