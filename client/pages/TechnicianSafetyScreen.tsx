@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   X,
   Shield,
@@ -17,6 +19,9 @@ import {
   FileText,
   Camera,
   User,
+  Calendar,
+  Hash,
+  Heart,
 } from "lucide-react";
 
 interface ChecklistItem {
@@ -25,6 +30,12 @@ interface ChecklistItem {
   checked: boolean;
   required: boolean;
   notes?: string;
+  requiresImage?: boolean;
+  image?: string;
+  serialNumber?: string;
+  expiryDate?: string;
+  requiresSerial?: boolean;
+  requiresExpiry?: boolean;
 }
 
 interface SafetyChecklist {
