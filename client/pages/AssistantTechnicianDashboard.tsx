@@ -23,10 +23,35 @@ import {
 import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
 
 export default function AssistantTechnicianDashboard() {
-  const [workingHours, setWorkingHours] = useState("6:45");
-  const [distanceTraveled, setDistanceTraveled] = useState("28.3");
+  const [workingHours, setWorkingHours] = useState("0:00");
+  const [distanceTraveled, setDistanceTraveled] = useState("0.0");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Update time and distance from localStorage
+  useEffect(() => {
+    const updateTimeAndDistance = () => {
+      const clockInTime = localStorage.getItem('clockInTime');
+      const isClockedIn = localStorage.getItem('isClockedIn');
+
+      if (clockInTime && isClockedIn === 'true') {
+        const now = new Date();
+        const clockIn = new Date(clockInTime);
+        const diffInMinutes = Math.floor((now.getTime() - clockIn.getTime()) / (1000 * 60));
+        const hours = Math.floor(diffInMinutes / 60);
+        const minutes = diffInMinutes % 60;
+        setWorkingHours(`${hours}:${minutes.toString().padStart(2, '0')}`);
+
+        // Simulate distance based on time (0.5 km per hour)
+        const distanceKm = (diffInMinutes / 60) * 0.5;
+        setDistanceTraveled(distanceKm.toFixed(1));
+      }
+    };
+
+    updateTimeAndDistance();
+    const interval = setInterval(updateTimeAndDistance, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
 
   const stats = {
     assignedJobs: getJobsByStatus("assigned").length,
