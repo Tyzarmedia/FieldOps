@@ -510,6 +510,38 @@ export default function EnhancedStockManagementScreen() {
     },
   ]);
 
+  const [orderDocuments, setOrderDocuments] = useState([
+    {
+      id: "DOC-2024-001",
+      type: "Invoice",
+      supplier: "Fiber Tech Solutions",
+      orderNumber: "ORD-001",
+      status: "awaiting-delivery",
+      uploadDate: "2024-01-15",
+      expectedDate: "2024-01-25",
+      items: [
+        { name: "Fiber Optic Cable 1km", quantity: 5, unitPrice: 120 },
+        { name: "Connector Kit", quantity: 10, unitPrice: 35 }
+      ],
+      total: 950,
+      fileName: "invoice-fiber-tech-001.pdf"
+    },
+    {
+      id: "DOC-2024-002",
+      type: "Quote",
+      supplier: "Cable Solutions Ltd",
+      orderNumber: "QUO-002",
+      status: "awaiting-order",
+      uploadDate: "2024-01-14",
+      expectedDate: "2024-01-30",
+      items: [
+        { name: "Cable Ties 100pack", quantity: 20, unitPrice: 15 }
+      ],
+      total: 300,
+      fileName: "quote-cable-solutions-002.pdf"
+    }
+  ]);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "critical":
