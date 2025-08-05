@@ -19,6 +19,12 @@ import {
   Plus,
   QrCode,
   X,
+  FileText,
+  Settings,
+  Camera,
+  Package,
+  PenTool,
+  Clock,
 } from "lucide-react";
 
 interface TechnicianStock {
