@@ -145,11 +145,24 @@ export default function TechnicianStockUsageScreen() {
     }
 
     try {
+      // Add to usage list
+      const usageEntry = {
+        id: `usage-${Date.now()}`,
+        itemName: selectedItem.itemName,
+        quantity: qtyUsed,
+        unit: selectedItem.unit,
+        container: usageForm.container || "Unknown",
+        description: usageForm.description || "No description",
+        timestamp: new Date().toISOString(),
+      };
+
+      setUsageList(prev => [usageEntry, ...prev]);
+
       // Update local state
-      setAssignedItems(items => items.map(item => 
-        item.id === selectedItem.id 
-          ? { 
-              ...item, 
+      setAssignedItems(items => items.map(item =>
+        item.id === selectedItem.id
+          ? {
+              ...item,
               usedQuantity: item.usedQuantity + qtyUsed,
               remainingQuantity: item.remainingQuantity - qtyUsed,
               status: item.remainingQuantity - qtyUsed === 0 ? "depleted" : "in-use"
