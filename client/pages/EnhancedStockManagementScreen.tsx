@@ -556,7 +556,10 @@ export default function EnhancedStockManagementScreen() {
       case "delivered":
         return "bg-green-100 text-green-800";
       case "approved":
+      case "awaiting-delivery":
         return "bg-blue-100 text-blue-800";
+      case "awaiting-order":
+        return "bg-yellow-100 text-yellow-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -1386,7 +1389,7 @@ export default function EnhancedStockManagementScreen() {
                             : {transaction.quantity} units
                           </p>
                           <p className="text-xs text-gray-500">
-                            {transaction.technician || transaction.from} ���{" "}
+                            {transaction.technician || transaction.from} •{" "}
                             {transaction.date}
                           </p>
                         </div>
