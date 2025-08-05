@@ -771,7 +771,7 @@ export default function EnhancedStockManagementScreen() {
 
     // Add items to inventory
     const updatedStockItems = [...stockItems];
-    document.items.forEach(docItem => {
+    document.items.forEach((docItem, index) => {
       const existingItem = updatedStockItems.find(item =>
         item.name.toLowerCase().includes(docItem.name.toLowerCase()) ||
         docItem.name.toLowerCase().includes(item.name.toLowerCase())
@@ -781,13 +781,14 @@ export default function EnhancedStockManagementScreen() {
         existingItem.quantity += docItem.quantity;
         existingItem.status = existingItem.quantity > existingItem.minimumQuantity ? "in-stock" : "low-stock";
       } else {
-        // Create new stock item
+        // Create new stock item with unique ID
+        const timestamp = Date.now();
         const newItem = {
-          id: `ITM-${Date.now()}`,
+          id: `ITM-${timestamp}-${index}`,
           name: docItem.name,
           description: `Auto-added from ${document.type} ${document.orderNumber}`,
           category: "General",
-          sku: `AUTO-${Date.now()}`,
+          sku: `AUTO-${timestamp}-${index}`,
           unit: "pieces",
           quantity: docItem.quantity,
           minimumQuantity: Math.max(5, Math.floor(docItem.quantity * 0.2)),
