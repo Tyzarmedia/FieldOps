@@ -24,39 +24,58 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    // Simulate checking for new notifications - only run once
-    const initializeNotifications = () => {
-      const mockNotifications: Notification[] = [
-        {
-          id: "1",
-          type: "job_assigned",
-          title: "New Job Assigned",
-          message: "FTTH Installation - SA-688808 has been assigned to you",
-          timestamp: new Date().toISOString(),
-          read: false,
-          priority: "high",
-        },
-        {
-          id: "2",
-          type: "stock_assigned",
-          title: "Stock Assigned",
-          message:
-            "Fiber Optic Cable (500 meters) has been assigned to your inventory",
-          timestamp: new Date(Date.now() - 300000).toISOString(), // 5 minutes ago
-          read: false,
-          priority: "medium",
-        },
-      ];
+    // Load notifications from localStorage and check for deleted ones
+    const loadNotifications = async () => {
+      try {
+        // Get deleted notification IDs from localStorage
+        const deletedIds = JSON.parse(localStorage.getItem(`deleted-notifications-${technicianId}`) || '[]');
 
-      setNotifications(mockNotifications);
-      setUnreadCount(mockNotifications.filter((n) => !n.read).length);
+        // Try to fetch from API first
+        const response = await fetch(`/api/notifications/technician/${technicianId}`);
+        let loadedNotifications: Notification[] = [];
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            loadedNotifications = result.data;
+          }
+        } else {
+          // Fallback to mock data if API fails
+          loadedNotifications = [
+            {
+              id: "1",
+              type: "job_assigned",
+              title: "New Job Assigned",
+              message: "FTTH Installation - SA-688808 has been assigned to you",
+              timestamp: new Date().toISOString(),
+              read: false,
+              priority: "high",
+            },
+            {
+              id: "2",
+              type: "stock_assigned",
+              title: "Stock Assigned",
+              message:
+                "Fiber Optic Cable (500 meters) has been assigned to your inventory",
+              timestamp: new Date(Date.now() - 300000).toISOString(), // 5 minutes ago
+              read: false,
+              priority: "medium",
+            },
+          ];
+        }
+
+        // Filter out deleted notifications
+        const filteredNotifications = loadedNotifications.filter(n => !deletedIds.includes(n.id));
+
+        setNotifications(filteredNotifications);
+        setUnreadCount(filteredNotifications.filter((n) => !n.read).length);
+      } catch (error) {
+        console.error('Error loading notifications:', error);
+      }
     };
 
-    // Only initialize once when component mounts
-    if (notifications.length === 0) {
-      initializeNotifications();
-    }
-  }, []); // Empty dependency array to run only once
+    loadNotifications();
+  }, [technicianId]);
 
   const markAsRead = (notificationId: string) => {
     setNotifications((prev) =>
@@ -70,12 +89,45 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
     setUnreadCount(0);
   };
 
-  const removeNotification = (notificationId: string) => {
+  const removeNotification = async (notificationId: string) => {
     const notification = notifications.find((n) => n.id === notificationId);
     if (notification && !notification.read) {
       setUnreadCount((prev) => Math.max(0, prev - 1));
     }
+
+    // Remove from local state
     setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+
+    // Persist deletion to prevent reappearing on refresh
+    try {
+      // First try to delete from database
+      const response = await fetch(`/api/notifications/${notificationId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ technicianId })
+      });
+
+      if (!response.ok) {
+        console.warn('Failed to delete notification from database, storing locally');
+      }
+
+      // Always store deleted ID locally as backup
+      const deletedIds = JSON.parse(localStorage.getItem(`deleted-notifications-${technicianId}`) || '[]');
+      if (!deletedIds.includes(notificationId)) {
+        deletedIds.push(notificationId);
+        localStorage.setItem(`deleted-notifications-${technicianId}`, JSON.stringify(deletedIds));
+      }
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      // Store locally as fallback
+      const deletedIds = JSON.parse(localStorage.getItem(`deleted-notifications-${technicianId}`) || '[]');
+      if (!deletedIds.includes(notificationId)) {
+        deletedIds.push(notificationId);
+        localStorage.setItem(`deleted-notifications-${technicianId}`, JSON.stringify(deletedIds));
+      }
+    }
   };
 
   const getIcon = (type: string) => {
