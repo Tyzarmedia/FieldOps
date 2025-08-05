@@ -112,12 +112,12 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
     <div className="relative">
       {/* Notification Bell */}
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
         onClick={() => setShowNotifications(!showNotifications)}
-        className="relative"
+        className="relative text-white hover:bg-white/20 border-none"
       >
-        <Bell className="h-4 w-4" />
+        <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
           <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 py-0 min-w-[1.2rem] h-5">
             {unreadCount}
