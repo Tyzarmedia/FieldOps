@@ -103,6 +103,25 @@ export default function SignOffScreen() {
     }
   };
 
+  // Check completion status from localStorage/API
+  useEffect(() => {
+    const checkCompletionStatus = () => {
+      // Check UDF completion - in real app, this would check actual UDF data
+      const udfData = localStorage.getItem('udf-completed');
+      setUdfCompleted(!!udfData);
+
+      // Check images uploaded - check gallery or image storage
+      const imageData = localStorage.getItem('job-images');
+      setImagesUploaded(!!imageData);
+
+      // Check stock usage - check if any stock was recorded
+      const stockUsage = localStorage.getItem('stock-usage-list');
+      setStockUpdated(!!stockUsage);
+    };
+
+    checkCompletionStatus();
+  }, []);
+
   // Validation functions
   const checkValidation = async () => {
     setIsValidating(true);
@@ -110,12 +129,17 @@ export default function SignOffScreen() {
 
     // Check UDF completion
     if (!udfCompleted) {
-      errors.push("UDF fields must be filled and updated");
+      errors.push("UDF fields must be completed and saved");
+    }
+
+    // Check images uploaded
+    if (!imagesUploaded) {
+      errors.push("At least one image must be uploaded to gallery");
     }
 
     // Check stock status
     if (!stockUpdated && !noStockUsed) {
-      errors.push("Stock must be updated or marked as 'No stock used'");
+      errors.push("Stock usage must be recorded or marked as 'No stock used'");
     }
 
     // Check digital signature
