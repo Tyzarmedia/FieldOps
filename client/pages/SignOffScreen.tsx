@@ -177,7 +177,13 @@ export default function SignOffScreen() {
       // In real app, send to API
       console.log("Signature data:", signatureData);
 
+      success("Success", "Job completed successfully!");
       navigate("/", { state: { message: "Job completed successfully!" } });
+    } else {
+      // Show validation errors as notifications
+      validationErrors.forEach((errorMsg) => {
+        error("Validation Error", errorMsg);
+      });
     }
   };
 
