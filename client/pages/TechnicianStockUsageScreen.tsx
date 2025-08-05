@@ -162,7 +162,12 @@ export default function TechnicianStockUsageScreen() {
         timestamp: new Date().toISOString(),
       };
 
-      setUsageList(prev => [usageEntry, ...prev]);
+      setUsageList(prev => {
+        const newList = [usageEntry, ...prev];
+        // Save to localStorage for validation
+        localStorage.setItem('stock-usage-list', JSON.stringify(newList));
+        return newList;
+      });
 
       // Update local state
       setAssignedItems(items => items.map(item =>
