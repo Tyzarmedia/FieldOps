@@ -164,25 +164,15 @@ export default function TechnicianStockUsageScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
+    <div className="min-h-screen bg-white">
+      {/* Header - matching the image exactly */}
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/20"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="h-6 w-6" />
-            </Button>
-            <h1 className="text-xl font-semibold">Add Stock Usage</h1>
-          </div>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-semibold">Add Stock</h1>
           <Button
             variant="ghost"
             size="sm"
-            className="text-white hover:bg-white/20"
+            className="text-white hover:bg-white/20 rounded-full h-10 w-10 p-0"
             onClick={() => navigate(-1)}
           >
             <X className="h-6 w-6" />
@@ -190,123 +180,126 @@ export default function TechnicianStockUsageScreen() {
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
-        {/* Stock Usage Form */}
-        <Card>
-          <CardContent className="p-6 space-y-4">
-            {/* Code/Search */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Code</Label>
-              <div className="relative">
-                <Input
-                  placeholder="Search..."
-                  value={usageForm.code}
-                  onChange={(e) => {
-                    setUsageForm({ ...usageForm, code: e.target.value });
-                    setSearchTerm(e.target.value);
+      <div className="p-4 space-y-6">
+        {/* Code */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-gray-500">Code</Label>
+          <div className="relative">
+            <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <Input
+              placeholder="Search..."
+              value={usageForm.code}
+              onChange={(e) => {
+                setUsageForm({ ...usageForm, code: e.target.value });
+                setSearchTerm(e.target.value);
+              }}
+              className="pl-12 pr-12 h-12 text-gray-500 border-gray-200 bg-gray-50"
+            />
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+              <QrCode className="h-6 w-6 text-gray-400" />
+            </div>
+          </div>
+
+          {/* Search Results */}
+          {searchTerm && filteredItems.length > 0 && (
+            <div className="border rounded-md bg-white shadow-sm max-h-40 overflow-y-auto mt-2">
+              {filteredItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                  onClick={() => {
+                    setUsageForm({ ...usageForm, code: item.itemSku });
+                    setSearchTerm("");
                   }}
-                  className="pr-10"
-                />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <QrCode className="h-5 w-5 text-gray-400" />
+                >
+                  <div className="font-medium text-sm">{item.itemName}</div>
+                  <div className="text-xs text-gray-500">
+                    SKU: {item.itemSku} • Available: {item.remainingQuantity} {item.unit}
+                  </div>
                 </div>
-              </div>
-              
-              {/* Search Results */}
-              {searchTerm && filteredItems.length > 0 && (
-                <div className="border rounded-md bg-white shadow-sm max-h-40 overflow-y-auto">
-                  {filteredItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
-                      onClick={() => {
-                        setUsageForm({ ...usageForm, code: item.itemSku });
-                        setSearchTerm("");
-                      }}
-                    >
-                      <div className="font-medium text-sm">{item.itemName}</div>
-                      <div className="text-xs text-gray-500">
-                        SKU: {item.itemSku} • Available: {item.remainingQuantity} {item.unit}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              ))}
             </div>
+          )}
+        </div>
 
-            {/* Container */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Container</Label>
-              <Select 
-                value={usageForm.container} 
-                onValueChange={(value) => setUsageForm({ ...usageForm, container: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Container" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="van-001">Van 001</SelectItem>
-                  <SelectItem value="van-002">Van 002</SelectItem>
-                  <SelectItem value="warehouse-a">Warehouse A</SelectItem>
-                  <SelectItem value="warehouse-b">Warehouse B</SelectItem>
-                  <SelectItem value="field-kit">Field Kit</SelectItem>
-                </SelectContent>
-              </Select>
+        {/* Container */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-gray-500">Container</Label>
+          <Select
+            value={usageForm.container}
+            onValueChange={(value) => setUsageForm({ ...usageForm, container: value })}
+          >
+            <SelectTrigger className="h-12 text-gray-500 border-gray-200 bg-gray-50">
+              <SelectValue placeholder="Select Container" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="van-001">Van 001</SelectItem>
+              <SelectItem value="van-002">Van 002</SelectItem>
+              <SelectItem value="warehouse-a">Warehouse A</SelectItem>
+              <SelectItem value="warehouse-b">Warehouse B</SelectItem>
+              <SelectItem value="field-kit">Field Kit</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Qty Used */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-gray-500">Qty Used</Label>
+          <Input
+            type="number"
+            value={usageForm.qtyUsed}
+            onChange={(e) => setUsageForm({ ...usageForm, qtyUsed: e.target.value })}
+            className="h-12 text-gray-500 border-gray-200 bg-gray-50"
+            min="1"
+          />
+        </div>
+
+        {/* Description */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-gray-500">Description</Label>
+          <Textarea
+            value={usageForm.description}
+            onChange={(e) => setUsageForm({ ...usageForm, description: e.target.value })}
+            className="min-h-24 text-gray-500 border-gray-200 bg-gray-50 resize-none"
+            rows={3}
+          />
+        </div>
+
+        {/* Comments */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-gray-500">Comments</Label>
+          <div className="relative">
+            <Textarea
+              value={usageForm.comments}
+              onChange={(e) => setUsageForm({ ...usageForm, comments: e.target.value })}
+              className="min-h-32 text-gray-500 border-gray-200 bg-gray-50 resize-none pr-12"
+              rows={4}
+            />
+            <div className="absolute bottom-3 right-3">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-green-500">
+                🎤
+              </Button>
             </div>
-
-            {/* Qty Used */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Qty Used</Label>
-              <Input
-                type="number"
-                placeholder="Enter quantity used"
-                value={usageForm.qtyUsed}
-                onChange={(e) => setUsageForm({ ...usageForm, qtyUsed: e.target.value })}
-                min="1"
-              />
-            </div>
-
-            {/* Description */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Description</Label>
-              <Textarea
-                placeholder="Enter description..."
-                value={usageForm.description}
-                onChange={(e) => setUsageForm({ ...usageForm, description: e.target.value })}
-                rows={3}
-              />
-            </div>
-
-            {/* Comments */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Comments</Label>
-              <div className="relative">
-                <Textarea
-                  placeholder="Enter comments..."
-                  value={usageForm.comments}
-                  onChange={(e) => setUsageForm({ ...usageForm, comments: e.target.value })}
-                  rows={3}
-                />
-                <div className="absolute bottom-3 right-3">
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                    🎤
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Add Button */}
-            <Button 
-              onClick={submitUsage}
-              className="w-full bg-green-500 hover:bg-green-600 text-white py-3 text-lg font-medium"
-              disabled={!usageForm.code || !usageForm.qtyUsed}
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Add
-            </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
+
+      {/* Fixed Add Button at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white">
+        <Button
+          onClick={submitUsage}
+          className="w-full bg-green-400 hover:bg-green-500 text-white py-4 text-lg font-medium rounded-2xl shadow-lg"
+          disabled={!usageForm.code || !usageForm.qtyUsed}
+        >
+          <Plus className="h-6 w-6 mr-2" />
+          Add
+        </Button>
+      </div>
+
+      {/* Bottom padding to account for fixed button */}
+      <div className="h-24"></div>
     </div>
   );
 }
