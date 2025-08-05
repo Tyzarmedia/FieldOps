@@ -20,6 +20,7 @@ import {
 
 export default function SignOffScreen() {
   const navigate = useNavigate();
+  const { success, error } = useNotification();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [currentTab, setCurrentTab] = useState("signoff");
 
