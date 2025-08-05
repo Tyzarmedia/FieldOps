@@ -1449,7 +1449,7 @@ export default function EnhancedStockManagementScreen() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <FileUpload className="h-5 w-5 text-blue-600" />
+                    <UploadCloud className="h-5 w-5 text-blue-600" />
                     Document Management
                   </div>
                   <Dialog open={showDocumentUploadDialog} onOpenChange={setShowDocumentUploadDialog}>
