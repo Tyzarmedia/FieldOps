@@ -192,7 +192,7 @@ export default function TechnicianStockUsageScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Header - matching the image exactly */}
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
         <div className="flex items-center justify-between">
