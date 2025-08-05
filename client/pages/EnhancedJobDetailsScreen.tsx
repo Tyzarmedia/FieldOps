@@ -266,7 +266,18 @@ export default function EnhancedJobDetailsScreen() {
           >
             <X className="h-6 w-6" />
           </Button>
-          <h1 className="text-xl font-bold">{jobDetails.title}</h1>
+
+          <div className="flex flex-col items-center">
+            <h1 className="text-xl font-bold">{jobDetails.title}</h1>
+            <div className="bg-white/20 rounded-lg px-3 py-1 mt-1">
+              <JobTimer
+                jobId={jobDetails.id}
+                jobStatus={jobDetails.status}
+                onTimeUpdate={(time) => console.log(`Job ${jobDetails.id} time: ${time}s`)}
+              />
+            </div>
+          </div>
+
           <Button
             variant="ghost"
             size="sm"
