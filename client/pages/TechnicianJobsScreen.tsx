@@ -69,6 +69,8 @@ export default function TechnicianJobsScreen() {
   const [selectedTab, setSelectedTab] = useState("assigned");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [showJobDetail, setShowJobDetail] = useState(false);
   const [isJobPaused, setIsJobPaused] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
