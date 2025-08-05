@@ -63,8 +63,18 @@ export default function TechnicianStockUsageScreen() {
     timestamp: string;
   }[]>([]);
 
-  // Load assigned stock items
+  // Load assigned stock items and usage list
   useEffect(() => {
+    // Load previous usage list from localStorage
+    const savedUsageList = localStorage.getItem('stock-usage-list');
+    if (savedUsageList) {
+      try {
+        setUsageList(JSON.parse(savedUsageList));
+      } catch (error) {
+        console.error('Error loading usage list:', error);
+      }
+    }
+
     const loadAssignedStock = async () => {
       try {
         const response = await fetch("/api/stock-management/assignments/technician/tech001");
