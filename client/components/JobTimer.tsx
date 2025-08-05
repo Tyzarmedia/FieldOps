@@ -15,9 +15,12 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
 
   // Check if job should auto-start timer
   useEffect(() => {
-    if (jobStatus === "In Progress" && !isRunning && !startTime) {
+    const inProgressStatuses = ["in-progress", "In Progress", "accepted"];
+    const completedStatuses = ["completed", "Completed", "Closed"];
+
+    if (inProgressStatuses.includes(jobStatus) && !isRunning && !startTime) {
       startTimer();
-    } else if (jobStatus === "Completed" && isRunning) {
+    } else if (completedStatuses.includes(jobStatus) && isRunning) {
       stopTimer();
     }
   }, [jobStatus]);
