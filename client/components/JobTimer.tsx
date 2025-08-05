@@ -29,16 +29,19 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
   useEffect(() => {
     const savedTime = localStorage.getItem(`job-timer-${jobId}`);
     const savedStartTime = localStorage.getItem(`job-start-${jobId}`);
-    
+
     if (savedTime) {
       setTimeSpent(parseInt(savedTime));
     }
-    
-    if (savedStartTime && ["in-progress", "In Progress", "accepted"].includes(jobStatus)) {
+
+    if (
+      savedStartTime &&
+      ["in-progress", "In Progress", "accepted"].includes(jobStatus)
+    ) {
       const start = parseInt(savedStartTime);
       const now = Date.now();
       const elapsed = Math.floor((now - start) / 1000);
-      setTimeSpent(prev => prev + elapsed);
+      setTimeSpent((prev) => prev + elapsed);
       setStartTime(start);
       setIsRunning(true);
     }
@@ -47,14 +50,16 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
   // Timer tick
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-    
+
     if (isRunning && startTime) {
       interval = setInterval(() => {
         const now = Date.now();
         const currentElapsed = Math.floor((now - startTime) / 1000);
-        const savedTime = parseInt(localStorage.getItem(`job-timer-${jobId}`) || "0");
+        const savedTime = parseInt(
+          localStorage.getItem(`job-timer-${jobId}`) || "0",
+        );
         const totalTime = savedTime + currentElapsed;
-        
+
         setTimeSpent(totalTime);
         onTimeUpdate?.(totalTime);
       }, 1000);
@@ -77,10 +82,10 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
       const now = Date.now();
       const sessionTime = Math.floor((now - startTime) / 1000);
       const newTotalTime = timeSpent + sessionTime;
-      
+
       localStorage.setItem(`job-timer-${jobId}`, newTotalTime.toString());
       localStorage.removeItem(`job-start-${jobId}`);
-      
+
       setTimeSpent(newTotalTime);
       setIsRunning(false);
       setStartTime(null);
@@ -107,11 +112,11 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    
+
     if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     }
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
   };
 
   const getTimerColor = () => {
@@ -127,7 +132,7 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
       <span className="font-mono text-sm text-white font-medium">
         {formatTime(timeSpent)}
       </span>
-      
+
       {!["completed", "Completed", "Closed"].includes(jobStatus) && (
         <div className="flex gap-1 ml-2">
           {!isRunning ? (
@@ -136,7 +141,9 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
               size="sm"
               onClick={startTimer}
               className="h-6 w-6 p-0 text-white hover:bg-white/20"
-              disabled={["completed", "Completed", "Closed"].includes(jobStatus)}
+              disabled={["completed", "Completed", "Closed"].includes(
+                jobStatus,
+              )}
             >
               <Play className="h-3 w-3" />
             </Button>

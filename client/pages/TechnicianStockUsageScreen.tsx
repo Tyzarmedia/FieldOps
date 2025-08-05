@@ -53,31 +53,35 @@ export default function TechnicianStockUsageScreen() {
     description: "",
     comments: "",
   });
-  const [usageList, setUsageList] = useState<{
-    id: string;
-    itemName: string;
-    quantity: number;
-    unit: string;
-    container: string;
-    description: string;
-    timestamp: string;
-  }[]>([]);
+  const [usageList, setUsageList] = useState<
+    {
+      id: string;
+      itemName: string;
+      quantity: number;
+      unit: string;
+      container: string;
+      description: string;
+      timestamp: string;
+    }[]
+  >([]);
 
   // Load assigned stock items and usage list
   useEffect(() => {
     // Load previous usage list from localStorage
-    const savedUsageList = localStorage.getItem('stock-usage-list');
+    const savedUsageList = localStorage.getItem("stock-usage-list");
     if (savedUsageList) {
       try {
         setUsageList(JSON.parse(savedUsageList));
       } catch (error) {
-        console.error('Error loading usage list:', error);
+        console.error("Error loading usage list:", error);
       }
     }
 
     const loadAssignedStock = async () => {
       try {
-        const response = await fetch("/api/stock-management/assignments/technician/tech001");
+        const response = await fetch(
+          "/api/stock-management/assignments/technician/tech001",
+        );
         if (response.ok) {
           const data = await response.json();
           if (data.success) {
@@ -109,7 +113,7 @@ export default function TechnicianStockUsageScreen() {
               usedQuantity: 75,
               remainingQuantity: 25,
               status: "in-use",
-            }
+            },
           ]);
         }
       } catch (err) {
@@ -126,7 +130,7 @@ export default function TechnicianStockUsageScreen() {
             usedQuantity: 200,
             remainingQuantity: 300,
             status: "in-use",
-          }
+          },
         ]);
       }
     };
@@ -134,9 +138,10 @@ export default function TechnicianStockUsageScreen() {
     loadAssignedStock();
   }, []);
 
-  const filteredItems = assignedItems.filter(item =>
-    (item.itemName?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-    (item.itemSku?.toLowerCase() || "").includes(searchTerm.toLowerCase())
+  const filteredItems = assignedItems.filter(
+    (item) =>
+      (item.itemName?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (item.itemSku?.toLowerCase() || "").includes(searchTerm.toLowerCase()),
   );
 
   const submitUsage = async () => {
@@ -145,8 +150,9 @@ export default function TechnicianStockUsageScreen() {
       return;
     }
 
-    const selectedItem = assignedItems.find(item => 
-      item.itemSku === usageForm.code || item.itemName === usageForm.code
+    const selectedItem = assignedItems.find(
+      (item) =>
+        item.itemSku === usageForm.code || item.itemName === usageForm.code,
     );
 
     if (!selectedItem) {
@@ -156,7 +162,10 @@ export default function TechnicianStockUsageScreen() {
 
     const qtyUsed = parseInt(usageForm.qtyUsed);
     if (qtyUsed > selectedItem.remainingQuantity) {
-      error("Error", `You only have ${selectedItem.remainingQuantity} ${selectedItem.unit} remaining`);
+      error(
+        "Error",
+        `You only have ${selectedItem.remainingQuantity} ${selectedItem.unit} remaining`,
+      );
       return;
     }
 
@@ -172,24 +181,29 @@ export default function TechnicianStockUsageScreen() {
         timestamp: new Date().toISOString(),
       };
 
-      setUsageList(prev => {
+      setUsageList((prev) => {
         const newList = [usageEntry, ...prev];
         // Save to localStorage for validation
-        localStorage.setItem('stock-usage-list', JSON.stringify(newList));
+        localStorage.setItem("stock-usage-list", JSON.stringify(newList));
         return newList;
       });
 
       // Update local state
-      setAssignedItems(items => items.map(item =>
-        item.id === selectedItem.id
-          ? {
-              ...item,
-              usedQuantity: item.usedQuantity + qtyUsed,
-              remainingQuantity: item.remainingQuantity - qtyUsed,
-              status: item.remainingQuantity - qtyUsed === 0 ? "depleted" : "in-use"
-            }
-          : item
-      ));
+      setAssignedItems((items) =>
+        items.map((item) =>
+          item.id === selectedItem.id
+            ? {
+                ...item,
+                usedQuantity: item.usedQuantity + qtyUsed,
+                remainingQuantity: item.remainingQuantity - qtyUsed,
+                status:
+                  item.remainingQuantity - qtyUsed === 0
+                    ? "depleted"
+                    : "in-use",
+              }
+            : item,
+        ),
+      );
 
       // Reset form
       setUsageForm({
@@ -200,7 +214,10 @@ export default function TechnicianStockUsageScreen() {
         comments: "",
       });
 
-      success("Success", `Stock usage recorded: ${qtyUsed} ${selectedItem.unit} of ${selectedItem.itemName}`);
+      success(
+        "Success",
+        `Stock usage recorded: ${qtyUsed} ${selectedItem.unit} of ${selectedItem.itemName}`,
+      );
     } catch (err) {
       error("Error", "Failed to record stock usage");
     }
@@ -262,7 +279,8 @@ export default function TechnicianStockUsageScreen() {
                     >
                       <div className="font-medium text-sm">{item.itemName}</div>
                       <div className="text-xs text-gray-500">
-                        SKU: {item.itemSku} • Available: {item.remainingQuantity} {item.unit}
+                        SKU: {item.itemSku} • Available:{" "}
+                        {item.remainingQuantity} {item.unit}
                       </div>
                     </div>
                   ))}
@@ -273,10 +291,14 @@ export default function TechnicianStockUsageScreen() {
             <div className="grid grid-cols-2 gap-4">
               {/* Container */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-500">Container</Label>
+                <Label className="text-sm font-medium text-gray-500">
+                  Container
+                </Label>
                 <Select
                   value={usageForm.container}
-                  onValueChange={(value) => setUsageForm({ ...usageForm, container: value })}
+                  onValueChange={(value) =>
+                    setUsageForm({ ...usageForm, container: value })
+                  }
                 >
                   <SelectTrigger className="h-10 text-gray-500 border-gray-200 bg-gray-50">
                     <SelectValue placeholder="Container" />
@@ -292,11 +314,15 @@ export default function TechnicianStockUsageScreen() {
 
               {/* Qty Used */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-500">Qty Used</Label>
+                <Label className="text-sm font-medium text-gray-500">
+                  Qty Used
+                </Label>
                 <Input
                   type="number"
                   value={usageForm.qtyUsed}
-                  onChange={(e) => setUsageForm({ ...usageForm, qtyUsed: e.target.value })}
+                  onChange={(e) =>
+                    setUsageForm({ ...usageForm, qtyUsed: e.target.value })
+                  }
                   className="h-10 text-gray-500 border-gray-200 bg-gray-50"
                   min="1"
                 />
@@ -305,10 +331,14 @@ export default function TechnicianStockUsageScreen() {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-500">Description</Label>
+              <Label className="text-sm font-medium text-gray-500">
+                Description
+              </Label>
               <Textarea
                 value={usageForm.description}
-                onChange={(e) => setUsageForm({ ...usageForm, description: e.target.value })}
+                onChange={(e) =>
+                  setUsageForm({ ...usageForm, description: e.target.value })
+                }
                 className="h-16 text-gray-500 border-gray-200 bg-gray-50 resize-none"
                 rows={2}
               />
@@ -339,19 +369,28 @@ export default function TechnicianStockUsageScreen() {
               ) : (
                 <div className="space-y-3">
                   {usageList.map((usage) => (
-                    <div key={usage.id} className="bg-white rounded-lg p-4 shadow-sm border">
+                    <div
+                      key={usage.id}
+                      className="bg-white rounded-lg p-4 shadow-sm border"
+                    >
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-gray-900">{usage.itemName}</h4>
+                        <h4 className="font-medium text-gray-900">
+                          {usage.itemName}
+                        </h4>
                         <span className="text-sm text-gray-500">
                           {new Date(usage.timestamp).toLocaleTimeString()}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                        <div>Quantity: {usage.quantity} {usage.unit}</div>
+                        <div>
+                          Quantity: {usage.quantity} {usage.unit}
+                        </div>
                         <div>Container: {usage.container}</div>
                       </div>
                       {usage.description && (
-                        <p className="text-sm text-gray-600 mt-2">{usage.description}</p>
+                        <p className="text-sm text-gray-600 mt-2">
+                          {usage.description}
+                        </p>
                       )}
                     </div>
                   ))}

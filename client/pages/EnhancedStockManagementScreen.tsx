@@ -81,7 +81,8 @@ export default function EnhancedStockManagementScreen() {
     eta: "",
   });
 
-  const [showDocumentUploadDialog, setShowDocumentUploadDialog] = useState(false);
+  const [showDocumentUploadDialog, setShowDocumentUploadDialog] =
+    useState(false);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [newDocumentOrder, setNewDocumentOrder] = useState({
     documentType: "",
@@ -89,9 +90,7 @@ export default function EnhancedStockManagementScreen() {
     orderNumber: "",
     expectedDate: "",
     notes: "",
-    items: [
-      { name: "", quantity: "", unitPrice: "" }
-    ]
+    items: [{ name: "", quantity: "", unitPrice: "" }],
   });
   const [newAssignment, setNewAssignment] = useState({
     itemId: "",
@@ -292,36 +291,51 @@ export default function EnhancedStockManagementScreen() {
             const items = data.data;
             setStats({
               totalItems: items.length,
-              inStock: items.filter((item) => item.status === "in-stock").length,
-              lowStock: items.filter((item) => item.status === "low-stock").length,
-              outOfStock: items.filter((item) => item.status === "out-of-stock").length,
-              totalValue: items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0),
+              inStock: items.filter((item) => item.status === "in-stock")
+                .length,
+              lowStock: items.filter((item) => item.status === "low-stock")
+                .length,
+              outOfStock: items.filter((item) => item.status === "out-of-stock")
+                .length,
+              totalValue: items.reduce(
+                (sum, item) => sum + item.quantity * item.unitPrice,
+                0,
+              ),
               assignedStock: 0,
               todayUsage: 0,
               weeklyUsage: 0,
               monthlyUsage: 0,
               topUsedItem: "Fiber Optic Cable",
-              criticalAlerts: items.filter((item) => item.status === "out-of-stock" || item.status === "low-stock").length,
+              criticalAlerts: items.filter(
+                (item) =>
+                  item.status === "out-of-stock" || item.status === "low-stock",
+              ).length,
             });
 
             // Update low stock items from API data
             setLowStockItems(
               items
-                .filter((item) => item.status === "low-stock" || item.status === "out-of-stock")
+                .filter(
+                  (item) =>
+                    item.status === "low-stock" ||
+                    item.status === "out-of-stock",
+                )
                 .map((item) => ({
                   id: item.id,
                   name: item.name,
                   current: item.quantity,
                   minimum: item.minimumQuantity,
                   status: item.status,
-                }))
+                })),
             );
           }
         }
 
         // Try to fetch assignments
         try {
-          const assignmentsResponse = await fetch("/api/stock-management/assignments");
+          const assignmentsResponse = await fetch(
+            "/api/stock-management/assignments",
+          );
           if (assignmentsResponse.ok) {
             const assignmentsData = await assignmentsResponse.json();
             if (assignmentsData.success) {
@@ -430,10 +444,10 @@ export default function EnhancedStockManagementScreen() {
       expectedDate: "2024-01-25",
       items: [
         { name: "Fiber Optic Cable 1km", quantity: 5, unitPrice: 120 },
-        { name: "Connector Kit", quantity: 10, unitPrice: 35 }
+        { name: "Connector Kit", quantity: 10, unitPrice: 35 },
       ],
       total: 950,
-      fileName: "invoice-fiber-tech-001.pdf"
+      fileName: "invoice-fiber-tech-001.pdf",
     },
     {
       id: "DOC-2024-002",
@@ -443,12 +457,10 @@ export default function EnhancedStockManagementScreen() {
       status: "awaiting-order",
       uploadDate: "2024-01-14",
       expectedDate: "2024-01-30",
-      items: [
-        { name: "Cable Ties 100pack", quantity: 20, unitPrice: 15 }
-      ],
+      items: [{ name: "Cable Ties 100pack", quantity: 20, unitPrice: 15 }],
       total: 300,
-      fileName: "quote-cable-solutions-002.pdf"
-    }
+      fileName: "quote-cable-solutions-002.pdf",
+    },
   ]);
 
   const getStatusColor = (status: string) => {
@@ -714,30 +726,36 @@ export default function EnhancedStockManagementScreen() {
   const addDocumentItem = () => {
     setNewDocumentOrder({
       ...newDocumentOrder,
-      items: [...newDocumentOrder.items, { name: "", quantity: "", unitPrice: "" }]
+      items: [
+        ...newDocumentOrder.items,
+        { name: "", quantity: "", unitPrice: "" },
+      ],
     });
   };
 
   const removeDocumentItem = (index) => {
     setNewDocumentOrder({
       ...newDocumentOrder,
-      items: newDocumentOrder.items.filter((_, i) => i !== index)
+      items: newDocumentOrder.items.filter((_, i) => i !== index),
     });
   };
 
   const updateDocumentItem = (index, field, value) => {
     const updatedItems = newDocumentOrder.items.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
+      i === index ? { ...item, [field]: value } : item,
     );
     setNewDocumentOrder({
       ...newDocumentOrder,
-      items: updatedItems
+      items: updatedItems,
     });
   };
 
   const uploadDocument = () => {
-    const total = newDocumentOrder.items.reduce((sum, item) =>
-      sum + (parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0), 0
+    const total = newDocumentOrder.items.reduce(
+      (sum, item) =>
+        sum +
+        (parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0),
+      0,
     );
 
     const newDoc = {
@@ -745,13 +763,18 @@ export default function EnhancedStockManagementScreen() {
       type: newDocumentOrder.documentType,
       supplier: newDocumentOrder.supplier,
       orderNumber: newDocumentOrder.orderNumber,
-      status: newDocumentOrder.documentType === "Delivery Note" ? "delivered" : "awaiting-delivery",
-      uploadDate: new Date().toISOString().split('T')[0],
+      status:
+        newDocumentOrder.documentType === "Delivery Note"
+          ? "delivered"
+          : "awaiting-delivery",
+      uploadDate: new Date().toISOString().split("T")[0],
       expectedDate: newDocumentOrder.expectedDate,
-      items: newDocumentOrder.items.filter(item => item.name && item.quantity && item.unitPrice),
+      items: newDocumentOrder.items.filter(
+        (item) => item.name && item.quantity && item.unitPrice,
+      ),
       total: total,
-      fileName: `${newDocumentOrder.documentType.toLowerCase().replace(' ', '-')}-${newDocumentOrder.supplier.replace(/\s+/g, '-').toLowerCase()}.pdf`,
-      notes: newDocumentOrder.notes
+      fileName: `${newDocumentOrder.documentType.toLowerCase().replace(" ", "-")}-${newDocumentOrder.supplier.replace(/\s+/g, "-").toLowerCase()}.pdf`,
+      notes: newDocumentOrder.notes,
     };
 
     setOrderDocuments([...orderDocuments, newDoc]);
@@ -761,14 +784,18 @@ export default function EnhancedStockManagementScreen() {
       // Add items to inventory immediately
       const updatedStockItems = [...stockItems];
       newDoc.items.forEach((docItem, index) => {
-        const existingItem = updatedStockItems.find(item =>
-          item.name.toLowerCase().includes(docItem.name.toLowerCase()) ||
-          docItem.name.toLowerCase().includes(item.name.toLowerCase())
+        const existingItem = updatedStockItems.find(
+          (item) =>
+            item.name.toLowerCase().includes(docItem.name.toLowerCase()) ||
+            docItem.name.toLowerCase().includes(item.name.toLowerCase()),
         );
 
         if (existingItem) {
           existingItem.quantity += docItem.quantity;
-          existingItem.status = existingItem.quantity > existingItem.minimumQuantity ? "in-stock" : "low-stock";
+          existingItem.status =
+            existingItem.quantity > existingItem.minimumQuantity
+              ? "in-stock"
+              : "low-stock";
         } else {
           // Create new stock item
           const timestamp = Date.now();
@@ -784,16 +811,22 @@ export default function EnhancedStockManagementScreen() {
             unitPrice: docItem.unitPrice,
             supplier: newDoc.supplier,
             location: "Main Warehouse",
-            status: "in-stock"
+            status: "in-stock",
           };
           updatedStockItems.push(newItem);
         }
       });
 
       setStockItems(updatedStockItems);
-      success("Success", `Delivery Note processed! ${newDoc.items.length} items added to inventory automatically.`);
+      success(
+        "Success",
+        `Delivery Note processed! ${newDoc.items.length} items added to inventory automatically.`,
+      );
     } else {
-      success("Success", `${newDocumentOrder.documentType} uploaded and order created successfully!`);
+      success(
+        "Success",
+        `${newDocumentOrder.documentType} uploaded and order created successfully!`,
+      );
     }
 
     setNewDocumentOrder({
@@ -802,26 +835,30 @@ export default function EnhancedStockManagementScreen() {
       orderNumber: "",
       expectedDate: "",
       notes: "",
-      items: [{ name: "", quantity: "", unitPrice: "" }]
+      items: [{ name: "", quantity: "", unitPrice: "" }],
     });
     setShowDocumentUploadDialog(false);
   };
 
   const markAsDelivered = (docId) => {
-    const document = orderDocuments.find(doc => doc.id === docId);
+    const document = orderDocuments.find((doc) => doc.id === docId);
     if (!document) return;
 
     // Add items to inventory
     const updatedStockItems = [...stockItems];
     document.items.forEach((docItem, index) => {
-      const existingItem = updatedStockItems.find(item =>
-        item.name.toLowerCase().includes(docItem.name.toLowerCase()) ||
-        docItem.name.toLowerCase().includes(item.name.toLowerCase())
+      const existingItem = updatedStockItems.find(
+        (item) =>
+          item.name.toLowerCase().includes(docItem.name.toLowerCase()) ||
+          docItem.name.toLowerCase().includes(item.name.toLowerCase()),
       );
 
       if (existingItem) {
         existingItem.quantity += docItem.quantity;
-        existingItem.status = existingItem.quantity > existingItem.minimumQuantity ? "in-stock" : "low-stock";
+        existingItem.status =
+          existingItem.quantity > existingItem.minimumQuantity
+            ? "in-stock"
+            : "low-stock";
       } else {
         // Create new stock item with unique ID
         const timestamp = Date.now();
@@ -837,7 +874,7 @@ export default function EnhancedStockManagementScreen() {
           unitPrice: docItem.unitPrice,
           supplier: document.supplier,
           location: "Main Warehouse",
-          status: "in-stock"
+          status: "in-stock",
         };
         updatedStockItems.push(newItem);
       }
@@ -846,11 +883,16 @@ export default function EnhancedStockManagementScreen() {
     setStockItems(updatedStockItems);
 
     // Update document status
-    setOrderDocuments(orderDocuments.map(doc =>
-      doc.id === docId ? { ...doc, status: "delivered" } : doc
-    ));
+    setOrderDocuments(
+      orderDocuments.map((doc) =>
+        doc.id === docId ? { ...doc, status: "delivered" } : doc,
+      ),
+    );
 
-    success("Success", `Order ${document.orderNumber} marked as delivered and stock updated!`);
+    success(
+      "Success",
+      `Order ${document.orderNumber} marked as delivered and stock updated!`,
+    );
   };
 
   const startEditingMinStock = (itemId: string, currentMin: number) => {
@@ -867,23 +909,29 @@ export default function EnhancedStockManagementScreen() {
 
     try {
       // Update in local state immediately
-      setStockItems(items => items.map(item =>
-        item.id === itemId
-          ? {
-              ...item,
-              minimumQuantity: newMinQuantity,
-              status: item.quantity > newMinQuantity ? "in-stock" :
-                      item.quantity > 0 ? "low-stock" : "out-of-stock"
-            }
-          : item
-      ));
+      setStockItems((items) =>
+        items.map((item) =>
+          item.id === itemId
+            ? {
+                ...item,
+                minimumQuantity: newMinQuantity,
+                status:
+                  item.quantity > newMinQuantity
+                    ? "in-stock"
+                    : item.quantity > 0
+                      ? "low-stock"
+                      : "out-of-stock",
+              }
+            : item,
+        ),
+      );
 
       // Try to update via API (optional)
       try {
         const response = await fetch(`/api/stock-management/items/${itemId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ minimumQuantity: newMinQuantity })
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ minimumQuantity: newMinQuantity }),
         });
 
         if (response.ok) {
@@ -1455,7 +1503,10 @@ export default function EnhancedStockManagementScreen() {
                     <UploadCloud className="h-5 w-5 text-blue-600" />
                     Document Management
                   </div>
-                  <Dialog open={showDocumentUploadDialog} onOpenChange={setShowDocumentUploadDialog}>
+                  <Dialog
+                    open={showDocumentUploadDialog}
+                    onOpenChange={setShowDocumentUploadDialog}
+                  >
                     <DialogTrigger asChild>
                       <Button>
                         <Upload className="h-4 w-4 mr-2" />
@@ -1472,7 +1523,12 @@ export default function EnhancedStockManagementScreen() {
                             <Label htmlFor="documentType">Document Type</Label>
                             <Select
                               value={newDocumentOrder.documentType}
-                              onValueChange={(value) => setNewDocumentOrder({ ...newDocumentOrder, documentType: value })}
+                              onValueChange={(value) =>
+                                setNewDocumentOrder({
+                                  ...newDocumentOrder,
+                                  documentType: value,
+                                })
+                              }
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select document type" />
@@ -1480,18 +1536,31 @@ export default function EnhancedStockManagementScreen() {
                               <SelectContent>
                                 <SelectItem value="Invoice">Invoice</SelectItem>
                                 <SelectItem value="Quote">Quote</SelectItem>
-                                <SelectItem value="POP">Proof of Payment</SelectItem>
-                                <SelectItem value="Purchase Order">Purchase Order</SelectItem>
-                                <SelectItem value="Delivery Note">Delivery Note (Auto-Process)</SelectItem>
+                                <SelectItem value="POP">
+                                  Proof of Payment
+                                </SelectItem>
+                                <SelectItem value="Purchase Order">
+                                  Purchase Order
+                                </SelectItem>
+                                <SelectItem value="Delivery Note">
+                                  Delivery Note (Auto-Process)
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           <div>
-                            <Label htmlFor="orderNumber">Order/Document Number</Label>
+                            <Label htmlFor="orderNumber">
+                              Order/Document Number
+                            </Label>
                             <Input
                               id="orderNumber"
                               value={newDocumentOrder.orderNumber}
-                              onChange={(e) => setNewDocumentOrder({ ...newDocumentOrder, orderNumber: e.target.value })}
+                              onChange={(e) =>
+                                setNewDocumentOrder({
+                                  ...newDocumentOrder,
+                                  orderNumber: e.target.value,
+                                })
+                              }
                               placeholder="ORD-001"
                             />
                           </div>
@@ -1503,17 +1572,29 @@ export default function EnhancedStockManagementScreen() {
                             <Input
                               id="supplier"
                               value={newDocumentOrder.supplier}
-                              onChange={(e) => setNewDocumentOrder({ ...newDocumentOrder, supplier: e.target.value })}
+                              onChange={(e) =>
+                                setNewDocumentOrder({
+                                  ...newDocumentOrder,
+                                  supplier: e.target.value,
+                                })
+                              }
                               placeholder="Supplier name"
                             />
                           </div>
                           <div>
-                            <Label htmlFor="expectedDate">Expected Delivery Date</Label>
+                            <Label htmlFor="expectedDate">
+                              Expected Delivery Date
+                            </Label>
                             <Input
                               id="expectedDate"
                               type="date"
                               value={newDocumentOrder.expectedDate}
-                              onChange={(e) => setNewDocumentOrder({ ...newDocumentOrder, expectedDate: e.target.value })}
+                              onChange={(e) =>
+                                setNewDocumentOrder({
+                                  ...newDocumentOrder,
+                                  expectedDate: e.target.value,
+                                })
+                              }
                             />
                           </div>
                         </div>
@@ -1522,24 +1603,45 @@ export default function EnhancedStockManagementScreen() {
                           <Label>Items</Label>
                           <div className="space-y-3">
                             {newDocumentOrder.items.map((item, index) => (
-                              <div key={index} className="grid grid-cols-4 gap-3 p-3 border rounded">
+                              <div
+                                key={index}
+                                className="grid grid-cols-4 gap-3 p-3 border rounded"
+                              >
                                 <Input
                                   placeholder="Item name"
                                   value={item.name}
-                                  onChange={(e) => updateDocumentItem(index, 'name', e.target.value)}
+                                  onChange={(e) =>
+                                    updateDocumentItem(
+                                      index,
+                                      "name",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                                 <Input
                                   type="number"
                                   placeholder="Quantity"
                                   value={item.quantity}
-                                  onChange={(e) => updateDocumentItem(index, 'quantity', e.target.value)}
+                                  onChange={(e) =>
+                                    updateDocumentItem(
+                                      index,
+                                      "quantity",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                                 <Input
                                   type="number"
                                   step="0.01"
                                   placeholder="Unit price"
                                   value={item.unitPrice}
-                                  onChange={(e) => updateDocumentItem(index, 'unitPrice', e.target.value)}
+                                  onChange={(e) =>
+                                    updateDocumentItem(
+                                      index,
+                                      "unitPrice",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                                 <Button
                                   variant="destructive"
@@ -1563,18 +1665,30 @@ export default function EnhancedStockManagementScreen() {
                           <Input
                             id="notes"
                             value={newDocumentOrder.notes}
-                            onChange={(e) => setNewDocumentOrder({ ...newDocumentOrder, notes: e.target.value })}
+                            onChange={(e) =>
+                              setNewDocumentOrder({
+                                ...newDocumentOrder,
+                                notes: e.target.value,
+                              })
+                            }
                             placeholder="Additional notes"
                           />
                         </div>
 
                         <div className="flex justify-between">
-                          <Button variant="outline" onClick={() => setShowDocumentUploadDialog(false)}>
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowDocumentUploadDialog(false)}
+                          >
                             Cancel
                           </Button>
                           <Button
                             onClick={uploadDocument}
-                            disabled={!newDocumentOrder.documentType || !newDocumentOrder.supplier || !newDocumentOrder.orderNumber}
+                            disabled={
+                              !newDocumentOrder.documentType ||
+                              !newDocumentOrder.supplier ||
+                              !newDocumentOrder.orderNumber
+                            }
                           >
                             Upload & Create Order
                           </Button>
@@ -1594,16 +1708,22 @@ export default function EnhancedStockManagementScreen() {
                             <FileText className="h-5 w-5 text-blue-600" />
                           </div>
                           <div>
-                            <h3 className="font-medium">{doc.type} - {doc.orderNumber}</h3>
-                            <p className="text-sm text-gray-600">{doc.supplier}</p>
-                            <p className="text-xs text-gray-500">Uploaded: {doc.uploadDate}</p>
+                            <h3 className="font-medium">
+                              {doc.type} - {doc.orderNumber}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {doc.supplier}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Uploaded: {doc.uploadDate}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
                           <Badge className={getStatusColor(doc.status)}>
-                            {doc.status.replace('-', ' ')}
+                            {doc.status.replace("-", " ")}
                           </Badge>
-                          {doc.status === 'awaiting-delivery' && (
+                          {doc.status === "awaiting-delivery" && (
                             <Button
                               size="sm"
                               onClick={() => markAsDelivered(doc.id)}
@@ -1618,16 +1738,27 @@ export default function EnhancedStockManagementScreen() {
 
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <p><strong>Total Value:</strong> R{doc.total.toLocaleString()}</p>
-                          <p><strong>Items:</strong> {doc.items.length}</p>
+                          <p>
+                            <strong>Total Value:</strong> R
+                            {doc.total.toLocaleString()}
+                          </p>
+                          <p>
+                            <strong>Items:</strong> {doc.items.length}
+                          </p>
                           {doc.expectedDate && (
-                            <p><strong>Expected:</strong> {doc.expectedDate}</p>
+                            <p>
+                              <strong>Expected:</strong> {doc.expectedDate}
+                            </p>
                           )}
                         </div>
                         <div>
-                          <p><strong>File:</strong> {doc.fileName}</p>
+                          <p>
+                            <strong>File:</strong> {doc.fileName}
+                          </p>
                           {doc.notes && (
-                            <p><strong>Notes:</strong> {doc.notes}</p>
+                            <p>
+                              <strong>Notes:</strong> {doc.notes}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -1638,8 +1769,12 @@ export default function EnhancedStockManagementScreen() {
                         </summary>
                         <div className="mt-2 space-y-1">
                           {doc.items.map((item, idx) => (
-                            <div key={idx} className="text-xs p-2 bg-gray-50 rounded">
-                              {item.name} - Qty: {item.quantity} @ R{item.unitPrice} each
+                            <div
+                              key={idx}
+                              className="text-xs p-2 bg-gray-50 rounded"
+                            >
+                              {item.name} - Qty: {item.quantity} @ R
+                              {item.unitPrice} each
                             </div>
                           ))}
                         </div>
@@ -2114,9 +2249,7 @@ export default function EnhancedStockManagementScreen() {
                           <p className="text-lg font-bold text-blue-600">
                             {item.quantity.toLocaleString()}
                           </p>
-                          <p className="text-xs text-gray-500">
-                            {item.unit}
-                          </p>
+                          <p className="text-xs text-gray-500">{item.unit}</p>
                         </div>
 
                         {/* Cost Per Item */}
@@ -2152,7 +2285,9 @@ export default function EnhancedStockManagementScreen() {
                           <label className="text-xs font-medium text-gray-500">
                             Supplier
                           </label>
-                          <p className="text-sm text-gray-700">{item.supplier}</p>
+                          <p className="text-sm text-gray-700">
+                            {item.supplier}
+                          </p>
                         </div>
                         <div>
                           <label className="text-xs font-medium text-gray-500">
@@ -2163,7 +2298,9 @@ export default function EnhancedStockManagementScreen() {
                               <Input
                                 type="number"
                                 value={editMinStockValue}
-                                onChange={(e) => setEditMinStockValue(e.target.value)}
+                                onChange={(e) =>
+                                  setEditMinStockValue(e.target.value)
+                                }
                                 className="h-6 w-16 text-xs"
                                 min="0"
                               />
@@ -2186,7 +2323,12 @@ export default function EnhancedStockManagementScreen() {
                           ) : (
                             <p
                               className="text-sm text-gray-700 hover:text-blue-600 cursor-pointer hover:underline"
-                              onClick={() => startEditingMinStock(item.id, item.minimumQuantity)}
+                              onClick={() =>
+                                startEditingMinStock(
+                                  item.id,
+                                  item.minimumQuantity,
+                                )
+                              }
                               title="Click to edit minimum stock level"
                             >
                               {item.minimumQuantity} {item.unit}

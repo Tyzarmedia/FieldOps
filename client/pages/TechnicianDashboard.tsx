@@ -485,7 +485,9 @@ export default function TechnicianDashboard() {
           </Button>
 
           <div className="flex items-center space-x-2">
-            <NotificationSystem technicianId={userData.employeeId || "tech001"} />
+            <NotificationSystem
+              technicianId={userData.employeeId || "tech001"}
+            />
             <Button
               variant="ghost"
               size="sm"

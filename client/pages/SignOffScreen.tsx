@@ -109,15 +109,15 @@ export default function SignOffScreen() {
   useEffect(() => {
     const checkCompletionStatus = () => {
       // Check UDF completion - in real app, this would check actual UDF data
-      const udfData = localStorage.getItem('udf-completed');
+      const udfData = localStorage.getItem("udf-completed");
       setUdfCompleted(!!udfData);
 
       // Check images uploaded - check gallery or image storage
-      const imageData = localStorage.getItem('job-images');
+      const imageData = localStorage.getItem("job-images");
       setImagesUploaded(!!imageData);
 
       // Check stock usage - check if any stock was recorded
-      const stockUsage = localStorage.getItem('stock-usage-list');
+      const stockUsage = localStorage.getItem("stock-usage-list");
       setStockUpdated(!!stockUsage);
     };
 

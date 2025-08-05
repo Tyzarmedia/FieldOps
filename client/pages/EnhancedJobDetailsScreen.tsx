@@ -273,7 +273,9 @@ export default function EnhancedJobDetailsScreen() {
               <JobTimer
                 jobId={jobDetails.id}
                 jobStatus={jobDetails.status}
-                onTimeUpdate={(time) => console.log(`Job ${jobDetails.id} time: ${time}s`)}
+                onTimeUpdate={(time) =>
+                  console.log(`Job ${jobDetails.id} time: ${time}s`)
+                }
               />
             </div>
           </div>
