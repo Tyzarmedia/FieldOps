@@ -115,7 +115,8 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
   };
 
   const getTimerColor = () => {
-    if (jobStatus === "Completed") return "text-green-600";
+    const completedStatuses = ["completed", "Completed", "Closed"];
+    if (completedStatuses.includes(jobStatus)) return "text-green-600";
     if (isRunning) return "text-blue-600";
     return "text-gray-600";
   };
