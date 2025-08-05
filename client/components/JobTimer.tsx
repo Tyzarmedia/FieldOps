@@ -135,7 +135,7 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
               variant="ghost"
               size="sm"
               onClick={startTimer}
-              className="h-6 w-6 p-0"
+              className="h-6 w-6 p-0 text-white hover:bg-white/20"
               disabled={["completed", "Completed", "Closed"].includes(jobStatus)}
             >
               <Play className="h-3 w-3" />
@@ -145,17 +145,17 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
               variant="ghost"
               size="sm"
               onClick={pauseTimer}
-              className="h-6 w-6 p-0"
+              className="h-6 w-6 p-0 text-white hover:bg-white/20"
             >
               <Pause className="h-3 w-3" />
             </Button>
           )}
-          
+
           <Button
             variant="ghost"
             size="sm"
             onClick={resetTimer}
-            className="h-6 w-6 p-0"
+            className="h-6 w-6 p-0 text-white hover:bg-white/20"
           >
             <Square className="h-3 w-3" />
           </Button>
