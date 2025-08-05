@@ -201,7 +201,7 @@ export default function TechnicianStockUsageScreen() {
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20 rounded-full h-10 w-10 p-0"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/stock-on-hand")}
           >
             <X className="h-6 w-6" />
           </Button>
