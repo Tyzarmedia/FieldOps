@@ -1978,32 +1978,102 @@ export default function EnhancedStockManagementScreen() {
                   {stockItems.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
+                      className="p-6 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow"
                     >
-                      <div className="flex-1">
-                        <h3 className="font-medium">{item.name}</h3>
-                        <p className="text-sm text-gray-600">
-                          {item.description}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          SKU: {item.sku} | {item.category}
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-lg font-bold">{item.quantity}</p>
-                        <p className="text-xs text-gray-500">{item.unit}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-lg font-bold">R{item.unitPrice}</p>
-                        <p className="text-xs text-gray-500">per {item.unit}</p>
-                      </div>
-                      <div className="text-right">
+                      {/* Header with Item Name and Status */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                            {item.name}
+                          </h3>
+                          <p className="text-sm text-gray-600 leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
                         <Badge className={getStatusColor(item.status)}>
                           {item.status.replace("-", " ")}
                         </Badge>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {item.location}
-                        </p>
+                      </div>
+
+                      {/* Information Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {/* Stock Code (SKU) */}
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Stock Code
+                          </label>
+                          <p className="text-sm font-mono font-semibold text-gray-900">
+                            {item.sku}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {item.category}
+                          </p>
+                        </div>
+
+                        {/* Quantity */}
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Quantity
+                          </label>
+                          <p className="text-lg font-bold text-blue-600">
+                            {item.quantity.toLocaleString()}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {item.unit}
+                          </p>
+                        </div>
+
+                        {/* Cost Per Item */}
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Cost Per Item
+                          </label>
+                          <p className="text-lg font-bold text-green-600">
+                            R{item.unitPrice.toFixed(2)}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            per {item.unit}
+                          </p>
+                        </div>
+
+                        {/* Warehouse */}
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Warehouse
+                          </label>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {item.location}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Storage Location
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Additional Information */}
+                      <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="text-xs font-medium text-gray-500">
+                            Supplier
+                          </label>
+                          <p className="text-sm text-gray-700">{item.supplier}</p>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-500">
+                            Minimum Stock
+                          </label>
+                          <p className="text-sm text-gray-700">
+                            {item.minimumQuantity} {item.unit}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-500">
+                            Total Value
+                          </label>
+                          <p className="text-sm font-semibold text-gray-700">
+                            R{(item.quantity * item.unitPrice).toLocaleString()}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ))}
