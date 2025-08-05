@@ -128,7 +128,7 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
         {formatTime(timeSpent)}
       </span>
       
-      {jobStatus !== "Completed" && (
+      {!["completed", "Completed", "Closed"].includes(jobStatus) && (
         <div className="flex gap-1 ml-2">
           {!isRunning ? (
             <Button
