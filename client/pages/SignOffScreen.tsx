@@ -194,7 +194,7 @@ export default function SignOffScreen() {
 
     switch (tab) {
       case "details":
-        navigate(`/technician/job/${currentJobId}`);
+        navigate("/technician/jobs");
         break;
       case "udf":
         navigate("/technician/udf");

@@ -621,12 +621,13 @@ export default function TechnicianJobsScreen() {
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
           <div className="flex justify-around py-2">
             <Button
-              variant="ghost"
-              className="flex flex-col items-center space-y-1 p-3 text-blue-600"
-            >
-              <FileText className="h-6 w-6" />
-              <span className="text-xs font-medium">Details</span>
-            </Button>
+            variant="ghost"
+            className="flex flex-col items-center space-y-1 p-3 text-blue-600"
+            onClick={() => navigate("/technician/jobs")}
+          >
+            <FileText className="h-6 w-6" />
+            <span className="text-xs font-medium">Details</span>
+          </Button>
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-gray-600"
