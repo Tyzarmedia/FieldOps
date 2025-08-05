@@ -714,14 +714,24 @@ export default function TechnicianJobsScreen() {
             <Calendar className="h-5 w-5" />
             <div>
               <p className="text-sm">From</p>
-              <p className="text-sm opacity-80">Select Date</p>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="text-sm bg-white/20 border-white/30 text-white rounded px-2 py-1"
+              />
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <Calendar className="h-5 w-5" />
             <div>
               <p className="text-sm">To</p>
-              <p className="text-sm opacity-80">Select Date</p>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="text-sm bg-white/20 border-white/30 text-white rounded px-2 py-1"
+              />
             </div>
           </div>
         </div>
