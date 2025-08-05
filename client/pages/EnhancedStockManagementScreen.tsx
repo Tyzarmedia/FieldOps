@@ -72,6 +72,8 @@ export default function EnhancedStockManagementScreen() {
   const [showAssignStockDialog, setShowAssignStockDialog] = useState(false);
   const [showAddStockDialog, setShowAddStockDialog] = useState(false);
   const [showBulkAssignDialog, setShowBulkAssignDialog] = useState(false);
+  const [editingMinStock, setEditingMinStock] = useState<string | null>(null);
+  const [editMinStockValue, setEditMinStockValue] = useState("");
   const [newPOP, setNewPOP] = useState({
     supplier: "",
     items: "",
