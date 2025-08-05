@@ -739,7 +739,7 @@ export default function EnhancedStockManagementScreen() {
     );
 
     const newDoc = {
-      id: `DOC-2024-${String(orderDocuments.length + 1).padStart(3, "0")}`,
+      id: `DOC-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       type: newDocumentOrder.documentType,
       supplier: newDocumentOrder.supplier,
       orderNumber: newDocumentOrder.orderNumber,
