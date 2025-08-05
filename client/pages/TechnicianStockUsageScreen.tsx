@@ -110,8 +110,8 @@ export default function TechnicianStockUsageScreen() {
   }, []);
 
   const filteredItems = assignedItems.filter(item =>
-    item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.itemSku.toLowerCase().includes(searchTerm.toLowerCase())
+    (item.itemName?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+    (item.itemSku?.toLowerCase() || "").includes(searchTerm.toLowerCase())
   );
 
   const submitUsage = async () => {
