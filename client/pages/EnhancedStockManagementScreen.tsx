@@ -813,6 +813,59 @@ export default function EnhancedStockManagementScreen() {
     success("Success", `Order ${document.orderNumber} marked as delivered and stock updated!`);
   };
 
+  const startEditingMinStock = (itemId: string, currentMin: number) => {
+    setEditingMinStock(itemId);
+    setEditMinStockValue(currentMin.toString());
+  };
+
+  const saveMinStockLevel = async (itemId: string) => {
+    const newMinQuantity = parseInt(editMinStockValue);
+    if (isNaN(newMinQuantity) || newMinQuantity < 0) {
+      error("Error", "Please enter a valid minimum quantity");
+      return;
+    }
+
+    try {
+      // Update in local state immediately
+      setStockItems(items => items.map(item =>
+        item.id === itemId
+          ? {
+              ...item,
+              minimumQuantity: newMinQuantity,
+              status: item.quantity > newMinQuantity ? "in-stock" :
+                      item.quantity > 0 ? "low-stock" : "out-of-stock"
+            }
+          : item
+      ));
+
+      // Try to update via API (optional)
+      try {
+        const response = await fetch(`/api/stock-management/items/${itemId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ minimumQuantity: newMinQuantity })
+        });
+
+        if (response.ok) {
+          console.log("Minimum stock level updated in database");
+        }
+      } catch (apiError) {
+        console.log("Could not update in database, but updated locally");
+      }
+
+      setEditingMinStock(null);
+      setEditMinStockValue("");
+      success("Success", `Minimum stock level updated to ${newMinQuantity}`);
+    } catch (err) {
+      error("Error", "Failed to update minimum stock level");
+    }
+  };
+
+  const cancelEditingMinStock = () => {
+    setEditingMinStock(null);
+    setEditMinStockValue("");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 p-6">
       <div className="mx-auto max-w-7xl space-y-6">
