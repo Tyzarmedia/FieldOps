@@ -223,9 +223,9 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={(e) => {
+                          onClick={async (e) => {
                             e.stopPropagation();
-                            removeNotification(notification.id);
+                            await removeNotification(notification.id);
                           }}
                           className="h-6 w-6 p-0"
                         >
