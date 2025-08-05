@@ -68,6 +68,44 @@ export default function TechnicianStockScreen() {
   const [stockItems, setStockItems] = useState<TechnicianStock[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Define fallback data first
+  const [fallbackStockItems] = useState<TechnicianStock[]>([
+    {
+      id: "ts1",
+      itemId: "1",
+      itemName: "Fiber Optic Cable",
+      itemDescription: "100 meters of single-mode fiber optic cable",
+      itemSku: "FOC-SM-100",
+      category: "Cables",
+      unit: "meters",
+      assignedQuantity: 500,
+      usedQuantity: 200,
+      remainingQuantity: 300,
+      assignedDate: new Date().toISOString(),
+      assignedBy: "Stock Manager",
+      status: "in-use",
+      notes: "For weekly FTTH installations",
+      unitPrice: 2.5,
+    },
+    {
+      id: "ts2",
+      itemId: "2",
+      itemName: "Splice Protectors",
+      itemDescription: "Heat shrink splice protectors for fiber connections",
+      itemSku: "SP-HS-40",
+      category: "Connectors",
+      unit: "pieces",
+      assignedQuantity: 100,
+      usedQuantity: 75,
+      remainingQuantity: 25,
+      assignedDate: new Date().toISOString(),
+      assignedBy: "Stock Manager",
+      status: "in-use",
+      notes: "Standard 40mm protectors",
+      unitPrice: 0.5,
+    },
+  ]);
+
   // Load assigned stock from API
   useEffect(() => {
     const loadAssignedStock = async () => {
