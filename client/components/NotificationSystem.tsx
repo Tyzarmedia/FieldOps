@@ -24,9 +24,8 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    // Simulate checking for new notifications
-    const checkNotifications = () => {
-      // In a real app, this would check the server for new notifications
+    // Simulate checking for new notifications - only run once
+    const initializeNotifications = () => {
       const mockNotifications: Notification[] = [
         {
           id: "1",
@@ -49,18 +48,15 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
         },
       ];
 
-      // Only show notifications if there are any changes
-      if (notifications.length === 0) {
-        setNotifications(mockNotifications);
-        setUnreadCount(mockNotifications.filter((n) => !n.read).length);
-      }
+      setNotifications(mockNotifications);
+      setUnreadCount(mockNotifications.filter((n) => !n.read).length);
     };
 
-    const interval = setInterval(checkNotifications, 30000); // Check every 30 seconds
-    checkNotifications(); // Initial check
-
-    return () => clearInterval(interval);
-  }, [notifications.length]);
+    // Only initialize once when component mounts
+    if (notifications.length === 0) {
+      initializeNotifications();
+    }
+  }, []); // Empty dependency array to run only once
 
   const markAsRead = (notificationId: string) => {
     setNotifications((prev) =>
