@@ -2118,9 +2118,40 @@ export default function EnhancedStockManagementScreen() {
                           <label className="text-xs font-medium text-gray-500">
                             Minimum Stock
                           </label>
-                          <p className="text-sm text-gray-700">
-                            {item.minimumQuantity} {item.unit}
-                          </p>
+                          {editingMinStock === item.id ? (
+                            <div className="flex items-center gap-2">
+                              <Input
+                                type="number"
+                                value={editMinStockValue}
+                                onChange={(e) => setEditMinStockValue(e.target.value)}
+                                className="h-6 w-16 text-xs"
+                                min="0"
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => saveMinStockLevel(item.id)}
+                                className="h-6 px-2 text-xs"
+                              >
+                                <CheckCircle2 className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={cancelEditingMinStock}
+                                className="h-6 px-2 text-xs"
+                              >
+                                <XCircle className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <p
+                              className="text-sm text-gray-700 hover:text-blue-600 cursor-pointer hover:underline"
+                              onClick={() => startEditingMinStock(item.id, item.minimumQuantity)}
+                              title="Click to edit minimum stock level"
+                            >
+                              {item.minimumQuantity} {item.unit}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <label className="text-xs font-medium text-gray-500">
