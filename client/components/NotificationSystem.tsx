@@ -28,10 +28,14 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
     const loadNotifications = async () => {
       try {
         // Get deleted notification IDs from localStorage
-        const deletedIds = JSON.parse(localStorage.getItem(`deleted-notifications-${technicianId}`) || '[]');
+        const deletedIds = JSON.parse(
+          localStorage.getItem(`deleted-notifications-${technicianId}`) || "[]",
+        );
 
         // Try to fetch from API first
-        const response = await fetch(`/api/notifications/technician/${technicianId}`);
+        const response = await fetch(
+          `/api/notifications/technician/${technicianId}`,
+        );
         let loadedNotifications: Notification[] = [];
 
         if (response.ok) {
@@ -65,12 +69,14 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
         }
 
         // Filter out deleted notifications
-        const filteredNotifications = loadedNotifications.filter(n => !deletedIds.includes(n.id));
+        const filteredNotifications = loadedNotifications.filter(
+          (n) => !deletedIds.includes(n.id),
+        );
 
         setNotifications(filteredNotifications);
         setUnreadCount(filteredNotifications.filter((n) => !n.read).length);
       } catch (error) {
-        console.error('Error loading notifications:', error);
+        console.error("Error loading notifications:", error);
       }
     };
 
@@ -102,30 +108,42 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
     try {
       // First try to delete from database
       const response = await fetch(`/api/notifications/${notificationId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ technicianId })
+        body: JSON.stringify({ technicianId }),
       });
 
       if (!response.ok) {
-        console.warn('Failed to delete notification from database, storing locally');
+        console.warn(
+          "Failed to delete notification from database, storing locally",
+        );
       }
 
       // Always store deleted ID locally as backup
-      const deletedIds = JSON.parse(localStorage.getItem(`deleted-notifications-${technicianId}`) || '[]');
+      const deletedIds = JSON.parse(
+        localStorage.getItem(`deleted-notifications-${technicianId}`) || "[]",
+      );
       if (!deletedIds.includes(notificationId)) {
         deletedIds.push(notificationId);
-        localStorage.setItem(`deleted-notifications-${technicianId}`, JSON.stringify(deletedIds));
+        localStorage.setItem(
+          `deleted-notifications-${technicianId}`,
+          JSON.stringify(deletedIds),
+        );
       }
     } catch (error) {
-      console.error('Error deleting notification:', error);
+      console.error("Error deleting notification:", error);
       // Store locally as fallback
-      const deletedIds = JSON.parse(localStorage.getItem(`deleted-notifications-${technicianId}`) || '[]');
+      const deletedIds = JSON.parse(
+        localStorage.getItem(`deleted-notifications-${technicianId}`) || "[]",
+      );
       if (!deletedIds.includes(notificationId)) {
         deletedIds.push(notificationId);
-        localStorage.setItem(`deleted-notifications-${technicianId}`, JSON.stringify(deletedIds));
+        localStorage.setItem(
+          `deleted-notifications-${technicianId}`,
+          JSON.stringify(deletedIds),
+        );
       }
     }
   };

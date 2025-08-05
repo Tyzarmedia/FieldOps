@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 
 const router = express.Router();
 
@@ -31,7 +31,8 @@ let notifications: Notification[] = [
     technicianId: "tech001",
     type: "stock_assigned",
     title: "Stock Assigned",
-    message: "Fiber Optic Cable (500 meters) has been assigned to your inventory",
+    message:
+      "Fiber Optic Cable (500 meters) has been assigned to your inventory",
     timestamp: new Date(Date.now() - 300000).toISOString(),
     read: false,
     priority: "medium",
@@ -39,116 +40,116 @@ let notifications: Notification[] = [
 ];
 
 // Get notifications for a technician
-router.get('/technician/:technicianId', (req, res) => {
+router.get("/technician/:technicianId", (req, res) => {
   try {
     const { technicianId } = req.params;
-    
+
     // Filter notifications for this technician and exclude deleted ones
     const technicianNotifications = notifications.filter(
-      n => n.technicianId === technicianId && !n.deleted
+      (n) => n.technicianId === technicianId && !n.deleted,
     );
-    
+
     res.json({
       success: true,
-      data: technicianNotifications
+      data: technicianNotifications,
     });
   } catch (error) {
-    console.error('Error fetching notifications:', error);
+    console.error("Error fetching notifications:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch notifications'
+      message: "Failed to fetch notifications",
     });
   }
 });
 
 // Delete a notification
-router.delete('/:notificationId', (req, res) => {
+router.delete("/:notificationId", (req, res) => {
   try {
     const { notificationId } = req.params;
     const { technicianId } = req.body;
-    
+
     // Find and mark notification as deleted
     const notificationIndex = notifications.findIndex(
-      n => n.id === notificationId && n.technicianId === technicianId
+      (n) => n.id === notificationId && n.technicianId === technicianId,
     );
-    
+
     if (notificationIndex === -1) {
       return res.status(404).json({
         success: false,
-        message: 'Notification not found'
+        message: "Notification not found",
       });
     }
-    
+
     // Mark as deleted instead of removing (for audit trail)
     notifications[notificationIndex].deleted = true;
-    
+
     res.json({
       success: true,
-      message: 'Notification deleted successfully'
+      message: "Notification deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting notification:', error);
+    console.error("Error deleting notification:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to delete notification'
+      message: "Failed to delete notification",
     });
   }
 });
 
 // Mark notification as read
-router.put('/:notificationId/read', (req, res) => {
+router.put("/:notificationId/read", (req, res) => {
   try {
     const { notificationId } = req.params;
     const { technicianId } = req.body;
-    
+
     const notificationIndex = notifications.findIndex(
-      n => n.id === notificationId && n.technicianId === technicianId
+      (n) => n.id === notificationId && n.technicianId === technicianId,
     );
-    
+
     if (notificationIndex === -1) {
       return res.status(404).json({
         success: false,
-        message: 'Notification not found'
+        message: "Notification not found",
       });
     }
-    
+
     notifications[notificationIndex].read = true;
-    
+
     res.json({
       success: true,
-      data: notifications[notificationIndex]
+      data: notifications[notificationIndex],
     });
   } catch (error) {
-    console.error('Error marking notification as read:', error);
+    console.error("Error marking notification as read:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to mark notification as read'
+      message: "Failed to mark notification as read",
     });
   }
 });
 
 // Create new notification (for system use)
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
   try {
     const notification: Notification = {
       id: Date.now().toString(),
       ...req.body,
       timestamp: new Date().toISOString(),
       read: false,
-      deleted: false
+      deleted: false,
     };
-    
+
     notifications.push(notification);
-    
+
     res.json({
       success: true,
-      data: notification
+      data: notification,
     });
   } catch (error) {
-    console.error('Error creating notification:', error);
+    console.error("Error creating notification:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to create notification'
+      message: "Failed to create notification",
     });
   }
 });
