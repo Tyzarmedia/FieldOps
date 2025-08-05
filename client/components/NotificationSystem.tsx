@@ -75,11 +75,11 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
   };
 
   const removeNotification = (notificationId: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
     const notification = notifications.find((n) => n.id === notificationId);
     if (notification && !notification.read) {
       setUnreadCount((prev) => Math.max(0, prev - 1));
     }
+    setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
   };
 
   const getIcon = (type: string) => {
