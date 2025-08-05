@@ -799,6 +799,107 @@ export default function EnhancedStockManagementScreen() {
     }
   };
 
+  const addDocumentItem = () => {
+    setNewDocumentOrder({
+      ...newDocumentOrder,
+      items: [...newDocumentOrder.items, { name: "", quantity: "", unitPrice: "" }]
+    });
+  };
+
+  const removeDocumentItem = (index) => {
+    setNewDocumentOrder({
+      ...newDocumentOrder,
+      items: newDocumentOrder.items.filter((_, i) => i !== index)
+    });
+  };
+
+  const updateDocumentItem = (index, field, value) => {
+    const updatedItems = newDocumentOrder.items.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item
+    );
+    setNewDocumentOrder({
+      ...newDocumentOrder,
+      items: updatedItems
+    });
+  };
+
+  const uploadDocument = () => {
+    const total = newDocumentOrder.items.reduce((sum, item) =>
+      sum + (parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0), 0
+    );
+
+    const newDoc = {
+      id: `DOC-2024-${String(orderDocuments.length + 1).padStart(3, "0")}`,
+      type: newDocumentOrder.documentType,
+      supplier: newDocumentOrder.supplier,
+      orderNumber: newDocumentOrder.orderNumber,
+      status: "awaiting-delivery",
+      uploadDate: new Date().toISOString().split('T')[0],
+      expectedDate: newDocumentOrder.expectedDate,
+      items: newDocumentOrder.items.filter(item => item.name && item.quantity && item.unitPrice),
+      total: total,
+      fileName: `${newDocumentOrder.documentType.toLowerCase()}-${newDocumentOrder.supplier.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+      notes: newDocumentOrder.notes
+    };
+
+    setOrderDocuments([...orderDocuments, newDoc]);
+    setNewDocumentOrder({
+      documentType: "",
+      supplier: "",
+      orderNumber: "",
+      expectedDate: "",
+      notes: "",
+      items: [{ name: "", quantity: "", unitPrice: "" }]
+    });
+    setShowDocumentUploadDialog(false);
+    success("Success", `${newDocumentOrder.documentType} uploaded and order created successfully!`);
+  };
+
+  const markAsDelivered = (docId) => {
+    const document = orderDocuments.find(doc => doc.id === docId);
+    if (!document) return;
+
+    // Add items to inventory
+    const updatedStockItems = [...stockItems];
+    document.items.forEach(docItem => {
+      const existingItem = updatedStockItems.find(item =>
+        item.name.toLowerCase().includes(docItem.name.toLowerCase()) ||
+        docItem.name.toLowerCase().includes(item.name.toLowerCase())
+      );
+
+      if (existingItem) {
+        existingItem.quantity += docItem.quantity;
+        existingItem.status = existingItem.quantity > existingItem.minimumQuantity ? "in-stock" : "low-stock";
+      } else {
+        // Create new stock item
+        const newItem = {
+          id: `ITM-${Date.now()}`,
+          name: docItem.name,
+          description: `Auto-added from ${document.type} ${document.orderNumber}`,
+          category: "General",
+          sku: `AUTO-${Date.now()}`,
+          unit: "pieces",
+          quantity: docItem.quantity,
+          minimumQuantity: Math.max(5, Math.floor(docItem.quantity * 0.2)),
+          unitPrice: docItem.unitPrice,
+          supplier: document.supplier,
+          location: "Main Warehouse",
+          status: "in-stock"
+        };
+        updatedStockItems.push(newItem);
+      }
+    });
+
+    setStockItems(updatedStockItems);
+
+    // Update document status
+    setOrderDocuments(orderDocuments.map(doc =>
+      doc.id === docId ? { ...doc, status: "delivered" } : doc
+    ));
+
+    success("Success", `Order ${document.orderNumber} marked as delivered and stock updated!`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 p-6">
       <div className="mx-auto max-w-7xl space-y-6">
@@ -1285,7 +1386,7 @@ export default function EnhancedStockManagementScreen() {
                             : {transaction.quantity} units
                           </p>
                           <p className="text-xs text-gray-500">
-                            {transaction.technician || transaction.from} •{" "}
+                            {transaction.technician || transaction.from} ���{" "}
                             {transaction.date}
                           </p>
                         </div>
