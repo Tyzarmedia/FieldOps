@@ -745,16 +745,57 @@ export default function EnhancedStockManagementScreen() {
       type: newDocumentOrder.documentType,
       supplier: newDocumentOrder.supplier,
       orderNumber: newDocumentOrder.orderNumber,
-      status: "awaiting-delivery",
+      status: newDocumentOrder.documentType === "Delivery Note" ? "delivered" : "awaiting-delivery",
       uploadDate: new Date().toISOString().split('T')[0],
       expectedDate: newDocumentOrder.expectedDate,
       items: newDocumentOrder.items.filter(item => item.name && item.quantity && item.unitPrice),
       total: total,
-      fileName: `${newDocumentOrder.documentType.toLowerCase()}-${newDocumentOrder.supplier.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+      fileName: `${newDocumentOrder.documentType.toLowerCase().replace(' ', '-')}-${newDocumentOrder.supplier.replace(/\s+/g, '-').toLowerCase()}.pdf`,
       notes: newDocumentOrder.notes
     };
 
     setOrderDocuments([...orderDocuments, newDoc]);
+
+    // Auto-process delivery notes
+    if (newDocumentOrder.documentType === "Delivery Note") {
+      // Add items to inventory immediately
+      const updatedStockItems = [...stockItems];
+      newDoc.items.forEach((docItem, index) => {
+        const existingItem = updatedStockItems.find(item =>
+          item.name.toLowerCase().includes(docItem.name.toLowerCase()) ||
+          docItem.name.toLowerCase().includes(item.name.toLowerCase())
+        );
+
+        if (existingItem) {
+          existingItem.quantity += docItem.quantity;
+          existingItem.status = existingItem.quantity > existingItem.minimumQuantity ? "in-stock" : "low-stock";
+        } else {
+          // Create new stock item
+          const timestamp = Date.now();
+          const newItem = {
+            id: `ITM-${timestamp}-${index}`,
+            name: docItem.name,
+            description: `Auto-added from ${newDoc.type} ${newDoc.orderNumber}`,
+            category: "General",
+            sku: `AUTO-${timestamp}-${index}`,
+            unit: "pieces",
+            quantity: docItem.quantity,
+            minimumQuantity: Math.max(5, Math.floor(docItem.quantity * 0.2)),
+            unitPrice: docItem.unitPrice,
+            supplier: newDoc.supplier,
+            location: "Main Warehouse",
+            status: "in-stock"
+          };
+          updatedStockItems.push(newItem);
+        }
+      });
+
+      setStockItems(updatedStockItems);
+      success("Success", `Delivery Note processed! ${newDoc.items.length} items added to inventory automatically.`);
+    } else {
+      success("Success", `${newDocumentOrder.documentType} uploaded and order created successfully!`);
+    }
+
     setNewDocumentOrder({
       documentType: "",
       supplier: "",
@@ -764,7 +805,6 @@ export default function EnhancedStockManagementScreen() {
       items: [{ name: "", quantity: "", unitPrice: "" }]
     });
     setShowDocumentUploadDialog(false);
-    success("Success", `${newDocumentOrder.documentType} uploaded and order created successfully!`);
   };
 
   const markAsDelivered = (docId) => {
