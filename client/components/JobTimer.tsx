@@ -34,7 +34,7 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
       setTimeSpent(parseInt(savedTime));
     }
     
-    if (savedStartTime && jobStatus === "In Progress") {
+    if (savedStartTime && ["in-progress", "In Progress", "accepted"].includes(jobStatus)) {
       const start = parseInt(savedStartTime);
       const now = Date.now();
       const elapsed = Math.floor((now - start) / 1000);
