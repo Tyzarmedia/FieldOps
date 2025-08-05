@@ -78,6 +78,19 @@ export default function EnhancedStockManagementScreen() {
     total: "",
     eta: "",
   });
+
+  const [showDocumentUploadDialog, setShowDocumentUploadDialog] = useState(false);
+  const [uploadedDocuments, setUploadedDocuments] = useState([]);
+  const [newDocumentOrder, setNewDocumentOrder] = useState({
+    documentType: "",
+    supplier: "",
+    orderNumber: "",
+    expectedDate: "",
+    notes: "",
+    items: [
+      { name: "", quantity: "", unitPrice: "" }
+    ]
+  });
   const [newAssignment, setNewAssignment] = useState({
     itemId: "",
     technicianId: "",
