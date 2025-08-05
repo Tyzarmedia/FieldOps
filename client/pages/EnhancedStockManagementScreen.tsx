@@ -55,7 +55,7 @@ import {
   CircleDollarSign,
   BarChart4,
   Target,
-  FileUpload,
+  UploadCloud,
   CheckCircle2,
   Clock4,
   XCircle,
