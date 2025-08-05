@@ -283,8 +283,8 @@ export default function TechnicianJobsScreen() {
         updateJobStatus(job.id, "completed");
         break;
       case "view":
-        setSelectedJob(job);
-        setShowJobDetail(true);
+        // Navigate to dedicated job details route
+        navigate(`/technician/job/${job.id}`);
         break;
     }
   };
