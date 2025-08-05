@@ -268,7 +268,8 @@ export default function App() {
               <Route path="/technician/gallery" element={<GalleryScreen />} />
               <Route path="/technician/signoff" element={<SignOffScreen />} />
               <Route path="/apply-leave" element={<ApplyLeaveScreen />} />
-              <Route path="/stock-on-hand" element={<StockScreen />} />
+              <Route path="/stock-on-hand" element={<TechnicianStockUsageScreen />} />
+              <Route path="/add-stock-usage" element={<TechnicianStockUsageScreen />} />
               <Route
                 path="/network-assessment"
                 element={<NetworkAssessmentScreen />}
