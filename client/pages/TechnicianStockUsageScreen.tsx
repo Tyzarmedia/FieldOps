@@ -47,6 +47,15 @@ export default function TechnicianStockUsageScreen() {
     description: "",
     comments: "",
   });
+  const [usageList, setUsageList] = useState<{
+    id: string;
+    itemName: string;
+    quantity: number;
+    unit: string;
+    container: string;
+    description: string;
+    timestamp: string;
+  }[]>([]);
 
   // Load assigned stock items
   useEffect(() => {
