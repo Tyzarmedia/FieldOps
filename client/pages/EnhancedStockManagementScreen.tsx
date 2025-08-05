@@ -1442,7 +1442,7 @@ export default function EnhancedStockManagementScreen() {
                                 <SelectItem value="Quote">Quote</SelectItem>
                                 <SelectItem value="POP">Proof of Payment</SelectItem>
                                 <SelectItem value="Purchase Order">Purchase Order</SelectItem>
-                                <SelectItem value="Delivery Note">Delivery Note</SelectItem>
+                                <SelectItem value="Delivery Note">Delivery Note (Auto-Process)</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
