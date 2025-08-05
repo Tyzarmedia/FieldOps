@@ -38,6 +38,7 @@ import CoordinatorJobBoard from "./pages/CoordinatorJobBoard";
 import StockManagementScreen from "./pages/StockManagementScreen";
 import EnhancedStockManagementScreen from "./pages/EnhancedStockManagementScreen";
 import TechnicianStockScreen from "./pages/TechnicianStockScreen";
+import TechnicianStockUsageScreen from "./pages/TechnicianStockUsageScreen";
 import JobDetailsWithTracking from "./pages/JobDetailsWithTracking";
 import MonitorProgress from "./pages/MonitorProgress";
 import MobileAddStockScreen from "./pages/MobileAddStockScreen";
