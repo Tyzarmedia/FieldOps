@@ -1444,6 +1444,209 @@ export default function EnhancedStockManagementScreen() {
           </TabsContent>
 
           <TabsContent value="orders" className="space-y-6">
+            {/* Document Upload Section */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileUpload className="h-5 w-5 text-blue-600" />
+                    Document Management
+                  </div>
+                  <Dialog open={showDocumentUploadDialog} onOpenChange={setShowDocumentUploadDialog}>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Document
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>Upload Order Document</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="documentType">Document Type</Label>
+                            <Select
+                              value={newDocumentOrder.documentType}
+                              onValueChange={(value) => setNewDocumentOrder({ ...newDocumentOrder, documentType: value })}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select document type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Invoice">Invoice</SelectItem>
+                                <SelectItem value="Quote">Quote</SelectItem>
+                                <SelectItem value="POP">Proof of Payment</SelectItem>
+                                <SelectItem value="Purchase Order">Purchase Order</SelectItem>
+                                <SelectItem value="Delivery Note">Delivery Note</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="orderNumber">Order/Document Number</Label>
+                            <Input
+                              id="orderNumber"
+                              value={newDocumentOrder.orderNumber}
+                              onChange={(e) => setNewDocumentOrder({ ...newDocumentOrder, orderNumber: e.target.value })}
+                              placeholder="ORD-001"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="supplier">Supplier</Label>
+                            <Input
+                              id="supplier"
+                              value={newDocumentOrder.supplier}
+                              onChange={(e) => setNewDocumentOrder({ ...newDocumentOrder, supplier: e.target.value })}
+                              placeholder="Supplier name"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="expectedDate">Expected Delivery Date</Label>
+                            <Input
+                              id="expectedDate"
+                              type="date"
+                              value={newDocumentOrder.expectedDate}
+                              onChange={(e) => setNewDocumentOrder({ ...newDocumentOrder, expectedDate: e.target.value })}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label>Items</Label>
+                          <div className="space-y-3">
+                            {newDocumentOrder.items.map((item, index) => (
+                              <div key={index} className="grid grid-cols-4 gap-3 p-3 border rounded">
+                                <Input
+                                  placeholder="Item name"
+                                  value={item.name}
+                                  onChange={(e) => updateDocumentItem(index, 'name', e.target.value)}
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Quantity"
+                                  value={item.quantity}
+                                  onChange={(e) => updateDocumentItem(index, 'quantity', e.target.value)}
+                                />
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  placeholder="Unit price"
+                                  value={item.unitPrice}
+                                  onChange={(e) => updateDocumentItem(index, 'unitPrice', e.target.value)}
+                                />
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => removeDocumentItem(index)}
+                                  disabled={newDocumentOrder.items.length === 1}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ))}
+                            <Button variant="outline" onClick={addDocumentItem}>
+                              <Plus className="h-4 w-4 mr-2" />
+                              Add Item
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="notes">Notes</Label>
+                          <Input
+                            id="notes"
+                            value={newDocumentOrder.notes}
+                            onChange={(e) => setNewDocumentOrder({ ...newDocumentOrder, notes: e.target.value })}
+                            placeholder="Additional notes"
+                          />
+                        </div>
+
+                        <div className="flex justify-between">
+                          <Button variant="outline" onClick={() => setShowDocumentUploadDialog(false)}>
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={uploadDocument}
+                            disabled={!newDocumentOrder.documentType || !newDocumentOrder.supplier || !newDocumentOrder.orderNumber}
+                          >
+                            Upload & Create Order
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {orderDocuments.map((doc) => (
+                    <div key={doc.id} className="p-4 border rounded-lg">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-blue-100 rounded">
+                            <FileText className="h-5 w-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium">{doc.type} - {doc.orderNumber}</h3>
+                            <p className="text-sm text-gray-600">{doc.supplier}</p>
+                            <p className="text-xs text-gray-500">Uploaded: {doc.uploadDate}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Badge className={getStatusColor(doc.status)}>
+                            {doc.status.replace('-', ' ')}
+                          </Badge>
+                          {doc.status === 'awaiting-delivery' && (
+                            <Button
+                              size="sm"
+                              onClick={() => markAsDelivered(doc.id)}
+                              className="bg-green-600 hover:bg-green-700"
+                            >
+                              <CheckCircle2 className="h-4 w-4 mr-1" />
+                              Mark Delivered
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p><strong>Total Value:</strong> R{doc.total.toLocaleString()}</p>
+                          <p><strong>Items:</strong> {doc.items.length}</p>
+                          {doc.expectedDate && (
+                            <p><strong>Expected:</strong> {doc.expectedDate}</p>
+                          )}
+                        </div>
+                        <div>
+                          <p><strong>File:</strong> {doc.fileName}</p>
+                          {doc.notes && (
+                            <p><strong>Notes:</strong> {doc.notes}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <details className="mt-3">
+                        <summary className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800">
+                          View Items ({doc.items.length})
+                        </summary>
+                        <div className="mt-2 space-y-1">
+                          {doc.items.map((item, idx) => (
+                            <div key={idx} className="text-xs p-2 bg-gray-50 rounded">
+                              {item.name} - Qty: {item.quantity} @ R{item.unitPrice} each
+                            </div>
+                          ))}
+                        </div>
+                      </details>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Purchase Orders */}
               <Card>
