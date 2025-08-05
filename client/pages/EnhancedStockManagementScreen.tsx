@@ -205,7 +205,7 @@ export default function EnhancedStockManagementScreen() {
     const loadData = async () => {
       setIsLoading(true);
 
-      // Use fallback data immediately
+      // Use fallback data immediately to prevent crashes
       const fallbackItems = [
         {
           id: "CAB00092",
@@ -267,237 +267,83 @@ export default function EnhancedStockManagementScreen() {
         criticalAlerts: 2,
       });
 
+      setLowStockItems([
+        {
+          id: "CAB00175",
+          name: "UNJACKED PIGTAILS LC/APC - 1M",
+          current: 50,
+          minimum: 100,
+          status: "low-stock",
+        },
+      ]);
+
       try {
-        // Test basic API connectivity first
-        console.log("Testing basic API connectivity...");
-        const pingResponse = await fetch("/api/ping", {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        console.log("Ping response status:", pingResponse.status);
-        if (pingResponse.ok) {
-          const pingData = await pingResponse.json();
-          console.log("Ping successful:", pingData);
-        }
-
-        // Test stock management router specifically
-        console.log("Testing stock management router...");
-        try {
-          const debugResponse = await fetch("/api/stock-management/debug");
-          console.log("Stock debug response status:", debugResponse.status);
-          if (debugResponse.ok) {
-            const debugData = await debugResponse.json();
-            console.log("Stock management router working:", debugData);
-          }
-        } catch (debugError) {
-          console.error("Stock management debug failed:", debugError);
-          throw new Error("Stock management API not accessible");
-        }
-
-        // Fetch stock items
-        console.log("Fetching stock items from /api/stock-management/items");
-        const itemsResponse = await fetch("/api/stock-management/items");
-        console.log("Items response status:", itemsResponse.status);
-        console.log("Items response URL:", itemsResponse.url);
-
-        if (!itemsResponse.ok) {
-          const errorText = await itemsResponse.text();
-          console.error("Items response error text:", errorText);
-          throw new Error(
-            `HTTP ${itemsResponse.status}: ${itemsResponse.statusText} - ${errorText}`,
-          );
-        }
-
-        const itemsData = await itemsResponse.json();
-        if (itemsData.success) {
-          setStockItems(itemsData.data);
-
-          // Calculate stats
-          const items = itemsData.data;
-          setStats({
-            totalItems: items.length,
-            inStock: items.filter((item) => item.status === "in-stock").length,
-            lowStock: items.filter((item) => item.status === "low-stock")
-              .length,
-            outOfStock: items.filter((item) => item.status === "out-of-stock")
-              .length,
-            totalValue: items.reduce(
-              (sum, item) => sum + item.quantity * item.unitPrice,
-              0,
-            ),
-            assignedStock: 0,
-            todayUsage: 0,
-            weeklyUsage: 0,
-            monthlyUsage: 0,
-            topUsedItem: "Fiber Optic Cable",
-            criticalAlerts: items.filter(
-              (item) =>
-                item.status === "out-of-stock" || item.status === "low-stock",
-            ).length,
-          });
-
-          // Update low stock items
-          setLowStockItems(
-            items
-              .filter(
-                (item) =>
-                  item.status === "low-stock" || item.status === "out-of-stock",
-              )
-              .map((item) => ({
-                id: item.id,
-                name: item.name,
-                current: item.quantity,
-                minimum: item.minimumQuantity,
-                status: item.status,
-              })),
-          );
-        }
-
-        // Fetch assignments
-        console.log(
-          "Fetching assignments from /api/stock-management/assignments",
-        );
-        const assignmentsResponse = await fetch(
-          "/api/stock-management/assignments",
-        );
-        console.log("Assignments response status:", assignmentsResponse.status);
-
-        if (assignmentsResponse.ok) {
-          const assignmentsData = await assignmentsResponse.json();
-          if (assignmentsData.success) {
-            setAssignments(assignmentsData.data);
-          }
-        }
-
-        // Fetch usage history
-        console.log("Fetching usage from /api/stock-management/usage");
-        const usageResponse = await fetch("/api/stock-management/usage");
-        console.log("Usage response status:", usageResponse.status);
-
-        if (usageResponse.ok) {
-          const usageData = await usageResponse.json();
-          if (usageData.success) {
-            setUsageHistory(usageData.data);
-
-            // Calculate usage analytics
-            const usageByItem = {};
-            usageData.data.forEach((usage) => {
-              if (!usageByItem[usage.itemName]) {
-                usageByItem[usage.itemName] = 0;
-              }
-              usageByItem[usage.itemName] += usage.quantityUsed;
+        // Try to load from API
+        console.log("Attempting to load data from API...");
+        const response = await fetch("/api/stock-management/items");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data) {
+            setStockItems(data.data);
+            console.log("Successfully loaded data from API");
+            // Calculate stats from API data
+            const items = data.data;
+            setStats({
+              totalItems: items.length,
+              inStock: items.filter((item) => item.status === "in-stock").length,
+              lowStock: items.filter((item) => item.status === "low-stock").length,
+              outOfStock: items.filter((item) => item.status === "out-of-stock").length,
+              totalValue: items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0),
+              assignedStock: 0,
+              todayUsage: 0,
+              weeklyUsage: 0,
+              monthlyUsage: 0,
+              topUsedItem: "Fiber Optic Cable",
+              criticalAlerts: items.filter((item) => item.status === "out-of-stock" || item.status === "low-stock").length,
             });
 
-            const analytics = Object.entries(usageByItem)
-              .map(([item, used]) => ({
-                item,
-                used,
-                percentage: 0,
-                trend: "up",
-              }))
-              .sort((a, b) => b.used - a.used)
-              .slice(0, 5);
-
-            const totalUsed = analytics.reduce(
-              (sum, item) => sum + item.used,
-              0,
+            // Update low stock items from API data
+            setLowStockItems(
+              items
+                .filter((item) => item.status === "low-stock" || item.status === "out-of-stock")
+                .map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  current: item.quantity,
+                  minimum: item.minimumQuantity,
+                  status: item.status,
+                }))
             );
-            analytics.forEach((item) => {
-              item.percentage = Math.round((item.used / totalUsed) * 100);
-            });
-
-            setUsageAnalytics(analytics);
           }
+        }
+
+        // Try to fetch assignments
+        try {
+          const assignmentsResponse = await fetch("/api/stock-management/assignments");
+          if (assignmentsResponse.ok) {
+            const assignmentsData = await assignmentsResponse.json();
+            if (assignmentsData.success) {
+              setAssignments(assignmentsData.data);
+            }
+          }
+        } catch (err) {
+          console.log("Could not load assignments:", err.message);
+        }
+
+        // Try to fetch usage history
+        try {
+          const usageResponse = await fetch("/api/stock-management/usage");
+          if (usageResponse.ok) {
+            const usageData = await usageResponse.json();
+            if (usageData.success) {
+              setUsageHistory(usageData.data);
+            }
+          }
+        } catch (err) {
+          console.log("Could not load usage history:", err.message);
         }
       } catch (error) {
-        console.error("Error loading stock data:", error);
-
-        // Use fallback data when API is not available
-        console.log("Using fallback stock data...");
-        const fallbackItems = [
-          {
-            id: "CAB00092",
-            name: "MICRO MINI 24F FIBRE BLACK",
-            description: "24 fiber micro mini cable for FTTH applications",
-            category: "Cables",
-            sku: "CAB00092",
-            unit: "meters",
-            quantity: 2000,
-            minimumQuantity: 500,
-            unitPrice: 4.2,
-            supplier: "Fiber Solutions Inc",
-            location: "VAN462",
-            status: "in-stock",
-          },
-          {
-            id: "CAB00175",
-            name: "UNJACKED PIGTAILS LC/APC - 1M",
-            description: "Unjacked pigtails LC/APC connector 1 meter",
-            category: "Connectors",
-            sku: "CAB00175",
-            unit: "pieces",
-            quantity: 50,
-            minimumQuantity: 100,
-            unitPrice: 8.5,
-            supplier: "Fiber Solutions Inc",
-            location: "VAN462",
-            status: "low-stock",
-          },
-          {
-            id: "GEN00007",
-            name: "Cable Ties (305 x 4.7mm) T50I - BLACK",
-            description: "Large black cable ties 305x4.7mm T50I",
-            category: "General",
-            sku: "GEN00007",
-            unit: "pieces",
-            quantity: 500,
-            minimumQuantity: 100,
-            unitPrice: 0.5,
-            supplier: "General Supplies",
-            location: "VAN462",
-            status: "in-stock",
-          },
-        ];
-
-        setStockItems(fallbackItems);
-        setStats({
-          totalItems: fallbackItems.length,
-          inStock: fallbackItems.filter((item) => item.status === "in-stock")
-            .length,
-          lowStock: fallbackItems.filter((item) => item.status === "low-stock")
-            .length,
-          outOfStock: fallbackItems.filter(
-            (item) => item.status === "out-of-stock",
-          ).length,
-          totalValue: fallbackItems.reduce(
-            (sum, item) => sum + item.quantity * item.unitPrice,
-            0,
-          ),
-          assignedStock: 0,
-          todayUsage: 0,
-          weeklyUsage: 0,
-          monthlyUsage: 0,
-          topUsedItem: "Fiber Optic Cable",
-          criticalAlerts: fallbackItems.filter(
-            (item) =>
-              item.status === "out-of-stock" || item.status === "low-stock",
-          ).length,
-        });
-
-        setLowStockItems(
-          fallbackItems
-            .filter(
-              (item) =>
-                item.status === "low-stock" || item.status === "out-of-stock",
-            )
-            .map((item) => ({
-              id: item.id,
-              name: item.name,
-              current: item.quantity,
-              minimum: item.minimumQuantity,
-              status: item.status,
-            })),
-        );
+        console.log("API not available, using fallback data:", error.message);
       } finally {
         setIsLoading(false);
       }
