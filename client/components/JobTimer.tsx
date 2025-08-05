@@ -136,7 +136,7 @@ export function JobTimer({ jobId, jobStatus, onTimeUpdate }: JobTimerProps) {
               size="sm"
               onClick={startTimer}
               className="h-6 w-6 p-0"
-              disabled={jobStatus === "Completed"}
+              disabled={["completed", "Completed", "Closed"].includes(jobStatus)}
             >
               <Play className="h-3 w-3" />
             </Button>
