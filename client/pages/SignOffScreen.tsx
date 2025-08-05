@@ -35,6 +35,7 @@ export default function SignOffScreen() {
   // Mock validation data - in real app this would come from API/state
   const [udfCompleted, setUdfCompleted] = useState(false);
   const [stockUpdated, setStockUpdated] = useState(false);
+  const [imagesUploaded, setImagesUploaded] = useState(false);
 
   // Digital signature functions
   useEffect(() => {
