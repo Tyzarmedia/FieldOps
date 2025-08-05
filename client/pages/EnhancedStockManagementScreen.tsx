@@ -50,6 +50,15 @@ import {
   Calendar,
   PieChart,
   Activity,
+  PackageCheck,
+  ShieldAlert,
+  CircleDollarSign,
+  BarChart4,
+  Target,
+  FileUpload,
+  CheckCircle2,
+  Clock4,
+  XCircle,
 } from "lucide-react";
 
 export default function EnhancedStockManagementScreen() {
@@ -1054,12 +1063,15 @@ export default function EnhancedStockManagementScreen() {
           <TabsContent value="dashboard" className="space-y-6">
             {/* Key Performance Indicators */}
             <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              <Card className="hover:shadow-lg transition-shadow">
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => setSelectedTab("inventory")}
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Total Items
                   </CardTitle>
-                  <Package className="h-4 w-4 text-blue-600" />
+                  <PackageCheck className="h-5 w-5 text-blue-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-blue-600">
@@ -1071,12 +1083,15 @@ export default function EnhancedStockManagementScreen() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow">
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => setSelectedTab("inventory")}
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     In Stock
                   </CardTitle>
-                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-green-600">
@@ -1094,26 +1109,29 @@ export default function EnhancedStockManagementScreen() {
               >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    🚨 Low Stock
+                    Low Stock Alerts
                   </CardTitle>
-                  <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                  <ShieldAlert className="h-5 w-5 text-yellow-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-yellow-600">
                     {stats.lowStock}
                   </div>
                   <p className="text-xs text-red-600">
-                    ⚠️ {stats.criticalAlerts} critical alerts
+                    {stats.criticalAlerts} critical alerts
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow">
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => setSelectedTab("analytics")}
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Total Value
                   </CardTitle>
-                  <DollarSign className="h-4 w-4 text-purple-600" />
+                  <CircleDollarSign className="h-5 w-5 text-purple-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-purple-600">
@@ -1125,12 +1143,15 @@ export default function EnhancedStockManagementScreen() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow">
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => setSelectedTab("assignments")}
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Monthly Usage
                   </CardTitle>
-                  <Activity className="h-4 w-4 text-orange-600" />
+                  <BarChart4 className="h-5 w-5 text-orange-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-orange-600">
@@ -1140,12 +1161,15 @@ export default function EnhancedStockManagementScreen() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow">
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => setSelectedTab("analytics")}
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Most Used
                   </CardTitle>
-                  <TrendingUp className="h-4 w-4 text-indigo-600" />
+                  <Target className="h-5 w-5 text-indigo-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-lg font-bold text-indigo-600">
