@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Flow Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .step {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+      }
+      .error {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      button {
+        padding: 10px 20px;
+        margin: 5px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      #log {
+        background: #f8f9fa;
+        padding: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      pre {
+        margin: 0;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Job Management Flow Test</h1>
+    <p>
+      This page tests the complete job creation, assignment, and completion
+      flow.
+    </p>
+
+    <button onclick="testCompleteFlow()">🚀 Test Complete Job Flow</button>
+    <button onclick="clearLog()">🗑️ Clear Log</button>
+
+    <div id="log">
+      <p>Click "Test Complete Job Flow" to begin testing...</p>
+    </div>
+
+    <script>
+      const baseUrl = "/api/job-mgmt";
+
+      function log(message, isError = false) {
+        const logDiv = document.getElementById("log");
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = document.createElement("div");
+        logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+        if (isError) {
+          logEntry.style.color = "red";
+        }
+        logDiv.appendChild(logEntry);
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+
+      function clearLog() {
+        document.getElementById("log").innerHTML = "";
+      }
+
+      async function makeRequest(url, options = {}) {
+        try {
+          const response = await fetch(url, options);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(
+              `HTTP ${response.status}: ${data.error || "Unknown error"}`,
+            );
+          }
+
+          return data;
+        } catch (error) {
+          throw new Error(`Request failed: ${error.message}`);
+        }
+      }
+
+      async function testCompleteFlow() {
+        clearLog();
+        log("🚀 Starting complete job flow test...");
+
+        try {
+          // Step 1: Create a new job
+          log("📝 Step 1: Creating a new job...");
+          const createResult = await makeRequest(`${baseUrl}/jobs`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: "Test Installation Job",
+              description: "Test fiber installation for flow verification",
+              type: "Installation",
+              priority: "High",
+              client: {
+                name: "Test Customer Ltd",
+                address: "123 Test Street, Test City",
+                contactPerson: "John Test",
+                phone: "+27123456789",
+              },
+              estimatedHours: 3,
+            }),
+          });
+
+          log(`✅ Job created successfully! ID: ${createResult.data.id}`);
+          const jobId = createResult.data.id;
+
+          // Step 2: Assign job to technician
+          log("👤 Step 2: Assigning job to technician...");
+          const assignResult = await makeRequest(
+            `${baseUrl}/jobs/${jobId}/assign`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                technicianId: "tech001",
+              }),
+            },
+          );
+
+          log(
+            `✅ Job assigned successfully! Status: ${assignResult.data.status}`,
+          );
+
+          // Step 3: Technician accepts the job
+          log("👍 Step 3: Technician accepting job...");
+          const acceptResult = await makeRequest(
+            `${baseUrl}/jobs/${jobId}/accept`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                technicianId: "tech001",
+              }),
+            },
+          );
+
+          log(
+            `✅ Job accepted successfully! Status: ${acceptResult.data.status}`,
+          );
+
+          // Step 4: Technician starts the job
+          log("▶️ Step 4: Technician starting job...");
+          const startResult = await makeRequest(
+            `${baseUrl}/jobs/${jobId}/start`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                technicianId: "tech001",
+                location: { lat: -26.2041, lng: 28.0473 },
+              }),
+            },
+          );
+
+          log(
+            `✅ Job started successfully! Status: ${startResult.data.status}`,
+          );
+
+          // Step 5: Technician completes the job
+          log("✅ Step 5: Technician completing job...");
+          const completeResult = await makeRequest(
+            `${baseUrl}/jobs/${jobId}/complete`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                technicianId: "tech001",
+                timeSpent: 2.5,
+                notes: "Installation completed successfully. All tests passed.",
+                photos: ["photo1.jpg", "photo2.jpg"],
+              }),
+            },
+          );
+
+          log(
+            `✅ Job completed successfully! Status: ${completeResult.data.status}`,
+          );
+
+          // Step 6: Verify the final job state
+          log("🔍 Step 6: Verifying final job state...");
+          const verifyResult = await makeRequest(`${baseUrl}/jobs/${jobId}`);
+
+          log(
+            `✅ Final job state verified! Status: ${verifyResult.data.status}`,
+          );
+
+          // Step 7: Get technician stats
+          log("📊 Step 7: Getting technician statistics...");
+          const statsResult = await makeRequest(
+            `${baseUrl}/jobs/stats/tech001`,
+          );
+
+          log(
+            `✅ Technician stats: ${statsResult.data.completed} completed jobs`,
+          );
+
+          log("🎉 COMPLETE JOB FLOW TEST PASSED! 🎉");
+          log("✨ Summary:");
+          log(`   - Job ${jobId} was created`);
+          log(`   - Assigned to tech001`);
+          log(`   - Accepted by technician`);
+          log(`   - Started and completed`);
+          log(`   - Final status: ${verifyResult.data.status}`);
+          log(
+            `   - Technician now has ${statsResult.data.completed} completed jobs`,
+          );
+        } catch (error) {
+          log(`❌ Test failed: ${error.message}`, true);
+          log("❌ COMPLETE JOB FLOW TEST FAILED!", true);
+        }
+      }
+
+      // Auto-run test on page load for demonstration
+      window.addEventListener("load", () => {
+        log("Page loaded. Ready to test job flow.");
+      });
+    </script>
+  </body>
+</html>

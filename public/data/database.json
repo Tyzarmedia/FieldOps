@@ -1,0 +1,617 @@
+{
+  "employees": [
+    {
+      "id": "E001",
+      "employeeNumber": "FO-001",
+      "personalInfo": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "fullName": "John Smith",
+        "email": "john.smith@fiberco.com",
+        "phone": "+1 (555) 123-4567",
+        "address": "123 Main St, Downtown, City 12345",
+        "dateOfBirth": "1985-03-15",
+        "emergencyContact": {
+          "name": "Jane Smith",
+          "relationship": "Spouse",
+          "phone": "+1 (555) 987-6543"
+        }
+      },
+      "employment": {
+        "role": "Senior Technician",
+        "department": "Field Operations",
+        "branch": "Downtown Branch",
+        "startDate": "2021-03-15",
+        "contractType": "permanent",
+        "status": "active",
+        "manager": "Sarah Wilson",
+        "salary": 65000,
+        "lastReview": "2023-12-01",
+        "nextReview": "2024-12-01"
+      },
+      "leave": {
+        "balance": 18,
+        "used": 7,
+        "total": 25
+      },
+      "performance": {
+        "rating": 4.2,
+        "efficiency": 94.2,
+        "jobsCompleted": 156,
+        "customerSatisfaction": 4.5
+      },
+      "documents": [
+        {
+          "id": "DOC001",
+          "name": "Employment Contract",
+          "type": "contract",
+          "uploadDate": "2021-03-15",
+          "url": "/documents/john-smith-contract.pdf"
+        },
+        {
+          "id": "DOC002",
+          "name": "ID Copy",
+          "type": "identification",
+          "uploadDate": "2021-03-15",
+          "url": "/documents/john-smith-id.pdf"
+        }
+      ]
+    },
+    {
+      "id": "E002",
+      "employeeNumber": "FO-002",
+      "personalInfo": {
+        "firstName": "Sarah",
+        "lastName": "Johnson",
+        "fullName": "Sarah Johnson",
+        "email": "sarah.johnson@fiberco.com",
+        "phone": "+1 (555) 234-5678",
+        "address": "456 Oak Ave, Midtown, City 12346",
+        "dateOfBirth": "1988-08-22",
+        "emergencyContact": {
+          "name": "Mike Johnson",
+          "relationship": "Brother",
+          "phone": "+1 (555) 876-5432"
+        }
+      },
+      "employment": {
+        "role": "Fleet Coordinator",
+        "department": "Fleet Management",
+        "branch": "Central Branch",
+        "startDate": "2020-08-22",
+        "contractType": "permanent",
+        "status": "on-leave",
+        "manager": "David Brown",
+        "salary": 58000,
+        "lastReview": "2024-01-05",
+        "nextReview": "2025-01-05"
+      },
+      "leave": {
+        "balance": 12,
+        "used": 13,
+        "total": 25
+      },
+      "performance": {
+        "rating": 4.5,
+        "efficiency": 96.8,
+        "jobsCompleted": 203,
+        "customerSatisfaction": 4.7
+      },
+      "documents": [
+        {
+          "id": "DOC003",
+          "name": "Employment Contract",
+          "type": "contract",
+          "uploadDate": "2020-08-22",
+          "url": "/documents/sarah-johnson-contract.pdf"
+        }
+      ]
+    },
+    {
+      "id": "E003",
+      "employeeNumber": "FO-003",
+      "personalInfo": {
+        "firstName": "Mike",
+        "lastName": "Chen",
+        "fullName": "Mike Chen",
+        "email": "mike.chen@fiberco.com",
+        "phone": "+1 (555) 345-6789",
+        "address": "789 Pine St, Uptown, City 12347",
+        "dateOfBirth": "1992-05-10",
+        "emergencyContact": {
+          "name": "Lisa Chen",
+          "relationship": "Sister",
+          "phone": "+1 (555) 765-4321"
+        }
+      },
+      "employment": {
+        "role": "Network Technician",
+        "department": "Field Operations",
+        "branch": "Downtown Branch",
+        "startDate": "2023-05-10",
+        "contractType": "contract",
+        "status": "active",
+        "manager": "Sarah Wilson",
+        "salary": 48000,
+        "lastReview": "2023-11-15",
+        "nextReview": "2024-11-15"
+      },
+      "leave": {
+        "balance": 8,
+        "used": 2,
+        "total": 10
+      },
+      "performance": {
+        "rating": 3.8,
+        "efficiency": 88.5,
+        "jobsCompleted": 89,
+        "customerSatisfaction": 4.1
+      },
+      "documents": [
+        {
+          "id": "DOC004",
+          "name": "Contract Agreement",
+          "type": "contract",
+          "uploadDate": "2023-05-10",
+          "url": "/documents/mike-chen-contract.pdf"
+        }
+      ]
+    }
+  ],
+  "leaveRequests": [
+    {
+      "id": "LR001",
+      "employeeId": "E001",
+      "employee": "John Smith",
+      "type": "Annual Leave",
+      "startDate": "2024-02-15",
+      "endDate": "2024-02-19",
+      "days": 5,
+      "reason": "Family vacation",
+      "status": "pending",
+      "submittedDate": "2024-01-20",
+      "approver": "HR Manager",
+      "documents": []
+    },
+    {
+      "id": "LR002",
+      "employeeId": "E002",
+      "employee": "Sarah Johnson",
+      "type": "Sick Leave",
+      "startDate": "2024-01-22",
+      "endDate": "2024-01-24",
+      "days": 3,
+      "reason": "Medical appointment and recovery",
+      "status": "approved",
+      "submittedDate": "2024-01-21",
+      "approver": "HR Manager",
+      "approvedDate": "2024-01-21",
+      "documents": [
+        {
+          "name": "Medical Certificate",
+          "url": "/documents/sarah-medical-cert.pdf"
+        }
+      ]
+    },
+    {
+      "id": "LR003",
+      "employeeId": "E003",
+      "employee": "Mike Chen",
+      "type": "Maternity Leave",
+      "startDate": "2024-03-01",
+      "endDate": "2024-05-30",
+      "days": 90,
+      "reason": "Maternity leave",
+      "status": "pending",
+      "submittedDate": "2024-01-18",
+      "approver": "HR Manager",
+      "documents": []
+    }
+  ],
+  "onboardingTasks": [
+    {
+      "id": "OB001",
+      "employeeId": "E004",
+      "employee": "Alex Kim",
+      "position": "Junior Technician",
+      "startDate": "2024-01-22",
+      "progress": 75,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Complete paperwork",
+          "status": "completed",
+          "dueDate": "2024-01-22"
+        },
+        {
+          "id": "T002",
+          "title": "IT setup",
+          "status": "completed",
+          "dueDate": "2024-01-23"
+        },
+        {
+          "id": "T003",
+          "title": "Safety training",
+          "status": "completed",
+          "dueDate": "2024-01-24"
+        },
+        {
+          "id": "T004",
+          "title": "Department introduction",
+          "status": "completed",
+          "dueDate": "2024-01-25"
+        },
+        {
+          "id": "T005",
+          "title": "System training",
+          "status": "completed",
+          "dueDate": "2024-01-26"
+        },
+        {
+          "id": "T006",
+          "title": "Equipment assignment",
+          "status": "completed",
+          "dueDate": "2024-01-29"
+        },
+        {
+          "id": "T007",
+          "title": "Mentor assignment",
+          "status": "in-progress",
+          "dueDate": "2024-01-30"
+        },
+        {
+          "id": "T008",
+          "title": "First week review",
+          "status": "pending",
+          "dueDate": "2024-02-01"
+        }
+      ]
+    },
+    {
+      "id": "OB002",
+      "employeeId": "E005",
+      "employee": "Maria Rodriguez",
+      "position": "Customer Service Rep",
+      "startDate": "2024-01-25",
+      "progress": 45,
+      "tasks": [
+        {
+          "id": "T009",
+          "title": "Complete paperwork",
+          "status": "completed",
+          "dueDate": "2024-01-25"
+        },
+        {
+          "id": "T010",
+          "title": "IT setup",
+          "status": "completed",
+          "dueDate": "2024-01-26"
+        },
+        {
+          "id": "T011",
+          "title": "Safety training",
+          "status": "completed",
+          "dueDate": "2024-01-27"
+        },
+        {
+          "id": "T012",
+          "title": "System access setup",
+          "status": "completed",
+          "dueDate": "2024-01-28"
+        },
+        {
+          "id": "T013",
+          "title": "Customer service training",
+          "status": "in-progress",
+          "dueDate": "2024-01-30"
+        },
+        {
+          "id": "T014",
+          "title": "Product knowledge training",
+          "status": "pending",
+          "dueDate": "2024-02-01"
+        },
+        {
+          "id": "T015",
+          "title": "Quality standards training",
+          "status": "pending",
+          "dueDate": "2024-02-03"
+        },
+        {
+          "id": "T016",
+          "title": "Mentor assignment",
+          "status": "pending",
+          "dueDate": "2024-02-05"
+        },
+        {
+          "id": "T017",
+          "title": "First week review",
+          "status": "pending",
+          "dueDate": "2024-02-07"
+        }
+      ]
+    }
+  ],
+  "disciplinaryActions": [
+    {
+      "id": "DA001",
+      "employeeId": "E001",
+      "employee": "John Smith",
+      "type": "Verbal Warning",
+      "issue": "Repeated tardiness",
+      "date": "2024-01-15",
+      "description": "Employee has been consistently 15-20 minutes late",
+      "action": "Formal verbal warning issued",
+      "followUp": "2024-02-15",
+      "status": "active",
+      "documents": [
+        {
+          "name": "Warning Notice",
+          "url": "/documents/john-smith-warning.pdf",
+          "signed": true
+        }
+      ]
+    },
+    {
+      "id": "DA002",
+      "employeeId": "E002",
+      "employee": "Sarah Johnson",
+      "type": "Written Warning",
+      "issue": "Safety protocol violation",
+      "date": "2024-01-10",
+      "description": "Failed to follow proper PPE requirements on site",
+      "action": "Written warning and mandatory safety training",
+      "followUp": "2024-02-10",
+      "status": "resolved",
+      "documents": [
+        {
+          "name": "Written Warning",
+          "url": "/documents/sarah-johnson-warning.pdf",
+          "signed": true
+        },
+        {
+          "name": "Safety Training Certificate",
+          "url": "/documents/sarah-johnson-safety-cert.pdf",
+          "signed": true
+        }
+      ]
+    }
+  ],
+  "departments": [
+    {
+      "id": "DEPT001",
+      "name": "Field Operations",
+      "branch": "Downtown Branch",
+      "manager": "Sarah Wilson",
+      "employees": 15,
+      "performance": {
+        "efficiency": 91.2,
+        "jobsCompleted": 342,
+        "completionRate": 98.2,
+        "customerSatisfaction": 4.3
+      }
+    },
+    {
+      "id": "DEPT002",
+      "name": "Fleet Management",
+      "branch": "Central Branch",
+      "manager": "David Brown",
+      "employees": 8,
+      "performance": {
+        "efficiency": 88.9,
+        "jobsCompleted": 298,
+        "completionRate": 96.8,
+        "customerSatisfaction": 4.1
+      }
+    },
+    {
+      "id": "DEPT003",
+      "name": "Customer Service",
+      "branch": "All Branches",
+      "manager": "Lisa Garcia",
+      "employees": 12,
+      "performance": {
+        "efficiency": 94.5,
+        "jobsCompleted": 856,
+        "completionRate": 97.8,
+        "customerSatisfaction": 4.6
+      }
+    },
+    {
+      "id": "DEPT004",
+      "name": "Network Operations",
+      "branch": "Central Branch",
+      "manager": "Robert Taylor",
+      "employees": 10,
+      "performance": {
+        "efficiency": 89.7,
+        "jobsCompleted": 445,
+        "completionRate": 95.5,
+        "customerSatisfaction": 4.2
+      }
+    }
+  ],
+  "branches": [
+    {
+      "id": "BR001",
+      "name": "Downtown Branch",
+      "address": "123 Business Ave, Downtown",
+      "manager": "Sarah Wilson",
+      "employees": 25,
+      "departments": ["Field Operations", "IT Support"],
+      "performance": {
+        "efficiency": 92.1,
+        "revenue": 450000,
+        "customerSatisfaction": 4.4
+      }
+    },
+    {
+      "id": "BR002",
+      "name": "Central Branch",
+      "address": "456 Corporate Blvd, Midtown",
+      "manager": "David Brown",
+      "employees": 30,
+      "departments": ["Fleet Management", "Network Operations", "HR"],
+      "performance": {
+        "efficiency": 89.3,
+        "revenue": 520000,
+        "customerSatisfaction": 4.2
+      }
+    },
+    {
+      "id": "BR003",
+      "name": "Uptown Branch",
+      "address": "789 Service St, Uptown",
+      "manager": "Lisa Garcia",
+      "employees": 20,
+      "departments": ["Customer Service", "Sales"],
+      "performance": {
+        "efficiency": 91.8,
+        "revenue": 380000,
+        "customerSatisfaction": 4.5
+      }
+    }
+  ],
+  "systemAlerts": [
+    {
+      "id": "ALT001",
+      "type": "safety",
+      "message": "Vehicle inspection overdue - Van #247",
+      "severity": "high",
+      "date": "2024-01-21",
+      "department": "Fleet Management",
+      "status": "active"
+    },
+    {
+      "id": "ALT002",
+      "type": "compliance",
+      "message": "H&S training due for 3 technicians",
+      "severity": "medium",
+      "date": "2024-01-20",
+      "department": "Field Operations",
+      "status": "active"
+    },
+    {
+      "id": "ALT003",
+      "type": "hr",
+      "message": "Contract renewal required for Mike Chen",
+      "severity": "medium",
+      "date": "2024-01-19",
+      "department": "HR",
+      "status": "pending"
+    },
+    {
+      "id": "ALT004",
+      "type": "system",
+      "message": "Payroll processing scheduled for tonight",
+      "severity": "info",
+      "date": "2024-01-21",
+      "department": "Payroll",
+      "status": "active"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "J001",
+      "title": "HVAC System Maintenance",
+      "status": "completed",
+      "priority": "medium",
+      "assignedTo": "John Smith",
+      "department": "Field Operations",
+      "completedDate": "2024-01-21",
+      "duration": 2.5
+    },
+    {
+      "id": "J002",
+      "title": "Network Installation",
+      "status": "assigned",
+      "priority": "high",
+      "assignedTo": "Mike Chen",
+      "department": "Field Operations",
+      "startDate": "2024-01-21",
+      "estimatedDuration": 4,
+      "assignedTechnician": "John Smith",
+      "scheduledDate": "2025-07-31",
+      "scheduledTime": "11:00",
+      "updatedAt": "2025-07-31T19:33:09.607Z"
+    },
+    {
+      "id": "J003",
+      "title": "Emergency Repair",
+      "status": "assigned",
+      "priority": "urgent",
+      "assignedTo": "Sarah Johnson",
+      "department": "Field Operations",
+      "failedDate": "2024-01-20",
+      "reason": "Equipment failure",
+      "assignedTechnician": "John Smith",
+      "scheduledDate": "2025-07-31",
+      "scheduledTime": "12:00",
+      "updatedAt": "2025-07-31T19:33:07.053Z"
+    }
+  ],
+  "overtime": [
+    {
+      "id": "OT001",
+      "employeeId": "E001",
+      "employee": "John Smith",
+      "date": "2024-01-20",
+      "startTime": "17:00",
+      "endTime": "21:30",
+      "totalHours": 4.5,
+      "reason": "Emergency fiber repair - customer outage",
+      "assistantWorkedWith": "Mike Chen",
+      "workedAlone": false,
+      "status": "approved",
+      "submittedAt": "2024-01-21T08:00:00Z",
+      "approvedBy": "Sarah Johnson",
+      "notes": "Critical customer affecting 200+ users"
+    }
+  ],
+  "inspections": [
+    {
+      "id": "INS001",
+      "type": "vehicle",
+      "vehicleId": "V001",
+      "submittedBy": "E001",
+      "submittedAt": "2024-01-21T07:30:00Z",
+      "items": [
+        {
+          "name": "Tires",
+          "status": "good",
+          "notes": ""
+        },
+        {
+          "name": "Engine Oil",
+          "status": "good",
+          "notes": ""
+        },
+        {
+          "name": "Brakes",
+          "status": "attention",
+          "notes": "Minor squeaking"
+        }
+      ]
+    }
+  ],
+  "compliance": {
+    "overall": 95.2,
+    "certifications": {
+      "safety": 98.1,
+      "technical": 94.5,
+      "quality": 93.8
+    },
+    "expiringCertifications": [
+      {
+        "employee": "John Smith",
+        "certification": "Safety Training",
+        "expiryDate": "2024-03-15"
+      },
+      {
+        "employee": "Mike Chen",
+        "certification": "Technical Certification",
+        "expiryDate": "2024-02-28"
+      }
+    ]
+  }
+}

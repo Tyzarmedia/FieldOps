@@ -1,0 +1,412 @@
+// Job Management API Routes for Coordinators and Technicians
+import { Router } from "express";
+
+const router = Router();
+
+// Mock data for demonstration - in real app this would connect to database
+let jobs: any[] = [
+  {
+    id: "1",
+    workOrderNumber: "WO-2024-001",
+    title: "FTTH Installation",
+    description: "Install fiber to the home for new customer",
+    type: "Installation",
+    priority: "High",
+    status: "Assigned",
+    assignedTechnician: "tech001",
+    assistantTechnician: "",
+    client: {
+      name: "Vumatel (Pty) Ltd",
+      address: "123 Main Street, Central",
+      coordinates: { lat: -26.2041, lng: 28.0473 },
+      contactPerson: "John Smith",
+      phone: "+27123456789",
+    },
+    estimatedHours: 4,
+    scheduledDate: new Date().toISOString(),
+    createdDate: new Date().toISOString(),
+    lastModified: new Date().toISOString(),
+    syncStatus: "synced",
+  },
+  {
+    id: "2",
+    workOrderNumber: "WO-2024-002",
+    title: "Network Maintenance",
+    description: "Routine maintenance on fiber network",
+    type: "Maintenance",
+    priority: "Medium",
+    status: "In Progress",
+    assignedTechnician: "tech001",
+    assistantTechnician: "",
+    client: {
+      name: "TelkomSA Ltd",
+      address: "456 Oak Avenue, Sandton",
+      coordinates: { lat: -26.1076, lng: 28.0567 },
+      contactPerson: "Jane Doe",
+      phone: "+27987654321",
+    },
+    estimatedHours: 2,
+    scheduledDate: new Date().toISOString(),
+    createdDate: new Date().toISOString(),
+    lastModified: new Date().toISOString(),
+    syncStatus: "synced",
+  },
+];
+
+// Get all jobs
+router.get("/jobs", (req, res) => {
+  try {
+    res.json({ success: true, data: jobs });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch jobs",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get jobs by technician
+router.get("/jobs/technician/:technicianId", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const technicianJobs = jobs.filter(
+      (job) =>
+        job.assignedTechnician === technicianId ||
+        job.assistantTechnician === technicianId,
+    );
+    res.json({ success: true, data: technicianJobs });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch technician jobs",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get jobs by status
+router.get("/jobs/status/:status", (req, res) => {
+  try {
+    const { status } = req.params;
+    const statusJobs = jobs.filter(
+      (job) => job.status.toLowerCase() === status.toLowerCase(),
+    );
+    res.json({ success: true, data: statusJobs });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch jobs by status",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get single job by ID
+router.get("/jobs/:jobId", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const job = jobs.find((j) => j.id === jobId);
+
+    if (!job) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    res.json({ success: true, data: job });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Create new job (Coordinator only)
+router.post("/jobs", (req, res) => {
+  try {
+    const jobData = req.body;
+    const newJob = {
+      id: Date.now().toString(),
+      workOrderNumber: `WO-${new Date().getFullYear()}-${String(jobs.length + 1).padStart(3, "0")}`,
+      ...jobData,
+      status: "Open",
+      assignedTechnician: "",
+      assistantTechnician: "",
+      createdDate: new Date().toISOString(),
+      lastModified: new Date().toISOString(),
+      syncStatus: "synced",
+    };
+
+    jobs.push(newJob);
+
+    res.json({
+      success: true,
+      data: newJob,
+      message: "Job created successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to create job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Assign job to technician (Coordinator only)
+router.put("/jobs/:jobId/assign", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { technicianId, assistantId } = req.body;
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    jobs[jobIndex].assignedTechnician = technicianId;
+    if (assistantId) {
+      jobs[jobIndex].assistantTechnician = assistantId;
+    }
+    jobs[jobIndex].status = "Assigned";
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    res.json({
+      success: true,
+      data: jobs[jobIndex],
+      message: "Job assigned successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to assign job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Update job status (Technician actions)
+router.put("/jobs/:jobId/status", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { status, notes, technicianId } = req.body;
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    // Verify technician is assigned to this job
+    const job = jobs[jobIndex];
+    if (
+      job.assignedTechnician !== technicianId &&
+      job.assistantTechnician !== technicianId
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to update this job",
+      });
+    }
+
+    jobs[jobIndex].status = status;
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    if (notes) {
+      if (!jobs[jobIndex].notes) {
+        jobs[jobIndex].notes = [];
+      }
+      jobs[jobIndex].notes.push({
+        timestamp: new Date().toISOString(),
+        technician: technicianId,
+        note: notes,
+      });
+    }
+
+    // Set completed date if job is being closed
+    if (status === "Completed" || status === "Closed") {
+      jobs[jobIndex].completedDate = new Date().toISOString();
+    }
+
+    res.json({
+      success: true,
+      data: jobs[jobIndex],
+      message: "Job status updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to update job status",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Accept job (Technician action)
+router.put("/jobs/:jobId/accept", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { technicianId } = req.body;
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    const job = jobs[jobIndex];
+    if (
+      job.assignedTechnician !== technicianId &&
+      job.assistantTechnician !== technicianId
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to accept this job",
+      });
+    }
+
+    jobs[jobIndex].status = "Accepted";
+    jobs[jobIndex].acceptedDate = new Date().toISOString();
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    res.json({
+      success: true,
+      data: jobs[jobIndex],
+      message: "Job accepted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to accept job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Start job tracking (Technician action)
+router.put("/jobs/:jobId/start", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { technicianId, location } = req.body;
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    const job = jobs[jobIndex];
+    if (
+      job.assignedTechnician !== technicianId &&
+      job.assistantTechnician !== technicianId
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to start this job",
+      });
+    }
+
+    jobs[jobIndex].status = "In Progress";
+    jobs[jobIndex].startedDate = new Date().toISOString();
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    if (location) {
+      jobs[jobIndex].startLocation = location;
+    }
+
+    res.json({
+      success: true,
+      data: jobs[jobIndex],
+      message: "Job started successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to start job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Complete job (Technician action)
+router.put("/jobs/:jobId/complete", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { technicianId, timeSpent, notes, photos } = req.body;
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    const job = jobs[jobIndex];
+    if (
+      job.assignedTechnician !== technicianId &&
+      job.assistantTechnician !== technicianId
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to complete this job",
+      });
+    }
+
+    jobs[jobIndex].status = "Completed";
+    jobs[jobIndex].completedDate = new Date().toISOString();
+    jobs[jobIndex].actualHours = timeSpent;
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    if (notes) {
+      jobs[jobIndex].completionNotes = notes;
+    }
+
+    if (photos) {
+      jobs[jobIndex].photos = photos;
+    }
+
+    res.json({
+      success: true,
+      data: jobs[jobIndex],
+      message: "Job completed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to complete job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get job statistics for dashboard
+router.get("/jobs/stats/:technicianId", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const technicianJobs = jobs.filter(
+      (job) =>
+        job.assignedTechnician === technicianId ||
+        job.assistantTechnician === technicianId,
+    );
+
+    const stats = {
+      assigned: technicianJobs.filter(
+        (job) => job.status === "Assigned" || job.status === "Open",
+      ).length,
+      accepted: technicianJobs.filter((job) => job.status === "Accepted")
+        .length,
+      inProgress: technicianJobs.filter((job) => job.status === "In Progress")
+        .length,
+      completed: technicianJobs.filter(
+        (job) => job.status === "Completed" || job.status === "Closed",
+      ).length,
+      total: technicianJobs.length,
+    };
+
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch job stats",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+export default router;
