@@ -758,117 +758,106 @@ export default function EnhancedJobDetailsScreen() {
                           <SelectItem value="isp-drop-cable-broken">
                             ISP - Drop Cable Broken
                           </SelectItem>
-                          <SelectItem value="isp-damaged-fiber">
-                            ISP - Damaged Fiber
+                          <SelectItem value="isp-drop-cable-connector-broken">
+                            ISP - Drop Cable Connector broken
                           </SelectItem>
-                          <SelectItem value="isp-loose-connections">
-                            ISP - Loose Connections
+                          <SelectItem value="isp-drop-cable-high-losses">
+                            ISP - Drop Cable High Losses
                           </SelectItem>
-                          <SelectItem value="isp-splice-loss">
-                            ISP - Splice Loss
+                          <SelectItem value="isp-incorrect-not-patched">
+                            ISP - Incorrect/Not Patched
                           </SelectItem>
-                          <SelectItem value="isp-connector-dirty">
-                            ISP - Dirty Connector
+                          <SelectItem value="isp-cpe-ont-faulty">
+                            ISP - CPE/ONT Faulty
                           </SelectItem>
-                          <SelectItem value="isp-bend-radius">
-                            ISP - Bend Radius Exceeded
+                          <SelectItem value="isp-cpe-ont-reboot-off">
+                            ISP - CPE/ONT Reboot/Off
+                          </SelectItem>
+                          <SelectItem value="isp-cpe-sfp-faulty">
+                            ISP - CPE SFP Faulty
+                          </SelectItem>
+                          <SelectItem value="isp-cpe-move">
+                            ISP - CPE Move
+                          </SelectItem>
+                          <SelectItem value="isp-router-faulty">
+                            ISP - Router Faulty
+                          </SelectItem>
+                          <SelectItem value="isp-router-reboot-off">
+                            ISP - Router Reboot/Off
+                          </SelectItem>
+                          <SelectItem value="isp-ups-issue">
+                            ISP - UPS Issue
+                          </SelectItem>
+                          <SelectItem value="osp-pop-faulty-patch-lead">
+                            OSP - POP Faulty Patch Lead
+                          </SelectItem>
+                          <SelectItem value="osp-pop-incorrect-patch">
+                            OSP - POP Incorrect Patch
+                          </SelectItem>
+                          <SelectItem value="osp-pop-faulty-sfp">
+                            OSP - POP Faulty SFP
+                          </SelectItem>
+                          <SelectItem value="osp-pop-switch-offline-faulty">
+                            OSP - POP Switch Offline/Faulty
+                          </SelectItem>
+                          <SelectItem value="osp-pop-not-patched">
+                            OSP - POP Not Patched
+                          </SelectItem>
+                          <SelectItem value="osp-ag-not-patched">
+                            OSP - AG Not Patched
+                          </SelectItem>
+                          <SelectItem value="osp-ag-incorrect-patch">
+                            OSP - AG Incorrect Patch
+                          </SelectItem>
+                          <SelectItem value="osp-ag-faulty-patch-lead">
+                            OSP - AG Faulty Patch Lead
                           </SelectItem>
                           <SelectItem value="osp-high-losses">
                             OSP - High Losses
                           </SelectItem>
-                          <SelectItem value="osp-fiber-break">
-                            OSP - Fiber Break
+                          <SelectItem value="osp-faulty-field-splitter">
+                            OSP - Faulty field splitter
                           </SelectItem>
-                          <SelectItem value="osp-water-ingress">
-                            OSP - Water Ingress
+                          <SelectItem value="osp-fibre-broken-distribution-run">
+                            OSP - Fibre Broken on Distribution run
                           </SelectItem>
-                          <SelectItem value="osp-cable-damage">
-                            OSP - Cable Damage
+                          <SelectItem value="osp-fibre-broken-mdu-dist-box-ndp">
+                            OSP - Fibre Broken in MDU Dist Box/NDP
                           </SelectItem>
-                          <SelectItem value="osp-joint-failure">
-                            OSP - Joint Failure
+                          <SelectItem value="osp-fibre-broken-joint">
+                            OSP - Fibre Broken in Joint
                           </SelectItem>
-                          <SelectItem value="osp-rodent-damage">
-                            OSP - Rodent Damage
+                          <SelectItem value="osp-fibre-damaged-ctp">
+                            OSP - Fibre Damaged at CTP
                           </SelectItem>
-                          <SelectItem value="equipment-ont-failure">
-                            Equipment - ONT Failure
+                          <SelectItem value="osp-fibre-broken-wall-box">
+                            OSP - Fibre broken in Wall box
                           </SelectItem>
-                          <SelectItem value="equipment-ont-config">
-                            Equipment - ONT Configuration
+                          <SelectItem value="osp-wallbox-incorrect-patch">
+                            OSP - Wallbox Incorrect Patch
                           </SelectItem>
-                          <SelectItem value="equipment-power-supply">
-                            Equipment - Power Supply Issue
+                          <SelectItem value="osp-wallbox-not-patched">
+                            OSP - Wallbox Not Patched
                           </SelectItem>
-                          <SelectItem value="equipment-sfp-failure">
-                            Equipment - SFP Module Failure
+                          <SelectItem value="osp-wallbox-move">
+                            OSP - Wallbox Move
                           </SelectItem>
-                          <SelectItem value="equipment-port-failure">
-                            Equipment - Port Failure
+                          <SelectItem value="osp-civil-works-issue">
+                            OSP - Civil Works Issue
                           </SelectItem>
-                          <SelectItem value="network-congestion">
-                            Network - Congestion
+                          <SelectItem value="service-activation-network-identifier-confirmation">
+                            Service activation - Network Identifier Confirmation
                           </SelectItem>
-                          <SelectItem value="network-routing">
-                            Network - Routing Issue
-                          </SelectItem>
-                          <SelectItem value="network-bandwidth">
-                            Network - Bandwidth Limitation
-                          </SelectItem>
-                          <SelectItem value="customer-premises-wiring">
-                            Customer - Premises Wiring
-                          </SelectItem>
-                          <SelectItem value="customer-equipment">
-                            Customer - Equipment Issue
-                          </SelectItem>
-                          <SelectItem value="customer-configuration">
-                            Customer - Configuration Error
-                          </SelectItem>
-                          <SelectItem value="environmental-weather">
-                            Environmental - Weather Related
-                          </SelectItem>
-                          <SelectItem value="environmental-temperature">
-                            Environmental - Temperature
-                          </SelectItem>
-                          <SelectItem value="environmental-lightning">
-                            Environmental - Lightning Damage
-                          </SelectItem>
-                          <SelectItem value="preventive-maintenance">
-                            Preventive Maintenance
-                          </SelectItem>
-                          <SelectItem value="routine-inspection">
-                            Routine Inspection
-                          </SelectItem>
-                          <SelectItem value="upgrade-installation">
-                            Upgrade Installation
-                          </SelectItem>
-                          <SelectItem value="new-service-activation">
-                            New Service Activation
-                          </SelectItem>
-                          <SelectItem value="service-relocation">
-                            Service Relocation
-                          </SelectItem>
-                          <SelectItem value="no-fault-found">
-                            No Fault Found
+                          <SelectItem value="internet-service-provider-issue">
+                            Internet Service Provider Issue
                           </SelectItem>
                           <SelectItem value="no-fault-handed-back">
                             No Fault Handed Back
                           </SelectItem>
-                          <SelectItem value="fault-confirmed-resolved">
-                            Fault Confirmed - Resolved
+                          <SelectItem value="change-completed">
+                            Change Completed
                           </SelectItem>
-                          <SelectItem value="escalation-required">
-                            Escalation Required
-                          </SelectItem>
-                          <SelectItem value="parts-required">
-                            Parts Required
-                          </SelectItem>
-                          <SelectItem value="access-denied">
-                            Access Denied
-                          </SelectItem>
-                          <SelectItem value="customer-not-available">
-                            Customer Not Available
-                          </SelectItem>
+                          <SelectItem value="nwi-resolved">NWI Resolved</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
