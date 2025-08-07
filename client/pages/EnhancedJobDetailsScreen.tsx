@@ -482,6 +482,10 @@ export default function EnhancedJobDetailsScreen() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl font-bold">Job Details</h1>
           <div className="flex items-center space-x-3">
+            <div className="bg-white/20 rounded-lg px-3 py-1 text-center">
+              <div className="text-xs text-white/80">Timer</div>
+              <div className="font-mono font-bold">{formatTimer(jobTimer)}</div>
+            </div>
             <Button
               variant="ghost"
               size="sm"
@@ -502,22 +506,58 @@ export default function EnhancedJobDetailsScreen() {
           </div>
         </div>
 
-        {/* Start/Stop Buttons */}
+        {/* Start/Stop/Pause Buttons */}
         <div className="flex justify-center space-x-4 mb-6">
-          <Button
-            className="bg-white/20 hover:bg-white/30 text-white border-white/30 px-8 py-2"
-            variant="outline"
-          >
-            <CheckCircle className="h-4 w-4 mr-2" />
-            Start
-          </Button>
-          <Button
-            className="bg-white/20 hover:bg-white/30 text-white border-white/30 px-8 py-2"
-            variant="outline"
-          >
-            <X className="h-4 w-4 mr-2" />
-            Stop
-          </Button>
+          {jobStatus === 'assigned' && (
+            <Button
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
+              onClick={startJob}
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Start
+            </Button>
+          )}
+
+          {jobStatus === 'in-progress' && (
+            <>
+              <Button
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-2"
+                onClick={pauseJob}
+              >
+                <Pause className="h-4 w-4 mr-2" />
+                Pause
+              </Button>
+              <Button
+                className="bg-red-500 hover:bg-red-600 text-white px-8 py-2"
+                onClick={stopJob}
+              >
+                <X className="h-4 w-4 mr-2" />
+                Stop
+              </Button>
+            </>
+          )}
+
+          {jobStatus === 'paused' && (
+            <>
+              <Button
+                className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
+                onClick={() => {
+                  setJobStatus('in-progress');
+                  setIsTimerRunning(true);
+                }}
+              >
+                <Play className="h-4 w-4 mr-2" />
+                Resume
+              </Button>
+              <Button
+                className="bg-red-500 hover:bg-red-600 text-white px-8 py-2"
+                onClick={stopJob}
+              >
+                <X className="h-4 w-4 mr-2" />
+                Stop
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Company and Job Info */}
