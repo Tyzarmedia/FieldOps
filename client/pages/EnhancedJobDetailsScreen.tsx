@@ -442,35 +442,47 @@ export default function EnhancedJobDetailsScreen() {
             <Card>
               <CardContent className="p-4">
                 <h3 className="font-semibold mb-3 text-gray-900">Job Tags</h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
+                  {/* Assignment Time */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border border-gray-400"></div>
-                      <span className="text-sm">Start Date</span>
+                      <Calendar className="h-4 w-4 text-blue-500" />
+                      <span className="text-sm font-medium">Assigned</span>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-medium">Jul 18, 2025</div>
+                      <Badge className="bg-blue-100 text-blue-800 text-xs">4:02 PM</Badge>
                     </div>
                   </div>
+
+                  {/* Due Time */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border border-gray-400"></div>
-                      <span className="text-sm">Jul 18, 2025</span>
+                      <Clock className={`h-4 w-4 ${isLate ? 'text-red-500' : 'text-orange-500'}`} />
+                      <span className="text-sm font-medium">Due</span>
+                      {isLate && <AlertTriangle className="h-4 w-4 text-red-500" />}
                     </div>
-                    <Badge className="bg-gray-100 text-gray-800 text-xs">4:02 PM</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border border-gray-400"></div>
-                      <span className="text-sm">Scheduled Due</span>
+                    <div className="text-right">
+                      <div className={`text-sm font-medium ${isLate ? 'text-red-600' : 'text-gray-900'}`}>
+                        Jul 18, 2025
+                      </div>
+                      <Badge className={`text-xs ${isLate ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'}`}>
+                        11:59 PM
+                      </Badge>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border border-gray-400"></div>
-                      <span className="text-sm">Jul 18, 2025</span>
+
+                  {/* Time Status */}
+                  {isLate && (
+                    <div className="flex items-center space-x-2 p-2 bg-red-50 rounded">
+                      <AlertTriangle className="h-4 w-4 text-red-500" />
+                      <span className="text-sm text-red-700 font-medium">Job is overdue</span>
                     </div>
-                    <span className="text-sm text-gray-500">11:59 PM</span>
-                  </div>
-                  <div className="flex items-center space-x-2 mt-3">
-                    <Clock className="h-4 w-4 text-gray-500" />
+                  )}
+
+                  {/* Job Type */}
+                  <div className="flex items-center space-x-2 mt-4">
+                    <Settings className="h-4 w-4 text-gray-500" />
                     <span className="text-sm font-medium">Job Type</span>
                   </div>
                   <p className="text-sm text-blue-600 ml-6">FTTH - Maintenance</p>
