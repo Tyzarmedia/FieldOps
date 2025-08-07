@@ -493,13 +493,15 @@ export default function EnhancedJobDetailsScreen() {
             {/* Technicians */}
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-3 text-gray-900">Technicians</h3>
+                <h3 className="font-semibold mb-3 text-gray-900">Assigned Technician</h3>
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white font-semibold">
-                    DC
+                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                    DM
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Operational Element Manager</p>
+                    <p className="font-medium text-gray-900">{technician.name}</p>
+                    <p className="text-sm text-gray-600">ID: {technician.id}</p>
+                    <p className="text-sm text-gray-600">{technician.phone}</p>
                   </div>
                 </div>
               </CardContent>
