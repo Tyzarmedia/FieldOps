@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -20,11 +21,6 @@ import {
   ChevronDown,
   Trash2,
   RefreshCw,
-  Play,
-  Pause,
-  Square,
-  Camera,
-  Package,
   Clock,
   MapPin,
   User,
@@ -33,6 +29,11 @@ import {
   HardHat,
   Settings,
   PenTool,
+  Camera,
+  Package,
+  Plus,
+  Search,
+  Save,
 } from "lucide-react";
 
 interface JobDetails {
@@ -47,12 +48,6 @@ interface JobDetails {
   priority: "low" | "medium" | "high" | "urgent";
   estimatedDuration: string;
   description: string;
-  tracking?: {
-    started: boolean;
-    startTime?: string;
-    paused: boolean;
-    totalPausedTime: number;
-  };
 }
 
 export default function EnhancedJobDetailsScreen() {
@@ -68,27 +63,32 @@ export default function EnhancedJobDetailsScreen() {
     location: 'East London'
   });
 
+  // UDF Form Data
+  const [udfData, setUdfData] = useState({
+    faultResolved: "",
+    faultSolutionType: "",
+    maintenanceIssueClass: "",
+    techComments: "",
+    rocComments: "",
+    referenceNumber: "",
+  });
+
+  // Sign Off Form Data
+  const [signOffData, setSignOffData] = useState({
+    date: new Date().toISOString().slice(0, 16),
+    comments: "",
+    completionNotes: "",
+    nameAndSurname: "",
+    signature: "",
+    acceptTerms: false,
+  });
+
   const [expandedSections, setExpandedSections] = useState<{
     [key: string]: boolean;
   }>({
     faultDetails: true,
     planning: false,
   });
-
-  const [formData, setFormData] = useState({
-    resolution: "",
-    fixType: "",
-    maintenanceIssueClass: "",
-    maintenanceClassIssue: "",
-    resolutionComments: "",
-  });
-
-  const [stockItems, setStockItems] = useState([
-    { id: 1, name: "Fiber Optic Cable - 50m", available: 15, used: 0 },
-    { id: 2, name: "RJ45 Connectors", available: 100, used: 0 },
-    { id: 3, name: "Cable Ties", available: 200, used: 0 },
-    { id: 4, name: "Junction Box", available: 8, used: 0 },
-  ]);
 
   const [jobPhotos, setJobPhotos] = useState<string[]>([]);
 
@@ -113,10 +113,7 @@ export default function EnhancedJobDetailsScreen() {
       setNetworkStatus(navigator.onLine ? 'online' : 'offline');
     };
 
-    // Initial check
     updateNetworkStatus();
-
-    // Listen for network changes
     window.addEventListener('online', updateNetworkStatus);
     window.addEventListener('offline', updateNetworkStatus);
 
@@ -126,27 +123,6 @@ export default function EnhancedJobDetailsScreen() {
     };
   }, []);
 
-
-
-  const closeJob = async () => {
-    try {
-      await fetch(`/api/jobs/${jobId}/close`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          maintenanceIssueClass: formData.maintenanceIssueClass,
-          images: jobPhotos,
-          udfData: formData,
-          location: "Job completion location",
-        }),
-      });
-
-      navigate("/", { state: { message: "Job completed successfully!" } });
-    } catch (error) {
-      console.error("Failed to close job:", error);
-    }
-  };
-
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -154,30 +130,75 @@ export default function EnhancedJobDetailsScreen() {
     }));
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
+  const handleUdfChange = (field: string, value: string) => {
+    setUdfData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleUpdate = async () => {
+  const handleSignOffChange = (field: string, value: string | boolean) => {
+    setSignOffData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleUpdateUdf = async () => {
     try {
-      await fetch(`/api/jobs/${jobId}`, {
+      await fetch(`/api/jobs/${jobId}/udf`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          udfData: formData,
-          updatedAt: new Date().toISOString(),
-        }),
+        body: JSON.stringify(udfData),
       });
-
-      console.log("UDF Fields updated:", formData);
+      console.log("UDF updated successfully");
     } catch (error) {
       console.error("Failed to update UDF:", error);
     }
   };
 
+  const handleSaveJob = async () => {
+    try {
+      await fetch(`/api/jobs/${jobId}/save`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          signOffData,
+          photos: jobPhotos,
+          status: "saved",
+        }),
+      });
+      console.log("Job saved successfully");
+    } catch (error) {
+      console.error("Failed to save job:", error);
+    }
+  };
+
+  const handleCompleteJob = async () => {
+    if (!signOffData.acceptTerms) {
+      alert("Please accept the Terms & Conditions");
+      return;
+    }
+
+    try {
+      await fetch(`/api/jobs/${jobId}/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          signOffData,
+          udfData,
+          photos: jobPhotos,
+          status: "completed",
+        }),
+      });
+
+      navigate("/technician/jobs", { 
+        state: { message: "Job completed successfully!" } 
+      });
+    } catch (error) {
+      console.error("Failed to complete job:", error);
+    }
+  };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -362,7 +383,7 @@ export default function EnhancedJobDetailsScreen() {
             <Card>
               <CardContent className="p-0">
                 <div
-                  className="flex items-center justify-between p-4 cursor-pointer"
+                  className="flex items-center justify-between p-4 cursor-pointer border-b"
                   onClick={() => toggleSection("faultDetails")}
                 >
                   <h3 className="font-semibold">
@@ -385,37 +406,37 @@ export default function EnhancedJobDetailsScreen() {
                 </div>
 
                 {expandedSections.faultDetails && (
-                  <div className="px-4 pb-4 space-y-4 border-t">
-                    {/* Resolution */}
+                  <div className="p-4 space-y-4">
+                    {/* Fault Resolved */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Resolution
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Fault Resolved
                       </label>
                       <Select
-                        value={formData.resolution}
+                        value={udfData.faultResolved}
                         onValueChange={(value) =>
-                          handleInputChange("resolution", value)
+                          handleUdfChange("faultResolved", value)
                         }
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="resolved">Resolved</SelectItem>
-                          <SelectItem value="unresolved">Unresolved</SelectItem>
+                          <SelectItem value="yes">Yes</SelectItem>
+                          <SelectItem value="no">No</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
-                    {/* Fix Type */}
+                    {/* Fault Solution Type */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Fix Type
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Fault Solution Type
                       </label>
                       <Select
-                        value={formData.fixType}
+                        value={udfData.faultSolutionType}
                         onValueChange={(value) =>
-                          handleInputChange("fixType", value)
+                          handleUdfChange("faultSolutionType", value)
                         }
                       >
                         <SelectTrigger className="w-full">
@@ -430,13 +451,13 @@ export default function EnhancedJobDetailsScreen() {
 
                     {/* Maintenance Issue Class */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Maintenance Issue Class
                       </label>
                       <Select
-                        value={formData.maintenanceIssueClass}
+                        value={udfData.maintenanceIssueClass}
                         onValueChange={(value) =>
-                          handleInputChange("maintenanceIssueClass", value)
+                          handleUdfChange("maintenanceIssueClass", value)
                         }
                       >
                         <SelectTrigger className="w-full">
@@ -459,23 +480,83 @@ export default function EnhancedJobDetailsScreen() {
                       </Select>
                     </div>
 
-                    {/* Resolution Comments */}
+                    {/* Tech Comments */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Resolution Comments
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Tech Comments
                       </label>
                       <Textarea
                         placeholder="Write here..."
-                        value={formData.resolutionComments}
+                        value={udfData.techComments}
                         onChange={(e) =>
-                          handleInputChange(
-                            "resolutionComments",
-                            e.target.value,
-                          )
+                          handleUdfChange("techComments", e.target.value)
                         }
                         className="min-h-[80px] resize-none"
                       />
                     </div>
+
+                    {/* ROC Comments */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        ROC Comments
+                      </label>
+                      <Textarea
+                        placeholder="Write here..."
+                        value={udfData.rocComments}
+                        onChange={(e) =>
+                          handleUdfChange("rocComments", e.target.value)
+                        }
+                        className="min-h-[80px] resize-none"
+                      />
+                    </div>
+
+                    {/* Reference Number */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Reference Number
+                      </label>
+                      <Input
+                        placeholder="Write here..."
+                        value={udfData.referenceNumber}
+                        onChange={(e) =>
+                          handleUdfChange("referenceNumber", e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* FTTH Maintenance - Planning */}
+            <Card>
+              <CardContent className="p-0">
+                <div
+                  className="flex items-center justify-between p-4 cursor-pointer"
+                  onClick={() => toggleSection("planning")}
+                >
+                  <h3 className="font-semibold">
+                    FTTH Maintenance - Planning
+                  </h3>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-500 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                    {expandedSections.planning ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </div>
+                </div>
+
+                {expandedSections.planning && (
+                  <div className="p-4">
+                    <p className="text-gray-500 text-sm">Planning fields will be added here...</p>
                   </div>
                 )}
               </CardContent>
@@ -484,10 +565,14 @@ export default function EnhancedJobDetailsScreen() {
 
           {/* Gallery Tab */}
           <TabsContent value="gallery" className="space-y-4">
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Job Photos</h3>
-                <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="relative min-h-[400px] flex flex-col items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+              {jobPhotos.length === 0 ? (
+                <div className="text-center">
+                  <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No Images</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 p-4 w-full">
                   {jobPhotos.map((photo, index) => (
                     <div
                       key={index}
@@ -497,18 +582,17 @@ export default function EnhancedJobDetailsScreen() {
                     </div>
                   ))}
                 </div>
-                <Button
-                  onClick={() =>
-                    setJobPhotos([...jobPhotos, `photo-${Date.now()}`])
-                  }
-                  className="w-full"
-                  variant="outline"
-                >
-                  <Camera className="h-4 w-4 mr-2" />
-                  Take Photo
-                </Button>
-              </CardContent>
-            </Card>
+              )}
+              
+              <Button
+                onClick={() =>
+                  setJobPhotos([...jobPhotos, `photo-${Date.now()}`])
+                }
+                className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                <Plus className="h-6 w-6" />
+              </Button>
+            </div>
           </TabsContent>
 
           {/* Stocks Tab */}
@@ -516,39 +600,7 @@ export default function EnhancedJobDetailsScreen() {
             <Card>
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-4">Stock Usage</h3>
-                <div className="space-y-4">
-                  {stockItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
-                    >
-                      <div>
-                        <div className="font-medium">{item.name}</div>
-                        <div className="text-sm text-gray-500">
-                          Available: {item.available}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Input
-                          type="number"
-                          value={item.used}
-                          onChange={(e) => {
-                            const newItems = stockItems.map((i) =>
-                              i.id === item.id
-                                ? { ...i, used: parseInt(e.target.value) || 0 }
-                                : i,
-                            );
-                            setStockItems(newItems);
-                          }}
-                          className="w-20"
-                          min="0"
-                          max={item.available}
-                        />
-                        <Package className="h-4 w-4 text-gray-400" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-gray-500">Stock tracking functionality will be added here...</p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -556,30 +608,101 @@ export default function EnhancedJobDetailsScreen() {
           {/* Sign Off Tab */}
           <TabsContent value="signoff" className="space-y-4">
             <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Job Completion</h3>
-                <div className="space-y-4">
-                  {formData.maintenanceIssueClass && (
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <FileText className="h-4 w-4 text-green-600" />
-                        <span className="font-medium">
-                          Maintenance Issue Class
-                        </span>
-                      </div>
-                      <div className="text-green-800">
-                        {formData.maintenanceIssueClass}
-                      </div>
-                    </div>
-                  )}
+              <CardContent className="p-6 space-y-6">
+                {/* Date */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Date
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    value={signOffData.date}
+                    onChange={(e) =>
+                      handleSignOffChange("date", e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </div>
 
+                {/* Comments */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Comments
+                  </label>
+                  <Textarea
+                    value={signOffData.comments}
+                    onChange={(e) =>
+                      handleSignOffChange("comments", e.target.value)
+                    }
+                    className="min-h-[80px] resize-none"
+                  />
+                </div>
+
+                {/* Job Completion Notes */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Job Completion Notes
+                  </label>
+                  <Textarea
+                    placeholder="Write notes here..."
+                    value={signOffData.completionNotes}
+                    onChange={(e) =>
+                      handleSignOffChange("completionNotes", e.target.value)
+                    }
+                    className="min-h-[100px] resize-none"
+                  />
+                </div>
+
+                {/* Name & Surname */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Name & Surname
+                  </label>
+                  <Input
+                    value={signOffData.nameAndSurname}
+                    onChange={(e) =>
+                      handleSignOffChange("nameAndSurname", e.target.value)
+                    }
+                  />
+                </div>
+
+                {/* Signature Area */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
+                  <p className="text-gray-400 text-lg">TAP TO SIGN</p>
+                </div>
+
+                {/* Terms & Conditions */}
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    id="terms"
+                    checked={signOffData.acceptTerms}
+                    onCheckedChange={(checked) =>
+                      handleSignOffChange("acceptTerms", checked)
+                    }
+                    className="w-6 h-6"
+                  />
+                  <label htmlFor="terms" className="text-sm font-medium text-gray-700">
+                    I accept the Terms & Conditions
+                  </label>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex space-x-4 pt-4">
                   <Button
-                    onClick={closeJob}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-4"
-                    disabled={!formData.maintenanceIssueClass}
+                    onClick={handleSaveJob}
+                    variant="outline"
+                    className="flex-1 py-6 text-lg"
                   >
-                    <CheckCircle className="h-5 w-5 mr-2" />
-                    Close Job
+                    <Save className="h-5 w-5 mr-2" />
+                    Save
+                  </Button>
+                  <Button
+                    onClick={handleCompleteJob}
+                    className="flex-1 py-6 text-lg bg-green-500 hover:bg-green-600"
+                    disabled={!signOffData.acceptTerms}
+                  >
+                    Complete
+                    <CheckCircle className="h-5 w-5 ml-2" />
                   </Button>
                 </div>
               </CardContent>
@@ -592,7 +715,7 @@ export default function EnhancedJobDetailsScreen() {
       {activeTab === "udf" && (
         <div className="fixed bottom-16 left-0 right-0 p-4 bg-white border-t">
           <Button
-            onClick={handleUpdate}
+            onClick={handleUpdateUdf}
             className="w-full bg-green-500 hover:bg-green-600 text-white py-4 text-lg font-semibold"
           >
             <RefreshCw className="h-5 w-5 mr-2" />
@@ -627,7 +750,7 @@ export default function EnhancedJobDetailsScreen() {
           <Button
             variant="ghost"
             className={`flex flex-col items-center space-y-1 p-3 ${
-              activeTab === "gallery" ? "text-blue-600" : "text-gray-600"
+              activeTab === "gallery" ? "text-orange-600" : "text-gray-600"
             }`}
             onClick={() => setActiveTab("gallery")}
           >
