@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { NotificationSystem } from "@/components/NotificationSystem";
+import { offlineDataService } from "@/services/offlineDataService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -302,12 +303,35 @@ export default function CoordinatorJobBoard() {
   const updateJobInBackend = async (jobId: string, updates: Partial<Job>) => {
     try {
       if (updates.assignedTechnician && updates.status === "assigned") {
+        // Check technician availability first
+        const availabilityResponse = await fetch(`/api/technician-status/availability/${updates.assignedTechnician}`);
+        if (availabilityResponse.ok) {
+          const availabilityData = await availabilityResponse.json();
+          if (availabilityData.success && !availabilityData.data.isAvailable) {
+            const proceed = window.confirm(
+              `Warning: ${availabilityData.data.name} is currently ${availabilityData.data.status}. ${availabilityData.data.warning || ''} Do you want to proceed with the assignment?`
+            );
+            if (!proceed) {
+              // Revert the local change
+              setJobs((prev) =>
+                prev.map((job) =>
+                  job.id === jobId
+                    ? { ...job, status: "unassigned", assignedTechnician: undefined }
+                    : job,
+                ),
+              );
+              return;
+            }
+          }
+        }
+
         // Use the assignment endpoint
         const response = await fetch(`/api/job-mgmt/jobs/${jobId}/assign`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             technicianId: updates.assignedTechnician,
+            assignedBy: 'coordinator001' // In real app, get from auth context
           }),
         });
 
