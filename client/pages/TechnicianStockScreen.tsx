@@ -462,7 +462,7 @@ export default function TechnicianStockScreen() {
         <div className="text-center mb-4">
           <h2 className="text-lg font-bold">{currentTechnicianName}</h2>
           <p className="text-white/80">Technician ID: {currentTechnicianId}</p>
-          <p className="text-white/90 text-sm">Stock Assigned to You</p>
+          <p className="text-white/90 text-sm">View • Request • Return Stock</p>
         </div>
 
         {/* Search Bar */}
