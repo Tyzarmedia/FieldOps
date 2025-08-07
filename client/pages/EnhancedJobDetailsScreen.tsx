@@ -113,6 +113,32 @@ export default function EnhancedJobDetailsScreen() {
 
   const [jobPhotos, setJobPhotos] = useState<string[]>([]);
 
+  // Image form data
+  const [imageFormData, setImageFormData] = useState({
+    beforeLightLevels: null as File | null,
+    faultFinding: null as File | null,
+    faultAfterFixing: null as File | null,
+    lightLevelsAfterFix: null as File | null,
+  });
+
+  // Stock form data
+  const [stockFormData, setStockFormData] = useState({
+    searchQuery: "",
+    selectedStock: null as any,
+    warehouseNumber: "",
+    quantity: "",
+  });
+
+  // Available stocks for search
+  const [availableStocks] = useState([
+    { id: 1, code: "FC-50M", name: "Fiber Optic Cable - 50m", warehouseQty: 15 },
+    { id: 2, code: "RJ45-100", name: "RJ45 Connectors", warehouseQty: 100 },
+    { id: 3, code: "CT-200", name: "Cable Ties", warehouseQty: 200 },
+    { id: 4, code: "JB-08", name: "Junction Box", warehouseQty: 8 },
+    { id: 5, code: "SF-LX", name: "SFP Module - LX", warehouseQty: 25 },
+    { id: 6, code: "ONT-G2", name: "ONT Device - G2", warehouseQty: 12 },
+  ]);
+
   // Mock job data
   const jobDetails: JobDetails = {
     id: jobId || "JA-7762",
