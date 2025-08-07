@@ -886,4 +886,158 @@ router.get("/stats", (req, res) => {
   }
 });
 
+// Update minimum stock level (Stock Manager only)
+router.put("/items/:itemId/minimum-level", (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const { minimumQuantity, updatedBy = 'stock-manager' } = req.body;
+
+    const itemIndex = stockItems.findIndex(item => item.id === itemId);
+    if (itemIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: "Item not found"
+      });
+    }
+
+    const oldMinimum = stockItems[itemIndex].minimumQuantity;
+    stockItems[itemIndex].minimumQuantity = minimumQuantity;
+    stockItems[itemIndex].lastUpdated = new Date().toISOString();
+
+    // Update status based on new minimum level
+    if (stockItems[itemIndex].quantity === 0) {
+      stockItems[itemIndex].status = "out-of-stock";
+    } else if (stockItems[itemIndex].quantity <= minimumQuantity) {
+      stockItems[itemIndex].status = "low-stock";
+    } else {
+      stockItems[itemIndex].status = "in-stock";
+    }
+
+    // Log the change for audit purposes
+    console.log(`Minimum stock level updated for ${stockItems[itemIndex].name}:`, {
+      itemId,
+      oldMinimum,
+      newMinimum: minimumQuantity,
+      updatedBy,
+      timestamp: new Date().toISOString()
+    });
+
+    res.json({
+      success: true,
+      data: stockItems[itemIndex],
+      message: "Minimum stock level updated successfully"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to update minimum stock level",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
+// Bulk update minimum stock levels
+router.put("/items/bulk-minimum-levels", (req, res) => {
+  try {
+    const { updates, updatedBy = 'stock-manager' } = req.body;
+    const results = [];
+    const errors = [];
+
+    for (const update of updates) {
+      const itemIndex = stockItems.findIndex(item => item.id === update.itemId);
+      if (itemIndex === -1) {
+        errors.push(`Item ${update.itemId} not found`);
+        continue;
+      }
+
+      const oldMinimum = stockItems[itemIndex].minimumQuantity;
+      stockItems[itemIndex].minimumQuantity = update.minimumQuantity;
+      stockItems[itemIndex].lastUpdated = new Date().toISOString();
+
+      // Update status based on new minimum level
+      if (stockItems[itemIndex].quantity === 0) {
+        stockItems[itemIndex].status = "out-of-stock";
+      } else if (stockItems[itemIndex].quantity <= update.minimumQuantity) {
+        stockItems[itemIndex].status = "low-stock";
+      } else {
+        stockItems[itemIndex].status = "in-stock";
+      }
+
+      results.push({
+        itemId: update.itemId,
+        itemName: stockItems[itemIndex].name,
+        oldMinimum,
+        newMinimum: update.minimumQuantity,
+        newStatus: stockItems[itemIndex].status
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        updated: results,
+        errors: errors
+      },
+      message: `Updated ${results.length} items successfully`
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to bulk update minimum stock levels",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
+// Get low stock alerts
+router.get("/alerts/low-stock", (req, res) => {
+  try {
+    const lowStockItems = stockItems.filter(item =>
+      item.quantity <= item.minimumQuantity && item.quantity > 0
+    );
+
+    const outOfStockItems = stockItems.filter(item => item.quantity === 0);
+
+    const alerts = {
+      lowStock: lowStockItems.map(item => ({
+        itemId: item.id,
+        itemName: item.name,
+        currentQuantity: item.quantity,
+        minimumQuantity: item.minimumQuantity,
+        shortage: item.minimumQuantity - item.quantity,
+        category: item.category,
+        unitPrice: item.unitPrice,
+        estimatedRestockCost: (item.minimumQuantity - item.quantity) * item.unitPrice
+      })),
+      outOfStock: outOfStockItems.map(item => ({
+        itemId: item.id,
+        itemName: item.name,
+        minimumQuantity: item.minimumQuantity,
+        category: item.category,
+        unitPrice: item.unitPrice,
+        estimatedRestockCost: item.minimumQuantity * item.unitPrice
+      }))
+    };
+
+    res.json({
+      success: true,
+      data: alerts,
+      summary: {
+        totalLowStock: lowStockItems.length,
+        totalOutOfStock: outOfStockItems.length,
+        totalRestockCost: [...lowStockItems, ...outOfStockItems].reduce((sum, item) => {
+          const shortage = item.quantity === 0 ? item.minimumQuantity : (item.minimumQuantity - item.quantity);
+          return sum + (shortage * item.unitPrice);
+        }, 0)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch stock alerts",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
 export default router;
