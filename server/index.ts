@@ -18,6 +18,7 @@ import {
 import jobManagementRouter from "./routes/job-management";
 import stockManagementRouter from "./routes/stock-management";
 import notificationsRouter from "./routes/notifications";
+import technicianStatusRouter from "./routes/technician-status";
 
 export function createServer() {
   const app = express();
@@ -42,6 +43,9 @@ export function createServer() {
 
   // Notifications API
   app.use("/api/notifications", notificationsRouter);
+
+  // Technician Status API
+  app.use("/api/technician-status", technicianStatusRouter);
 
   // Job Management API
   app.get("/api/jobs", getJobs);
