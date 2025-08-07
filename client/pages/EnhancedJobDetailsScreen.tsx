@@ -283,12 +283,37 @@ export default function EnhancedJobDetailsScreen() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
+        {/* Technician Info Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+              <HardHat className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="font-semibold">{technician.name}</p>
+              <p className="text-sm text-white/80">ID: {technician.id}</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className={`flex items-center space-x-1 px-2 py-1 rounded text-xs ${
+              networkStatus === 'online'
+                ? 'bg-green-500/20 text-green-100'
+                : 'bg-red-500/20 text-red-100'
+            }`}>
+              <div className={`w-2 h-2 rounded-full ${
+                networkStatus === 'online' ? 'bg-green-400' : 'bg-red-400'
+              }`}></div>
+              <span>{networkStatus === 'online' ? 'Online' : 'Offline'}</span>
+            </div>
+          </div>
+        </div>
+
         <div className="flex justify-between items-center mb-4">
           <Button
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/technician/jobs")}
           >
             <X className="h-6 w-6" />
           </Button>
@@ -313,7 +338,7 @@ export default function EnhancedJobDetailsScreen() {
             onClick={() => navigate("/technician/safety")}
             title="HVAC Maintenance Check"
           >
-            <HardHat className="h-6 w-6" />
+            <Clock className="h-6 w-6" />
           </Button>
         </div>
 
@@ -325,9 +350,19 @@ export default function EnhancedJobDetailsScreen() {
               {jobDetails.priority}
             </Badge>
           </div>
-          <div className="flex items-center space-x-2">
-            <MapPin className="h-4 w-4" />
-            <span className="text-sm">{jobDetails.client.address}</span>
+          <div className="grid grid-cols-1 gap-2">
+            <div className="flex items-center space-x-2">
+              <MapPin className="h-4 w-4" />
+              <span className="text-sm">{jobDetails.client.address}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Clock className="h-4 w-4" />
+              <span className="text-sm">Scheduled: {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <User className="h-4 w-4" />
+              <span className="text-sm">Client: {jobDetails.client.name}</span>
+            </div>
           </div>
           {isNearClient && (
             <div className="bg-white/20 rounded-lg p-2 mt-2">
