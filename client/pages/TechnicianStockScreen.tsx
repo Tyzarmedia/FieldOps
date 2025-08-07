@@ -661,18 +661,18 @@ export default function TechnicianStockScreen() {
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Record Stock Usage</DialogTitle>
+                          <DialogTitle>Return Stock</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                           <div className="p-4 bg-gray-50 rounded-lg">
                             <h4 className="font-medium">{item.itemName}</h4>
                             <p className="text-sm text-gray-600">
-                              Available: {item.remainingQuantity} {item.unit}
+                              Assigned: {item.assignedQuantity} {item.unit} | Used: {item.usedQuantity} {item.unit}
                             </p>
                           </div>
 
                           <div className="space-y-2">
-                            <Label>Quantity Used</Label>
+                            <Label>Quantity to Return</Label>
                             <Input
                               type="number"
                               max={item.remainingQuantity}
@@ -686,25 +686,12 @@ export default function TechnicianStockScreen() {
                                   ),
                                 }))
                               }
+                              placeholder="0"
                             />
                           </div>
 
                           <div className="space-y-2">
-                            <Label>Job ID (Optional)</Label>
-                            <Input
-                              value={usageData.jobId}
-                              onChange={(e) =>
-                                setUsageData((prev) => ({
-                                  ...prev,
-                                  jobId: e.target.value,
-                                }))
-                              }
-                              placeholder="e.g., SA-688808"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label>Usage Notes (Optional)</Label>
+                            <Label>Reason for Return</Label>
                             <Input
                               value={usageData.notes}
                               onChange={(e) =>
@@ -713,7 +700,7 @@ export default function TechnicianStockScreen() {
                                   notes: e.target.value,
                                 }))
                               }
-                              placeholder="Description of usage..."
+                              placeholder="Job completed, excess stock, etc..."
                             />
                           </div>
 
@@ -722,7 +709,7 @@ export default function TechnicianStockScreen() {
                               onClick={recordStockUsage}
                               className="flex-1"
                             >
-                              Record Usage
+                              Return Stock
                             </Button>
                             <Button
                               variant="outline"
