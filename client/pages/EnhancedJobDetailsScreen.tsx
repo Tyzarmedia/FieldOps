@@ -374,11 +374,88 @@ export default function EnhancedJobDetailsScreen() {
         }),
       });
 
-      navigate("/technician/jobs", { 
-        state: { message: "Job completed successfully!" } 
+      navigate("/technician/jobs", {
+        state: { message: "Job completed successfully!" }
       });
     } catch (error) {
       console.error("Failed to complete job:", error);
+    }
+  };
+
+  // Image form handlers
+  const handleImageUpload = (field: string, file: File) => {
+    setImageFormData(prev => ({
+      ...prev,
+      [field]: file
+    }));
+  };
+
+  const submitImageForm = async () => {
+    const formData = new FormData();
+    Object.entries(imageFormData).forEach(([key, file]) => {
+      if (file) {
+        formData.append(key, file);
+      }
+    });
+
+    try {
+      const response = await fetch(`/api/jobs/${jobDetails.id}/images`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        setShowImageForm(false);
+        setImageFormData({
+          beforeLightLevels: null,
+          faultFinding: null,
+          faultAfterFixing: null,
+          lightLevelsAfterFix: null,
+        });
+        // Refresh job photos
+        const photos = await response.json();
+        setJobPhotos(photos);
+      }
+    } catch (error) {
+      console.error('Failed to upload images:', error);
+    }
+  };
+
+  // Stock form handlers
+  const filteredStocks = availableStocks.filter(stock =>
+    stock.code.toLowerCase().includes(stockFormData.searchQuery.toLowerCase()) ||
+    stock.name.toLowerCase().includes(stockFormData.searchQuery.toLowerCase())
+  );
+
+  const submitStockForm = async () => {
+    if (!stockFormData.selectedStock || !stockFormData.quantity) {
+      alert("Please select stock and enter quantity");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/jobs/${jobDetails.id}/allocate-stock`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stockId: stockFormData.selectedStock.id,
+          warehouseNumber: stockFormData.warehouseNumber,
+          quantity: parseInt(stockFormData.quantity),
+          technicianId: technician.id,
+        }),
+      });
+
+      if (response.ok) {
+        setShowStockForm(false);
+        setStockFormData({
+          searchQuery: "",
+          selectedStock: null,
+          warehouseNumber: "",
+          quantity: "",
+        });
+      }
+    } catch (error) {
+      console.error('Failed to allocate stock:', error);
     }
   };
 
