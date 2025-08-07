@@ -37,6 +37,16 @@ let notifications: Notification[] = [
     read: false,
     priority: "medium",
   },
+  {
+    id: "3",
+    technicianId: "coordinator001",
+    type: "alert",
+    title: "Job Status Update",
+    message: "Technician has completed FTTH Installation job",
+    timestamp: new Date(Date.now() - 600000).toISOString(),
+    read: false,
+    priority: "low",
+  },
 ];
 
 // Get notifications for a technician
