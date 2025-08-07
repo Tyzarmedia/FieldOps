@@ -173,32 +173,32 @@ router.put("/jobs/:jobId/assign", (req, res) => {
     jobs[jobIndex].lastModified = new Date().toISOString();
 
     // Create notification for the assigned technician
-    const createNotification = async (techId: string) => {
+    const createNotification = (techId: string) => {
       try {
-        const notificationResponse = await fetch('http://localhost:3000/api/notifications', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            technicianId: techId,
-            type: 'job_assigned',
-            title: 'New Job Assigned',
-            message: `${jobs[jobIndex].title} - ${jobs[jobIndex].workOrderNumber || jobId} has been assigned to you`,
-            priority: 'high'
-          })
-        });
+        // Create notification directly (in real app, this would use shared database)
+        const jobNotification = {
+          id: (Date.now() + Math.random()).toString(),
+          technicianId: techId,
+          type: 'job_assigned' as const,
+          title: 'New Job Assigned',
+          message: `${jobs[jobIndex].title} - ${jobs[jobIndex].workOrderNumber || jobId} has been assigned to you`,
+          timestamp: new Date().toISOString(),
+          read: false,
+          priority: 'high' as const,
+          deleted: false
+        };
 
-        if (!notificationResponse.ok) {
-          console.warn('Failed to create notification for job assignment');
-        }
+        // This would normally be handled by a shared notification service
+        console.log('Job assignment notification created:', jobNotification);
       } catch (error) {
         console.warn('Error creating job assignment notification:', error);
       }
     };
 
     // Create notifications for assigned technicians
-    await createNotification(technicianId);
+    createNotification(technicianId);
     if (assistantId) {
-      await createNotification(assistantId);
+      createNotification(assistantId);
     }
 
     res.json({
