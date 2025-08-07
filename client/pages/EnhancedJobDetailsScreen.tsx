@@ -126,44 +126,6 @@ export default function EnhancedJobDetailsScreen() {
     };
   }, []);
 
-  // Simulate location detection
-  useEffect(() => {
-    // Simulate being near client after 3 seconds
-    const timer = setTimeout(() => {
-      setIsNearClient(true);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Auto-start tracking after 150 seconds near client
-  useEffect(() => {
-    if (isNearClient && !trackingStarted) {
-      const interval = setInterval(() => {
-        setNearClientTimer((prev) => {
-          if (prev >= 150) {
-            setTrackingStarted(true);
-            startJobTracking();
-            return 0;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [isNearClient, trackingStarted]);
-
-  // Time tracking
-  useEffect(() => {
-    if (trackingStarted && !isPaused) {
-      const interval = setInterval(() => {
-        setTimeSpent((prev) => prev + 1);
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [trackingStarted, isPaused]);
 
   const startJobTracking = async () => {
     setTrackingStarted(true);
