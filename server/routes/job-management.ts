@@ -486,4 +486,101 @@ router.get("/jobs/stats/:technicianId", (req, res) => {
   }
 });
 
+// Get job assignment audit trail (Manager only)
+router.get("/audit/assignments", (req, res) => {
+  try {
+    const auditData = jobs.map(job => ({
+      jobId: job.id,
+      title: job.title,
+      currentAssignee: job.assignedTechnician,
+      assignmentHistory: job.assignmentHistory || [],
+      status: job.status,
+      createdDate: job.createdDate,
+      lastModified: job.lastModified
+    }));
+
+    res.json({
+      success: true,
+      data: auditData
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch audit trail",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
+// Get technician time tracking report (Manager only)
+router.get("/reports/technician-time/:technicianId", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const technicianJobs = jobs.filter(job =>
+      job.assignedTechnician === technicianId || job.assistantTechnician === technicianId
+    );
+
+    const timeReport = {
+      technicianId,
+      totalJobsCompleted: technicianJobs.filter(job => job.status === 'Completed').length,
+      totalHoursWorked: technicianJobs.reduce((total, job) => total + (job.actualHours || 0), 0),
+      averageJobTime: technicianJobs.length > 0
+        ? technicianJobs.reduce((total, job) => total + (job.actualHours || 0), 0) / technicianJobs.length
+        : 0,
+      jobDetails: technicianJobs.map(job => ({
+        jobId: job.id,
+        title: job.title,
+        status: job.status,
+        estimatedHours: job.estimatedHours,
+        actualHours: job.actualHours,
+        startedDate: job.startedDate,
+        completedDate: job.completedDate,
+        stockUsed: job.stockUsed || [],
+        stockValue: job.stockUsageValue || 0
+      }))
+    };
+
+    res.json({
+      success: true,
+      data: timeReport
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch time report",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
+// Get all completed jobs with stock usage (Manager/Stock Manager view)
+router.get("/completed-jobs-stock", (req, res) => {
+  try {
+    const completedJobs = jobs
+      .filter(job => job.status === 'Completed')
+      .map(job => ({
+        jobId: job.id,
+        title: job.title,
+        completedBy: job.completedBy,
+        completedDate: job.completedDate,
+        actualHours: job.actualHours,
+        stockUsed: job.stockUsed || [],
+        stockValue: job.stockUsageValue || 0,
+        udfData: job.udfData || {},
+        client: job.client
+      }));
+
+    res.json({
+      success: true,
+      data: completedJobs
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch completed jobs",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
 export default router;
