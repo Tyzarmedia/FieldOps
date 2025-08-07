@@ -352,7 +352,7 @@ router.put("/jobs/:jobId/start", (req, res) => {
 router.put("/jobs/:jobId/complete", (req, res) => {
   try {
     const { jobId } = req.params;
-    const { technicianId, timeSpent, notes, photos } = req.body;
+    const { technicianId, timeSpent, notes, photos, stockUsed, udfData, signOffData } = req.body;
 
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
     if (jobIndex === -1) {
@@ -370,10 +370,16 @@ router.put("/jobs/:jobId/complete", (req, res) => {
       });
     }
 
+    // Calculate actual time spent if start time exists
+    const actualTimeSpent = job.startedDate
+      ? (new Date().getTime() - new Date(job.startedDate).getTime()) / (1000 * 60 * 60) // hours
+      : timeSpent;
+
     jobs[jobIndex].status = "Completed";
     jobs[jobIndex].completedDate = new Date().toISOString();
-    jobs[jobIndex].actualHours = timeSpent;
+    jobs[jobIndex].actualHours = actualTimeSpent;
     jobs[jobIndex].lastModified = new Date().toISOString();
+    jobs[jobIndex].completedBy = technicianId;
 
     if (notes) {
       jobs[jobIndex].completionNotes = notes;
@@ -381,6 +387,40 @@ router.put("/jobs/:jobId/complete", (req, res) => {
 
     if (photos) {
       jobs[jobIndex].photos = photos;
+    }
+
+    // Store stock usage data for tracking
+    if (stockUsed && stockUsed.length > 0) {
+      jobs[jobIndex].stockUsed = stockUsed;
+      jobs[jobIndex].stockUsageValue = stockUsed.reduce((total: number, item: any) =>
+        total + (item.quantity * item.unitPrice || 0), 0);
+    }
+
+    // Store UDF (User Defined Fields) data
+    if (udfData) {
+      jobs[jobIndex].udfData = udfData;
+    }
+
+    // Store sign-off data
+    if (signOffData) {
+      jobs[jobIndex].signOffData = {
+        ...signOffData,
+        timestamp: new Date().toISOString(),
+        technicianId
+      };
+    }
+
+    // Create notification for managers/coordinators about job completion
+    try {
+      createNotification({
+        technicianId: 'manager001', // In real app, would notify all relevant managers
+        type: 'alert',
+        title: 'Job Completed',
+        message: `${job.title} completed by technician. Stock used: ${stockUsed?.length || 0} items`,
+        priority: 'medium'
+      });
+    } catch (error) {
+      console.warn('Error creating job completion notification:', error);
     }
 
     res.json({
