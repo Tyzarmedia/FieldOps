@@ -172,6 +172,35 @@ router.put("/jobs/:jobId/assign", (req, res) => {
     jobs[jobIndex].status = "Assigned";
     jobs[jobIndex].lastModified = new Date().toISOString();
 
+    // Create notification for the assigned technician
+    const createNotification = async (techId: string) => {
+      try {
+        const notificationResponse = await fetch('http://localhost:5000/api/notifications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            technicianId: techId,
+            type: 'job_assigned',
+            title: 'New Job Assigned',
+            message: `${jobs[jobIndex].title} - ${jobs[jobIndex].workOrderNumber || jobId} has been assigned to you`,
+            priority: 'high'
+          })
+        });
+
+        if (!notificationResponse.ok) {
+          console.warn('Failed to create notification for job assignment');
+        }
+      } catch (error) {
+        console.warn('Error creating job assignment notification:', error);
+      }
+    };
+
+    // Create notifications for assigned technicians
+    await createNotification(technicianId);
+    if (assistantId) {
+      await createNotification(assistantId);
+    }
+
     res.json({
       success: true,
       data: jobs[jobIndex],
