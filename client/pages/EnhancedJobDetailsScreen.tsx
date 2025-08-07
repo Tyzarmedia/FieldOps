@@ -564,8 +564,16 @@ export default function EnhancedJobDetailsScreen() {
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold mb-2">Vumatel (Pty) Ltd - Central</h2>
           <h3 className="text-xl font-semibold mb-3">#{jobDetails.id}215784</h3>
-          <Badge className="bg-purple-500/80 text-white px-4 py-1 text-sm">
-            Scheduled
+          <Badge className={`px-4 py-1 text-sm ${
+            jobStatus === 'assigned' ? 'bg-purple-500/80 text-white' :
+            jobStatus === 'in-progress' ? 'bg-green-500/80 text-white' :
+            jobStatus === 'paused' ? 'bg-yellow-500/80 text-white' :
+            'bg-gray-500/80 text-white'
+          }`}>
+            {jobStatus === 'assigned' ? 'Scheduled' :
+             jobStatus === 'in-progress' ? 'In Progress' :
+             jobStatus === 'paused' ? 'Paused' :
+             'Completed'}
           </Badge>
         </div>
 
