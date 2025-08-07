@@ -498,6 +498,7 @@ export default function CoordinatorJobBoard() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <NotificationSystem technicianId="coordinator001" />
             <Button variant="outline">
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
