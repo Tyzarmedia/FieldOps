@@ -250,8 +250,8 @@ export default function EnhancedJobDetailsScreen() {
             variant="ghost"
             size="sm"
             className="text-white hover:bg-white/20 rounded-full h-10 w-10"
-            onClick={() => navigate("/technician/safety")}
-            title="HVAC Maintenance Check"
+            onClick={() => setShowTimerOverlay(!showTimerOverlay)}
+            title="View Timer"
           >
             <Clock className="h-6 w-6" />
           </Button>
