@@ -1,5 +1,6 @@
 // Stock Management API Routes
 import { Router } from "express";
+import { createNotification } from "../services/notificationService";
 
 const router = Router();
 
@@ -659,23 +660,15 @@ router.post("/assignments", (req, res) => {
     // Update main inventory
     stockItems[itemIndex].quantity -= quantity;
 
-    // Create notification for the technician - import notifications array from notifications route
+    // Create notification for the technician
     try {
-      // Create notification directly (in real app, this would use shared database)
-      const stockNotification = {
-        id: (Date.now() + Math.random()).toString(),
+      createNotification({
         technicianId,
-        type: 'stock_assigned' as const,
+        type: 'stock_assigned',
         title: 'Stock Assigned',
         message: `${item.name} (${quantity} ${item.unit}) has been assigned to your inventory`,
-        timestamp: new Date().toISOString(),
-        read: false,
-        priority: 'medium' as const,
-        deleted: false
-      };
-
-      // This would normally be handled by a shared notification service
-      console.log('Stock assignment notification created:', stockNotification);
+        priority: 'medium'
+      });
     } catch (error) {
       console.warn('Error creating stock assignment notification:', error);
     }
