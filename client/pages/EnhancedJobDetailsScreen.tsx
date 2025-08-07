@@ -279,17 +279,6 @@ export default function EnhancedJobDetailsScreen() {
               <span className="text-sm">Client: {jobDetails.client.name}</span>
             </div>
           </div>
-          {isNearClient && (
-            <div className="bg-white/20 rounded-lg p-2 mt-2">
-              <div className="text-center">
-                <span className="text-sm">
-                  {!trackingStarted
-                    ? `Auto-start in ${150 - nearClientTimer}s`
-                    : `Time: ${formatTime(timeSpent)}`}
-                </span>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
