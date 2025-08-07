@@ -159,7 +159,7 @@ router.post("/jobs", (req, res) => {
 router.put("/jobs/:jobId/assign", (req, res) => {
   try {
     const { jobId } = req.params;
-    const { technicianId, assistantId } = req.body;
+    const { technicianId, assistantId, assignedBy = 'coordinator001' } = req.body;
 
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
     if (jobIndex === -1) {
@@ -171,7 +171,22 @@ router.put("/jobs/:jobId/assign", (req, res) => {
       jobs[jobIndex].assistantTechnician = assistantId;
     }
     jobs[jobIndex].status = "Assigned";
+    jobs[jobIndex].assignedDate = new Date().toISOString();
+    jobs[jobIndex].assignedBy = assignedBy;
     jobs[jobIndex].lastModified = new Date().toISOString();
+
+    // Add to assignment audit trail
+    if (!jobs[jobIndex].assignmentHistory) {
+      jobs[jobIndex].assignmentHistory = [];
+    }
+    jobs[jobIndex].assignmentHistory.push({
+      id: Date.now().toString(),
+      assignedBy,
+      assignedTo: technicianId,
+      assistantId: assistantId || null,
+      assignedAt: new Date().toISOString(),
+      action: 'assigned'
+    });
 
     // Create notification for the assigned technician
     const createJobNotification = (techId: string) => {
