@@ -343,34 +343,181 @@ export default function EnhancedJobDetailsScreen() {
 
           {/* Details Tab */}
           <TabsContent value="details" className="space-y-4">
+            {/* Client Contacts */}
             <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Job Information</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <User className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium">Client:</span>
-                    <span className="text-sm">{jobDetails.client.name}</span>
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-3 text-gray-900">Client Contacts</h3>
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-slate-600 rounded-full flex items-center justify-center text-white font-semibold">
+                    JM
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium">Address:</span>
-                    <span className="text-sm">{jobDetails.client.address}</span>
+                  <div>
+                    <p className="font-medium text-gray-900">Jody Make</p>
                   </div>
-                  <div className="flex items-center space-x-2">
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Client Address */}
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-3 text-gray-900">Client Address</h3>
+                <div className="bg-gray-200 rounded-lg h-32 mb-3 flex items-center justify-center">
+                  <MapPin className="h-6 w-6 text-gray-500" />
+                  <span className="text-gray-500 ml-2">Map View</span>
+                </div>
+                <p className="text-sm text-gray-600">
+                  The Crescent, 21 Georgian Crescent EA37 Bramlerton Starting
+                  South Quay Canberra
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Job Tags */}
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-3 text-gray-900">Job Tags</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border border-gray-400"></div>
+                      <span className="text-sm">Start Date</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border border-gray-400"></div>
+                      <span className="text-sm">Jul 18, 2025</span>
+                    </div>
+                    <Badge className="bg-gray-100 text-gray-800 text-xs">4:02 PM</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border border-gray-400"></div>
+                      <span className="text-sm">Scheduled Due</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border border-gray-400"></div>
+                      <span className="text-sm">Jul 18, 2025</span>
+                    </div>
+                    <span className="text-sm text-gray-500">11:59 PM</span>
+                  </div>
+                  <div className="flex items-center space-x-2 mt-3">
                     <Clock className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium">
-                      Estimated Duration:
-                    </span>
-                    <span className="text-sm">
-                      {jobDetails.estimatedDuration}
-                    </span>
+                    <span className="text-sm font-medium">Job Type</span>
                   </div>
-                  <div className="mt-4">
-                    <span className="text-sm font-medium">Description:</span>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {jobDetails.description}
-                    </p>
+                  <p className="text-sm text-blue-600 ml-6">FTTH - Maintenance</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Technicians */}
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-3 text-gray-900">Technicians</h3>
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white font-semibold">
+                    DC
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Operational Element Manager</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Job Details */}
+            <Card>
+              <CardContent className="p-4 space-y-4">
+                {/* Task */}
+                <div className="flex items-start space-x-3">
+                  <User className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Task</p>
+                    <p className="text-sm text-gray-900">Stefany Sampetha Relay</p>
+                  </div>
+                </div>
+
+                {/* Address */}
+                <div className="flex items-start space-x-3">
+                  <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Address</p>
+                    <p className="text-sm text-gray-900">{jobDetails.client.address}</p>
+                  </div>
+                </div>
+
+                {/* Job Type */}
+                <div className="flex items-start space-x-3">
+                  <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Job Type</p>
+                    <p className="text-sm text-gray-900">1. Maintenance Job (SF)</p>
+                  </div>
+                </div>
+
+                {/* Work Order Method */}
+                <div className="flex items-start space-x-3">
+                  <Settings className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Work Order Method</p>
+                    <p className="text-sm text-gray-900">DV8 08/05</p>
+                  </div>
+                </div>
+
+                {/* Work Order Number */}
+                <div className="flex items-start space-x-3">
+                  <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Work Order Number</p>
+                    <p className="text-sm text-gray-900">0076501</p>
+                  </div>
+                </div>
+
+                {/* Equipment Location */}
+                <div className="flex items-start space-x-3">
+                  <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Equipment Location</p>
+                    <p className="text-sm text-gray-900">SA-TT134</p>
+                  </div>
+                </div>
+
+                {/* Terminal Interface */}
+                <div className="flex items-start space-x-3">
+                  <Settings className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Terminal Interface</p>
+                    <p className="text-sm text-gray-900">485754d3E2ED5EAB</p>
+                  </div>
+                </div>
+
+                {/* Area */}
+                <div className="flex items-start space-x-3">
+                  <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Area</p>
+                    <p className="text-sm text-gray-900">120 - East London</p>
+                  </div>
+                </div>
+
+                {/* Tower */}
+                <div className="flex items-start space-x-3">
+                  <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Tower</p>
+                    <p className="text-sm text-gray-900">218-Bc BCE</p>
+                  </div>
+                </div>
+
+                {/* Created Details */}
+                <div className="flex items-start space-x-3">
+                  <User className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Created Details</p>
+                    <p className="text-sm text-gray-900">Created by system</p>
                   </div>
                 </div>
               </CardContent>
