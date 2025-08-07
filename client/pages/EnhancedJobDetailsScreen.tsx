@@ -282,48 +282,6 @@ export default function EnhancedJobDetailsScreen() {
         </div>
       </div>
 
-      {/* Job Tracking Controls */}
-      {isNearClient && (
-        <div className="bg-white border-b p-4">
-          <div className="flex items-center justify-center space-x-4">
-            {!trackingStarted ? (
-              <Button
-                onClick={startJobTracking}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <Play className="h-4 w-4 mr-2" />
-                Start Job
-              </Button>
-            ) : (
-              <>
-                <Button
-                  onClick={toggleTracking}
-                  variant={isPaused ? "default" : "outline"}
-                >
-                  {isPaused ? (
-                    <>
-                      <Play className="h-4 w-4 mr-2" />
-                      Resume
-                    </>
-                  ) : (
-                    <>
-                      <Pause className="h-4 w-4 mr-2" />
-                      Pause
-                    </>
-                  )}
-                </Button>
-                <Button
-                  onClick={stopJobTracking}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  <Square className="h-4 w-4 mr-2" />
-                  Finish Job
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Navigation Tabs */}
       <div className="p-4 pb-24">
