@@ -219,6 +219,92 @@ export default function EnhancedJobDetailsScreen() {
     }
   };
 
+  // Job timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setJobTimer(prev => prev + 1);
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerRunning]);
+
+  // Format timer display
+  const formatTimer = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Job control functions
+  const startJob = async () => {
+    try {
+      const response = await fetch(`/api/jobs/${jobDetails.id}/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          technicianId: technician.id,
+          startTime: new Date().toISOString(),
+        }),
+      });
+
+      if (response.ok) {
+        setJobStatus('in-progress');
+        setIsTimerRunning(true);
+      }
+    } catch (error) {
+      console.error('Failed to start job:', error);
+    }
+  };
+
+  const pauseJob = async () => {
+    try {
+      const response = await fetch(`/api/jobs/${jobDetails.id}/pause`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          technicianId: technician.id,
+          pauseTime: new Date().toISOString(),
+          timeSpent: jobTimer,
+        }),
+      });
+
+      if (response.ok) {
+        setJobStatus('paused');
+        setIsTimerRunning(false);
+      }
+    } catch (error) {
+      console.error('Failed to pause job:', error);
+    }
+  };
+
+  const stopJob = async () => {
+    try {
+      const response = await fetch(`/api/jobs/${jobDetails.id}/stop`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          technicianId: technician.id,
+          endTime: new Date().toISOString(),
+          totalTime: jobTimer,
+        }),
+      });
+
+      if (response.ok) {
+        setJobStatus('completed');
+        setIsTimerRunning(false);
+      }
+    } catch (error) {
+      console.error('Failed to stop job:', error);
+    }
+  };
+
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
       ...prev,
