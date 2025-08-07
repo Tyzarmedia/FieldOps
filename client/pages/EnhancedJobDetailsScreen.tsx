@@ -134,7 +134,6 @@ export default function EnhancedJobDetailsScreen() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          timeSpent: Math.round(timeSpent / 60), // Convert to minutes
           maintenanceIssueClass: formData.maintenanceIssueClass,
           images: jobPhotos,
           udfData: formData,
