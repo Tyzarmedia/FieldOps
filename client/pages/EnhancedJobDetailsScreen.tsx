@@ -758,11 +758,116 @@ export default function EnhancedJobDetailsScreen() {
                           <SelectItem value="isp-drop-cable-broken">
                             ISP - Drop Cable Broken
                           </SelectItem>
+                          <SelectItem value="isp-damaged-fiber">
+                            ISP - Damaged Fiber
+                          </SelectItem>
+                          <SelectItem value="isp-loose-connections">
+                            ISP - Loose Connections
+                          </SelectItem>
+                          <SelectItem value="isp-splice-loss">
+                            ISP - Splice Loss
+                          </SelectItem>
+                          <SelectItem value="isp-connector-dirty">
+                            ISP - Dirty Connector
+                          </SelectItem>
+                          <SelectItem value="isp-bend-radius">
+                            ISP - Bend Radius Exceeded
+                          </SelectItem>
                           <SelectItem value="osp-high-losses">
                             OSP - High Losses
                           </SelectItem>
+                          <SelectItem value="osp-fiber-break">
+                            OSP - Fiber Break
+                          </SelectItem>
+                          <SelectItem value="osp-water-ingress">
+                            OSP - Water Ingress
+                          </SelectItem>
+                          <SelectItem value="osp-cable-damage">
+                            OSP - Cable Damage
+                          </SelectItem>
+                          <SelectItem value="osp-joint-failure">
+                            OSP - Joint Failure
+                          </SelectItem>
+                          <SelectItem value="osp-rodent-damage">
+                            OSP - Rodent Damage
+                          </SelectItem>
+                          <SelectItem value="equipment-ont-failure">
+                            Equipment - ONT Failure
+                          </SelectItem>
+                          <SelectItem value="equipment-ont-config">
+                            Equipment - ONT Configuration
+                          </SelectItem>
+                          <SelectItem value="equipment-power-supply">
+                            Equipment - Power Supply Issue
+                          </SelectItem>
+                          <SelectItem value="equipment-sfp-failure">
+                            Equipment - SFP Module Failure
+                          </SelectItem>
+                          <SelectItem value="equipment-port-failure">
+                            Equipment - Port Failure
+                          </SelectItem>
+                          <SelectItem value="network-congestion">
+                            Network - Congestion
+                          </SelectItem>
+                          <SelectItem value="network-routing">
+                            Network - Routing Issue
+                          </SelectItem>
+                          <SelectItem value="network-bandwidth">
+                            Network - Bandwidth Limitation
+                          </SelectItem>
+                          <SelectItem value="customer-premises-wiring">
+                            Customer - Premises Wiring
+                          </SelectItem>
+                          <SelectItem value="customer-equipment">
+                            Customer - Equipment Issue
+                          </SelectItem>
+                          <SelectItem value="customer-configuration">
+                            Customer - Configuration Error
+                          </SelectItem>
+                          <SelectItem value="environmental-weather">
+                            Environmental - Weather Related
+                          </SelectItem>
+                          <SelectItem value="environmental-temperature">
+                            Environmental - Temperature
+                          </SelectItem>
+                          <SelectItem value="environmental-lightning">
+                            Environmental - Lightning Damage
+                          </SelectItem>
+                          <SelectItem value="preventive-maintenance">
+                            Preventive Maintenance
+                          </SelectItem>
+                          <SelectItem value="routine-inspection">
+                            Routine Inspection
+                          </SelectItem>
+                          <SelectItem value="upgrade-installation">
+                            Upgrade Installation
+                          </SelectItem>
+                          <SelectItem value="new-service-activation">
+                            New Service Activation
+                          </SelectItem>
+                          <SelectItem value="service-relocation">
+                            Service Relocation
+                          </SelectItem>
+                          <SelectItem value="no-fault-found">
+                            No Fault Found
+                          </SelectItem>
                           <SelectItem value="no-fault-handed-back">
                             No Fault Handed Back
+                          </SelectItem>
+                          <SelectItem value="fault-confirmed-resolved">
+                            Fault Confirmed - Resolved
+                          </SelectItem>
+                          <SelectItem value="escalation-required">
+                            Escalation Required
+                          </SelectItem>
+                          <SelectItem value="parts-required">
+                            Parts Required
+                          </SelectItem>
+                          <SelectItem value="access-denied">
+                            Access Denied
+                          </SelectItem>
+                          <SelectItem value="customer-not-available">
+                            Customer Not Available
                           </SelectItem>
                         </SelectContent>
                       </Select>
