@@ -381,16 +381,9 @@ export default function EnhancedJobDetailsScreen() {
         </div>
       )}
 
-      {/* Navigation Tabs */}
+      {/* Content Area */}
       <div className="p-4 pb-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-5 w-full mb-6">
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="udf">UDF</TabsTrigger>
-            <TabsTrigger value="gallery">Gallery</TabsTrigger>
-            <TabsTrigger value="stocks">Stocks</TabsTrigger>
-            <TabsTrigger value="signoff">Sign Off</TabsTrigger>
-          </TabsList>
 
           {/* Details Tab */}
           <TabsContent value="details" className="space-y-4">
