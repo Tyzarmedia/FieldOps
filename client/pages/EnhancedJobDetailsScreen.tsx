@@ -62,6 +62,13 @@ export default function EnhancedJobDetailsScreen() {
   const [isPaused, setIsPaused] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
   const [nearClientTimer, setNearClientTimer] = useState(0);
+  const [networkStatus, setNetworkStatus] = useState<'online' | 'offline'>('online');
+  const [technician] = useState({
+    id: 'tech001',
+    name: 'Dyondzani Clement Masinge',
+    phone: '+27123456789',
+    location: 'East London'
+  });
 
   const [expandedSections, setExpandedSections] = useState<{
     [key: string]: boolean;
@@ -101,6 +108,25 @@ export default function EnhancedJobDetailsScreen() {
     estimatedDuration: "2h",
     description: "Routine maintenance and inspection of HVAC system",
   };
+
+  // Network status monitoring
+  useEffect(() => {
+    const updateNetworkStatus = () => {
+      setNetworkStatus(navigator.onLine ? 'online' : 'offline');
+    };
+
+    // Initial check
+    updateNetworkStatus();
+
+    // Listen for network changes
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+
+    return () => {
+      window.removeEventListener('online', updateNetworkStatus);
+      window.removeEventListener('offline', updateNetworkStatus);
+    };
+  }, []);
 
   // Simulate location detection
   useEffect(() => {
