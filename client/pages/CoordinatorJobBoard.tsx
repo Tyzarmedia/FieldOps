@@ -186,11 +186,29 @@ export default function CoordinatorJobBoard() {
                 ? `${job.estimatedHours}h`
                 : "2h",
             }));
-            // Only update if there are actual changes to prevent UI disruption
+            // Merge new jobs with existing ones, preserving local changes
             setJobs((prevJobs) => {
-              const jobsChanged =
-                JSON.stringify(prevJobs) !== JSON.stringify(formattedJobs);
-              return jobsChanged ? formattedJobs : prevJobs;
+              const newJobsMap = new Map(formattedJobs.map((job: any) => [job.id, job]));
+              const existingJobsMap = new Map(prevJobs.map(job => [job.id, job]));
+
+              // Start with existing jobs to preserve any local changes
+              const mergedJobs = [...prevJobs];
+
+              // Add any new jobs from backend that don't exist locally
+              formattedJobs.forEach((backendJob: any) => {
+                if (!existingJobsMap.has(backendJob.id)) {
+                  mergedJobs.push(backendJob);
+                }
+              });
+
+              // Remove jobs that no longer exist on backend (unless they were just created)
+              const filteredJobs = mergedJobs.filter(job => {
+                // Keep job if it exists on backend OR if it's very recently created (within 30 seconds)
+                const jobAge = Date.now() - parseInt(job.id);
+                return newJobsMap.has(job.id) || jobAge < 30000;
+              });
+
+              return filteredJobs;
             });
           }
         }
