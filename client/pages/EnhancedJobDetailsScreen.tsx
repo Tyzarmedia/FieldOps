@@ -282,6 +282,32 @@ export default function EnhancedJobDetailsScreen() {
         </div>
       </div>
 
+      {/* Timer Overlay */}
+      {showTimerOverlay && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 m-4 max-w-sm w-full">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Job Timer</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowTimerOverlay(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="text-center">
+              <JobTimer
+                jobId={jobDetails.id}
+                jobStatus={jobDetails.status}
+                onTimeUpdate={(time) =>
+                  console.log(`Job ${jobDetails.id} time: ${time}s`)
+                }
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Navigation Tabs */}
       <div className="p-4 pb-24">
