@@ -623,6 +623,236 @@ export default function EnhancedJobDetailsScreen() {
         </div>
       )}
 
+      {/* Image Upload Form Overlay */}
+      {showImageForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold">Upload Job Images</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowImageForm(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Before Light Levels */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Before Light Levels *
+                  </label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload('beforeLightLevels', file);
+                    }}
+                    className="w-full"
+                  />
+                  {imageFormData.beforeLightLevels && (
+                    <p className="text-sm text-green-600 mt-1">
+                      ✓ {imageFormData.beforeLightLevels.name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Fault Finding */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Fault Finding *
+                  </label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload('faultFinding', file);
+                    }}
+                    className="w-full"
+                  />
+                  {imageFormData.faultFinding && (
+                    <p className="text-sm text-green-600 mt-1">
+                      ✓ {imageFormData.faultFinding.name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Fault After Fixing */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Fault After Fixing *
+                  </label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload('faultAfterFixing', file);
+                    }}
+                    className="w-full"
+                  />
+                  {imageFormData.faultAfterFixing && (
+                    <p className="text-sm text-green-600 mt-1">
+                      ✓ {imageFormData.faultAfterFixing.name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Light Levels After Fix */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Light Levels After Fix *
+                  </label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload('lightLevelsAfterFix', file);
+                    }}
+                    className="w-full"
+                  />
+                  {imageFormData.lightLevelsAfterFix && (
+                    <p className="text-sm text-green-600 mt-1">
+                      ✓ {imageFormData.lightLevelsAfterFix.name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                  onClick={submitImageForm}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3"
+                  disabled={!imageFormData.beforeLightLevels || !imageFormData.faultFinding ||
+                           !imageFormData.faultAfterFixing || !imageFormData.lightLevelsAfterFix}
+                >
+                  Upload All Images
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stock Allocation Form Overlay */}
+      {showStockForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold">Allocate Stock</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowStockForm(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {/* Search Bar */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Search Stock (Code or Name)
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Search by code or name..."
+                    value={stockFormData.searchQuery}
+                    onChange={(e) => setStockFormData(prev => ({
+                      ...prev,
+                      searchQuery: e.target.value
+                    }))}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Stock Results */}
+                {stockFormData.searchQuery && (
+                  <div className="max-h-40 overflow-y-auto border rounded-lg">
+                    {filteredStocks.map((stock) => (
+                      <div
+                        key={stock.id}
+                        className={`p-3 cursor-pointer hover:bg-gray-50 border-b ${
+                          stockFormData.selectedStock?.id === stock.id ? 'bg-blue-50' : ''
+                        }`}
+                        onClick={() => setStockFormData(prev => ({
+                          ...prev,
+                          selectedStock: stock
+                        }))}
+                      >
+                        <div className="font-medium">{stock.code}</div>
+                        <div className="text-sm text-gray-600">{stock.name}</div>
+                        <div className="text-sm text-green-600">Available: {stock.warehouseQty}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Selected Stock */}
+                {stockFormData.selectedStock && (
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="font-medium">{stockFormData.selectedStock.code}</div>
+                    <div className="text-sm text-gray-600">{stockFormData.selectedStock.name}</div>
+                  </div>
+                )}
+
+                {/* Warehouse Number */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Warehouse Number
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Enter warehouse number"
+                    value={stockFormData.warehouseNumber}
+                    onChange={(e) => setStockFormData(prev => ({
+                      ...prev,
+                      warehouseNumber: e.target.value
+                    }))}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Quantity */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Quantity to Allocate
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="Enter quantity"
+                    value={stockFormData.quantity}
+                    onChange={(e) => setStockFormData(prev => ({
+                      ...prev,
+                      quantity: e.target.value
+                    }))}
+                    className="w-full"
+                    min="1"
+                    max={stockFormData.selectedStock?.warehouseQty || 999}
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                  onClick={submitStockForm}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3"
+                  disabled={!stockFormData.selectedStock || !stockFormData.quantity}
+                >
+                  Allocate Stock
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Content Area */}
       <div className="p-4 pb-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
