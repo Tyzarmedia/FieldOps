@@ -661,7 +661,7 @@ router.post("/assignments", (req, res) => {
 
     // Create notification for the technician
     try {
-      const notificationResponse = await fetch('http://localhost:5000/api/notifications', {
+      const notificationResponse = await fetch('http://localhost:3000/api/notifications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

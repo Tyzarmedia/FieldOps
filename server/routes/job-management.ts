@@ -175,7 +175,7 @@ router.put("/jobs/:jobId/assign", (req, res) => {
     // Create notification for the assigned technician
     const createNotification = async (techId: string) => {
       try {
-        const notificationResponse = await fetch('http://localhost:5000/api/notifications', {
+        const notificationResponse = await fetch('http://localhost:3000/api/notifications', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
