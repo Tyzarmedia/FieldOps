@@ -31,6 +31,8 @@ import {
   FileText,
   CheckCircle,
   HardHat,
+  Settings,
+  PenTool,
 } from "lucide-react";
 
 interface JobDetails {
@@ -712,7 +714,7 @@ export default function EnhancedJobDetailsScreen() {
 
       {/* Fixed Bottom Update Button (only for UDF tab) */}
       {activeTab === "udf" && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
+        <div className="fixed bottom-16 left-0 right-0 p-4 bg-white border-t">
           <Button
             onClick={handleUpdate}
             className="w-full bg-green-500 hover:bg-green-600 text-white py-4 text-lg font-semibold"
@@ -722,6 +724,62 @@ export default function EnhancedJobDetailsScreen() {
           </Button>
         </div>
       )}
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+        <div className="flex justify-around py-2">
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-3 ${
+              activeTab === "details" ? "text-blue-600" : "text-gray-600"
+            }`}
+            onClick={() => setActiveTab("details")}
+          >
+            <FileText className="h-6 w-6" />
+            <span className="text-xs font-medium">Details</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-3 ${
+              activeTab === "udf" ? "text-blue-600" : "text-gray-600"
+            }`}
+            onClick={() => setActiveTab("udf")}
+          >
+            <Settings className="h-6 w-6" />
+            <span className="text-xs font-medium">UDF</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-3 ${
+              activeTab === "gallery" ? "text-blue-600" : "text-gray-600"
+            }`}
+            onClick={() => setActiveTab("gallery")}
+          >
+            <Camera className="h-6 w-6" />
+            <span className="text-xs font-medium">Gallery</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-3 ${
+              activeTab === "stocks" ? "text-blue-600" : "text-gray-600"
+            }`}
+            onClick={() => setActiveTab("stocks")}
+          >
+            <Package className="h-6 w-6" />
+            <span className="text-xs font-medium">Stocks</span>
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex flex-col items-center space-y-1 p-3 ${
+              activeTab === "signoff" ? "text-orange-600" : "text-gray-600"
+            }`}
+            onClick={() => setActiveTab("signoff")}
+          >
+            <PenTool className="h-6 w-6" />
+            <span className="text-xs font-medium">Sign Off</span>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
