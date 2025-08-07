@@ -510,93 +510,155 @@ export default function EnhancedJobDetailsScreen() {
             {/* Job Details */}
             <Card>
               <CardContent className="p-4 space-y-4">
-                {/* Task */}
+                {/* ROC */}
+                <div className="flex items-start space-x-3">
+                  <Building className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">ROC</p>
+                    <p className="text-sm text-gray-900">Regional Operations Center</p>
+                  </div>
+                </div>
+
+                {/* Contractor */}
                 <div className="flex items-start space-x-3">
                   <User className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Task</p>
+                    <p className="text-sm font-medium text-gray-700">Contractor</p>
                     <p className="text-sm text-gray-900">Stefany Sampetha Relay</p>
                   </div>
                 </div>
 
-                {/* Address */}
+                {/* Work Type */}
                 <div className="flex items-start space-x-3">
-                  <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <Settings className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Address</p>
-                    <p className="text-sm text-gray-900">{jobDetails.client.address}</p>
-                  </div>
-                </div>
-
-                {/* Job Type */}
-                <div className="flex items-start space-x-3">
-                  <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Job Type</p>
+                    <p className="text-sm font-medium text-gray-700">Work Type</p>
                     <p className="text-sm text-gray-900">1. Maintenance Job (SF)</p>
                   </div>
                 </div>
 
-                {/* Work Order Method */}
+                {/* Case/NWI/Change Number */}
                 <div className="flex items-start space-x-3">
-                  <Settings className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <Hash className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Work Order Method</p>
+                    <p className="text-sm font-medium text-gray-700">Case/NWI/Change Number</p>
                     <p className="text-sm text-gray-900">DV8 08/05</p>
                   </div>
                 </div>
 
-                {/* Work Order Number */}
+                {/* Appointment Number */}
                 <div className="flex items-start space-x-3">
-                  <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Work Order Number</p>
+                    <p className="text-sm font-medium text-gray-700">Appointment Number</p>
                     <p className="text-sm text-gray-900">0076501</p>
                   </div>
                 </div>
 
-                {/* Equipment Location */}
+                {/* Network Identifier */}
                 <div className="flex items-start space-x-3">
-                  <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <Wifi className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Equipment Location</p>
-                    <p className="text-sm text-gray-900">SA-TT134</p>
-                  </div>
-                </div>
-
-                {/* Terminal Interface */}
-                <div className="flex items-start space-x-3">
-                  <Settings className="h-5 w-5 text-gray-500 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Terminal Interface</p>
+                    <p className="text-sm font-medium text-gray-700">Network Identifier</p>
                     <p className="text-sm text-gray-900">485754d3E2ED5EAB</p>
                   </div>
                 </div>
 
-                {/* Area */}
+                {/* Location */}
                 <div className="flex items-start space-x-3">
                   <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Area</p>
+                    <p className="text-sm font-medium text-gray-700">Location</p>
+                    <p className="text-sm text-gray-900">{jobDetails.client.address}</p>
+                  </div>
+                </div>
+
+                {/* Service Territory */}
+                <div className="flex items-start space-x-3">
+                  <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Service Territory</p>
                     <p className="text-sm text-gray-900">120 - East London</p>
                   </div>
                 </div>
 
-                {/* Tower */}
-                <div className="flex items-start space-x-3">
-                  <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Tower</p>
-                    <p className="text-sm text-gray-900">218-Bc BCE</p>
-                  </div>
-                </div>
-
-                {/* Created Details */}
+                {/* Contact Name */}
                 <div className="flex items-start space-x-3">
                   <User className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Created Details</p>
-                    <p className="text-sm text-gray-900">Created by system</p>
+                    <p className="text-sm font-medium text-gray-700">Contact Name</p>
+                    <p className="text-sm text-gray-900">Jody Make</p>
+                  </div>
+                </div>
+
+                {/* Contact Number */}
+                <div className="flex items-start space-x-3">
+                  <Phone className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">Contact Number</p>
+                    <p className="text-sm text-gray-900">{jobDetails.client.phone}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Network Status */}
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-3 text-gray-900">Network Status</h3>
+                <div className="space-y-4">
+                  {/* Network Identifier/Serial Number */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Hash className="h-4 w-4 text-gray-500" />
+                      <span className="text-sm font-medium">Network ID/Serial</span>
+                    </div>
+                    <span className="text-sm text-gray-900">485754d3E2ED5EAB</span>
+                  </div>
+
+                  {/* RX Signal */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Signal className="h-4 w-4 text-green-500" />
+                      <span className="text-sm font-medium">RX Signal</span>
+                    </div>
+                    <Badge className="bg-green-100 text-green-800">-12.5 dBm</Badge>
+                  </div>
+
+                  {/* SFP */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <CircleDot className="h-4 w-4 text-blue-500" />
+                      <span className="text-sm font-medium">SFP</span>
+                    </div>
+                    <span className="text-sm text-gray-900">1000Base-LX</span>
+                  </div>
+
+                  {/* NMS */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Activity className="h-4 w-4 text-orange-500" />
+                      <span className="text-sm font-medium">NMS</span>
+                    </div>
+                    <span className="text-sm text-gray-900">Active</span>
+                  </div>
+
+                  {/* Link Status */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Wifi className="h-4 w-4 text-green-500" />
+                      <span className="text-sm font-medium">Status</span>
+                    </div>
+                    <Badge className="bg-green-100 text-green-800">Link is Up</Badge>
+                  </div>
+
+                  {/* Last Update */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4 text-gray-500" />
+                      <span className="text-sm font-medium">Last Update</span>
+                    </div>
+                    <span className="text-sm text-gray-500">{new Date().toLocaleTimeString()}</span>
                   </div>
                 </div>
               </CardContent>
