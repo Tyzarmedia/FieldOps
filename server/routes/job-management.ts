@@ -174,32 +174,24 @@ router.put("/jobs/:jobId/assign", (req, res) => {
     jobs[jobIndex].lastModified = new Date().toISOString();
 
     // Create notification for the assigned technician
-    const createNotification = (techId: string) => {
+    const createJobNotification = (techId: string) => {
       try {
-        // Create notification directly (in real app, this would use shared database)
-        const jobNotification = {
-          id: (Date.now() + Math.random()).toString(),
+        createNotification({
           technicianId: techId,
-          type: 'job_assigned' as const,
+          type: 'job_assigned',
           title: 'New Job Assigned',
           message: `${jobs[jobIndex].title} - ${jobs[jobIndex].workOrderNumber || jobId} has been assigned to you`,
-          timestamp: new Date().toISOString(),
-          read: false,
-          priority: 'high' as const,
-          deleted: false
-        };
-
-        // This would normally be handled by a shared notification service
-        console.log('Job assignment notification created:', jobNotification);
+          priority: 'high'
+        });
       } catch (error) {
         console.warn('Error creating job assignment notification:', error);
       }
     };
 
     // Create notifications for assigned technicians
-    createNotification(technicianId);
+    createJobNotification(technicianId);
     if (assistantId) {
-      createNotification(assistantId);
+      createJobNotification(assistantId);
     }
 
     res.json({
