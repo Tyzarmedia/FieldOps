@@ -64,9 +64,14 @@ export default function EnhancedJobDetailsScreen() {
   const { jobId } = useParams();
   const [activeTab, setActiveTab] = useState("details");
   const [showTimerOverlay, setShowTimerOverlay] = useState(false);
+  const [showImageForm, setShowImageForm] = useState(false);
+  const [showStockForm, setShowStockForm] = useState(false);
   const [networkStatus, setNetworkStatus] = useState<'online' | 'offline'>('online');
   const [isLate, setIsLate] = useState(false);
   const [notificationSent, setNotificationSent] = useState(false);
+  const [jobStatus, setJobStatus] = useState<'assigned' | 'in-progress' | 'paused' | 'completed'>("assigned");
+  const [jobTimer, setJobTimer] = useState(0); // Timer in seconds
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [technician] = useState({
     id: 'tech001',
     name: 'Dyondzani Clement Masinge',
