@@ -65,12 +65,19 @@ export default function EnhancedJobDetailsScreen() {
   const [activeTab, setActiveTab] = useState("details");
   const [showTimerOverlay, setShowTimerOverlay] = useState(false);
   const [networkStatus, setNetworkStatus] = useState<'online' | 'offline'>('online');
+  const [isLate, setIsLate] = useState(false);
+  const [notificationSent, setNotificationSent] = useState(false);
   const [technician] = useState({
     id: 'tech001',
     name: 'Dyondzani Clement Masinge',
     phone: '+27123456789',
     location: 'East London'
   });
+
+  // Job timing details
+  const assignedTime = new Date('2025-07-18T16:02:00');
+  const dueTime = new Date('2025-07-18T23:59:00');
+  const warningTime = new Date(dueTime.getTime() - 10 * 60 * 1000); // 10 minutes before
 
   // UDF Form Data
   const [udfData, setUdfData] = useState({
