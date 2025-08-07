@@ -1198,12 +1198,19 @@ export default function EnhancedJobDetailsScreen() {
 
           {/* Stocks Tab */}
           <TabsContent value="stocks" className="space-y-4">
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Stock Usage</h3>
-                <p className="text-gray-500">Stock tracking functionality will be added here...</p>
-              </CardContent>
-            </Card>
+            <div className="relative min-h-[400px] flex flex-col items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+              <div className="text-center">
+                <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg">No Stock Allocated</p>
+              </div>
+
+              <Button
+                onClick={() => setShowStockForm(true)}
+                className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                <Plus className="h-6 w-6" />
+              </Button>
+            </div>
           </TabsContent>
 
           {/* Sign Off Tab */}
