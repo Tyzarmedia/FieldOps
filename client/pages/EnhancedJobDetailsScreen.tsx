@@ -139,6 +139,55 @@ export default function EnhancedJobDetailsScreen() {
     };
   }, []);
 
+  // Deadline monitoring and notifications
+  useEffect(() => {
+    const checkDeadline = () => {
+      const now = new Date();
+
+      // Check if technician is late
+      if (now > dueTime) {
+        setIsLate(true);
+      }
+
+      // Send warning notification 10 minutes before deadline
+      if (now >= warningTime && !notificationSent && now < dueTime) {
+        setNotificationSent(true);
+        sendDeadlineWarning();
+      }
+    };
+
+    const interval = setInterval(checkDeadline, 60000); // Check every minute
+    checkDeadline(); // Initial check
+
+    return () => clearInterval(interval);
+  }, [notificationSent]);
+
+  const sendDeadlineWarning = async () => {
+    try {
+      // Send notification to technician and coordinator
+      await fetch('/api/notifications/deadline-warning', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobId: jobDetails.id,
+          technicianId: technician.id,
+          dueTime: dueTime.toISOString(),
+          message: `Job ${jobDetails.id} is due in 10 minutes`
+        }),
+      });
+
+      // Browser notification
+      if (Notification.permission === 'granted') {
+        new Notification('Job Deadline Warning', {
+          body: `Job ${jobDetails.id} is due in 10 minutes`,
+          icon: '/notification-icon.png'
+        });
+      }
+    } catch (error) {
+      console.error('Failed to send deadline warning:', error);
+    }
+  };
+
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
       ...prev,
