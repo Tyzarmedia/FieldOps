@@ -127,44 +127,6 @@ export default function EnhancedJobDetailsScreen() {
   }, []);
 
 
-  const startJobTracking = async () => {
-    setTrackingStarted(true);
-    // API call to start tracking
-    try {
-      await fetch(`/api/jobs/${jobId}/start-tracking`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          location: "Near client location",
-          startTime: new Date().toISOString(),
-        }),
-      });
-    } catch (error) {
-      console.error("Failed to start tracking:", error);
-    }
-  };
-
-  const toggleTracking = async () => {
-    setIsPaused(!isPaused);
-    try {
-      await fetch(`/api/jobs/${jobId}/toggle-tracking`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: isPaused ? "resume" : "pause",
-        }),
-      });
-    } catch (error) {
-      console.error("Failed to toggle tracking:", error);
-    }
-  };
-
-  const stopJobTracking = () => {
-    setTrackingStarted(false);
-    setIsPaused(false);
-    // Move to sign-off tab
-    setActiveTab("signoff");
-  };
 
   const closeJob = async () => {
     try {
