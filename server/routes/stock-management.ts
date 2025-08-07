@@ -658,6 +658,27 @@ router.post("/assignments", (req, res) => {
 
     // Update main inventory
     stockItems[itemIndex].quantity -= quantity;
+
+    // Create notification for the technician
+    try {
+      const notificationResponse = await fetch('http://localhost:5000/api/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          technicianId,
+          type: 'stock_assigned',
+          title: 'Stock Assigned',
+          message: `${item.name} (${quantity} ${item.unit}) has been assigned to your inventory`,
+          priority: 'medium'
+        })
+      });
+
+      if (!notificationResponse.ok) {
+        console.warn('Failed to create notification for stock assignment');
+      }
+    } catch (error) {
+      console.warn('Error creating stock assignment notification:', error);
+    }
     stockItems[itemIndex].status =
       stockItems[itemIndex].quantity > stockItems[itemIndex].minimumQuantity
         ? "in-stock"
