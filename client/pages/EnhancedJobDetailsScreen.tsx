@@ -34,6 +34,15 @@ import {
   Plus,
   Search,
   Save,
+  Calendar,
+  AlertTriangle,
+  Wifi,
+  Activity,
+  Phone,
+  Building,
+  Hash,
+  Signal,
+  CircleDot,
 } from "lucide-react";
 
 interface JobDetails {
