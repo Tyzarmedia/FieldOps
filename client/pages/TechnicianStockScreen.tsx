@@ -428,7 +428,7 @@ export default function TechnicianStockScreen() {
             >
               <ArrowLeft className="h-6 w-6" />
             </Button>
-            <h1 className="text-xl font-semibold">My Stock</h1>
+            <h1 className="text-xl font-semibold">Stock on Hand</h1>
           </div>
           <div className="flex space-x-2">
             <Button
