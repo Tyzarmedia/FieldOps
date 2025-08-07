@@ -533,16 +533,6 @@ export default function EnhancedJobDetailsScreen() {
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-4">Job Completion</h3>
                 <div className="space-y-4">
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Clock className="h-4 w-4 text-blue-600" />
-                      <span className="font-medium">Time Spent</span>
-                    </div>
-                    <div className="text-2xl font-bold text-blue-600">
-                      {formatTime(timeSpent)}
-                    </div>
-                  </div>
-
                   {formData.maintenanceIssueClass && (
                     <div className="bg-green-50 p-4 rounded-lg">
                       <div className="flex items-center space-x-2 mb-2">
