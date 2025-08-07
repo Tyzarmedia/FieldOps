@@ -59,11 +59,7 @@ export default function EnhancedJobDetailsScreen() {
   const navigate = useNavigate();
   const { jobId } = useParams();
   const [activeTab, setActiveTab] = useState("details");
-  const [isNearClient, setIsNearClient] = useState(false);
-  const [trackingStarted, setTrackingStarted] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [timeSpent, setTimeSpent] = useState(0);
-  const [nearClientTimer, setNearClientTimer] = useState(0);
+  const [showTimerOverlay, setShowTimerOverlay] = useState(false);
   const [networkStatus, setNetworkStatus] = useState<'online' | 'offline'>('online');
   const [technician] = useState({
     id: 'tech001',
