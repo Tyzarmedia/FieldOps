@@ -631,6 +631,16 @@ export default function TechnicianStockScreen() {
 
                   {/* Action Buttons */}
                   <div className="flex space-x-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => navigate("/technician/stock")}
+                    >
+                      <Minus className="h-4 w-4 mr-1" />
+                      Use Stock
+                    </Button>
+
                     <Dialog
                       open={showUsageDialog && selectedItem?.id === item.id}
                       onOpenChange={(open) => {
@@ -640,13 +650,13 @@ export default function TechnicianStockScreen() {
                     >
                       <DialogTrigger asChild>
                         <Button
+                          variant="outline"
                           size="sm"
                           className="flex-1"
                           onClick={() => setSelectedItem(item)}
-                          disabled={item.remainingQuantity === 0}
                         >
-                          <Minus className="h-4 w-4 mr-1" />
-                          Use Stock
+                          <ArrowLeft className="h-4 w-4 mr-1" />
+                          Return
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
