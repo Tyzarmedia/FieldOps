@@ -1186,11 +1186,9 @@ export default function EnhancedJobDetailsScreen() {
                   ))}
                 </div>
               )}
-              
+
               <Button
-                onClick={() =>
-                  setJobPhotos([...jobPhotos, `photo-${Date.now()}`])
-                }
+                onClick={() => setShowImageForm(true)}
                 className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
               >
                 <Plus className="h-6 w-6" />
