@@ -43,6 +43,8 @@ import {
   Hash,
   Signal,
   CircleDot,
+  Play,
+  Pause,
 } from "lucide-react";
 
 interface JobDetails {
