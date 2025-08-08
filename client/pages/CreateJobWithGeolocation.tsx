@@ -123,45 +123,84 @@ export default function CreateJobWithGeolocation() {
   // Get current location
   const getCurrentLocation = async () => {
     setLocationLoading(true);
-    
+
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by this browser");
+      alert("Geolocation is not supported by this browser. Please enter the address manually.");
       setLocationLoading(false);
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const location: JobLocation = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          address: "Getting address...",
-          accuracy: position.coords.accuracy,
-        };
+    const handleLocationSuccess = async (position: GeolocationPosition) => {
+      const location: JobLocation = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        address: "Getting address...",
+        accuracy: position.coords.accuracy,
+      };
 
-        try {
-          // Reverse geocoding to get address
-          const response = await fetch(
-            `https://api.opencagedata.com/geocode/v1/json?q=${location.latitude}+${location.longitude}&key=YOUR_API_KEY`
-          );
-          const data = await response.json();
-          
-          if (data.results && data.results[0]) {
-            location.address = data.results[0].formatted;
-          }
-        } catch (error) {
-          console.error("Failed to get address:", error);
-          location.address = `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
+      try {
+        // Mock reverse geocoding since we don't have a real API key
+        // In production, you would use a proper geocoding service
+        location.address = `Lat: ${location.latitude.toFixed(6)}, Lng: ${location.longitude.toFixed(6)}`;
+
+        // You can replace this with actual reverse geocoding service
+        /*
+        const response = await fetch(
+          `https://api.opencagedata.com/geocode/v1/json?q=${location.latitude}+${location.longitude}&key=YOUR_API_KEY`
+        );
+        const data = await response.json();
+
+        if (data.results && data.results[0]) {
+          location.address = data.results[0].formatted;
         }
+        */
+      } catch (error) {
+        console.error("Failed to get address:", error);
+        location.address = `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
+      }
 
-        setJobLocation(location);
-        setJobData(prev => ({ ...prev, serviceAddress: location.address }));
-        setLocationLoading(false);
-      },
+      setJobLocation(location);
+      setJobData(prev => ({ ...prev, serviceAddress: location.address }));
+      setLocationLoading(false);
+    };
+
+    const handleLocationError = (error: GeolocationPositionError) => {
+      let errorMessage = 'Failed to get current location: ';
+
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage += 'Location access denied. Please enable location permissions and try again, or enter the address manually.';
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage += 'Location unavailable. Please check your GPS/network connection or enter the address manually.';
+          break;
+        case error.TIMEOUT:
+          errorMessage += 'Location request timed out. Please try again or enter the address manually.';
+          break;
+        default:
+          errorMessage += 'Unknown error. Please enter the address manually.';
+          break;
+      }
+
+      console.error("Geolocation error:", error);
+      alert(errorMessage);
+      setLocationLoading(false);
+    };
+
+    // First try with high accuracy
+    navigator.geolocation.getCurrentPosition(
+      handleLocationSuccess,
       (error) => {
-        console.error("Error getting location:", error);
-        alert("Failed to get current location. Please enter address manually.");
-        setLocationLoading(false);
+        // If high accuracy fails, try with lower accuracy
+        navigator.geolocation.getCurrentPosition(
+          handleLocationSuccess,
+          handleLocationError,
+          {
+            enableHighAccuracy: false,
+            timeout: 15000,
+            maximumAge: 60000,
+          }
+        );
       },
       {
         enableHighAccuracy: true,
