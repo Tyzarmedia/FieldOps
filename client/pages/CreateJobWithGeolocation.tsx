@@ -197,13 +197,7 @@ export default function CreateJobWithGeolocation() {
       }
 
       // Log detailed error information for debugging
-      console.error("Geolocation error details:", {
-        code: error.code,
-        message: error.message,
-        errorName: getErrorName(error.code),
-        userMessage,
-      });
-      console.error("Full error object:", error);
+      geolocationUtils.logGeolocationError(error, "CreateJobWithGeolocation");
 
       alert(userMessage);
       setLocationLoading(false);
