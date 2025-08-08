@@ -210,14 +210,43 @@ export default function CreateJobWithGeolocation() {
     );
   };
 
-  // Geocode address
+  // Request geolocation permission
+  const requestLocationPermission = async () => {
+    try {
+      const permission = await navigator.permissions.query({ name: 'geolocation' });
+
+      if (permission.state === 'denied') {
+        alert('Location access is denied. Please enable location permissions in your browser settings to use this feature.');
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.warn('Permission API not supported, proceeding with geolocation request');
+      return true;
+    }
+  };
+
+  // Geocode address (mock implementation)
   const geocodeAddress = async (address: string) => {
     if (!address.trim()) return;
 
     setLocationLoading(true);
     try {
+      // Mock geocoding - in production, use a real geocoding service
+      // This creates a mock location based on the address text
+      const mockLocation: JobLocation = {
+        latitude: -33.0197 + (Math.random() - 0.5) * 0.01, // Small random offset
+        longitude: 27.9117 + (Math.random() - 0.5) * 0.01,
+        address: address.trim(),
+      };
+
+      setJobLocation(mockLocation);
+
+      /*
+      // Real implementation would look like this:
       const response = await fetch(
-        `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=YOUR_API_KEY`
+        `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=YOUR_GEOCODING_API_KEY`
       );
       const data = await response.json();
 
@@ -232,9 +261,10 @@ export default function CreateJobWithGeolocation() {
       } else {
         alert("Address not found. Please check and try again.");
       }
+      */
     } catch (error) {
       console.error("Geocoding error:", error);
-      alert("Failed to geocode address. Please try again.");
+      alert("Failed to process address. Please check the address and try again.");
     }
     setLocationLoading(false);
   };
