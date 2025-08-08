@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useNotification } from "@/components/ui/notification";
 import { JobTimer } from "@/components/JobTimer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,7 @@ export default function EnhancedJobDetailsScreen() {
   const navigate = useNavigate();
   const { jobId } = useParams();
   const { toast } = useToast();
+  const { success, error: notifyError, warning } = useNotification();
   const [activeTab, setActiveTab] = useState("details");
   const [showTimerOverlay, setShowTimerOverlay] = useState(false);
   const [showImageForm, setShowImageForm] = useState(false);
@@ -248,33 +250,37 @@ export default function EnhancedJobDetailsScreen() {
     };
 
     const handleLocationError = (error: GeolocationPositionError) => {
-      let errorMessage = 'Location access failed: ';
+      let userMessage = '';
+      let shouldShowWarning = false;
 
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          errorMessage += 'Permission denied. Using default location for job tracking.';
-          // Set default location immediately when permission is denied
+          userMessage = 'Location access denied. Using default location for job tracking.';
+          shouldShowWarning = true;
           setCurrentLocation({
             latitude: -33.0197, // East London coordinates
             longitude: 27.9117,
           });
           break;
         case error.POSITION_UNAVAILABLE:
-          errorMessage += 'Location information unavailable. Using default location.';
+          userMessage = 'Location unavailable. Using default location for job tracking.';
+          shouldShowWarning = true;
           setCurrentLocation({
             latitude: -33.0197,
             longitude: 27.9117,
           });
           break;
         case error.TIMEOUT:
-          errorMessage += 'Location request timed out. Trying again...';
+          userMessage = 'Location request timed out. Retrying with lower accuracy...';
+          warning('Location Timeout', userMessage);
           // Try fallback for timeout
           setTimeout(() => {
             getCurrentLocationFallback();
           }, 5000);
           break;
         default:
-          errorMessage += 'Unknown error occurred. Using default location.';
+          userMessage = 'Unable to get location. Using default location for job tracking.';
+          shouldShowWarning = true;
           setCurrentLocation({
             latitude: -33.0197,
             longitude: 27.9117,
@@ -282,23 +288,46 @@ export default function EnhancedJobDetailsScreen() {
           break;
       }
 
-      console.error(errorMessage);
-      console.error('Location error details:', {
+      // Log detailed error information for debugging
+      console.error('Geolocation error details:', {
         code: error.code,
-        message: error.message
+        message: error.message,
+        errorName: getErrorName(error.code),
+        userMessage
       });
+
+      // Show user-friendly notification
+      if (shouldShowWarning) {
+        warning('Location Access', userMessage);
+      }
+    };
+
+    const getErrorName = (code: number): string => {
+      switch (code) {
+        case 1: return 'PERMISSION_DENIED';
+        case 2: return 'POSITION_UNAVAILABLE';
+        case 3: return 'TIMEOUT';
+        default: return 'UNKNOWN_ERROR';
+      }
     };
 
     const getCurrentLocationFallback = () => {
       navigator.geolocation.getCurrentPosition(
         handleLocationSuccess,
         (error) => {
-          console.error('Fallback location request also failed:', error);
+          console.error('Fallback location request failed:', {
+            code: error.code,
+            message: error.message,
+            errorName: getErrorName(error.code)
+          });
+
           // Use default location if all else fails
           setCurrentLocation({
             latitude: -33.0197, // East London coordinates as fallback
             longitude: 27.9117,
           });
+
+          notifyError('Location Failed', 'Using default location due to location service failure.');
         },
         {
           enableHighAccuracy: false,
