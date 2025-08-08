@@ -311,6 +311,39 @@ class GeolocationUtils {
   }
 
   /**
+   * Log geolocation error with proper formatting for debugging
+   */
+  logGeolocationError(error: GeolocationPositionError, context?: string): void {
+    const errorDetails = {
+      code: error.code,
+      message: error.message,
+      errorName: this.getErrorCodeName(error.code),
+      userMessage: this.parseGeolocationError(error).userMessage,
+      timestamp: new Date().toISOString(),
+      context: context || 'Unknown context'
+    };
+
+    console.error(`Geolocation Error${context ? ` (${context})` : ''}:`, errorDetails);
+    console.error('Full error object:', error);
+  }
+
+  /**
+   * Get human-readable error code name
+   */
+  private getErrorCodeName(code: number): string {
+    switch (code) {
+      case 1:
+        return "PERMISSION_DENIED";
+      case 2:
+        return "POSITION_UNAVAILABLE";
+      case 3:
+        return "TIMEOUT";
+      default:
+        return "UNKNOWN_ERROR";
+    }
+  }
+
+  /**
    * Mock reverse geocoding (replace with real service in production)
    */
   async reverseGeocode(lat: number, lon: number): Promise<string> {
