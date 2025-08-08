@@ -203,18 +203,6 @@ export default function CreateJobWithGeolocation() {
       setLocationLoading(false);
     };
 
-    const getErrorName = (code: number): string => {
-      switch (code) {
-        case 1:
-          return "PERMISSION_DENIED";
-        case 2:
-          return "POSITION_UNAVAILABLE";
-        case 3:
-          return "TIMEOUT";
-        default:
-          return "UNKNOWN_ERROR";
-      }
-    };
 
     // First try with high accuracy
     navigator.geolocation.getCurrentPosition(
