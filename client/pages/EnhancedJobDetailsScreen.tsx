@@ -228,10 +228,92 @@ export default function EnhancedJobDetailsScreen() {
     }
   };
 
+  // Geolocation tracking
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by this browser');
+      return;
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const newLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        setCurrentLocation(newLocation);
+        checkProximity(newLocation);
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 1000,
+      }
+    );
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
+
+  // Check proximity to job location
+  const checkProximity = (currentPos: {latitude: number, longitude: number}) => {
+    const distance = calculateDistance(
+      currentPos.latitude,
+      currentPos.longitude,
+      jobLocation.latitude,
+      jobLocation.longitude
+    );
+
+    const isWithinRadius = distance <= 0.1; // 100 meters radius
+    setIsNearJobLocation(isWithinRadius);
+  };
+
+  // Calculate distance between two coordinates (Haversine formula)
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c; // Distance in kilometers
+    return distance;
+  };
+
+  // Proximity timer for auto-start
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (isNearJobLocation && jobStatus === 'assigned') {
+      interval = setInterval(() => {
+        setProximityTimer(prev => {
+          if (prev >= 120) { // 2 minutes = 120 seconds
+            autoStartJob();
+            return 0;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    } else {
+      // Reset timer if moved away from location
+      setProximityTimer(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isNearJobLocation, jobStatus]);
+
   // Job timer effect
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-    
+
     if (isTimerRunning) {
       interval = setInterval(() => {
         setJobTimer(prev => prev + 1);
