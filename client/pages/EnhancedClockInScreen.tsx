@@ -124,32 +124,74 @@ export default function EnhancedClockInScreen() {
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
-      console.error('Geolocation is not supported');
+      console.error('Geolocation is not supported by this browser');
+      // Set a default location for testing
+      setCurrentLocation({
+        latitude: -33.0197,
+        longitude: 27.9117,
+        address: "Default Location (East London)"
+      });
       return;
     }
 
+    const handleLocationSuccess = (position: GeolocationPosition) => {
+      const location = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        address: `Lat: ${position.coords.latitude.toFixed(4)}, Lng: ${position.coords.longitude.toFixed(4)}`,
+      };
+
+      setCurrentLocation(location);
+    };
+
+    const handleLocationError = (error: GeolocationPositionError) => {
+      let errorMessage = 'Location error: ';
+
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage += 'Permission denied. Using default location.';
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage += 'Position unavailable. Using default location.';
+          break;
+        case error.TIMEOUT:
+          errorMessage += 'Request timed out. Using default location.';
+          break;
+        default:
+          errorMessage += 'Unknown error. Using default location.';
+          break;
+      }
+
+      console.error(errorMessage, error);
+
+      // Set default location as fallback
+      setCurrentLocation({
+        latitude: -33.0197,
+        longitude: 27.9117,
+        address: "Default Location (East London)"
+      });
+    };
+
+    // Try to get location with retry mechanism
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const location = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          address: "Getting address...",
-        };
-
-        try {
-          // Reverse geocoding (mock implementation)
-          const address = `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`;
-          location.address = address;
-        } catch (error) {
-          console.error("Failed to get address:", error);
-        }
-
-        setCurrentLocation(location);
-      },
+      handleLocationSuccess,
       (error) => {
-        console.error("Error getting location:", error);
+        // Retry with less strict settings
+        navigator.geolocation.getCurrentPosition(
+          handleLocationSuccess,
+          handleLocationError,
+          {
+            enableHighAccuracy: false,
+            timeout: 15000,
+            maximumAge: 60000,
+          }
+        );
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 1000 }
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 1000
+      }
     );
   };
 
