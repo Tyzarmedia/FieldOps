@@ -316,17 +316,15 @@ class GeolocationUtils {
    * Log geolocation error with proper formatting for debugging
    */
   logGeolocationError(error: GeolocationPositionError, context?: string): void {
-    const errorDetails = {
-      code: error.code,
-      message: error.message,
-      errorName: this.getErrorCodeName(error.code),
-      userMessage: this.parseGeolocationError(error).userMessage,
-      timestamp: new Date().toISOString(),
-      context: context || 'Unknown context'
-    };
+    const contextStr = context ? ` - ${context}` : '';
+    logError(error, `Geolocation${contextStr}`);
 
-    console.error(`Geolocation Error${context ? ` (${context})` : ''}:`, errorDetails);
-    console.error('Full error object:', error);
+    // Additional geolocation-specific details
+    const geolocationDetails = {
+      errorName: this.getErrorCodeName(error.code),
+      userMessage: this.parseGeolocationError(error).userMessage
+    };
+    console.error('Geolocation error details:', geolocationDetails);
   }
 
   /**
