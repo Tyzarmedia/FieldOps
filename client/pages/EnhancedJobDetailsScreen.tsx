@@ -333,7 +333,40 @@ export default function EnhancedJobDetailsScreen() {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Job control functions
+  // Auto-start job when in proximity for 2 minutes
+  const autoStartJob = async () => {
+    try {
+      // Include 2.5 minutes (150 seconds) prior to actual start
+      const adjustedStartTime = new Date(Date.now() - 150000).toISOString();
+
+      const response = await fetch(`/api/jobs/${jobDetails.id}/auto-start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          technicianId: technician.id,
+          startTime: adjustedStartTime,
+          actualStartTime: new Date().toISOString(),
+          location: currentLocation,
+          proximityDuration: proximityTimer,
+          autoStarted: true,
+        }),
+      });
+
+      if (response.ok) {
+        setJobStatus('in-progress');
+        setIsTimerRunning(true);
+        setJobTimer(150); // Start with 2.5 minutes already counted
+        setProximityTimer(0);
+
+        // Notify manager and coordinator
+        await notifyStatusChange('auto-started');
+      }
+    } catch (error) {
+      console.error('Failed to auto-start job:', error);
+    }
+  };
+
+  // Manual job start
   const startJob = async () => {
     try {
       const response = await fetch(`/api/jobs/${jobDetails.id}/start`, {
@@ -342,12 +375,18 @@ export default function EnhancedJobDetailsScreen() {
         body: JSON.stringify({
           technicianId: technician.id,
           startTime: new Date().toISOString(),
+          location: currentLocation,
+          manualStart: true,
         }),
       });
-      
+
       if (response.ok) {
         setJobStatus('in-progress');
         setIsTimerRunning(true);
+        setProximityTimer(0);
+
+        // Notify manager and coordinator
+        await notifyStatusChange('started');
       }
     } catch (error) {
       console.error('Failed to start job:', error);
@@ -363,12 +402,16 @@ export default function EnhancedJobDetailsScreen() {
           technicianId: technician.id,
           pauseTime: new Date().toISOString(),
           timeSpent: jobTimer,
+          location: currentLocation,
         }),
       });
-      
+
       if (response.ok) {
         setJobStatus('paused');
         setIsTimerRunning(false);
+
+        // Notify manager and coordinator
+        await notifyStatusChange('paused');
       }
     } catch (error) {
       console.error('Failed to pause job:', error);
@@ -384,15 +427,64 @@ export default function EnhancedJobDetailsScreen() {
           technicianId: technician.id,
           endTime: new Date().toISOString(),
           totalTime: jobTimer,
+          location: currentLocation,
         }),
       });
-      
+
       if (response.ok) {
         setJobStatus('completed');
         setIsTimerRunning(false);
+
+        // Notify manager and coordinator
+        await notifyStatusChange('completed');
       }
     } catch (error) {
       console.error('Failed to stop job:', error);
+    }
+  };
+
+  // Resume job from paused state
+  const resumeJob = async () => {
+    try {
+      const response = await fetch(`/api/jobs/${jobDetails.id}/resume`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          technicianId: technician.id,
+          resumeTime: new Date().toISOString(),
+          location: currentLocation,
+        }),
+      });
+
+      if (response.ok) {
+        setJobStatus('in-progress');
+        setIsTimerRunning(true);
+
+        // Notify manager and coordinator
+        await notifyStatusChange('resumed');
+      }
+    } catch (error) {
+      console.error('Failed to resume job:', error);
+    }
+  };
+
+  // Notify status change to manager and coordinator
+  const notifyStatusChange = async (status: string) => {
+    try {
+      await fetch('/api/notifications/job-status-change', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobId: jobDetails.id,
+          technicianId: technician.id,
+          technicianName: technician.name,
+          status,
+          timestamp: new Date().toISOString(),
+          location: currentLocation,
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to send status notification:', error);
     }
   };
 
