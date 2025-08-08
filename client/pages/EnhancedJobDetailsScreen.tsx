@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { JobTimer } from "@/components/JobTimer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -64,6 +65,7 @@ interface JobDetails {
 export default function EnhancedJobDetailsScreen() {
   const navigate = useNavigate();
   const { jobId } = useParams();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("details");
   const [showTimerOverlay, setShowTimerOverlay] = useState(false);
   const [showImageForm, setShowImageForm] = useState(false);
@@ -120,7 +122,8 @@ export default function EnhancedJobDetailsScreen() {
     planning: false,
   });
 
-  const [jobPhotos, setJobPhotos] = useState<string[]>([]);
+  const [jobPhotos, setJobPhotos] = useState<{id: string, name: string, url: string, type: string}[]>([]);
+  const [allocatedStock, setAllocatedStock] = useState<{id: string, code: string, name: string, quantity: number, allocatedAt: string}[]>([]);
   
   // Image form data
   const [imageFormData, setImageFormData] = useState({
@@ -421,6 +424,13 @@ export default function EnhancedJobDetailsScreen() {
         setJobTimer(150); // Start with 2.5 minutes already counted
         setProximityTimer(0);
 
+        // Show success toast
+        toast({
+          title: "Job Auto-Started",
+          description: "Job automatically started due to proximity detection.",
+          variant: "default",
+        });
+
         // Notify manager and coordinator
         await notifyStatusChange('auto-started');
       }
@@ -448,8 +458,21 @@ export default function EnhancedJobDetailsScreen() {
         setIsTimerRunning(true);
         setProximityTimer(0);
 
+        // Show success toast
+        toast({
+          title: "Job Started",
+          description: "Job has been successfully started.",
+          variant: "default",
+        });
+
         // Notify manager and coordinator
         await notifyStatusChange('started');
+      } else {
+        toast({
+          title: "Failed to Start Job",
+          description: "Unable to start the job. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Failed to start job:', error);
@@ -473,8 +496,21 @@ export default function EnhancedJobDetailsScreen() {
         setJobStatus('paused');
         setIsTimerRunning(false);
 
+        // Show success toast
+        toast({
+          title: "Job Paused",
+          description: "Job has been paused successfully.",
+          variant: "default",
+        });
+
         // Notify manager and coordinator
         await notifyStatusChange('paused');
+      } else {
+        toast({
+          title: "Failed to Pause Job",
+          description: "Unable to pause the job. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Failed to pause job:', error);
@@ -498,8 +534,21 @@ export default function EnhancedJobDetailsScreen() {
         setJobStatus('completed');
         setIsTimerRunning(false);
 
+        // Show success toast
+        toast({
+          title: "Job Stopped",
+          description: "Job has been stopped successfully.",
+          variant: "default",
+        });
+
         // Notify manager and coordinator
         await notifyStatusChange('completed');
+      } else {
+        toast({
+          title: "Failed to Stop Job",
+          description: "Unable to stop the job. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Failed to stop job:', error);
@@ -523,8 +572,21 @@ export default function EnhancedJobDetailsScreen() {
         setJobStatus('in-progress');
         setIsTimerRunning(true);
 
+        // Show success toast
+        toast({
+          title: "Job Resumed",
+          description: "Job has been resumed successfully.",
+          variant: "default",
+        });
+
         // Notify manager and coordinator
         await notifyStatusChange('resumed');
+      } else {
+        toast({
+          title: "Failed to Resume Job",
+          description: "Unable to resume the job. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Failed to resume job:', error);
@@ -574,14 +636,32 @@ export default function EnhancedJobDetailsScreen() {
 
   const handleUpdateUdf = async () => {
     try {
-      await fetch(`/api/jobs/${jobId}/udf`, {
+      const response = await fetch(`/api/jobs/${jobId}/udf`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(udfData),
       });
-      console.log("UDF updated successfully");
+
+      if (response.ok) {
+        toast({
+          title: "UDF Updated",
+          description: "User defined fields have been saved successfully.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Update Failed",
+          description: "Failed to update UDF. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Failed to update UDF:", error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update UDF. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -651,6 +731,8 @@ export default function EnhancedJobDetailsScreen() {
       });
 
       if (response.ok) {
+        const photos = await response.json();
+        setJobPhotos(photos);
         setShowImageForm(false);
         setImageFormData({
           beforeLightLevels: null,
@@ -658,9 +740,19 @@ export default function EnhancedJobDetailsScreen() {
           faultAfterFixing: null,
           lightLevelsAfterFix: null,
         });
-        // Refresh job photos
-        const photos = await response.json();
-        setJobPhotos(photos);
+
+        // Show success toast
+        toast({
+          title: "Images Uploaded",
+          description: "All job images have been uploaded successfully.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Upload Failed",
+          description: "Failed to upload images. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Failed to upload images:', error);
@@ -703,7 +795,13 @@ export default function EnhancedJobDetailsScreen() {
         const allocationResult = await response.json();
 
         // Update local stock tracking
-        setJobPhotos(prev => [...prev, `stock-allocation-${Date.now()}`]);
+        setAllocatedStock(prev => [...prev, {
+          id: `stock-${Date.now()}`,
+          code: stockFormData.selectedStock.code,
+          name: stockFormData.selectedStock.name,
+          quantity: parseInt(stockFormData.quantity),
+          allocatedAt: new Date().toISOString()
+        }]);
 
         setShowStockForm(false);
         setStockFormData({
@@ -713,12 +811,26 @@ export default function EnhancedJobDetailsScreen() {
           quantity: "",
         });
 
-        // Show success message with allocation details
-        alert(`Stock allocated successfully!\nWork Order: ${allocationResult.workOrderNumber}\nWarehouse: ${allocationResult.warehouse}\nQuantity: ${stockFormData.quantity}`);
+        // Show success toast
+        toast({
+          title: "Stock Allocated",
+          description: `${stockFormData.selectedStock.code} - Quantity: ${stockFormData.quantity} allocated successfully.`,
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Allocation Failed",
+          description: "Failed to allocate stock. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('Failed to allocate stock:', error);
-      alert('Failed to allocate stock. Please try again.');
+      toast({
+        title: "Allocation Error",
+        description: "Failed to allocate stock. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -1773,10 +1885,22 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="grid grid-cols-2 gap-4 p-4 w-full">
                   {jobPhotos.map((photo, index) => (
                     <div
-                      key={index}
-                      className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center"
+                      key={photo.id || index}
+                      className="aspect-square bg-white rounded-lg border shadow-sm overflow-hidden"
                     >
-                      <span className="text-gray-500">Photo {index + 1}</span>
+                      <div className="h-full flex flex-col">
+                        <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                          <Camera className="h-8 w-8 text-blue-400" />
+                        </div>
+                        <div className="p-2 bg-white">
+                          <p className="text-xs font-medium text-gray-800 truncate">
+                            {photo.name || `Photo ${index + 1}`}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {photo.type || 'image'}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1793,11 +1917,48 @@ export default function EnhancedJobDetailsScreen() {
 
           {/* Stocks Tab */}
           <TabsContent value="stocks" className="space-y-4">
-            <div className="relative min-h-[400px] flex flex-col items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-              <div className="text-center">
-                <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">No Stock Allocated</p>
-              </div>
+            <div className="relative min-h-[400px] bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+              {allocatedStock.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No Stock Allocated</p>
+                </div>
+              ) : (
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900">Allocated Stock</h3>
+                  <div className="space-y-3">
+                    {allocatedStock.map((stock) => (
+                      <div
+                        key={stock.id}
+                        className="bg-white rounded-lg border p-4 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <Package className="h-6 w-6 text-blue-600" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-gray-900">{stock.code}</p>
+                                <p className="text-sm text-gray-600">{stock.name}</p>
+                                <p className="text-xs text-gray-500">
+                                  Allocated: {new Date(stock.allocatedAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-lg font-semibold text-gray-900">
+                              {stock.quantity}
+                            </span>
+                            <p className="text-xs text-gray-500">Units</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               <Button
                 onClick={() => setShowStockForm(true)}
