@@ -665,10 +665,6 @@ export default function EnhancedJobDetailsScreen() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl font-bold">Job Details</h1>
           <div className="flex items-center space-x-3">
-            <div className="bg-white/20 rounded-lg px-3 py-1 text-center">
-              <div className="text-xs text-white/80">Timer</div>
-              <div className="font-mono font-bold">{formatTimer(jobTimer)}</div>
-            </div>
             <Button
               variant="ghost"
               size="sm"
