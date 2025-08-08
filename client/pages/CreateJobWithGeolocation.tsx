@@ -172,30 +172,42 @@ export default function CreateJobWithGeolocation() {
     };
 
     const handleLocationError = (error: GeolocationPositionError) => {
-      let errorMessage = 'Failed to get current location: ';
+      let userMessage = '';
 
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          errorMessage += 'Location access denied. Please enable location permissions and try again, or enter the address manually.';
+          userMessage = 'Location access denied. Please enable location permissions and try again, or enter the address manually.';
           break;
         case error.POSITION_UNAVAILABLE:
-          errorMessage += 'Location unavailable. Please check your GPS/network connection or enter the address manually.';
+          userMessage = 'Location unavailable. Please check your GPS/network connection or enter the address manually.';
           break;
         case error.TIMEOUT:
-          errorMessage += 'Location request timed out. Please try again or enter the address manually.';
+          userMessage = 'Location request timed out. Please try again or enter the address manually.';
           break;
         default:
-          errorMessage += 'Unknown error. Please enter the address manually.';
+          userMessage = 'Unable to get location. Please enter the address manually.';
           break;
       }
 
-      console.error(errorMessage);
+      // Log detailed error information for debugging
       console.error('Geolocation error details:', {
         code: error.code,
-        message: error.message
+        message: error.message,
+        errorName: getErrorName(error.code),
+        userMessage
       });
-      alert(errorMessage);
+
+      alert(userMessage);
       setLocationLoading(false);
+    };
+
+    const getErrorName = (code: number): string => {
+      switch (code) {
+        case 1: return 'PERMISSION_DENIED';
+        case 2: return 'POSITION_UNAVAILABLE';
+        case 3: return 'TIMEOUT';
+        default: return 'UNKNOWN_ERROR';
+      }
     };
 
     // First try with high accuracy
