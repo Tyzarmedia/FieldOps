@@ -145,34 +145,30 @@ export default function EnhancedClockInScreen() {
     };
 
     const handleLocationError = (error: GeolocationPositionError) => {
-      let errorMessage = 'Location error: ';
+      let errorMessage = '';
 
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          errorMessage += 'Permission denied. Using default location.';
+          errorMessage = 'Location permission denied. Using office location for clock-in.';
           break;
         case error.POSITION_UNAVAILABLE:
-          errorMessage += 'Position unavailable. Using default location.';
+          errorMessage = 'Location unavailable. Using office location for clock-in.';
           break;
         case error.TIMEOUT:
-          errorMessage += 'Request timed out. Using default location.';
+          errorMessage = 'Location request timed out. Using office location for clock-in.';
           break;
         default:
-          errorMessage += 'Unknown error. Using default location.';
+          errorMessage = 'Location error. Using office location for clock-in.';
           break;
       }
 
-      console.error(errorMessage);
-      console.error('Location error details:', {
-        code: error.code,
-        message: error.message
-      });
+      console.info(errorMessage);
 
-      // Set default location as fallback
+      // Always set default location as fallback - no need to show as error
       setCurrentLocation({
         latitude: -33.0197,
         longitude: 27.9117,
-        address: "Default Location (East London)"
+        address: "Office Location (East London)"
       });
     };
 
