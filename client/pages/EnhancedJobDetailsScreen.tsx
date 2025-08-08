@@ -1096,21 +1096,30 @@ export default function EnhancedJobDetailsScreen() {
                   </div>
                 )}
 
-                {/* Warehouse Number */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Warehouse Number
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="Enter warehouse number"
-                    value={stockFormData.warehouseNumber}
-                    onChange={(e) => setStockFormData(prev => ({
-                      ...prev,
-                      warehouseNumber: e.target.value
-                    }))}
-                    className="w-full"
-                  />
+                {/* Auto-Linked Information */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-900 mb-3">Auto-Linked Information</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Work Order:</span>
+                      <span className="font-medium text-blue-900">{jobDetails.workOrderNumber || `WO-${jobDetails.id}`}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Technician Warehouse:</span>
+                      <span className="font-medium text-blue-900">{technician.warehouse || "WH-EL-001"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Ticket Number:</span>
+                      <span className="font-medium text-blue-900">{jobDetails.id}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Allocated By:</span>
+                      <span className="font-medium text-blue-900">{technician.name}</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-xs text-blue-600">
+                    ℹ️ Work order and warehouse information will be automatically linked to this stock allocation.
+                  </div>
                 </div>
 
                 {/* Quantity */}
