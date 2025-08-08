@@ -617,18 +617,31 @@ export default function EnhancedJobDetailsScreen() {
     }
 
     try {
+      // Auto-link work order number and recognize technician warehouse
       const response = await fetch(`/api/jobs/${jobDetails.id}/allocate-stock`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           stockId: stockFormData.selectedStock.id,
-          warehouseNumber: stockFormData.warehouseNumber,
+          warehouseNumber: technician.warehouse || "WH-EL-001", // Auto-detect from logged-in user
           quantity: parseInt(stockFormData.quantity),
           technicianId: technician.id,
+          workOrderNumber: jobDetails.workOrderNumber || `WO-${jobDetails.id}`, // Auto-link work order
+          jobId: jobDetails.id,
+          ticketNumber: jobDetails.id,
+          allocatedDate: new Date().toISOString(),
+          allocatedBy: technician.name,
+          stockLocation: technician.warehouse,
+          autoLinked: true, // Flag to indicate automatic linking
         }),
       });
 
       if (response.ok) {
+        const allocationResult = await response.json();
+
+        // Update local stock tracking
+        setJobPhotos(prev => [...prev, `stock-allocation-${Date.now()}`]);
+
         setShowStockForm(false);
         setStockFormData({
           searchQuery: "",
@@ -636,9 +649,13 @@ export default function EnhancedJobDetailsScreen() {
           warehouseNumber: "",
           quantity: "",
         });
+
+        // Show success message with allocation details
+        alert(`Stock allocated successfully!\nWork Order: ${allocationResult.workOrderNumber}\nWarehouse: ${allocationResult.warehouse}\nQuantity: ${stockFormData.quantity}`);
       }
     } catch (error) {
       console.error('Failed to allocate stock:', error);
+      alert('Failed to allocate stock. Please try again.');
     }
   };
 
