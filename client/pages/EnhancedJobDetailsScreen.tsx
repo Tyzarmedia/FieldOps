@@ -790,7 +790,7 @@ export default function EnhancedJobDetailsScreen() {
       {/* Timer Overlay */}
       {showTimerOverlay && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 m-4 max-w-sm w-full">
+          <div className="bg-white rounded-lg p-6 m-4 max-w-md w-full">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Job Timer</h3>
               <Button
@@ -801,13 +801,99 @@ export default function EnhancedJobDetailsScreen() {
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <div className="text-center">
+
+            <div className="text-center mb-6">
               <div className="text-4xl font-mono font-bold text-blue-600 mb-2">
                 {formatTimer(jobTimer)}
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600 mb-4">
                 Status: {jobStatus.replace('-', ' ').toUpperCase()}
               </div>
+
+              {/* Location Status */}
+              <div className="space-y-2">
+                <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
+                  isNearJobLocation
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-gray-100 text-gray-600'
+                }`}>
+                  <MapPin className="h-4 w-4 mr-1" />
+                  {isNearJobLocation ? 'At Job Location' : 'Away from Job Location'}
+                </div>
+
+                {isNearJobLocation && jobStatus === 'assigned' && (
+                  <div className="text-sm text-blue-600">
+                    Auto-start in: {120 - proximityTimer}s
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Timer Controls */}
+            <div className="flex justify-center space-x-2">
+              {jobStatus === 'assigned' && (
+                <Button
+                  onClick={startJob}
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                  size="sm"
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Start
+                </Button>
+              )}
+
+              {jobStatus === 'in-progress' && (
+                <>
+                  <Button
+                    onClick={pauseJob}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                    size="sm"
+                  >
+                    <Pause className="h-4 w-4 mr-2" />
+                    Pause
+                  </Button>
+                  <Button
+                    onClick={stopJob}
+                    className="bg-red-500 hover:bg-red-600 text-white"
+                    size="sm"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Stop
+                  </Button>
+                </>
+              )}
+
+              {jobStatus === 'paused' && (
+                <>
+                  <Button
+                    onClick={resumeJob}
+                    className="bg-green-500 hover:bg-green-600 text-white"
+                    size="sm"
+                  >
+                    <Play className="h-4 w-4 mr-2" />
+                    Resume
+                  </Button>
+                  <Button
+                    onClick={stopJob}
+                    className="bg-red-500 hover:bg-red-600 text-white"
+                    size="sm"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Stop
+                  </Button>
+                </>
+              )}
+            </div>
+
+            {/* Additional Info */}
+            <div className="mt-4 pt-4 border-t text-xs text-gray-500 space-y-1">
+              <div>Job ID: {jobDetails.id}</div>
+              <div>Technician: {technician.name}</div>
+              {currentLocation && (
+                <div>
+                  Location: {currentLocation.latitude.toFixed(6)}, {currentLocation.longitude.toFixed(6)}
+                </div>
+              )}
             </div>
           </div>
         </div>
