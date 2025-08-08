@@ -321,6 +321,7 @@ export default function EnhancedJobDetailsScreen() {
         errorName: getErrorName(error.code),
         userMessage,
       });
+      console.error("Full error object:", error);
 
       // Show user-friendly notification
       if (shouldShowWarning) {

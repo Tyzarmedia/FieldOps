@@ -202,6 +202,7 @@ export default function CreateJobWithGeolocation() {
         errorName: getErrorName(error.code),
         userMessage,
       });
+      console.error("Full error object:", error);
 
       alert(userMessage);
       setLocationLoading(false);
