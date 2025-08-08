@@ -130,6 +130,13 @@ export default function CreateJobWithGeolocation() {
       return;
     }
 
+    // Check permission first
+    const hasPermission = await requestLocationPermission();
+    if (!hasPermission) {
+      setLocationLoading(false);
+      return;
+    }
+
     const handleLocationSuccess = async (position: GeolocationPosition) => {
       const location: JobLocation = {
         latitude: position.coords.latitude,
