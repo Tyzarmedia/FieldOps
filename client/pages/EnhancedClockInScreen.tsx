@@ -162,7 +162,11 @@ export default function EnhancedClockInScreen() {
           break;
       }
 
-      console.error(errorMessage, error);
+      console.error(errorMessage);
+      console.error('Location error details:', {
+        code: error.code,
+        message: error.message
+      });
 
       // Set default location as fallback
       setCurrentLocation({
