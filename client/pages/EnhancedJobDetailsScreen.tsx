@@ -324,28 +324,13 @@ export default function EnhancedJobDetailsScreen() {
       }
     };
 
-    const getErrorName = (code: number): string => {
-      switch (code) {
-        case 1:
-          return "PERMISSION_DENIED";
-        case 2:
-          return "POSITION_UNAVAILABLE";
-        case 3:
-          return "TIMEOUT";
-        default:
-          return "UNKNOWN_ERROR";
-      }
-    };
 
     const getCurrentLocationFallback = () => {
       navigator.geolocation.getCurrentPosition(
         handleLocationSuccess,
         (error) => {
-          console.error("Fallback location request failed:", {
-            code: error.code,
-            message: error.message,
-            errorName: getErrorName(error.code),
-          });
+          // Log fallback error using improved utility
+          geolocationUtils.logGeolocationError(error, "EnhancedJobDetailsScreen - Fallback");
 
           // Use default location if all else fails
           setCurrentLocation({
