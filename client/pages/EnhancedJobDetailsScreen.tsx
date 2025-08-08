@@ -316,13 +316,7 @@ export default function EnhancedJobDetailsScreen() {
       }
 
       // Log detailed error information for debugging
-      console.error("Geolocation error details:", {
-        code: error.code,
-        message: error.message,
-        errorName: getErrorName(error.code),
-        userMessage,
-      });
-      console.error("Full error object:", error);
+      geolocationUtils.logGeolocationError(error, "EnhancedJobDetailsScreen");
 
       // Show user-friendly notification
       if (shouldShowWarning) {
