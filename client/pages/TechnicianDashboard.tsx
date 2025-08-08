@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { NotificationSystem } from "@/components/NotificationSystem";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -482,14 +483,20 @@ export default function TechnicianDashboard() {
           >
             <Menu className="h-6 w-6" />
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white hover:bg-white/20"
-            onClick={() => handleMenuAction("close")}
-          >
-            <X className="h-6 w-6" />
-          </Button>
+
+          <div className="flex items-center space-x-2">
+            <NotificationSystem
+              technicianId={userData.employeeId || "tech001"}
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20"
+              onClick={() => handleMenuAction("close")}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </div>
         </div>
 
         {/* Stats Display */}

@@ -68,6 +68,44 @@ export default function TechnicianStockScreen() {
   const [stockItems, setStockItems] = useState<TechnicianStock[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Define fallback data first
+  const [fallbackStockItems] = useState<TechnicianStock[]>([
+    {
+      id: "ts1",
+      itemId: "1",
+      itemName: "Fiber Optic Cable",
+      itemDescription: "100 meters of single-mode fiber optic cable",
+      itemSku: "FOC-SM-100",
+      category: "Cables",
+      unit: "meters",
+      assignedQuantity: 500,
+      usedQuantity: 200,
+      remainingQuantity: 300,
+      assignedDate: new Date().toISOString(),
+      assignedBy: "Stock Manager",
+      status: "in-use",
+      notes: "For weekly FTTH installations",
+      unitPrice: 2.5,
+    },
+    {
+      id: "ts2",
+      itemId: "2",
+      itemName: "Splice Protectors",
+      itemDescription: "Heat shrink splice protectors for fiber connections",
+      itemSku: "SP-HS-40",
+      category: "Connectors",
+      unit: "pieces",
+      assignedQuantity: 100,
+      usedQuantity: 75,
+      remainingQuantity: 25,
+      assignedDate: new Date().toISOString(),
+      assignedBy: "Stock Manager",
+      status: "in-use",
+      notes: "Standard 40mm protectors",
+      unitPrice: 0.5,
+    },
+  ]);
+
   // Load assigned stock from API
   useEffect(() => {
     const loadAssignedStock = async () => {
@@ -115,74 +153,6 @@ export default function TechnicianStockScreen() {
 
     loadAssignedStock();
   }, [fallbackStockItems]);
-
-  const [fallbackStockItems] = useState<TechnicianStock[]>([
-    {
-      id: "ts1",
-      itemId: "1",
-      itemName: "Fiber Optic Cable",
-      itemDescription: "Single-mode fiber optic cable for FTTH installations",
-      itemSku: "FOC-SM-1000",
-      category: "Cables",
-      unit: "meters",
-      assignedQuantity: 500,
-      usedQuantity: 200,
-      remainingQuantity: 300,
-      assignedDate: new Date(Date.now() - 86400000).toISOString(), // Yesterday
-      assignedBy: "Stock Manager",
-      status: "in-use",
-      notes: "For weekly FTTH installations",
-      unitPrice: 2.5,
-    },
-    {
-      id: "ts2",
-      itemId: "2",
-      itemName: "Splice Protectors",
-      itemDescription: "Heat shrink splice protectors for fiber connections",
-      itemSku: "SP-HS-100",
-      category: "Connectors",
-      unit: "pieces",
-      assignedQuantity: 100,
-      usedQuantity: 75,
-      remainingQuantity: 25,
-      assignedDate: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-      assignedBy: "Stock Manager",
-      status: "in-use",
-      unitPrice: 0.75,
-    },
-    {
-      id: "ts3",
-      itemId: "4",
-      itemName: "Cable Ties",
-      itemDescription: "UV resistant cable ties for outdoor installations",
-      itemSku: "CT-UV-200",
-      category: "Hardware",
-      unit: "packs",
-      assignedQuantity: 10,
-      usedQuantity: 8,
-      remainingQuantity: 2,
-      assignedDate: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
-      assignedBy: "Stock Manager",
-      status: "in-use",
-      unitPrice: 12.0,
-    },
-    {
-      id: "ts4",
-      itemId: "5",
-      itemName: "Wall Sockets",
-      itemDescription: "Fiber optic wall outlet for indoor termination",
-      itemSku: "WS-FO-WH",
-      category: "Installation",
-      unit: "units",
-      assignedQuantity: 20,
-      usedQuantity: 5,
-      remainingQuantity: 15,
-      assignedDate: new Date().toISOString(),
-      assignedBy: "Stock Manager",
-      status: "assigned",
-      unitPrice: 15.5,
-    },
-  ]);
 
   const [stockUsageHistory, setStockUsageHistory] = useState<StockUsage[]>([
     {
@@ -458,7 +428,7 @@ export default function TechnicianStockScreen() {
             >
               <ArrowLeft className="h-6 w-6" />
             </Button>
-            <h1 className="text-xl font-semibold">My Stock</h1>
+            <h1 className="text-xl font-semibold">Stock on Hand</h1>
           </div>
           <div className="flex space-x-2">
             <Button
@@ -492,6 +462,7 @@ export default function TechnicianStockScreen() {
         <div className="text-center mb-4">
           <h2 className="text-lg font-bold">{currentTechnicianName}</h2>
           <p className="text-white/80">Technician ID: {currentTechnicianId}</p>
+          <p className="text-white/90 text-sm">View • Request • Return Stock</p>
         </div>
 
         {/* Search Bar */}
@@ -660,6 +631,16 @@ export default function TechnicianStockScreen() {
 
                   {/* Action Buttons */}
                   <div className="flex space-x-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => navigate("/technician/stock")}
+                    >
+                      <Minus className="h-4 w-4 mr-1" />
+                      Use Stock
+                    </Button>
+
                     <Dialog
                       open={showUsageDialog && selectedItem?.id === item.id}
                       onOpenChange={(open) => {
@@ -669,29 +650,29 @@ export default function TechnicianStockScreen() {
                     >
                       <DialogTrigger asChild>
                         <Button
+                          variant="outline"
                           size="sm"
                           className="flex-1"
                           onClick={() => setSelectedItem(item)}
-                          disabled={item.remainingQuantity === 0}
                         >
-                          <Minus className="h-4 w-4 mr-1" />
-                          Use Stock
+                          <ArrowLeft className="h-4 w-4 mr-1" />
+                          Return
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Record Stock Usage</DialogTitle>
+                          <DialogTitle>Return Stock</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                           <div className="p-4 bg-gray-50 rounded-lg">
                             <h4 className="font-medium">{item.itemName}</h4>
                             <p className="text-sm text-gray-600">
-                              Available: {item.remainingQuantity} {item.unit}
+                              Assigned: {item.assignedQuantity} {item.unit} | Used: {item.usedQuantity} {item.unit}
                             </p>
                           </div>
 
                           <div className="space-y-2">
-                            <Label>Quantity Used</Label>
+                            <Label>Quantity to Return</Label>
                             <Input
                               type="number"
                               max={item.remainingQuantity}
@@ -705,25 +686,12 @@ export default function TechnicianStockScreen() {
                                   ),
                                 }))
                               }
+                              placeholder="0"
                             />
                           </div>
 
                           <div className="space-y-2">
-                            <Label>Job ID (Optional)</Label>
-                            <Input
-                              value={usageData.jobId}
-                              onChange={(e) =>
-                                setUsageData((prev) => ({
-                                  ...prev,
-                                  jobId: e.target.value,
-                                }))
-                              }
-                              placeholder="e.g., SA-688808"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label>Usage Notes (Optional)</Label>
+                            <Label>Reason for Return</Label>
                             <Input
                               value={usageData.notes}
                               onChange={(e) =>
@@ -732,7 +700,7 @@ export default function TechnicianStockScreen() {
                                   notes: e.target.value,
                                 }))
                               }
-                              placeholder="Description of usage..."
+                              placeholder="Job completed, excess stock, etc..."
                             />
                           </div>
 
@@ -741,7 +709,7 @@ export default function TechnicianStockScreen() {
                               onClick={recordStockUsage}
                               className="flex-1"
                             >
-                              Record Usage
+                              Return Stock
                             </Button>
                             <Button
                               variant="outline"

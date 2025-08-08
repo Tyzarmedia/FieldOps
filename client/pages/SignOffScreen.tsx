@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "@/components/ui/notification";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,6 +20,7 @@ import {
 
 export default function SignOffScreen() {
   const navigate = useNavigate();
+  const { success, error } = useNotification();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [currentTab, setCurrentTab] = useState("signoff");
 
@@ -35,6 +37,7 @@ export default function SignOffScreen() {
   // Mock validation data - in real app this would come from API/state
   const [udfCompleted, setUdfCompleted] = useState(false);
   const [stockUpdated, setStockUpdated] = useState(false);
+  const [imagesUploaded, setImagesUploaded] = useState(false);
 
   // Digital signature functions
   useEffect(() => {
@@ -102,6 +105,25 @@ export default function SignOffScreen() {
     }
   };
 
+  // Check completion status from localStorage/API
+  useEffect(() => {
+    const checkCompletionStatus = () => {
+      // Check UDF completion - in real app, this would check actual UDF data
+      const udfData = localStorage.getItem("udf-completed");
+      setUdfCompleted(!!udfData);
+
+      // Check images uploaded - check gallery or image storage
+      const imageData = localStorage.getItem("job-images");
+      setImagesUploaded(!!imageData);
+
+      // Check stock usage - check if any stock was recorded
+      const stockUsage = localStorage.getItem("stock-usage-list");
+      setStockUpdated(!!stockUsage);
+    };
+
+    checkCompletionStatus();
+  }, []);
+
   // Validation functions
   const checkValidation = async () => {
     setIsValidating(true);
@@ -109,12 +131,17 @@ export default function SignOffScreen() {
 
     // Check UDF completion
     if (!udfCompleted) {
-      errors.push("UDF fields must be filled and updated");
+      errors.push("UDF fields must be completed and saved");
+    }
+
+    // Check images uploaded
+    if (!imagesUploaded) {
+      errors.push("At least one image must be uploaded to gallery");
     }
 
     // Check stock status
     if (!stockUpdated && !noStockUsed) {
-      errors.push("Stock must be updated or marked as 'No stock used'");
+      errors.push("Stock usage must be recorded or marked as 'No stock used'");
     }
 
     // Check digital signature
@@ -150,7 +177,13 @@ export default function SignOffScreen() {
       // In real app, send to API
       console.log("Signature data:", signatureData);
 
+      success("Success", "Job completed successfully!");
       navigate("/", { state: { message: "Job completed successfully!" } });
+    } else {
+      // Show validation errors as notifications
+      validationErrors.forEach((errorMsg) => {
+        error("Validation Error", errorMsg);
+      });
     }
   };
 
@@ -161,7 +194,7 @@ export default function SignOffScreen() {
 
     switch (tab) {
       case "details":
-        navigate(`/technician/job/${currentJobId}`);
+        navigate("/technician/jobs");
         break;
       case "udf":
         navigate("/technician/udf");

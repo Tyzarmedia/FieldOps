@@ -38,6 +38,7 @@ import CoordinatorJobBoard from "./pages/CoordinatorJobBoard";
 import StockManagementScreen from "./pages/StockManagementScreen";
 import EnhancedStockManagementScreen from "./pages/EnhancedStockManagementScreen";
 import TechnicianStockScreen from "./pages/TechnicianStockScreen";
+import TechnicianStockUsageScreen from "./pages/TechnicianStockUsageScreen";
 import JobDetailsWithTracking from "./pages/JobDetailsWithTracking";
 import MonitorProgress from "./pages/MonitorProgress";
 import MobileAddStockScreen from "./pages/MobileAddStockScreen";
@@ -258,9 +259,12 @@ export default function App() {
               <Route path="/job/:jobId" element={<JobDetailsWithTracking />} />
               <Route
                 path="/technician/stock"
-                element={<TechnicianStockScreen />}
+                element={<TechnicianStockUsageScreen />}
               />
-              <Route path="/my-stock" element={<TechnicianStockScreen />} />
+              <Route
+                path="/my-stock"
+                element={<TechnicianStockUsageScreen />}
+              />
               <Route
                 path="/mobile-add-stock"
                 element={<MobileAddStockScreen />}
@@ -268,7 +272,14 @@ export default function App() {
               <Route path="/technician/gallery" element={<GalleryScreen />} />
               <Route path="/technician/signoff" element={<SignOffScreen />} />
               <Route path="/apply-leave" element={<ApplyLeaveScreen />} />
-              <Route path="/stock-on-hand" element={<StockScreen />} />
+              <Route
+                path="/stock-on-hand"
+                element={<TechnicianStockScreen />}
+              />
+              <Route
+                path="/add-stock-usage"
+                element={<TechnicianStockUsageScreen />}
+              />
               <Route
                 path="/network-assessment"
                 element={<NetworkAssessmentScreen />}

@@ -69,6 +69,8 @@ export default function TechnicianJobsScreen() {
   const [selectedTab, setSelectedTab] = useState("assigned");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [showJobDetail, setShowJobDetail] = useState(false);
   const [isJobPaused, setIsJobPaused] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -281,8 +283,8 @@ export default function TechnicianJobsScreen() {
         updateJobStatus(job.id, "completed");
         break;
       case "view":
-        setSelectedJob(job);
-        setShowJobDetail(true);
+        // Navigate to dedicated job details route
+        navigate(`/technician/job/${job.id}`);
         break;
     }
   };
@@ -621,6 +623,7 @@ export default function TechnicianJobsScreen() {
             <Button
               variant="ghost"
               className="flex flex-col items-center space-y-1 p-3 text-blue-600"
+              onClick={() => navigate("/technician/jobs")}
             >
               <FileText className="h-6 w-6" />
               <span className="text-xs font-medium">Details</span>
@@ -712,14 +715,24 @@ export default function TechnicianJobsScreen() {
             <Calendar className="h-5 w-5" />
             <div>
               <p className="text-sm">From</p>
-              <p className="text-sm opacity-80">Select Date</p>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="text-sm bg-white/20 border-white/30 text-white rounded px-2 py-1"
+              />
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <Calendar className="h-5 w-5" />
             <div>
               <p className="text-sm">To</p>
-              <p className="text-sm opacity-80">Select Date</p>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="text-sm bg-white/20 border-white/30 text-white rounded px-2 py-1"
+              />
             </div>
           </div>
         </div>

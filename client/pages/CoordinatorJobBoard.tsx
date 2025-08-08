@@ -1,4 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { NotificationSystem } from "@/components/NotificationSystem";
+import { offlineDataService } from "@/services/offlineDataService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -186,11 +188,29 @@ export default function CoordinatorJobBoard() {
                 ? `${job.estimatedHours}h`
                 : "2h",
             }));
-            // Only update if there are actual changes to prevent UI disruption
+            // Merge new jobs with existing ones, preserving local changes
             setJobs((prevJobs) => {
-              const jobsChanged =
-                JSON.stringify(prevJobs) !== JSON.stringify(formattedJobs);
-              return jobsChanged ? formattedJobs : prevJobs;
+              const newJobsMap = new Map(formattedJobs.map((job: any) => [job.id, job]));
+              const existingJobsMap = new Map(prevJobs.map(job => [job.id, job]));
+
+              // Start with existing jobs to preserve any local changes
+              const mergedJobs = [...prevJobs];
+
+              // Add any new jobs from backend that don't exist locally
+              formattedJobs.forEach((backendJob: any) => {
+                if (!existingJobsMap.has(backendJob.id)) {
+                  mergedJobs.push(backendJob);
+                }
+              });
+
+              // Remove jobs that no longer exist on backend (unless they were just created)
+              const filteredJobs = mergedJobs.filter(job => {
+                // Keep job if it exists on backend OR if it's very recently created (within 30 seconds)
+                const jobAge = Date.now() - parseInt(job.id);
+                return newJobsMap.has(job.id) || jobAge < 30000;
+              });
+
+              return filteredJobs;
             });
           }
         }
@@ -283,12 +303,35 @@ export default function CoordinatorJobBoard() {
   const updateJobInBackend = async (jobId: string, updates: Partial<Job>) => {
     try {
       if (updates.assignedTechnician && updates.status === "assigned") {
+        // Check technician availability first
+        const availabilityResponse = await fetch(`/api/technician-status/availability/${updates.assignedTechnician}`);
+        if (availabilityResponse.ok) {
+          const availabilityData = await availabilityResponse.json();
+          if (availabilityData.success && !availabilityData.data.isAvailable) {
+            const proceed = window.confirm(
+              `Warning: ${availabilityData.data.name} is currently ${availabilityData.data.status}. ${availabilityData.data.warning || ''} Do you want to proceed with the assignment?`
+            );
+            if (!proceed) {
+              // Revert the local change
+              setJobs((prev) =>
+                prev.map((job) =>
+                  job.id === jobId
+                    ? { ...job, status: "unassigned", assignedTechnician: undefined }
+                    : job,
+                ),
+              );
+              return;
+            }
+          }
+        }
+
         // Use the assignment endpoint
         const response = await fetch(`/api/job-mgmt/jobs/${jobId}/assign`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             technicianId: updates.assignedTechnician,
+            assignedBy: 'coordinator001' // In real app, get from auth context
           }),
         });
 
@@ -479,6 +522,7 @@ export default function CoordinatorJobBoard() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <NotificationSystem technicianId="coordinator001" />
             <Button variant="outline">
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
