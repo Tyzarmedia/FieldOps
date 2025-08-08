@@ -114,7 +114,7 @@ export default function EnhancedJobDetailsScreen() {
   });
 
   const [jobPhotos, setJobPhotos] = useState<string[]>([]);
-
+  
   // Image form data
   const [imageFormData, setImageFormData] = useState({
     beforeLightLevels: null as File | null,
@@ -176,12 +176,12 @@ export default function EnhancedJobDetailsScreen() {
   useEffect(() => {
     const checkDeadline = () => {
       const now = new Date();
-
+      
       // Check if technician is late
       if (now > dueTime) {
         setIsLate(true);
       }
-
+      
       // Send warning notification 10 minutes before deadline
       if (now >= warningTime && !notificationSent && now < dueTime) {
         setNotificationSent(true);
@@ -208,7 +208,7 @@ export default function EnhancedJobDetailsScreen() {
           message: `Job ${jobDetails.id} is due in 10 minutes`
         }),
       });
-
+      
       // Browser notification
       if (Notification.permission === 'granted') {
         new Notification('Job Deadline Warning', {
@@ -224,7 +224,7 @@ export default function EnhancedJobDetailsScreen() {
   // Job timer effect
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-
+    
     if (isTimerRunning) {
       interval = setInterval(() => {
         setJobTimer(prev => prev + 1);
@@ -255,7 +255,7 @@ export default function EnhancedJobDetailsScreen() {
           startTime: new Date().toISOString(),
         }),
       });
-
+      
       if (response.ok) {
         setJobStatus('in-progress');
         setIsTimerRunning(true);
@@ -276,7 +276,7 @@ export default function EnhancedJobDetailsScreen() {
           timeSpent: jobTimer,
         }),
       });
-
+      
       if (response.ok) {
         setJobStatus('paused');
         setIsTimerRunning(false);
@@ -297,7 +297,7 @@ export default function EnhancedJobDetailsScreen() {
           totalTime: jobTimer,
         }),
       });
-
+      
       if (response.ok) {
         setJobStatus('completed');
         setIsTimerRunning(false);
@@ -376,8 +376,8 @@ export default function EnhancedJobDetailsScreen() {
         }),
       });
 
-      navigate("/technician/jobs", {
-        state: { message: "Job completed successfully!" }
+      navigate("/technician/jobs", { 
+        state: { message: "Job completed successfully!" } 
       });
     } catch (error) {
       console.error("Failed to complete job:", error);
@@ -519,7 +519,7 @@ export default function EnhancedJobDetailsScreen() {
               Start
             </Button>
           )}
-
+          
           {jobStatus === 'in-progress' && (
             <>
               <Button
@@ -592,7 +592,12 @@ export default function EnhancedJobDetailsScreen() {
             <CircleDot className="h-8 w-8 text-blue-400" />
             <div>
               <p className="text-sm text-white/80">Status</p>
-              <p className="font-semibold">Assigned</p>
+              <p className="font-semibold">
+                {jobStatus === 'assigned' ? 'Assigned' :
+                 jobStatus === 'in-progress' ? 'In Progress' :
+                 jobStatus === 'paused' ? 'Paused' :
+                 'Completed'}
+              </p>
             </div>
           </div>
         </div>
@@ -613,13 +618,12 @@ export default function EnhancedJobDetailsScreen() {
               </Button>
             </div>
             <div className="text-center">
-              <JobTimer
-                jobId={jobDetails.id}
-                jobStatus={jobDetails.status}
-                onTimeUpdate={(time) =>
-                  console.log(`Job ${jobDetails.id} time: ${time}s`)
-                }
-              />
+              <div className="text-4xl font-mono font-bold text-blue-600 mb-2">
+                {formatTimer(jobTimer)}
+              </div>
+              <div className="text-sm text-gray-600">
+                Status: {jobStatus.replace('-', ' ').toUpperCase()}
+              </div>
             </div>
           </div>
         </div>
@@ -730,7 +734,7 @@ export default function EnhancedJobDetailsScreen() {
                 <Button
                   onClick={submitImageForm}
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3"
-                  disabled={!imageFormData.beforeLightLevels || !imageFormData.faultFinding ||
+                  disabled={!imageFormData.beforeLightLevels || !imageFormData.faultFinding || 
                            !imageFormData.faultAfterFixing || !imageFormData.lightLevelsAfterFix}
                 >
                   Upload All Images
@@ -1418,7 +1422,7 @@ export default function EnhancedJobDetailsScreen() {
                   ))}
                 </div>
               )}
-
+              
               <Button
                 onClick={() => setShowImageForm(true)}
                 className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
@@ -1435,7 +1439,7 @@ export default function EnhancedJobDetailsScreen() {
                 <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-500 text-lg">No Stock Allocated</p>
               </div>
-
+              
               <Button
                 onClick={() => setShowStockForm(true)}
                 className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
