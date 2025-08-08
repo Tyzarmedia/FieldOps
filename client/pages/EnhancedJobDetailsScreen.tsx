@@ -262,7 +262,14 @@ export default function EnhancedJobDetailsScreen() {
           break;
       }
 
-      console.error(errorMessage, error);
+      console.error(errorMessage);
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        PERMISSION_DENIED: error.PERMISSION_DENIED,
+        POSITION_UNAVAILABLE: error.POSITION_UNAVAILABLE,
+        TIMEOUT: error.TIMEOUT
+      });
 
       // Try to get location again after a delay for timeout errors
       if (error.code === error.TIMEOUT) {
