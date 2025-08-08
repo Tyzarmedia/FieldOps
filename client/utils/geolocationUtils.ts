@@ -1,3 +1,5 @@
+import { logError, getUserFriendlyErrorMessage } from './errorUtils';
+
 interface LocationResult {
   latitude: number;
   longitude: number;
