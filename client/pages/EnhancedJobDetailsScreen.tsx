@@ -151,8 +151,8 @@ export default function EnhancedJobDetailsScreen() {
     { id: 6, code: "ONT-G2", name: "ONT Device - G2", warehouseQty: 12 },
   ]);
 
-  // Mock job data
-  const jobDetails: JobDetails = {
+  // Job data state
+  const [jobDetails, setJobDetails] = useState<JobDetails>({
     id: jobId || "JA-7762",
     title: "HVAC Maintenance Check",
     client: {
@@ -164,7 +164,7 @@ export default function EnhancedJobDetailsScreen() {
     priority: "medium",
     estimatedDuration: "2h",
     description: "Routine maintenance and inspection of HVAC system",
-  };
+  });
 
   // Network status monitoring
   useEffect(() => {
@@ -356,7 +356,7 @@ export default function EnhancedJobDetailsScreen() {
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    if (isNearJobLocation && jobStatus === 'assigned') {
+    if (isNearJobLocation && jobStatus === 'assigned' && jobDetails.status === 'accepted') {
       interval = setInterval(() => {
         setProximityTimer(prev => {
           if (prev >= 120) { // 2 minutes = 120 seconds
@@ -374,7 +374,7 @@ export default function EnhancedJobDetailsScreen() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isNearJobLocation, jobStatus]);
+  }, [isNearJobLocation, jobStatus, jobDetails.status]);
 
   // Job timer effect
   useEffect(() => {
@@ -397,6 +397,45 @@ export default function EnhancedJobDetailsScreen() {
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Accept job
+  const acceptJob = async () => {
+    try {
+      const response = await fetch(`/api/jobs/${jobDetails.id}/accept`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          technicianId: technician.id,
+          acceptedTime: new Date().toISOString(),
+          location: currentLocation,
+        }),
+      });
+
+      if (response.ok) {
+        setJobDetails(prev => ({ ...prev, status: 'accepted' }));
+
+        // Show success toast
+        toast({
+          title: "Job Accepted",
+          description: "Job has been accepted successfully.",
+        });
+
+        // Notify manager and coordinator
+        await notifyStatusChange('accepted');
+      } else {
+        toast({
+          title: "Failed to Accept Job",
+          description: "Unable to accept the job. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error('Failed to accept job:', error);
+      toast({
+        title: "Accept Error",
+        description: "Failed to accept the job. Please try again.",
+      });
+    }
   };
 
   // Auto-start job when in proximity for 2 minutes
@@ -462,7 +501,6 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Job Started",
           description: "Job has been successfully started.",
-          variant: "default",
         });
 
         // Notify manager and coordinator
@@ -471,7 +509,6 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Failed to Start Job",
           description: "Unable to start the job. Please try again.",
-          variant: "destructive",
         });
       }
     } catch (error) {
@@ -500,7 +537,6 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Job Paused",
           description: "Job has been paused successfully.",
-          variant: "default",
         });
 
         // Notify manager and coordinator
@@ -509,7 +545,6 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Failed to Pause Job",
           description: "Unable to pause the job. Please try again.",
-          variant: "destructive",
         });
       }
     } catch (error) {
@@ -538,7 +573,6 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Job Stopped",
           description: "Job has been stopped successfully.",
-          variant: "default",
         });
 
         // Notify manager and coordinator
@@ -547,7 +581,6 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Failed to Stop Job",
           description: "Unable to stop the job. Please try again.",
-          variant: "destructive",
         });
       }
     } catch (error) {
@@ -576,7 +609,6 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Job Resumed",
           description: "Job has been resumed successfully.",
-          variant: "default",
         });
 
         // Notify manager and coordinator
@@ -585,7 +617,6 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Failed to Resume Job",
           description: "Unable to resume the job. Please try again.",
-          variant: "destructive",
         });
       }
     } catch (error) {
@@ -646,13 +677,11 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "UDF Updated",
           description: "User defined fields have been saved successfully.",
-          variant: "default",
         });
       } else {
         toast({
           title: "Update Failed",
           description: "Failed to update UDF. Please try again.",
-          variant: "destructive",
         });
       }
     } catch (error) {
@@ -660,7 +689,6 @@ export default function EnhancedJobDetailsScreen() {
       toast({
         title: "Update Failed",
         description: "Failed to update UDF. Please try again.",
-        variant: "destructive",
       });
     }
   };
@@ -731,8 +759,14 @@ export default function EnhancedJobDetailsScreen() {
       });
 
       if (response.ok) {
-        const photos = await response.json();
-        setJobPhotos(photos);
+        // Mock response for uploaded images
+        const newPhotos = [
+          { id: 'before-light-levels', name: 'Before Light Levels', url: '/placeholder.svg', type: 'Before Light Levels' },
+          { id: 'fault-finding', name: 'Fault Finding', url: '/placeholder.svg', type: 'Fault Finding' },
+          { id: 'fault-after-fixing', name: 'Fault After Fixing', url: '/placeholder.svg', type: 'Fault After Fixing' },
+          { id: 'light-levels-after-fix', name: 'Light Levels After Fix', url: '/placeholder.svg', type: 'Light Levels After Fix' }
+        ];
+        setJobPhotos(newPhotos);
         setShowImageForm(false);
         setImageFormData({
           beforeLightLevels: null,
@@ -745,13 +779,11 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Images Uploaded",
           description: "All job images have been uploaded successfully.",
-          variant: "default",
         });
       } else {
         toast({
           title: "Upload Failed",
           description: "Failed to upload images. Please try again.",
-          variant: "destructive",
         });
       }
     } catch (error) {
@@ -815,13 +847,11 @@ export default function EnhancedJobDetailsScreen() {
         toast({
           title: "Stock Allocated",
           description: `${stockFormData.selectedStock.code} - Quantity: ${stockFormData.quantity} allocated successfully.`,
-          variant: "default",
         });
       } else {
         toast({
           title: "Allocation Failed",
           description: "Failed to allocate stock. Please try again.",
-          variant: "destructive",
         });
       }
     } catch (error) {
@@ -829,7 +859,6 @@ export default function EnhancedJobDetailsScreen() {
       toast({
         title: "Allocation Error",
         description: "Failed to allocate stock. Please try again.",
-        variant: "destructive",
       });
     }
   };
@@ -878,7 +907,7 @@ export default function EnhancedJobDetailsScreen() {
         </div>
 
         {/* Proximity Status */}
-        {jobStatus === 'assigned' && isNearJobLocation && (
+        {jobStatus === 'assigned' && jobDetails.status === 'accepted' && isNearJobLocation && (
           <div className="text-center mb-4">
             <div className="bg-blue-500/20 rounded-lg px-4 py-2 inline-block">
               <div className="text-sm font-medium">Auto-start in {120 - proximityTimer}s</div>
@@ -887,9 +916,19 @@ export default function EnhancedJobDetailsScreen() {
           </div>
         )}
 
-        {/* Start/Stop/Pause Buttons */}
+        {/* Job Actions */}
         <div className="flex justify-center space-x-4 mb-6">
-          {jobStatus === 'assigned' && (
+          {jobStatus === 'assigned' && jobDetails.status === 'assigned' && (
+            <Button
+              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2"
+              onClick={acceptJob}
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Accept
+            </Button>
+          )}
+
+          {jobStatus === 'assigned' && jobDetails.status === 'accepted' && (
             <Button
               className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
               onClick={startJob}
@@ -943,12 +982,14 @@ export default function EnhancedJobDetailsScreen() {
           <h2 className="text-2xl font-bold mb-2">Vumatel (Pty) Ltd - Central</h2>
           <h3 className="text-xl font-semibold mb-3">#{jobDetails.id}215784</h3>
           <Badge className={`px-4 py-1 text-sm ${
-            jobStatus === 'assigned' ? 'bg-purple-500/80 text-white' :
+            jobStatus === 'assigned' && jobDetails.status === 'assigned' ? 'bg-orange-500/80 text-white' :
+            jobStatus === 'assigned' && jobDetails.status === 'accepted' ? 'bg-purple-500/80 text-white' :
             jobStatus === 'in-progress' ? 'bg-green-500/80 text-white' :
             jobStatus === 'paused' ? 'bg-yellow-500/80 text-white' :
             'bg-gray-500/80 text-white'
           }`}>
-            {jobStatus === 'assigned' ? 'Scheduled' :
+            {jobStatus === 'assigned' && jobDetails.status === 'assigned' ? 'Assigned' :
+             jobStatus === 'assigned' && jobDetails.status === 'accepted' ? 'Accepted' :
              jobStatus === 'in-progress' ? 'In Progress' :
              jobStatus === 'paused' ? 'Paused' :
              'Completed'}
@@ -969,7 +1010,8 @@ export default function EnhancedJobDetailsScreen() {
             <div>
               <p className="text-sm text-white/80">Status</p>
               <p className="font-semibold">
-                {jobStatus === 'assigned' ? 'Assigned' :
+                {jobStatus === 'assigned' && jobDetails.status === 'assigned' ? 'Assigned' :
+                 jobStatus === 'assigned' && jobDetails.status === 'accepted' ? 'Accepted' :
                  jobStatus === 'in-progress' ? 'In Progress' :
                  jobStatus === 'paused' ? 'Paused' :
                  'Completed'}
@@ -1013,7 +1055,7 @@ export default function EnhancedJobDetailsScreen() {
                   {isNearJobLocation ? 'At Job Location' : 'Away from Job Location'}
                 </div>
 
-                {isNearJobLocation && jobStatus === 'assigned' && (
+                {isNearJobLocation && jobStatus === 'assigned' && jobDetails.status === 'accepted' && (
                   <div className="text-sm text-blue-600">
                     Auto-start in: {120 - proximityTimer}s
                   </div>
@@ -1023,7 +1065,18 @@ export default function EnhancedJobDetailsScreen() {
 
             {/* Timer Controls */}
             <div className="flex justify-center space-x-2">
-              {jobStatus === 'assigned' && (
+              {jobStatus === 'assigned' && jobDetails.status === 'assigned' && (
+                <Button
+                  onClick={acceptJob}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                  size="sm"
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Accept
+                </Button>
+              )}
+
+              {jobStatus === 'assigned' && jobDetails.status === 'accepted' && (
                 <Button
                   onClick={startJob}
                   className="bg-green-500 hover:bg-green-600 text-white"
