@@ -235,27 +235,76 @@ export default function EnhancedJobDetailsScreen() {
       return;
     }
 
+    const handleLocationSuccess = (position: GeolocationPosition) => {
+      const newLocation = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
+      setCurrentLocation(newLocation);
+      checkProximity(newLocation);
+    };
+
+    const handleLocationError = (error: GeolocationPositionError) => {
+      let errorMessage = 'Location access failed: ';
+
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage += 'Permission denied. Please enable location access in your browser settings.';
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage += 'Location information unavailable. Please check your GPS or network connection.';
+          break;
+        case error.TIMEOUT:
+          errorMessage += 'Location request timed out. Trying again...';
+          break;
+        default:
+          errorMessage += 'Unknown error occurred while getting location.';
+          break;
+      }
+
+      console.error(errorMessage, error);
+
+      // Try to get location again after a delay for timeout errors
+      if (error.code === error.TIMEOUT) {
+        setTimeout(() => {
+          getCurrentLocationFallback();
+        }, 5000);
+      }
+    };
+
+    const getCurrentLocationFallback = () => {
+      navigator.geolocation.getCurrentPosition(
+        handleLocationSuccess,
+        (error) => {
+          console.error('Fallback location request also failed:', error);
+          // Use default location if all else fails
+          setCurrentLocation({
+            latitude: -33.0197, // East London coordinates as fallback
+            longitude: 27.9117,
+          });
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 15000,
+          maximumAge: 60000,
+        }
+      );
+    };
+
     const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        const newLocation = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-        setCurrentLocation(newLocation);
-        checkProximity(newLocation);
-      },
-      (error) => {
-        console.error('Error getting location:', error);
-      },
+      handleLocationSuccess,
+      handleLocationError,
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 1000,
+        maximumAge: 5000,
       }
     );
 
     return () => {
-      navigator.geolocation.clearWatch(watchId);
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+      }
     };
   }, []);
 
