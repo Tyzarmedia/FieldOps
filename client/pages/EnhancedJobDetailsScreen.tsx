@@ -101,9 +101,11 @@ export default function EnhancedJobDetailsScreen() {
     date: new Date().toISOString().slice(0, 16),
     comments: "",
     completionNotes: "",
-    nameAndSurname: "",
     signature: "",
     acceptTerms: false,
+    udfCompleted: false,
+    imagesUploaded: false,
+    stockChecked: false,
   });
 
   const [expandedSections, setExpandedSections] = useState<{
@@ -704,7 +706,7 @@ export default function EnhancedJobDetailsScreen() {
                   />
                   {imageFormData.faultAfterFixing && (
                     <p className="text-sm text-green-600 mt-1">
-                      ✓ {imageFormData.faultAfterFixing.name}
+                      �� {imageFormData.faultAfterFixing.name}
                     </p>
                   )}
                 </div>
