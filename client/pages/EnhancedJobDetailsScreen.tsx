@@ -74,6 +74,11 @@ export default function EnhancedJobDetailsScreen() {
   const [jobStatus, setJobStatus] = useState<'assigned' | 'in-progress' | 'paused' | 'completed'>("assigned");
   const [jobTimer, setJobTimer] = useState(0); // Timer in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState<{latitude: number, longitude: number} | null>(null);
+  const [jobLocation] = useState({ latitude: -33.0197, longitude: 27.9117 }); // East London coordinates
+  const [proximityTimer, setProximityTimer] = useState(0);
+  const [isNearJobLocation, setIsNearJobLocation] = useState(false);
+  const [autoStartCountdown, setAutoStartCountdown] = useState(0);
   const [technician] = useState({
     id: 'tech001',
     name: 'Dyondzani Clement Masinge',
