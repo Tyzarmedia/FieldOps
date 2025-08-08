@@ -81,7 +81,7 @@ export default function CreateJobWithGeolocation() {
       warehouse: "WH-EL-001",
     },
     {
-      id: "tech002", 
+      id: "tech002",
       name: "Sarah Johnson",
       status: "available",
       currentLocation: "Port Elizabeth",
@@ -90,7 +90,7 @@ export default function CreateJobWithGeolocation() {
     },
     {
       id: "tech003",
-      name: "Mike Wilson", 
+      name: "Mike Wilson",
       status: "on-leave",
       currentLocation: "Cape Town",
       skills: ["Network Maintenance", "Technical Support"],
@@ -101,7 +101,7 @@ export default function CreateJobWithGeolocation() {
   // Job types
   const jobTypes = [
     "FTTH Installation",
-    "FTTH Maintenance", 
+    "FTTH Maintenance",
     "FTTH Repair",
     "Network Upgrade",
     "Equipment Replacement",
@@ -113,7 +113,7 @@ export default function CreateJobWithGeolocation() {
   const skillsOptions = [
     "FTTH",
     "Network Installation",
-    "Fiber Splicing", 
+    "Fiber Splicing",
     "Equipment Repair",
     "Customer Service",
     "Network Maintenance",
@@ -125,7 +125,9 @@ export default function CreateJobWithGeolocation() {
     setLocationLoading(true);
 
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by this browser. Please enter the address manually.");
+      alert(
+        "Geolocation is not supported by this browser. Please enter the address manually.",
+      );
       setLocationLoading(false);
       return;
     }
@@ -167,34 +169,38 @@ export default function CreateJobWithGeolocation() {
       }
 
       setJobLocation(location);
-      setJobData(prev => ({ ...prev, serviceAddress: location.address }));
+      setJobData((prev) => ({ ...prev, serviceAddress: location.address }));
       setLocationLoading(false);
     };
 
     const handleLocationError = (error: GeolocationPositionError) => {
-      let userMessage = '';
+      let userMessage = "";
 
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          userMessage = 'Location access denied. Please enable location permissions and try again, or enter the address manually.';
+          userMessage =
+            "Location access denied. Please enable location permissions and try again, or enter the address manually.";
           break;
         case error.POSITION_UNAVAILABLE:
-          userMessage = 'Location unavailable. Please check your GPS/network connection or enter the address manually.';
+          userMessage =
+            "Location unavailable. Please check your GPS/network connection or enter the address manually.";
           break;
         case error.TIMEOUT:
-          userMessage = 'Location request timed out. Please try again or enter the address manually.';
+          userMessage =
+            "Location request timed out. Please try again or enter the address manually.";
           break;
         default:
-          userMessage = 'Unable to get location. Please enter the address manually.';
+          userMessage =
+            "Unable to get location. Please enter the address manually.";
           break;
       }
 
       // Log detailed error information for debugging
-      console.error('Geolocation error details:', {
+      console.error("Geolocation error details:", {
         code: error.code,
         message: error.message,
         errorName: getErrorName(error.code),
-        userMessage
+        userMessage,
       });
 
       alert(userMessage);
@@ -203,10 +209,14 @@ export default function CreateJobWithGeolocation() {
 
     const getErrorName = (code: number): string => {
       switch (code) {
-        case 1: return 'PERMISSION_DENIED';
-        case 2: return 'POSITION_UNAVAILABLE';
-        case 3: return 'TIMEOUT';
-        default: return 'UNKNOWN_ERROR';
+        case 1:
+          return "PERMISSION_DENIED";
+        case 2:
+          return "POSITION_UNAVAILABLE";
+        case 3:
+          return "TIMEOUT";
+        default:
+          return "UNKNOWN_ERROR";
       }
     };
 
@@ -222,30 +232,36 @@ export default function CreateJobWithGeolocation() {
             enableHighAccuracy: false,
             timeout: 15000,
             maximumAge: 60000,
-          }
+          },
         );
       },
       {
         enableHighAccuracy: true,
         timeout: 10000,
         maximumAge: 1000,
-      }
+      },
     );
   };
 
   // Request geolocation permission
   const requestLocationPermission = async () => {
     try {
-      const permission = await navigator.permissions.query({ name: 'geolocation' });
+      const permission = await navigator.permissions.query({
+        name: "geolocation",
+      });
 
-      if (permission.state === 'denied') {
-        alert('Location access is denied. Please enable location permissions in your browser settings to use this feature.');
+      if (permission.state === "denied") {
+        alert(
+          "Location access is denied. Please enable location permissions in your browser settings to use this feature.",
+        );
         return false;
       }
 
       return true;
     } catch (error) {
-      console.warn('Permission API not supported, proceeding with geolocation request');
+      console.warn(
+        "Permission API not supported, proceeding with geolocation request",
+      );
       return true;
     }
   };
@@ -287,23 +303,25 @@ export default function CreateJobWithGeolocation() {
       */
     } catch (error) {
       console.error("Geocoding error:", error);
-      alert("Failed to process address. Please check the address and try again.");
+      alert(
+        "Failed to process address. Please check the address and try again.",
+      );
     }
     setLocationLoading(false);
   };
 
   // Handle form input changes
   const handleInputChange = (field: string, value: any) => {
-    setJobData(prev => ({ ...prev, [field]: value }));
+    setJobData((prev) => ({ ...prev, [field]: value }));
   };
 
   // Handle skills selection
   const toggleSkill = (skill: string) => {
-    setJobData(prev => ({
+    setJobData((prev) => ({
       ...prev,
       requiredSkills: prev.requiredSkills.includes(skill)
-        ? prev.requiredSkills.filter(s => s !== skill)
-        : [...prev.requiredSkills, skill]
+        ? prev.requiredSkills.filter((s) => s !== skill)
+        : [...prev.requiredSkills, skill],
     }));
   };
 
@@ -316,29 +334,29 @@ export default function CreateJobWithGeolocation() {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/jobs/create', {
-        method: 'POST',
+      const response = await fetch("/api/jobs/create", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           ...jobData,
           location: jobLocation,
-          coordinatorId: localStorage.getItem('userId'),
+          coordinatorId: localStorage.getItem("userId"),
           createdAt: new Date().toISOString(),
-          status: 'assigned',
+          status: "assigned",
         }),
       });
 
       if (response.ok) {
         const newJob = await response.json();
-        
+
         // Send notification to assigned technician
         if (jobData.assignedTechnician) {
-          await fetch('/api/notifications/job-assigned', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          await fetch("/api/notifications/job-assigned", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               technicianId: jobData.assignedTechnician,
               jobId: newJob.id,
@@ -348,15 +366,15 @@ export default function CreateJobWithGeolocation() {
           });
         }
 
-        navigate('/coordinator/jobs', {
-          state: { message: 'Job created successfully!' }
+        navigate("/coordinator/jobs", {
+          state: { message: "Job created successfully!" },
         });
       } else {
-        throw new Error('Failed to create job');
+        throw new Error("Failed to create job");
       }
     } catch (error) {
-      console.error('Failed to create job:', error);
-      alert('Failed to create job. Please try again.');
+      console.error("Failed to create job:", error);
+      alert("Failed to create job. Please try again.");
     }
     setLoading(false);
   };
@@ -368,11 +386,15 @@ export default function CreateJobWithGeolocation() {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Create New Job</h1>
-              <p className="text-gray-600">Create job with precise geolocation for auto-start</p>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Create New Job
+              </h1>
+              <p className="text-gray-600">
+                Create job with precise geolocation for auto-start
+              </p>
             </div>
             <Button
-              onClick={() => navigate('/coordinator/jobs')}
+              onClick={() => navigate("/coordinator/jobs")}
               variant="outline"
             >
               Cancel
@@ -423,7 +445,9 @@ export default function CreateJobWithGeolocation() {
               <div className="flex space-x-2">
                 <Input
                   value={jobData.serviceAddress}
-                  onChange={(e) => handleInputChange("serviceAddress", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("serviceAddress", e.target.value)
+                  }
                   placeholder="Enter complete service address"
                   className="flex-1"
                 />
@@ -441,11 +465,16 @@ export default function CreateJobWithGeolocation() {
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="flex items-center mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-                  <span className="font-medium text-green-800">Location Set</span>
+                  <span className="font-medium text-green-800">
+                    Location Set
+                  </span>
                 </div>
                 <div className="text-sm text-green-700 space-y-1">
                   <div>Address: {jobLocation.address}</div>
-                  <div>Coordinates: {jobLocation.latitude.toFixed(6)}, {jobLocation.longitude.toFixed(6)}</div>
+                  <div>
+                    Coordinates: {jobLocation.latitude.toFixed(6)},{" "}
+                    {jobLocation.longitude.toFixed(6)}
+                  </div>
                   {jobLocation.accuracy && (
                     <div>Accuracy: ±{Math.round(jobLocation.accuracy)}m</div>
                   )}
@@ -479,7 +508,9 @@ export default function CreateJobWithGeolocation() {
                 </label>
                 <Input
                   value={jobData.workOrderNumber}
-                  onChange={(e) => handleInputChange("workOrderNumber", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("workOrderNumber", e.target.value)
+                  }
                   placeholder="WO-2025-001"
                 />
               </div>
@@ -511,7 +542,9 @@ export default function CreateJobWithGeolocation() {
                 </label>
                 <Select
                   value={jobData.priority}
-                  onValueChange={(value) => handleInputChange("priority", value)}
+                  onValueChange={(value) =>
+                    handleInputChange("priority", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -531,7 +564,9 @@ export default function CreateJobWithGeolocation() {
                 </label>
                 <Input
                   value={jobData.estimatedDuration}
-                  onChange={(e) => handleInputChange("estimatedDuration", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("estimatedDuration", e.target.value)
+                  }
                   placeholder="e.g., 2 hours"
                 />
               </div>
@@ -543,7 +578,9 @@ export default function CreateJobWithGeolocation() {
                 <Input
                   type="date"
                   value={jobData.appointmentDate}
-                  onChange={(e) => handleInputChange("appointmentDate", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("appointmentDate", e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -554,7 +591,9 @@ export default function CreateJobWithGeolocation() {
               </label>
               <Textarea
                 value={jobData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
                 placeholder="Detailed description of the work to be performed"
                 rows={3}
               />
@@ -566,7 +605,9 @@ export default function CreateJobWithGeolocation() {
               </label>
               <Textarea
                 value={jobData.specialInstructions}
-                onChange={(e) => handleInputChange("specialInstructions", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("specialInstructions", e.target.value)
+                }
                 placeholder="Any special instructions for the technician"
                 rows={2}
               />
@@ -587,7 +628,9 @@ export default function CreateJobWithGeolocation() {
                 </label>
                 <Input
                   value={jobData.clientName}
-                  onChange={(e) => handleInputChange("clientName", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("clientName", e.target.value)
+                  }
                   placeholder="Client full name"
                 />
               </div>
@@ -598,7 +641,9 @@ export default function CreateJobWithGeolocation() {
                 </label>
                 <Input
                   value={jobData.clientPhone}
-                  onChange={(e) => handleInputChange("clientPhone", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("clientPhone", e.target.value)
+                  }
                   placeholder="+27 123 456 789"
                 />
               </div>
@@ -610,7 +655,9 @@ export default function CreateJobWithGeolocation() {
                 <Input
                   type="email"
                   value={jobData.clientEmail}
-                  onChange={(e) => handleInputChange("clientEmail", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("clientEmail", e.target.value)
+                  }
                   placeholder="client@example.com"
                 />
               </div>
@@ -632,7 +679,11 @@ export default function CreateJobWithGeolocation() {
                 {skillsOptions.map((skill) => (
                   <Button
                     key={skill}
-                    variant={jobData.requiredSkills.includes(skill) ? "default" : "outline"}
+                    variant={
+                      jobData.requiredSkills.includes(skill)
+                        ? "default"
+                        : "outline"
+                    }
                     size="sm"
                     onClick={() => toggleSkill(skill)}
                   >
@@ -648,14 +699,16 @@ export default function CreateJobWithGeolocation() {
               </label>
               <Select
                 value={jobData.assignedTechnician}
-                onValueChange={(value) => handleInputChange("assignedTechnician", value)}
+                onValueChange={(value) =>
+                  handleInputChange("assignedTechnician", value)
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select technician" />
                 </SelectTrigger>
                 <SelectContent>
                   {technicians
-                    .filter(tech => tech.status === "available")
+                    .filter((tech) => tech.status === "available")
                     .map((tech) => (
                       <SelectItem key={tech.id} value={tech.id}>
                         <div className="flex items-center justify-between w-full">
@@ -682,18 +735,18 @@ export default function CreateJobWithGeolocation() {
                   <strong>Selected Technician Skills:</strong>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {technicians
-                      .find(t => t.id === jobData.assignedTechnician)
-                      ?.skills.map(skill => (
+                      .find((t) => t.id === jobData.assignedTechnician)
+                      ?.skills.map((skill) => (
                         <Badge
                           key={skill}
                           className={`text-xs ${
                             jobData.requiredSkills.includes(skill)
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
                           }`}
                         >
                           {skill}
-                          {jobData.requiredSkills.includes(skill) && ' ✓'}
+                          {jobData.requiredSkills.includes(skill) && " ✓"}
                         </Badge>
                       ))}
                   </div>
@@ -707,7 +760,12 @@ export default function CreateJobWithGeolocation() {
         <div className="flex justify-end space-x-4">
           <Button
             onClick={createJob}
-            disabled={loading || !jobLocation || !jobData.title || !jobData.workOrderNumber}
+            disabled={
+              loading ||
+              !jobLocation ||
+              !jobData.title ||
+              !jobData.workOrderNumber
+            }
             className="bg-blue-600 hover:bg-blue-700"
           >
             {loading ? (
@@ -725,7 +783,8 @@ export default function CreateJobWithGeolocation() {
             <div className="flex items-center">
               <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
               <span className="text-sm text-yellow-800">
-                Please complete all required fields and set job location before creating the job.
+                Please complete all required fields and set job location before
+                creating the job.
               </span>
             </div>
           </div>

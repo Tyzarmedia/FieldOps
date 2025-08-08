@@ -56,7 +56,11 @@ export default function EnhancedClockInScreen() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [clockingIn, setClockedIn] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<{latitude: number, longitude: number, address: string} | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+    address: string;
+  } | null>(null);
   const [selectedAssistant, setSelectedAssistant] = useState("");
   const [workingWithAssistant, setWorkingWithAssistant] = useState(false);
   const [overtimeExpected, setOvertimeExpected] = useState(false);
@@ -82,7 +86,7 @@ export default function EnhancedClockInScreen() {
       specialties: ["FTTH Installation", "Cable Management"],
     },
     {
-      id: "asst002", 
+      id: "asst002",
       name: "Emma Davis",
       role: "junior_technician",
       status: "available",
@@ -93,7 +97,7 @@ export default function EnhancedClockInScreen() {
     {
       id: "asst003",
       name: "Michael Brown",
-      role: "assistant", 
+      role: "assistant",
       status: "busy",
       warehouse: "WH-PE-002",
       experienceLevel: "experienced",
@@ -102,7 +106,9 @@ export default function EnhancedClockInScreen() {
   ]);
 
   // Current work session
-  const [currentSession, setCurrentSession] = useState<WorkSession | null>(null);
+  const [currentSession, setCurrentSession] = useState<WorkSession | null>(
+    null,
+  );
 
   // Check if already clocked in
   useEffect(() => {
@@ -112,24 +118,26 @@ export default function EnhancedClockInScreen() {
 
   const checkCurrentSession = async () => {
     try {
-      const response = await fetch(`/api/work-sessions/current/${currentUser.id}`);
+      const response = await fetch(
+        `/api/work-sessions/current/${currentUser.id}`,
+      );
       if (response.ok) {
         const session = await response.json();
         setCurrentSession(session);
       }
     } catch (error) {
-      console.error('Failed to check current session:', error);
+      console.error("Failed to check current session:", error);
     }
   };
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
-      console.error('Geolocation is not supported by this browser');
+      console.error("Geolocation is not supported by this browser");
       // Set a default location for testing
       setCurrentLocation({
         latitude: -33.0197,
         longitude: 27.9117,
-        address: "Default Location (East London)"
+        address: "Default Location (East London)",
       });
       return;
     }
@@ -145,20 +153,23 @@ export default function EnhancedClockInScreen() {
     };
 
     const handleLocationError = (error: GeolocationPositionError) => {
-      let errorMessage = '';
+      let errorMessage = "";
 
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          errorMessage = 'Location permission denied. Using office location for clock-in.';
+          errorMessage =
+            "Location permission denied. Using office location for clock-in.";
           break;
         case error.POSITION_UNAVAILABLE:
-          errorMessage = 'Location unavailable. Using office location for clock-in.';
+          errorMessage =
+            "Location unavailable. Using office location for clock-in.";
           break;
         case error.TIMEOUT:
-          errorMessage = 'Location request timed out. Using office location for clock-in.';
+          errorMessage =
+            "Location request timed out. Using office location for clock-in.";
           break;
         default:
-          errorMessage = 'Location error. Using office location for clock-in.';
+          errorMessage = "Location error. Using office location for clock-in.";
           break;
       }
 
@@ -168,7 +179,7 @@ export default function EnhancedClockInScreen() {
       setCurrentLocation({
         latitude: -33.0197,
         longitude: 27.9117,
-        address: "Office Location (East London)"
+        address: "Office Location (East London)",
       });
     };
 
@@ -184,14 +195,14 @@ export default function EnhancedClockInScreen() {
             enableHighAccuracy: false,
             timeout: 15000,
             maximumAge: 60000,
-          }
+          },
         );
       },
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 1000
-      }
+        maximumAge: 1000,
+      },
     );
   };
 
@@ -215,11 +226,11 @@ export default function EnhancedClockInScreen() {
         workType: overtimeExpected ? "overtime" : "regular",
       };
 
-      const response = await fetch('/api/work-sessions/clock-in', {
-        method: 'POST',
+      const response = await fetch("/api/work-sessions/clock-in", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(clockInData),
       });
@@ -233,14 +244,14 @@ export default function EnhancedClockInScreen() {
 
         // Navigate to dashboard after short delay
         setTimeout(() => {
-          navigate('/technician/dashboard');
+          navigate("/technician/dashboard");
         }, 2000);
       } else {
-        throw new Error('Failed to clock in');
+        throw new Error("Failed to clock in");
       }
     } catch (error) {
-      console.error('Clock-in failed:', error);
-      alert('Failed to clock in. Please try again.');
+      console.error("Clock-in failed:", error);
+      alert("Failed to clock in. Please try again.");
       setClockedIn(false);
     }
     setLoading(false);
@@ -252,34 +263,37 @@ export default function EnhancedClockInScreen() {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/work-sessions/${currentSession.id}/clock-out`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      const response = await fetch(
+        `/api/work-sessions/${currentSession.id}/clock-out`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            clockOutTime: new Date().toISOString(),
+            location: currentLocation,
+          }),
         },
-        body: JSON.stringify({
-          clockOutTime: new Date().toISOString(),
-          location: currentLocation,
-        }),
-      });
+      );
 
       if (response.ok) {
         const completedSession = await response.json();
-        
+
         // Check for overtime and create claims if necessary
         await checkAndCreateOvertimeClaims(completedSession);
-        
+
         setCurrentSession(null);
-        
+
         // Navigate to login or summary
-        navigate('/login');
+        navigate("/login");
       } else {
-        throw new Error('Failed to clock out');
+        throw new Error("Failed to clock out");
       }
     } catch (error) {
-      console.error('Clock-out failed:', error);
-      alert('Failed to clock out. Please try again.');
+      console.error("Clock-out failed:", error);
+      alert("Failed to clock out. Please try again.");
     }
     setLoading(false);
   };
@@ -287,74 +301,88 @@ export default function EnhancedClockInScreen() {
   const sendClockInNotifications = async (session: WorkSession) => {
     try {
       // Notify manager about clock-in
-      await fetch('/api/notifications/clock-in', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/notifications/clock-in", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: currentUser.id,
           technicianName: currentUser.name,
           assistantId: session.assistantId,
-          assistantName: session.assistantId ? assistants.find(a => a.id === session.assistantId)?.name : null,
+          assistantName: session.assistantId
+            ? assistants.find((a) => a.id === session.assistantId)?.name
+            : null,
           clockInTime: session.clockInTime,
           location: session.location,
           expectedOvertime: overtimeExpected,
         }),
       });
     } catch (error) {
-      console.error('Failed to send notifications:', error);
+      console.error("Failed to send notifications:", error);
     }
   };
 
   const checkAndCreateOvertimeClaims = async (session: WorkSession) => {
     const clockInTime = new Date(session.clockInTime);
     const clockOutTime = new Date(session.clockOutTime!);
-    const workHours = (clockOutTime.getTime() - clockInTime.getTime()) / (1000 * 60 * 60);
-    
+    const workHours =
+      (clockOutTime.getTime() - clockInTime.getTime()) / (1000 * 60 * 60);
+
     // Check if worked more than 8 hours or after 17:00
     const isOvertime = workHours > 8 || clockOutTime.getHours() >= 17;
-    
+
     if (isOvertime) {
       try {
         // Get jobs completed during overtime hours
-        const overtimeJobs = await getOvertimeJobs(session.id, session.clockInTime, session.clockOutTime!);
-        
+        const overtimeJobs = await getOvertimeJobs(
+          session.id,
+          session.clockInTime,
+          session.clockOutTime!,
+        );
+
         const overtimeClaimData = {
           sessionId: session.id,
           technicianId: currentUser.id,
           assistantId: session.assistantId,
           overtimeHours: Math.max(0, workHours - 8),
           overtimeJobs: overtimeJobs,
-          comments: `Overtime claim for ${workHours.toFixed(2)} hours. Jobs completed after hours: ${overtimeJobs.map(j => j.workOrderNumber).join(', ')}`,
+          comments: `Overtime claim for ${workHours.toFixed(2)} hours. Jobs completed after hours: ${overtimeJobs.map((j) => j.workOrderNumber).join(", ")}`,
           claimDate: new Date().toISOString(),
         };
 
-        await fetch('/api/overtime-claims/create', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch("/api/overtime-claims/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(overtimeClaimData),
         });
       } catch (error) {
-        console.error('Failed to create overtime claim:', error);
+        console.error("Failed to create overtime claim:", error);
       }
     }
   };
 
-  const getOvertimeJobs = async (sessionId: string, clockInTime: string, clockOutTime: string) => {
+  const getOvertimeJobs = async (
+    sessionId: string,
+    clockInTime: string,
+    clockOutTime: string,
+  ) => {
     try {
-      const response = await fetch(`/api/jobs/overtime-jobs?sessionId=${sessionId}&start=${clockInTime}&end=${clockOutTime}`);
+      const response = await fetch(
+        `/api/jobs/overtime-jobs?sessionId=${sessionId}&start=${clockInTime}&end=${clockOutTime}`,
+      );
       if (response.ok) {
         return await response.json();
       }
     } catch (error) {
-      console.error('Failed to get overtime jobs:', error);
+      console.error("Failed to get overtime jobs:", error);
     }
     return [];
   };
 
   const getAvailableAssistants = () => {
-    return assistants.filter(assistant => 
-      assistant.status === "available" && 
-      assistant.warehouse === currentUser.warehouse
+    return assistants.filter(
+      (assistant) =>
+        assistant.status === "available" &&
+        assistant.warehouse === currentUser.warehouse,
     );
   };
 
@@ -392,20 +420,21 @@ export default function EnhancedClockInScreen() {
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="h-8 w-8 text-white" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Clocked In Successfully!</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              Clocked In Successfully!
+            </h2>
             <p className="text-gray-600 mb-4">
               Welcome back, {currentUser.name}
             </p>
             {workingWithAssistant && selectedAssistant && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                 <p className="text-sm text-blue-800">
-                  Working with: {assistants.find(a => a.id === selectedAssistant)?.name}
+                  Working with:{" "}
+                  {assistants.find((a) => a.id === selectedAssistant)?.name}
                 </p>
               </div>
             )}
-            <p className="text-sm text-gray-500">
-              Redirecting to dashboard...
-            </p>
+            <p className="text-sm text-gray-500">Redirecting to dashboard...</p>
           </CardContent>
         </Card>
       </div>
@@ -440,14 +469,21 @@ export default function EnhancedClockInScreen() {
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                {currentUser.name.split(' ').map(n => n[0]).join('')}
+                {currentUser.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">{currentUser.name}</h2>
+                <h2 className="text-xl font-bold text-gray-900">
+                  {currentUser.name}
+                </h2>
                 <p className="text-gray-600">{currentUser.role}</p>
                 <div className="flex items-center space-x-2 mt-1">
                   <Building className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">{currentUser.warehouse}</span>
+                  <span className="text-sm text-gray-600">
+                    {currentUser.warehouse}
+                  </span>
                 </div>
               </div>
             </div>
@@ -459,18 +495,26 @@ export default function EnhancedClockInScreen() {
           <Card className="mb-6">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Current Session</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Current Session
+                </h3>
                 <Badge className="bg-green-100 text-green-800">Active</Badge>
               </div>
               <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex items-center">
                   <Clock className="h-4 w-4 mr-2" />
-                  Clocked in: {new Date(currentSession.clockInTime).toLocaleString()}
+                  Clocked in:{" "}
+                  {new Date(currentSession.clockInTime).toLocaleString()}
                 </div>
                 {currentSession.assistantId && (
                   <div className="flex items-center">
                     <Users className="h-4 w-4 mr-2" />
-                    Working with: {assistants.find(a => a.id === currentSession.assistantId)?.name}
+                    Working with:{" "}
+                    {
+                      assistants.find(
+                        (a) => a.id === currentSession.assistantId,
+                      )?.name
+                    }
                   </div>
                 )}
                 <div className="flex items-center">
@@ -528,14 +572,20 @@ export default function EnhancedClockInScreen() {
                     checked={workingWithAssistant}
                     onCheckedChange={setWorkingWithAssistant}
                   />
-                  <label htmlFor="working-with-assistant" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="working-with-assistant"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Working with an assistant today
                   </label>
                 </div>
 
                 {workingWithAssistant && (
                   <div className="space-y-3">
-                    <Select value={selectedAssistant} onValueChange={setSelectedAssistant}>
+                    <Select
+                      value={selectedAssistant}
+                      onValueChange={setSelectedAssistant}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select assistant" />
                       </SelectTrigger>
@@ -545,10 +595,16 @@ export default function EnhancedClockInScreen() {
                             <div className="flex items-center justify-between w-full">
                               <span>{assistant.name}</span>
                               <div className="flex items-center space-x-2 ml-4">
-                                <Badge className={getExperienceColor(assistant.experienceLevel)}>
+                                <Badge
+                                  className={getExperienceColor(
+                                    assistant.experienceLevel,
+                                  )}
+                                >
                                   {assistant.experienceLevel}
                                 </Badge>
-                                <Badge className={getStatusColor(assistant.status)}>
+                                <Badge
+                                  className={getStatusColor(assistant.status)}
+                                >
                                   {assistant.status}
                                 </Badge>
                               </div>
@@ -560,16 +616,27 @@ export default function EnhancedClockInScreen() {
 
                     {selectedAssistant && (
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h4 className="font-medium text-blue-900 mb-2">Assistant Info</h4>
+                        <h4 className="font-medium text-blue-900 mb-2">
+                          Assistant Info
+                        </h4>
                         {(() => {
-                          const assistant = assistants.find(a => a.id === selectedAssistant);
+                          const assistant = assistants.find(
+                            (a) => a.id === selectedAssistant,
+                          );
                           return assistant ? (
                             <div className="space-y-2 text-sm text-blue-800">
-                              <div>Role: {assistant.role.replace('_', ' ').toUpperCase()}</div>
+                              <div>
+                                Role:{" "}
+                                {assistant.role.replace("_", " ").toUpperCase()}
+                              </div>
                               <div>Experience: {assistant.experienceLevel}</div>
-                              <div>Specialties: {assistant.specialties.join(', ')}</div>
+                              <div>
+                                Specialties: {assistant.specialties.join(", ")}
+                              </div>
                               <div className="text-xs text-blue-600 mt-2">
-                                ℹ️ Assistant will have read-only access to see how you complete UDF, images, stock, and sign-off processes for learning purposes.
+                                ℹ️ Assistant will have read-only access to see
+                                how you complete UDF, images, stock, and
+                                sign-off processes for learning purposes.
                               </div>
                             </div>
                           ) : null;
@@ -588,7 +655,10 @@ export default function EnhancedClockInScreen() {
                     checked={overtimeExpected}
                     onCheckedChange={setOvertimeExpected}
                   />
-                  <label htmlFor="overtime-expected" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="overtime-expected"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Expecting to work overtime today
                   </label>
                 </div>
@@ -597,7 +667,8 @@ export default function EnhancedClockInScreen() {
                     <div className="flex items-center">
                       <BellRing className="h-5 w-5 text-orange-600 mr-2" />
                       <span className="text-sm text-orange-800">
-                        Overtime will be automatically tracked and claims generated for both you and your assistant.
+                        Overtime will be automatically tracked and claims
+                        generated for both you and your assistant.
                       </span>
                     </div>
                   </div>
@@ -607,7 +678,11 @@ export default function EnhancedClockInScreen() {
               {/* Clock In Button */}
               <Button
                 onClick={clockIn}
-                disabled={loading || !currentLocation || (workingWithAssistant && !selectedAssistant)}
+                disabled={
+                  loading ||
+                  !currentLocation ||
+                  (workingWithAssistant && !selectedAssistant)
+                }
                 className="w-full bg-green-600 hover:bg-green-700 py-6 text-lg"
               >
                 {loading ? (
@@ -619,13 +694,16 @@ export default function EnhancedClockInScreen() {
               </Button>
 
               {/* Validation Messages */}
-              {(!currentLocation || (workingWithAssistant && !selectedAssistant)) && (
+              {(!currentLocation ||
+                (workingWithAssistant && !selectedAssistant)) && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                   <div className="flex items-center">
                     <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
                     <span className="text-sm text-yellow-800">
                       {!currentLocation && "Location is required. "}
-                      {workingWithAssistant && !selectedAssistant && "Please select an assistant. "}
+                      {workingWithAssistant &&
+                        !selectedAssistant &&
+                        "Please select an assistant. "}
                     </span>
                   </div>
                 </div>
@@ -646,13 +724,22 @@ export default function EnhancedClockInScreen() {
             <CardContent>
               <div className="space-y-3">
                 {getAvailableAssistants().map((assistant) => (
-                  <div key={assistant.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={assistant.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
                     <div>
                       <div className="font-medium">{assistant.name}</div>
-                      <div className="text-sm text-gray-600">{assistant.role.replace('_', ' ')}</div>
+                      <div className="text-sm text-gray-600">
+                        {assistant.role.replace("_", " ")}
+                      </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge className={getExperienceColor(assistant.experienceLevel)}>
+                      <Badge
+                        className={getExperienceColor(
+                          assistant.experienceLevel,
+                        )}
+                      >
                         {assistant.experienceLevel}
                       </Badge>
                       <Badge className={getStatusColor(assistant.status)}>

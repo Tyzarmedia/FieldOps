@@ -72,27 +72,34 @@ export default function EnhancedJobDetailsScreen() {
   const [showTimerOverlay, setShowTimerOverlay] = useState(false);
   const [showImageForm, setShowImageForm] = useState(false);
   const [showStockForm, setShowStockForm] = useState(false);
-  const [networkStatus, setNetworkStatus] = useState<'online' | 'offline'>('online');
+  const [networkStatus, setNetworkStatus] = useState<"online" | "offline">(
+    "online",
+  );
   const [isLate, setIsLate] = useState(false);
   const [notificationSent, setNotificationSent] = useState(false);
-  const [jobStatus, setJobStatus] = useState<'assigned' | 'in-progress' | 'paused' | 'completed'>("assigned");
+  const [jobStatus, setJobStatus] = useState<
+    "assigned" | "in-progress" | "paused" | "completed"
+  >("assigned");
   const [jobTimer, setJobTimer] = useState(0); // Timer in seconds
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<{latitude: number, longitude: number} | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const [jobLocation] = useState({ latitude: -33.0197, longitude: 27.9117 }); // East London coordinates
   const [proximityTimer, setProximityTimer] = useState(0);
   const [isNearJobLocation, setIsNearJobLocation] = useState(false);
   const [autoStartCountdown, setAutoStartCountdown] = useState(0);
   const [technician] = useState({
-    id: 'tech001',
-    name: 'Dyondzani Clement Masinge',
-    phone: '+27123456789',
-    location: 'East London'
+    id: "tech001",
+    name: "Dyondzani Clement Masinge",
+    phone: "+27123456789",
+    location: "East London",
   });
 
   // Job timing details
-  const assignedTime = new Date('2025-07-18T16:02:00');
-  const dueTime = new Date('2025-07-18T23:59:00');
+  const assignedTime = new Date("2025-07-18T16:02:00");
+  const dueTime = new Date("2025-07-18T23:59:00");
   const warningTime = new Date(dueTime.getTime() - 10 * 60 * 1000); // 10 minutes before
 
   // UDF Form Data
@@ -124,9 +131,19 @@ export default function EnhancedJobDetailsScreen() {
     planning: false,
   });
 
-  const [jobPhotos, setJobPhotos] = useState<{id: string, name: string, url: string, type: string}[]>([]);
-  const [allocatedStock, setAllocatedStock] = useState<{id: string, code: string, name: string, quantity: number, allocatedAt: string}[]>([]);
-  
+  const [jobPhotos, setJobPhotos] = useState<
+    { id: string; name: string; url: string; type: string }[]
+  >([]);
+  const [allocatedStock, setAllocatedStock] = useState<
+    {
+      id: string;
+      code: string;
+      name: string;
+      quantity: number;
+      allocatedAt: string;
+    }[]
+  >([]);
+
   // Image form data
   const [imageFormData, setImageFormData] = useState({
     beforeLightLevels: null as File | null,
@@ -145,7 +162,12 @@ export default function EnhancedJobDetailsScreen() {
 
   // Available stocks for search
   const [availableStocks] = useState([
-    { id: 1, code: "FC-50M", name: "Fiber Optic Cable - 50m", warehouseQty: 15 },
+    {
+      id: 1,
+      code: "FC-50M",
+      name: "Fiber Optic Cable - 50m",
+      warehouseQty: 15,
+    },
     { id: 2, code: "RJ45-100", name: "RJ45 Connectors", warehouseQty: 100 },
     { id: 3, code: "CT-200", name: "Cable Ties", warehouseQty: 200 },
     { id: 4, code: "JB-08", name: "Junction Box", warehouseQty: 8 },
@@ -171,16 +193,16 @@ export default function EnhancedJobDetailsScreen() {
   // Network status monitoring
   useEffect(() => {
     const updateNetworkStatus = () => {
-      setNetworkStatus(navigator.onLine ? 'online' : 'offline');
+      setNetworkStatus(navigator.onLine ? "online" : "offline");
     };
 
     updateNetworkStatus();
-    window.addEventListener('online', updateNetworkStatus);
-    window.addEventListener('offline', updateNetworkStatus);
+    window.addEventListener("online", updateNetworkStatus);
+    window.addEventListener("offline", updateNetworkStatus);
 
     return () => {
-      window.removeEventListener('online', updateNetworkStatus);
-      window.removeEventListener('offline', updateNetworkStatus);
+      window.removeEventListener("online", updateNetworkStatus);
+      window.removeEventListener("offline", updateNetworkStatus);
     };
   }, []);
 
@@ -188,12 +210,12 @@ export default function EnhancedJobDetailsScreen() {
   useEffect(() => {
     const checkDeadline = () => {
       const now = new Date();
-      
+
       // Check if technician is late
       if (now > dueTime) {
         setIsLate(true);
       }
-      
+
       // Send warning notification 10 minutes before deadline
       if (now >= warningTime && !notificationSent && now < dueTime) {
         setNotificationSent(true);
@@ -210,33 +232,33 @@ export default function EnhancedJobDetailsScreen() {
   const sendDeadlineWarning = async () => {
     try {
       // Send notification to technician and coordinator
-      await fetch('/api/notifications/deadline-warning', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/notifications/deadline-warning", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           jobId: jobDetails.id,
           technicianId: technician.id,
           dueTime: dueTime.toISOString(),
-          message: `Job ${jobDetails.id} is due in 10 minutes`
+          message: `Job ${jobDetails.id} is due in 10 minutes`,
         }),
       });
-      
+
       // Browser notification
-      if (Notification.permission === 'granted') {
-        new Notification('Job Deadline Warning', {
+      if (Notification.permission === "granted") {
+        new Notification("Job Deadline Warning", {
           body: `Job ${jobDetails.id} is due in 10 minutes`,
-          icon: '/notification-icon.png'
+          icon: "/notification-icon.png",
         });
       }
     } catch (error) {
-      console.error('Failed to send deadline warning:', error);
+      console.error("Failed to send deadline warning:", error);
     }
   };
 
   // Geolocation tracking
   useEffect(() => {
     if (!navigator.geolocation) {
-      console.error('Geolocation is not supported by this browser');
+      console.error("Geolocation is not supported by this browser");
       return;
     }
 
@@ -250,12 +272,13 @@ export default function EnhancedJobDetailsScreen() {
     };
 
     const handleLocationError = (error: GeolocationPositionError) => {
-      let userMessage = '';
+      let userMessage = "";
       let shouldShowWarning = false;
 
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          userMessage = 'Location access denied. Using default location for job tracking.';
+          userMessage =
+            "Location access denied. Using default location for job tracking.";
           shouldShowWarning = true;
           setCurrentLocation({
             latitude: -33.0197, // East London coordinates
@@ -263,7 +286,8 @@ export default function EnhancedJobDetailsScreen() {
           });
           break;
         case error.POSITION_UNAVAILABLE:
-          userMessage = 'Location unavailable. Using default location for job tracking.';
+          userMessage =
+            "Location unavailable. Using default location for job tracking.";
           shouldShowWarning = true;
           setCurrentLocation({
             latitude: -33.0197,
@@ -271,15 +295,17 @@ export default function EnhancedJobDetailsScreen() {
           });
           break;
         case error.TIMEOUT:
-          userMessage = 'Location request timed out. Retrying with lower accuracy...';
-          warning('Location Timeout', userMessage);
+          userMessage =
+            "Location request timed out. Retrying with lower accuracy...";
+          warning("Location Timeout", userMessage);
           // Try fallback for timeout
           setTimeout(() => {
             getCurrentLocationFallback();
           }, 5000);
           break;
         default:
-          userMessage = 'Unable to get location. Using default location for job tracking.';
+          userMessage =
+            "Unable to get location. Using default location for job tracking.";
           shouldShowWarning = true;
           setCurrentLocation({
             latitude: -33.0197,
@@ -289,25 +315,29 @@ export default function EnhancedJobDetailsScreen() {
       }
 
       // Log detailed error information for debugging
-      console.error('Geolocation error details:', {
+      console.error("Geolocation error details:", {
         code: error.code,
         message: error.message,
         errorName: getErrorName(error.code),
-        userMessage
+        userMessage,
       });
 
       // Show user-friendly notification
       if (shouldShowWarning) {
-        warning('Location Access', userMessage);
+        warning("Location Access", userMessage);
       }
     };
 
     const getErrorName = (code: number): string => {
       switch (code) {
-        case 1: return 'PERMISSION_DENIED';
-        case 2: return 'POSITION_UNAVAILABLE';
-        case 3: return 'TIMEOUT';
-        default: return 'UNKNOWN_ERROR';
+        case 1:
+          return "PERMISSION_DENIED";
+        case 2:
+          return "POSITION_UNAVAILABLE";
+        case 3:
+          return "TIMEOUT";
+        default:
+          return "UNKNOWN_ERROR";
       }
     };
 
@@ -315,10 +345,10 @@ export default function EnhancedJobDetailsScreen() {
       navigator.geolocation.getCurrentPosition(
         handleLocationSuccess,
         (error) => {
-          console.error('Fallback location request failed:', {
+          console.error("Fallback location request failed:", {
             code: error.code,
             message: error.message,
-            errorName: getErrorName(error.code)
+            errorName: getErrorName(error.code),
           });
 
           // Use default location if all else fails
@@ -327,13 +357,16 @@ export default function EnhancedJobDetailsScreen() {
             longitude: 27.9117,
           });
 
-          notifyError('Location Failed', 'Using default location due to location service failure.');
+          notifyError(
+            "Location Failed",
+            "Using default location due to location service failure.",
+          );
         },
         {
           enableHighAccuracy: false,
           timeout: 15000,
           maximumAge: 60000,
-        }
+        },
       );
     };
 
@@ -344,7 +377,7 @@ export default function EnhancedJobDetailsScreen() {
         enableHighAccuracy: true,
         timeout: 10000,
         maximumAge: 5000,
-      }
+      },
     );
 
     return () => {
@@ -355,12 +388,15 @@ export default function EnhancedJobDetailsScreen() {
   }, []);
 
   // Check proximity to job location
-  const checkProximity = (currentPos: {latitude: number, longitude: number}) => {
+  const checkProximity = (currentPos: {
+    latitude: number;
+    longitude: number;
+  }) => {
     const distance = calculateDistance(
       currentPos.latitude,
       currentPos.longitude,
       jobLocation.latitude,
-      jobLocation.longitude
+      jobLocation.longitude,
     );
 
     const isWithinRadius = distance <= 0.1; // 100 meters radius
@@ -368,15 +404,22 @@ export default function EnhancedJobDetailsScreen() {
   };
 
   // Calculate distance between two coordinates (Haversine formula)
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ) => {
     const R = 6371; // Radius of the Earth in kilometers
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c; // Distance in kilometers
     return distance;
   };
@@ -385,10 +428,15 @@ export default function EnhancedJobDetailsScreen() {
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    if (isNearJobLocation && jobStatus === 'assigned' && jobDetails.status === 'accepted') {
+    if (
+      isNearJobLocation &&
+      jobStatus === "assigned" &&
+      jobDetails.status === "accepted"
+    ) {
       interval = setInterval(() => {
-        setProximityTimer(prev => {
-          if (prev >= 120) { // 2 minutes = 120 seconds
+        setProximityTimer((prev) => {
+          if (prev >= 120) {
+            // 2 minutes = 120 seconds
             autoStartJob();
             return 0;
           }
@@ -411,7 +459,7 @@ export default function EnhancedJobDetailsScreen() {
 
     if (isTimerRunning) {
       interval = setInterval(() => {
-        setJobTimer(prev => prev + 1);
+        setJobTimer((prev) => prev + 1);
       }, 1000);
     }
 
@@ -425,15 +473,15 @@ export default function EnhancedJobDetailsScreen() {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   // Accept job
   const acceptJob = async () => {
     try {
       const response = await fetch(`/api/jobs/${jobDetails.id}/accept`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: technician.id,
           acceptedTime: new Date().toISOString(),
@@ -442,7 +490,7 @@ export default function EnhancedJobDetailsScreen() {
       });
 
       if (response.ok) {
-        setJobDetails(prev => ({ ...prev, status: 'accepted' }));
+        setJobDetails((prev) => ({ ...prev, status: "accepted" }));
 
         // Show success toast
         toast({
@@ -451,7 +499,7 @@ export default function EnhancedJobDetailsScreen() {
         });
 
         // Notify manager and coordinator
-        await notifyStatusChange('accepted');
+        await notifyStatusChange("accepted");
       } else {
         toast({
           title: "Failed to Accept Job",
@@ -459,7 +507,7 @@ export default function EnhancedJobDetailsScreen() {
         });
       }
     } catch (error) {
-      console.error('Failed to accept job:', error);
+      console.error("Failed to accept job:", error);
       toast({
         title: "Accept Error",
         description: "Failed to accept the job. Please try again.",
@@ -474,8 +522,8 @@ export default function EnhancedJobDetailsScreen() {
       const adjustedStartTime = new Date(Date.now() - 150000).toISOString();
 
       const response = await fetch(`/api/jobs/${jobDetails.id}/auto-start`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: technician.id,
           startTime: adjustedStartTime,
@@ -487,7 +535,7 @@ export default function EnhancedJobDetailsScreen() {
       });
 
       if (response.ok) {
-        setJobStatus('in-progress');
+        setJobStatus("in-progress");
         setIsTimerRunning(true);
         setJobTimer(150); // Start with 2.5 minutes already counted
         setProximityTimer(0);
@@ -500,10 +548,10 @@ export default function EnhancedJobDetailsScreen() {
         });
 
         // Notify manager and coordinator
-        await notifyStatusChange('auto-started');
+        await notifyStatusChange("auto-started");
       }
     } catch (error) {
-      console.error('Failed to auto-start job:', error);
+      console.error("Failed to auto-start job:", error);
     }
   };
 
@@ -511,8 +559,8 @@ export default function EnhancedJobDetailsScreen() {
   const startJob = async () => {
     try {
       const response = await fetch(`/api/jobs/${jobDetails.id}/start`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: technician.id,
           startTime: new Date().toISOString(),
@@ -522,7 +570,7 @@ export default function EnhancedJobDetailsScreen() {
       });
 
       if (response.ok) {
-        setJobStatus('in-progress');
+        setJobStatus("in-progress");
         setIsTimerRunning(true);
         setProximityTimer(0);
 
@@ -533,7 +581,7 @@ export default function EnhancedJobDetailsScreen() {
         });
 
         // Notify manager and coordinator
-        await notifyStatusChange('started');
+        await notifyStatusChange("started");
       } else {
         toast({
           title: "Failed to Start Job",
@@ -541,15 +589,15 @@ export default function EnhancedJobDetailsScreen() {
         });
       }
     } catch (error) {
-      console.error('Failed to start job:', error);
+      console.error("Failed to start job:", error);
     }
   };
 
   const pauseJob = async () => {
     try {
       const response = await fetch(`/api/jobs/${jobDetails.id}/pause`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: technician.id,
           pauseTime: new Date().toISOString(),
@@ -559,7 +607,7 @@ export default function EnhancedJobDetailsScreen() {
       });
 
       if (response.ok) {
-        setJobStatus('paused');
+        setJobStatus("paused");
         setIsTimerRunning(false);
 
         // Show success toast
@@ -569,7 +617,7 @@ export default function EnhancedJobDetailsScreen() {
         });
 
         // Notify manager and coordinator
-        await notifyStatusChange('paused');
+        await notifyStatusChange("paused");
       } else {
         toast({
           title: "Failed to Pause Job",
@@ -577,15 +625,15 @@ export default function EnhancedJobDetailsScreen() {
         });
       }
     } catch (error) {
-      console.error('Failed to pause job:', error);
+      console.error("Failed to pause job:", error);
     }
   };
 
   const stopJob = async () => {
     try {
       const response = await fetch(`/api/jobs/${jobDetails.id}/stop`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: technician.id,
           endTime: new Date().toISOString(),
@@ -595,7 +643,7 @@ export default function EnhancedJobDetailsScreen() {
       });
 
       if (response.ok) {
-        setJobStatus('completed');
+        setJobStatus("completed");
         setIsTimerRunning(false);
 
         // Show success toast
@@ -605,7 +653,7 @@ export default function EnhancedJobDetailsScreen() {
         });
 
         // Notify manager and coordinator
-        await notifyStatusChange('completed');
+        await notifyStatusChange("completed");
       } else {
         toast({
           title: "Failed to Stop Job",
@@ -613,7 +661,7 @@ export default function EnhancedJobDetailsScreen() {
         });
       }
     } catch (error) {
-      console.error('Failed to stop job:', error);
+      console.error("Failed to stop job:", error);
     }
   };
 
@@ -621,8 +669,8 @@ export default function EnhancedJobDetailsScreen() {
   const resumeJob = async () => {
     try {
       const response = await fetch(`/api/jobs/${jobDetails.id}/resume`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: technician.id,
           resumeTime: new Date().toISOString(),
@@ -631,7 +679,7 @@ export default function EnhancedJobDetailsScreen() {
       });
 
       if (response.ok) {
-        setJobStatus('in-progress');
+        setJobStatus("in-progress");
         setIsTimerRunning(true);
 
         // Show success toast
@@ -641,7 +689,7 @@ export default function EnhancedJobDetailsScreen() {
         });
 
         // Notify manager and coordinator
-        await notifyStatusChange('resumed');
+        await notifyStatusChange("resumed");
       } else {
         toast({
           title: "Failed to Resume Job",
@@ -649,16 +697,16 @@ export default function EnhancedJobDetailsScreen() {
         });
       }
     } catch (error) {
-      console.error('Failed to resume job:', error);
+      console.error("Failed to resume job:", error);
     }
   };
 
   // Notify status change to manager and coordinator
   const notifyStatusChange = async (status: string) => {
     try {
-      await fetch('/api/notifications/job-status-change', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/notifications/job-status-change", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           jobId: jobDetails.id,
           technicianId: technician.id,
@@ -669,7 +717,7 @@ export default function EnhancedJobDetailsScreen() {
         }),
       });
     } catch (error) {
-      console.error('Failed to send status notification:', error);
+      console.error("Failed to send status notification:", error);
     }
   };
 
@@ -757,8 +805,8 @@ export default function EnhancedJobDetailsScreen() {
         }),
       });
 
-      navigate("/technician/jobs", { 
-        state: { message: "Job completed successfully!" } 
+      navigate("/technician/jobs", {
+        state: { message: "Job completed successfully!" },
       });
     } catch (error) {
       console.error("Failed to complete job:", error);
@@ -767,9 +815,9 @@ export default function EnhancedJobDetailsScreen() {
 
   // Image form handlers
   const handleImageUpload = (field: string, file: File) => {
-    setImageFormData(prev => ({
+    setImageFormData((prev) => ({
       ...prev,
-      [field]: file
+      [field]: file,
     }));
   };
 
@@ -783,17 +831,37 @@ export default function EnhancedJobDetailsScreen() {
 
     try {
       const response = await fetch(`/api/jobs/${jobDetails.id}/images`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
 
       if (response.ok) {
         // Mock response for uploaded images
         const newPhotos = [
-          { id: 'before-light-levels', name: 'Before Light Levels', url: '/placeholder.svg', type: 'Before Light Levels' },
-          { id: 'fault-finding', name: 'Fault Finding', url: '/placeholder.svg', type: 'Fault Finding' },
-          { id: 'fault-after-fixing', name: 'Fault After Fixing', url: '/placeholder.svg', type: 'Fault After Fixing' },
-          { id: 'light-levels-after-fix', name: 'Light Levels After Fix', url: '/placeholder.svg', type: 'Light Levels After Fix' }
+          {
+            id: "before-light-levels",
+            name: "Before Light Levels",
+            url: "/placeholder.svg",
+            type: "Before Light Levels",
+          },
+          {
+            id: "fault-finding",
+            name: "Fault Finding",
+            url: "/placeholder.svg",
+            type: "Fault Finding",
+          },
+          {
+            id: "fault-after-fixing",
+            name: "Fault After Fixing",
+            url: "/placeholder.svg",
+            type: "Fault After Fixing",
+          },
+          {
+            id: "light-levels-after-fix",
+            name: "Light Levels After Fix",
+            url: "/placeholder.svg",
+            type: "Light Levels After Fix",
+          },
         ];
         setJobPhotos(newPhotos);
         setShowImageForm(false);
@@ -816,14 +884,19 @@ export default function EnhancedJobDetailsScreen() {
         });
       }
     } catch (error) {
-      console.error('Failed to upload images:', error);
+      console.error("Failed to upload images:", error);
     }
   };
 
   // Stock form handlers
-  const filteredStocks = availableStocks.filter(stock =>
-    stock.code.toLowerCase().includes(stockFormData.searchQuery.toLowerCase()) ||
-    stock.name.toLowerCase().includes(stockFormData.searchQuery.toLowerCase())
+  const filteredStocks = availableStocks.filter(
+    (stock) =>
+      stock.code
+        .toLowerCase()
+        .includes(stockFormData.searchQuery.toLowerCase()) ||
+      stock.name
+        .toLowerCase()
+        .includes(stockFormData.searchQuery.toLowerCase()),
   );
 
   const submitStockForm = async () => {
@@ -834,35 +907,42 @@ export default function EnhancedJobDetailsScreen() {
 
     try {
       // Auto-link work order number and recognize technician warehouse
-      const response = await fetch(`/api/jobs/${jobDetails.id}/allocate-stock`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          stockId: stockFormData.selectedStock.id,
-          warehouseNumber: technician.warehouse || "WH-EL-001", // Auto-detect from logged-in user
-          quantity: parseInt(stockFormData.quantity),
-          technicianId: technician.id,
-          workOrderNumber: jobDetails.workOrderNumber || `WO-${jobDetails.id}`, // Auto-link work order
-          jobId: jobDetails.id,
-          ticketNumber: jobDetails.id,
-          allocatedDate: new Date().toISOString(),
-          allocatedBy: technician.name,
-          stockLocation: technician.warehouse,
-          autoLinked: true, // Flag to indicate automatic linking
-        }),
-      });
+      const response = await fetch(
+        `/api/jobs/${jobDetails.id}/allocate-stock`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            stockId: stockFormData.selectedStock.id,
+            warehouseNumber: technician.warehouse || "WH-EL-001", // Auto-detect from logged-in user
+            quantity: parseInt(stockFormData.quantity),
+            technicianId: technician.id,
+            workOrderNumber:
+              jobDetails.workOrderNumber || `WO-${jobDetails.id}`, // Auto-link work order
+            jobId: jobDetails.id,
+            ticketNumber: jobDetails.id,
+            allocatedDate: new Date().toISOString(),
+            allocatedBy: technician.name,
+            stockLocation: technician.warehouse,
+            autoLinked: true, // Flag to indicate automatic linking
+          }),
+        },
+      );
 
       if (response.ok) {
         const allocationResult = await response.json();
 
         // Update local stock tracking
-        setAllocatedStock(prev => [...prev, {
-          id: `stock-${Date.now()}`,
-          code: stockFormData.selectedStock.code,
-          name: stockFormData.selectedStock.name,
-          quantity: parseInt(stockFormData.quantity),
-          allocatedAt: new Date().toISOString()
-        }]);
+        setAllocatedStock((prev) => [
+          ...prev,
+          {
+            id: `stock-${Date.now()}`,
+            code: stockFormData.selectedStock.code,
+            name: stockFormData.selectedStock.name,
+            quantity: parseInt(stockFormData.quantity),
+            allocatedAt: new Date().toISOString(),
+          },
+        ]);
 
         setShowStockForm(false);
         setStockFormData({
@@ -884,7 +964,7 @@ export default function EnhancedJobDetailsScreen() {
         });
       }
     } catch (error) {
-      console.error('Failed to allocate stock:', error);
+      console.error("Failed to allocate stock:", error);
       toast({
         title: "Allocation Error",
         description: "Failed to allocate stock. Please try again.",
@@ -936,18 +1016,24 @@ export default function EnhancedJobDetailsScreen() {
         </div>
 
         {/* Proximity Status */}
-        {jobStatus === 'assigned' && jobDetails.status === 'accepted' && isNearJobLocation && (
-          <div className="text-center mb-4">
-            <div className="bg-blue-500/20 rounded-lg px-4 py-2 inline-block">
-              <div className="text-sm font-medium">Auto-start in {120 - proximityTimer}s</div>
-              <div className="text-xs text-white/80">You are near the job location</div>
+        {jobStatus === "assigned" &&
+          jobDetails.status === "accepted" &&
+          isNearJobLocation && (
+            <div className="text-center mb-4">
+              <div className="bg-blue-500/20 rounded-lg px-4 py-2 inline-block">
+                <div className="text-sm font-medium">
+                  Auto-start in {120 - proximityTimer}s
+                </div>
+                <div className="text-xs text-white/80">
+                  You are near the job location
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Job Actions */}
         <div className="flex justify-center space-x-4 mb-6">
-          {jobStatus === 'assigned' && jobDetails.status === 'assigned' && (
+          {jobStatus === "assigned" && jobDetails.status === "assigned" && (
             <Button
               className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2"
               onClick={acceptJob}
@@ -957,7 +1043,7 @@ export default function EnhancedJobDetailsScreen() {
             </Button>
           )}
 
-          {jobStatus === 'assigned' && jobDetails.status === 'accepted' && (
+          {jobStatus === "assigned" && jobDetails.status === "accepted" && (
             <Button
               className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
               onClick={startJob}
@@ -967,7 +1053,7 @@ export default function EnhancedJobDetailsScreen() {
             </Button>
           )}
 
-          {jobStatus === 'in-progress' && (
+          {jobStatus === "in-progress" && (
             <>
               <Button
                 className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-2"
@@ -986,7 +1072,7 @@ export default function EnhancedJobDetailsScreen() {
             </>
           )}
 
-          {jobStatus === 'paused' && (
+          {jobStatus === "paused" && (
             <>
               <Button
                 className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
@@ -1008,20 +1094,32 @@ export default function EnhancedJobDetailsScreen() {
 
         {/* Company and Job Info */}
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold mb-2">Vumatel (Pty) Ltd - Central</h2>
+          <h2 className="text-2xl font-bold mb-2">
+            Vumatel (Pty) Ltd - Central
+          </h2>
           <h3 className="text-xl font-semibold mb-3">#{jobDetails.id}215784</h3>
-          <Badge className={`px-4 py-1 text-sm ${
-            jobStatus === 'assigned' && jobDetails.status === 'assigned' ? 'bg-orange-500/80 text-white' :
-            jobStatus === 'assigned' && jobDetails.status === 'accepted' ? 'bg-purple-500/80 text-white' :
-            jobStatus === 'in-progress' ? 'bg-green-500/80 text-white' :
-            jobStatus === 'paused' ? 'bg-yellow-500/80 text-white' :
-            'bg-gray-500/80 text-white'
-          }`}>
-            {jobStatus === 'assigned' && jobDetails.status === 'assigned' ? 'Assigned' :
-             jobStatus === 'assigned' && jobDetails.status === 'accepted' ? 'Accepted' :
-             jobStatus === 'in-progress' ? 'In Progress' :
-             jobStatus === 'paused' ? 'Paused' :
-             'Completed'}
+          <Badge
+            className={`px-4 py-1 text-sm ${
+              jobStatus === "assigned" && jobDetails.status === "assigned"
+                ? "bg-orange-500/80 text-white"
+                : jobStatus === "assigned" && jobDetails.status === "accepted"
+                  ? "bg-purple-500/80 text-white"
+                  : jobStatus === "in-progress"
+                    ? "bg-green-500/80 text-white"
+                    : jobStatus === "paused"
+                      ? "bg-yellow-500/80 text-white"
+                      : "bg-gray-500/80 text-white"
+            }`}
+          >
+            {jobStatus === "assigned" && jobDetails.status === "assigned"
+              ? "Assigned"
+              : jobStatus === "assigned" && jobDetails.status === "accepted"
+                ? "Accepted"
+                : jobStatus === "in-progress"
+                  ? "In Progress"
+                  : jobStatus === "paused"
+                    ? "Paused"
+                    : "Completed"}
           </Badge>
         </div>
 
@@ -1039,11 +1137,15 @@ export default function EnhancedJobDetailsScreen() {
             <div>
               <p className="text-sm text-white/80">Status</p>
               <p className="font-semibold">
-                {jobStatus === 'assigned' && jobDetails.status === 'assigned' ? 'Assigned' :
-                 jobStatus === 'assigned' && jobDetails.status === 'accepted' ? 'Accepted' :
-                 jobStatus === 'in-progress' ? 'In Progress' :
-                 jobStatus === 'paused' ? 'Paused' :
-                 'Completed'}
+                {jobStatus === "assigned" && jobDetails.status === "assigned"
+                  ? "Assigned"
+                  : jobStatus === "assigned" && jobDetails.status === "accepted"
+                    ? "Accepted"
+                    : jobStatus === "in-progress"
+                      ? "In Progress"
+                      : jobStatus === "paused"
+                        ? "Paused"
+                        : "Completed"}
               </p>
             </div>
           </div>
@@ -1070,31 +1172,37 @@ export default function EnhancedJobDetailsScreen() {
                 {formatTimer(jobTimer)}
               </div>
               <div className="text-sm text-gray-600 mb-4">
-                Status: {jobStatus.replace('-', ' ').toUpperCase()}
+                Status: {jobStatus.replace("-", " ").toUpperCase()}
               </div>
 
               {/* Location Status */}
               <div className="space-y-2">
-                <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
-                  isNearJobLocation
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-600'
-                }`}>
+                <div
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
+                    isNearJobLocation
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
                   <MapPin className="h-4 w-4 mr-1" />
-                  {isNearJobLocation ? 'At Job Location' : 'Away from Job Location'}
+                  {isNearJobLocation
+                    ? "At Job Location"
+                    : "Away from Job Location"}
                 </div>
 
-                {isNearJobLocation && jobStatus === 'assigned' && jobDetails.status === 'accepted' && (
-                  <div className="text-sm text-blue-600">
-                    Auto-start in: {120 - proximityTimer}s
-                  </div>
-                )}
+                {isNearJobLocation &&
+                  jobStatus === "assigned" &&
+                  jobDetails.status === "accepted" && (
+                    <div className="text-sm text-blue-600">
+                      Auto-start in: {120 - proximityTimer}s
+                    </div>
+                  )}
               </div>
             </div>
 
             {/* Timer Controls */}
             <div className="flex justify-center space-x-2">
-              {jobStatus === 'assigned' && jobDetails.status === 'assigned' && (
+              {jobStatus === "assigned" && jobDetails.status === "assigned" && (
                 <Button
                   onClick={acceptJob}
                   className="bg-blue-500 hover:bg-blue-600 text-white"
@@ -1105,7 +1213,7 @@ export default function EnhancedJobDetailsScreen() {
                 </Button>
               )}
 
-              {jobStatus === 'assigned' && jobDetails.status === 'accepted' && (
+              {jobStatus === "assigned" && jobDetails.status === "accepted" && (
                 <Button
                   onClick={startJob}
                   className="bg-green-500 hover:bg-green-600 text-white"
@@ -1116,7 +1224,7 @@ export default function EnhancedJobDetailsScreen() {
                 </Button>
               )}
 
-              {jobStatus === 'in-progress' && (
+              {jobStatus === "in-progress" && (
                 <>
                   <Button
                     onClick={pauseJob}
@@ -1137,7 +1245,7 @@ export default function EnhancedJobDetailsScreen() {
                 </>
               )}
 
-              {jobStatus === 'paused' && (
+              {jobStatus === "paused" && (
                 <>
                   <Button
                     onClick={resumeJob}
@@ -1165,7 +1273,8 @@ export default function EnhancedJobDetailsScreen() {
               <div>Technician: {technician.name}</div>
               {currentLocation && (
                 <div>
-                  Location: {currentLocation.latitude.toFixed(6)}, {currentLocation.longitude.toFixed(6)}
+                  Location: {currentLocation.latitude.toFixed(6)},{" "}
+                  {currentLocation.longitude.toFixed(6)}
                 </div>
               )}
             </div>
@@ -1200,7 +1309,7 @@ export default function EnhancedJobDetailsScreen() {
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (file) handleImageUpload('beforeLightLevels', file);
+                      if (file) handleImageUpload("beforeLightLevels", file);
                     }}
                     className="w-full"
                   />
@@ -1221,7 +1330,7 @@ export default function EnhancedJobDetailsScreen() {
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (file) handleImageUpload('faultFinding', file);
+                      if (file) handleImageUpload("faultFinding", file);
                     }}
                     className="w-full"
                   />
@@ -1242,7 +1351,7 @@ export default function EnhancedJobDetailsScreen() {
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (file) handleImageUpload('faultAfterFixing', file);
+                      if (file) handleImageUpload("faultAfterFixing", file);
                     }}
                     className="w-full"
                   />
@@ -1263,7 +1372,7 @@ export default function EnhancedJobDetailsScreen() {
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (file) handleImageUpload('lightLevelsAfterFix', file);
+                      if (file) handleImageUpload("lightLevelsAfterFix", file);
                     }}
                     className="w-full"
                   />
@@ -1278,8 +1387,12 @@ export default function EnhancedJobDetailsScreen() {
                 <Button
                   onClick={submitImageForm}
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3"
-                  disabled={!imageFormData.beforeLightLevels || !imageFormData.faultFinding || 
-                           !imageFormData.faultAfterFixing || !imageFormData.lightLevelsAfterFix}
+                  disabled={
+                    !imageFormData.beforeLightLevels ||
+                    !imageFormData.faultFinding ||
+                    !imageFormData.faultAfterFixing ||
+                    !imageFormData.lightLevelsAfterFix
+                  }
                 >
                   Upload All Images
                 </Button>
@@ -1315,10 +1428,12 @@ export default function EnhancedJobDetailsScreen() {
                     type="text"
                     placeholder="Search by code or name..."
                     value={stockFormData.searchQuery}
-                    onChange={(e) => setStockFormData(prev => ({
-                      ...prev,
-                      searchQuery: e.target.value
-                    }))}
+                    onChange={(e) =>
+                      setStockFormData((prev) => ({
+                        ...prev,
+                        searchQuery: e.target.value,
+                      }))
+                    }
                     className="w-full"
                   />
                 </div>
@@ -1330,16 +1445,24 @@ export default function EnhancedJobDetailsScreen() {
                       <div
                         key={stock.id}
                         className={`p-3 cursor-pointer hover:bg-gray-50 border-b ${
-                          stockFormData.selectedStock?.id === stock.id ? 'bg-blue-50' : ''
+                          stockFormData.selectedStock?.id === stock.id
+                            ? "bg-blue-50"
+                            : ""
                         }`}
-                        onClick={() => setStockFormData(prev => ({
-                          ...prev,
-                          selectedStock: stock
-                        }))}
+                        onClick={() =>
+                          setStockFormData((prev) => ({
+                            ...prev,
+                            selectedStock: stock,
+                          }))
+                        }
                       >
                         <div className="font-medium">{stock.code}</div>
-                        <div className="text-sm text-gray-600">{stock.name}</div>
-                        <div className="text-sm text-green-600">Available: {stock.warehouseQty}</div>
+                        <div className="text-sm text-gray-600">
+                          {stock.name}
+                        </div>
+                        <div className="text-sm text-green-600">
+                          Available: {stock.warehouseQty}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1348,34 +1471,51 @@ export default function EnhancedJobDetailsScreen() {
                 {/* Selected Stock */}
                 {stockFormData.selectedStock && (
                   <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="font-medium">{stockFormData.selectedStock.code}</div>
-                    <div className="text-sm text-gray-600">{stockFormData.selectedStock.name}</div>
+                    <div className="font-medium">
+                      {stockFormData.selectedStock.code}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {stockFormData.selectedStock.name}
+                    </div>
                   </div>
                 )}
 
                 {/* Auto-Linked Information */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-3">Auto-Linked Information</h4>
+                  <h4 className="font-medium text-blue-900 mb-3">
+                    Auto-Linked Information
+                  </h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-blue-700">Work Order:</span>
-                      <span className="font-medium text-blue-900">{jobDetails.workOrderNumber || `WO-${jobDetails.id}`}</span>
+                      <span className="font-medium text-blue-900">
+                        {jobDetails.workOrderNumber || `WO-${jobDetails.id}`}
+                      </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-blue-700">Technician Warehouse:</span>
-                      <span className="font-medium text-blue-900">{technician.warehouse || "WH-EL-001"}</span>
+                      <span className="text-blue-700">
+                        Technician Warehouse:
+                      </span>
+                      <span className="font-medium text-blue-900">
+                        {technician.warehouse || "WH-EL-001"}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-blue-700">Ticket Number:</span>
-                      <span className="font-medium text-blue-900">{jobDetails.id}</span>
+                      <span className="font-medium text-blue-900">
+                        {jobDetails.id}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-blue-700">Allocated By:</span>
-                      <span className="font-medium text-blue-900">{technician.name}</span>
+                      <span className="font-medium text-blue-900">
+                        {technician.name}
+                      </span>
                     </div>
                   </div>
                   <div className="mt-3 text-xs text-blue-600">
-                    ℹ️ Work order and warehouse information will be automatically linked to this stock allocation.
+                    ℹ️ Work order and warehouse information will be
+                    automatically linked to this stock allocation.
                   </div>
                 </div>
 
@@ -1388,10 +1528,12 @@ export default function EnhancedJobDetailsScreen() {
                     type="number"
                     placeholder="Enter quantity"
                     value={stockFormData.quantity}
-                    onChange={(e) => setStockFormData(prev => ({
-                      ...prev,
-                      quantity: e.target.value
-                    }))}
+                    onChange={(e) =>
+                      setStockFormData((prev) => ({
+                        ...prev,
+                        quantity: e.target.value,
+                      }))
+                    }
                     className="w-full"
                     min="1"
                     max={stockFormData.selectedStock?.warehouseQty || 999}
@@ -1402,7 +1544,9 @@ export default function EnhancedJobDetailsScreen() {
                 <Button
                   onClick={submitStockForm}
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3"
-                  disabled={!stockFormData.selectedStock || !stockFormData.quantity}
+                  disabled={
+                    !stockFormData.selectedStock || !stockFormData.quantity
+                  }
                 >
                   Allocate Stock
                 </Button>
@@ -1415,13 +1559,14 @@ export default function EnhancedJobDetailsScreen() {
       {/* Content Area */}
       <div className="p-4 pb-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-
           {/* Details Tab */}
           <TabsContent value="details" className="space-y-4">
             {/* Client Contacts */}
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-3 text-gray-900">Client Contacts</h3>
+                <h3 className="font-semibold mb-3 text-gray-900">
+                  Client Contacts
+                </h3>
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-slate-600 rounded-full flex items-center justify-center text-white font-semibold">
                     JM
@@ -1436,7 +1581,9 @@ export default function EnhancedJobDetailsScreen() {
             {/* Client Address */}
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-3 text-gray-900">Client Address</h3>
+                <h3 className="font-semibold mb-3 text-gray-900">
+                  Client Address
+                </h3>
                 <div className="bg-gray-200 rounded-lg h-32 mb-3 flex items-center justify-center">
                   <MapPin className="h-6 w-6 text-gray-500" />
                   <span className="text-gray-500 ml-2">Map View</span>
@@ -1461,22 +1608,32 @@ export default function EnhancedJobDetailsScreen() {
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-medium">Jul 18, 2025</div>
-                      <Badge className="bg-blue-100 text-blue-800 text-xs">4:02 PM</Badge>
+                      <Badge className="bg-blue-100 text-blue-800 text-xs">
+                        4:02 PM
+                      </Badge>
                     </div>
                   </div>
 
                   {/* Due Time */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Clock className={`h-4 w-4 ${isLate ? 'text-red-500' : 'text-orange-500'}`} />
+                      <Clock
+                        className={`h-4 w-4 ${isLate ? "text-red-500" : "text-orange-500"}`}
+                      />
                       <span className="text-sm font-medium">Due</span>
-                      {isLate && <AlertTriangle className="h-4 w-4 text-red-500" />}
+                      {isLate && (
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                      )}
                     </div>
                     <div className="text-right">
-                      <div className={`text-sm font-medium ${isLate ? 'text-red-600' : 'text-gray-900'}`}>
+                      <div
+                        className={`text-sm font-medium ${isLate ? "text-red-600" : "text-gray-900"}`}
+                      >
                         Jul 18, 2025
                       </div>
-                      <Badge className={`text-xs ${isLate ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'}`}>
+                      <Badge
+                        className={`text-xs ${isLate ? "bg-red-100 text-red-800" : "bg-orange-100 text-orange-800"}`}
+                      >
                         11:59 PM
                       </Badge>
                     </div>
@@ -1486,7 +1643,9 @@ export default function EnhancedJobDetailsScreen() {
                   {isLate && (
                     <div className="flex items-center space-x-2 p-2 bg-red-50 rounded">
                       <AlertTriangle className="h-4 w-4 text-red-500" />
-                      <span className="text-sm text-red-700 font-medium">Job is overdue</span>
+                      <span className="text-sm text-red-700 font-medium">
+                        Job is overdue
+                      </span>
                     </div>
                   )}
 
@@ -1495,7 +1654,9 @@ export default function EnhancedJobDetailsScreen() {
                     <Settings className="h-4 w-4 text-gray-500" />
                     <span className="text-sm font-medium">Job Type</span>
                   </div>
-                  <p className="text-sm text-blue-600 ml-6">FTTH - Maintenance</p>
+                  <p className="text-sm text-blue-600 ml-6">
+                    FTTH - Maintenance
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -1503,13 +1664,17 @@ export default function EnhancedJobDetailsScreen() {
             {/* Technicians */}
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-3 text-gray-900">Assigned Technician</h3>
+                <h3 className="font-semibold mb-3 text-gray-900">
+                  Assigned Technician
+                </h3>
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
                     DM
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{technician.name}</p>
+                    <p className="font-medium text-gray-900">
+                      {technician.name}
+                    </p>
                     <p className="text-sm text-gray-600">ID: {technician.id}</p>
                     <p className="text-sm text-gray-600">{technician.phone}</p>
                   </div>
@@ -1525,7 +1690,9 @@ export default function EnhancedJobDetailsScreen() {
                   <Building className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-700">ROC</p>
-                    <p className="text-sm text-gray-900">Regional Operations Center</p>
+                    <p className="text-sm text-gray-900">
+                      Regional Operations Center
+                    </p>
                   </div>
                 </div>
 
@@ -1533,8 +1700,12 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="flex items-start space-x-3">
                   <User className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Contractor</p>
-                    <p className="text-sm text-gray-900">Stefany Sampetha Relay</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Contractor
+                    </p>
+                    <p className="text-sm text-gray-900">
+                      Stefany Sampetha Relay
+                    </p>
                   </div>
                 </div>
 
@@ -1542,8 +1713,12 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="flex items-start space-x-3">
                   <Settings className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Work Type</p>
-                    <p className="text-sm text-gray-900">1. Maintenance Job (SF)</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Work Type
+                    </p>
+                    <p className="text-sm text-gray-900">
+                      1. Maintenance Job (SF)
+                    </p>
                   </div>
                 </div>
 
@@ -1551,7 +1726,9 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="flex items-start space-x-3">
                   <Hash className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Case/NWI/Change Number</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Case/NWI/Change Number
+                    </p>
                     <p className="text-sm text-gray-900">DV8 08/05</p>
                   </div>
                 </div>
@@ -1560,7 +1737,9 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="flex items-start space-x-3">
                   <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Appointment Number</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Appointment Number
+                    </p>
                     <p className="text-sm text-gray-900">0076501</p>
                   </div>
                 </div>
@@ -1569,7 +1748,9 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="flex items-start space-x-3">
                   <Wifi className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Network Identifier</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Network Identifier
+                    </p>
                     <p className="text-sm text-gray-900">485754d3E2ED5EAB</p>
                   </div>
                 </div>
@@ -1578,8 +1759,12 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="flex items-start space-x-3">
                   <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Location</p>
-                    <p className="text-sm text-gray-900">{jobDetails.client.address}</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Location
+                    </p>
+                    <p className="text-sm text-gray-900">
+                      {jobDetails.client.address}
+                    </p>
                   </div>
                 </div>
 
@@ -1587,7 +1772,9 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="flex items-start space-x-3">
                   <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Service Territory</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Service Territory
+                    </p>
                     <p className="text-sm text-gray-900">120 - East London</p>
                   </div>
                 </div>
@@ -1596,7 +1783,9 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="flex items-start space-x-3">
                   <User className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Contact Name</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Contact Name
+                    </p>
                     <p className="text-sm text-gray-900">Jody Make</p>
                   </div>
                 </div>
@@ -1605,8 +1794,12 @@ export default function EnhancedJobDetailsScreen() {
                 <div className="flex items-start space-x-3">
                   <Phone className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700">Contact Number</p>
-                    <p className="text-sm text-gray-900">{jobDetails.client.phone}</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Contact Number
+                    </p>
+                    <p className="text-sm text-gray-900">
+                      {jobDetails.client.phone}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -1615,15 +1808,21 @@ export default function EnhancedJobDetailsScreen() {
             {/* Network Status */}
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-3 text-gray-900">Network Status</h3>
+                <h3 className="font-semibold mb-3 text-gray-900">
+                  Network Status
+                </h3>
                 <div className="space-y-4">
                   {/* Network Identifier/Serial Number */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Hash className="h-4 w-4 text-gray-500" />
-                      <span className="text-sm font-medium">Network ID/Serial</span>
+                      <span className="text-sm font-medium">
+                        Network ID/Serial
+                      </span>
                     </div>
-                    <span className="text-sm text-gray-900">485754d3E2ED5EAB</span>
+                    <span className="text-sm text-gray-900">
+                      485754d3E2ED5EAB
+                    </span>
                   </div>
 
                   {/* RX Signal */}
@@ -1632,7 +1831,9 @@ export default function EnhancedJobDetailsScreen() {
                       <Signal className="h-4 w-4 text-green-500" />
                       <span className="text-sm font-medium">RX Signal</span>
                     </div>
-                    <Badge className="bg-green-100 text-green-800">-12.5 dBm</Badge>
+                    <Badge className="bg-green-100 text-green-800">
+                      -12.5 dBm
+                    </Badge>
                   </div>
 
                   {/* SFP */}
@@ -1659,7 +1860,9 @@ export default function EnhancedJobDetailsScreen() {
                       <Wifi className="h-4 w-4 text-green-500" />
                       <span className="text-sm font-medium">Status</span>
                     </div>
-                    <Badge className="bg-green-100 text-green-800">Link is Up</Badge>
+                    <Badge className="bg-green-100 text-green-800">
+                      Link is Up
+                    </Badge>
                   </div>
 
                   {/* Last Update */}
@@ -1668,7 +1871,9 @@ export default function EnhancedJobDetailsScreen() {
                       <Clock className="h-4 w-4 text-gray-500" />
                       <span className="text-sm font-medium">Last Update</span>
                     </div>
-                    <span className="text-sm text-gray-500">{new Date().toLocaleTimeString()}</span>
+                    <span className="text-sm text-gray-500">
+                      {new Date().toLocaleTimeString()}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -1867,7 +2072,9 @@ export default function EnhancedJobDetailsScreen() {
                           <SelectItem value="change-completed">
                             Change Completed
                           </SelectItem>
-                          <SelectItem value="nwi-resolved">NWI Resolved</SelectItem>
+                          <SelectItem value="nwi-resolved">
+                            NWI Resolved
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1927,9 +2134,7 @@ export default function EnhancedJobDetailsScreen() {
                   className="flex items-center justify-between p-4 cursor-pointer"
                   onClick={() => toggleSection("planning")}
                 >
-                  <h3 className="font-semibold">
-                    FTTH Maintenance - Planning
-                  </h3>
+                  <h3 className="font-semibold">FTTH Maintenance - Planning</h3>
                   <div className="flex items-center space-x-2">
                     <Button
                       variant="ghost"
@@ -1948,7 +2153,9 @@ export default function EnhancedJobDetailsScreen() {
 
                 {expandedSections.planning && (
                   <div className="p-4">
-                    <p className="text-gray-500 text-sm">Planning fields will be added here...</p>
+                    <p className="text-gray-500 text-sm">
+                      Planning fields will be added here...
+                    </p>
                   </div>
                 )}
               </CardContent>
@@ -1979,7 +2186,7 @@ export default function EnhancedJobDetailsScreen() {
                             {photo.name || `Photo ${index + 1}`}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {photo.type || 'image'}
+                            {photo.type || "image"}
                           </p>
                         </div>
                       </div>
@@ -1987,7 +2194,7 @@ export default function EnhancedJobDetailsScreen() {
                   ))}
                 </div>
               )}
-              
+
               <Button
                 onClick={() => setShowImageForm(true)}
                 className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
@@ -2007,7 +2214,9 @@ export default function EnhancedJobDetailsScreen() {
                 </div>
               ) : (
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-900">Allocated Stock</h3>
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900">
+                    Allocated Stock
+                  </h3>
                   <div className="space-y-3">
                     {allocatedStock.map((stock) => (
                       <div
@@ -2021,10 +2230,17 @@ export default function EnhancedJobDetailsScreen() {
                                 <Package className="h-6 w-6 text-blue-600" />
                               </div>
                               <div>
-                                <p className="font-medium text-gray-900">{stock.code}</p>
-                                <p className="text-sm text-gray-600">{stock.name}</p>
+                                <p className="font-medium text-gray-900">
+                                  {stock.code}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {stock.name}
+                                </p>
                                 <p className="text-xs text-gray-500">
-                                  Allocated: {new Date(stock.allocatedAt).toLocaleDateString()}
+                                  Allocated:{" "}
+                                  {new Date(
+                                    stock.allocatedAt,
+                                  ).toLocaleDateString()}
                                 </p>
                               </div>
                             </div>
@@ -2041,7 +2257,7 @@ export default function EnhancedJobDetailsScreen() {
                   </div>
                 </div>
               )}
-              
+
               <Button
                 onClick={() => setShowStockForm(true)}
                 className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
@@ -2096,7 +2312,9 @@ export default function EnhancedJobDetailsScreen() {
 
                 {/* Completion Checklist */}
                 <div className="border rounded-lg p-4 bg-gray-50">
-                  <h3 className="font-semibold mb-4 text-gray-900">Job Completion Checklist</h3>
+                  <h3 className="font-semibold mb-4 text-gray-900">
+                    Job Completion Checklist
+                  </h3>
                   <div className="space-y-3">
                     {/* UDF Completed */}
                     <div className="flex items-center space-x-3">
@@ -2108,7 +2326,10 @@ export default function EnhancedJobDetailsScreen() {
                         }
                         className="w-5 h-5"
                       />
-                      <label htmlFor="udf-completed" className="text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="udf-completed"
+                        className="text-sm font-medium text-gray-700"
+                      >
                         UDF (User Defined Fields) completed and uploaded
                       </label>
                     </div>
@@ -2123,8 +2344,12 @@ export default function EnhancedJobDetailsScreen() {
                         }
                         className="w-5 h-5"
                       />
-                      <label htmlFor="images-uploaded" className="text-sm font-medium text-gray-700">
-                        Required images uploaded (Before/After light levels, fault finding, fault after fixing)
+                      <label
+                        htmlFor="images-uploaded"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        Required images uploaded (Before/After light levels,
+                        fault finding, fault after fixing)
                       </label>
                     </div>
 
@@ -2138,8 +2363,12 @@ export default function EnhancedJobDetailsScreen() {
                         }
                         className="w-5 h-5"
                       />
-                      <label htmlFor="stock-checked" className="text-sm font-medium text-gray-700">
-                        Stock usage documented (Stock used or No stock used confirmed)
+                      <label
+                        htmlFor="stock-checked"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        Stock usage documented (Stock used or No stock used
+                        confirmed)
                       </label>
                     </div>
                   </div>
@@ -2153,13 +2382,16 @@ export default function EnhancedJobDetailsScreen() {
                   <div
                     className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
                       signOffData.signature
-                        ? 'border-green-300 bg-green-50'
-                        : 'border-gray-300 bg-gray-50 hover:border-gray-400'
+                        ? "border-green-300 bg-green-50"
+                        : "border-gray-300 bg-gray-50 hover:border-gray-400"
                     }`}
                     onClick={() => {
                       // Simulate signature capture
                       if (!signOffData.signature) {
-                        handleSignOffChange("signature", `${technician.name} - ${new Date().toLocaleString()}`);
+                        handleSignOffChange(
+                          "signature",
+                          `${technician.name} - ${new Date().toLocaleString()}`,
+                        );
                       }
                     }}
                   >
@@ -2169,7 +2401,8 @@ export default function EnhancedJobDetailsScreen() {
                           {technician.name}
                         </div>
                         <div className="text-sm text-gray-600">
-                          Signed on {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}
+                          Signed on {new Date().toLocaleDateString()} at{" "}
+                          {new Date().toLocaleTimeString()}
                         </div>
                         <div className="text-xs text-green-600 font-medium">
                           ✓ Digitally Signed
@@ -2196,7 +2429,10 @@ export default function EnhancedJobDetailsScreen() {
                     }
                     className="w-6 h-6"
                   />
-                  <label htmlFor="terms" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="terms"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     I accept the Terms & Conditions
                   </label>
                 </div>
@@ -2214,7 +2450,13 @@ export default function EnhancedJobDetailsScreen() {
                   <Button
                     onClick={handleCompleteJob}
                     className="flex-1 py-6 text-lg bg-green-500 hover:bg-green-600"
-                    disabled={!signOffData.acceptTerms || !signOffData.udfCompleted || !signOffData.imagesUploaded || !signOffData.stockChecked || !signOffData.signature}
+                    disabled={
+                      !signOffData.acceptTerms ||
+                      !signOffData.udfCompleted ||
+                      !signOffData.imagesUploaded ||
+                      !signOffData.stockChecked ||
+                      !signOffData.signature
+                    }
                   >
                     Complete
                     <CheckCircle className="h-5 w-5 ml-2" />
@@ -2222,7 +2464,11 @@ export default function EnhancedJobDetailsScreen() {
                 </div>
 
                 {/* Completion Status */}
-                {(!signOffData.acceptTerms || !signOffData.udfCompleted || !signOffData.imagesUploaded || !signOffData.stockChecked || !signOffData.signature) && (
+                {(!signOffData.acceptTerms ||
+                  !signOffData.udfCompleted ||
+                  !signOffData.imagesUploaded ||
+                  !signOffData.stockChecked ||
+                  !signOffData.signature) && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="flex items-center">
                       <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2" />

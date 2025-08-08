@@ -163,10 +163,34 @@ export default function EnhancedManagerDashboard() {
 
   // KPI data for charts
   const [kpiData, setKpiData] = useState<KPIData[]>([
-    { period: "Week 1", revenue: 75000, jobsCompleted: 180, efficiency: 89, customerSatisfaction: 87 },
-    { period: "Week 2", revenue: 82000, jobsCompleted: 195, efficiency: 91, customerSatisfaction: 89 },
-    { period: "Week 3", revenue: 78000, jobsCompleted: 172, efficiency: 88, customerSatisfaction: 85 },
-    { period: "Week 4", revenue: 89400, jobsCompleted: 234, efficiency: 91.2, customerSatisfaction: 92 },
+    {
+      period: "Week 1",
+      revenue: 75000,
+      jobsCompleted: 180,
+      efficiency: 89,
+      customerSatisfaction: 87,
+    },
+    {
+      period: "Week 2",
+      revenue: 82000,
+      jobsCompleted: 195,
+      efficiency: 91,
+      customerSatisfaction: 89,
+    },
+    {
+      period: "Week 3",
+      revenue: 78000,
+      jobsCompleted: 172,
+      efficiency: 88,
+      customerSatisfaction: 85,
+    },
+    {
+      period: "Week 4",
+      revenue: 89400,
+      jobsCompleted: 234,
+      efficiency: 91.2,
+      customerSatisfaction: 92,
+    },
   ]);
 
   // Job analytics data
@@ -181,13 +205,13 @@ export default function EnhancedManagerDashboard() {
   const refreshLiveData = async () => {
     setRefreshing(true);
     try {
-      const response = await fetch('/api/manager/live-stats');
+      const response = await fetch("/api/manager/live-stats");
       if (response.ok) {
         const data = await response.json();
         setLiveStats(data);
       }
     } catch (error) {
-      console.error('Failed to refresh live data:', error);
+      console.error("Failed to refresh live data:", error);
     }
     setRefreshing(false);
   };
@@ -199,75 +223,84 @@ export default function EnhancedManagerDashboard() {
   }, []);
 
   // Export KPI report
-  const exportKPIReport = async (format: 'excel' | 'pdf') => {
+  const exportKPIReport = async (format: "excel" | "pdf") => {
     try {
-      const response = await fetch(`/api/manager/export-kpi?format=${format}&period=${selectedPeriod}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      const response = await fetch(
+        `/api/manager/export-kpi?format=${format}&period=${selectedPeriod}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
-      });
-      
+      );
+
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        a.download = `kpi-report-${selectedPeriod}.${format === 'excel' ? 'xlsx' : 'pdf'}`;
+        a.download = `kpi-report-${selectedPeriod}.${format === "excel" ? "xlsx" : "pdf"}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       }
     } catch (error) {
-      console.error('Failed to export report:', error);
+      console.error("Failed to export report:", error);
     }
   };
 
   // User management functions
   const createUser = async (userData: any) => {
     try {
-      const response = await fetch('/api/admin/users', {
-        method: 'POST',
+      const response = await fetch("/api/admin/users", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(userData),
       });
-      
+
       if (response.ok) {
         // Refresh user list
         refreshLiveData();
       }
     } catch (error) {
-      console.error('Failed to create user:', error);
+      console.error("Failed to create user:", error);
     }
   };
 
-  const updateUserStatus = async (userId: string, status: 'active' | 'suspended') => {
+  const updateUserStatus = async (
+    userId: string,
+    status: "active" | "suspended",
+  ) => {
     try {
       const response = await fetch(`/api/admin/users/${userId}/status`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ status }),
       });
-      
+
       if (response.ok) {
         // Update local state
-        setTeamMembers(prev => 
-          prev.map(member => 
-            member.id === userId 
-              ? { ...member, status: status === 'active' ? 'active' : 'off-duty' }
-              : member
-          )
+        setTeamMembers((prev) =>
+          prev.map((member) =>
+            member.id === userId
+              ? {
+                  ...member,
+                  status: status === "active" ? "active" : "off-duty",
+                }
+              : member,
+          ),
         );
       }
     } catch (error) {
-      console.error('Failed to update user status:', error);
+      console.error("Failed to update user status:", error);
     }
   };
 
@@ -291,7 +324,9 @@ export default function EnhancedManagerDashboard() {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Manager Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Manager Dashboard
+              </h1>
               <p className="text-gray-600">Real-time operations overview</p>
             </div>
             <div className="flex items-center space-x-4">
@@ -301,7 +336,9 @@ export default function EnhancedManagerDashboard() {
                 variant="outline"
                 size="sm"
               >
-                <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`}
+                />
                 Refresh
               </Button>
               <Button
@@ -325,7 +362,9 @@ export default function EnhancedManagerDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Team Status</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Team Status
+                  </p>
                   <div className="flex items-center mt-2">
                     <span className="text-2xl font-bold">
                       {liveStats.teamStatus.active}/{liveStats.teamStatus.total}
@@ -345,9 +384,13 @@ export default function EnhancedManagerDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Efficiency</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Efficiency
+                  </p>
                   <div className="flex items-center mt-2">
-                    <span className="text-2xl font-bold">{liveStats.efficiency.current}%</span>
+                    <span className="text-2xl font-bold">
+                      {liveStats.efficiency.current}%
+                    </span>
                     <div className="flex items-center ml-2">
                       {liveStats.efficiency.trend === "up" ? (
                         <TrendingUp className="h-4 w-4 text-green-500" />
@@ -370,9 +413,13 @@ export default function EnhancedManagerDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Jobs Today</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Jobs Today
+                  </p>
                   <div className="flex items-center mt-2">
-                    <span className="text-2xl font-bold">{liveStats.jobsToday.total}</span>
+                    <span className="text-2xl font-bold">
+                      {liveStats.jobsToday.total}
+                    </span>
                     <Badge className="ml-2 bg-orange-100 text-orange-800">
                       {liveStats.jobsToday.pending} pending
                     </Badge>
@@ -393,7 +440,9 @@ export default function EnhancedManagerDashboard() {
                     <span className="text-2xl font-bold">
                       ${liveStats.revenue.amount.toLocaleString()}
                     </span>
-                    <p className="text-sm text-gray-500">{liveStats.revenue.period}</p>
+                    <p className="text-sm text-gray-500">
+                      {liveStats.revenue.period}
+                    </p>
                   </div>
                 </div>
                 <DollarSign className="h-8 w-8 text-purple-500" />
@@ -443,11 +492,13 @@ export default function EnhancedManagerDashboard() {
                   <div className="grid grid-cols-2 gap-2 mt-4">
                     {jobAnalytics.map((item, index) => (
                       <div key={index} className="flex items-center">
-                        <div 
-                          className="w-3 h-3 rounded-full mr-2" 
+                        <div
+                          className="w-3 h-3 rounded-full mr-2"
                           style={{ backgroundColor: item.color }}
                         />
-                        <span className="text-sm">{item.name}: {item.value}</span>
+                        <span className="text-sm">
+                          {item.name}: {item.value}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -466,17 +517,17 @@ export default function EnhancedManagerDashboard() {
                       <XAxis dataKey="period" />
                       <YAxis />
                       <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="efficiency" 
-                        stroke="#10B981" 
+                      <Line
+                        type="monotone"
+                        dataKey="efficiency"
+                        stroke="#10B981"
                         strokeWidth={2}
                         name="Efficiency %"
                       />
-                      <Line 
-                        type="monotone" 
-                        dataKey="customerSatisfaction" 
-                        stroke="#3B82F6" 
+                      <Line
+                        type="monotone"
+                        dataKey="customerSatisfaction"
+                        stroke="#3B82F6"
                         strokeWidth={2}
                         name="Customer Satisfaction %"
                       />
@@ -506,11 +557,16 @@ export default function EnhancedManagerDashboard() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                            {member.name.split(' ').map(n => n[0]).join('')}
+                            {member.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
                           </div>
                           <div>
                             <h3 className="font-semibold">{member.name}</h3>
-                            <p className="text-sm text-gray-600">{member.role}</p>
+                            <p className="text-sm text-gray-600">
+                              {member.role}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-4">
@@ -535,7 +591,9 @@ export default function EnhancedManagerDashboard() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => navigate(`/manager/jobs/${member.currentJob}`)}
+                              onClick={() =>
+                                navigate(`/manager/jobs/${member.currentJob}`)
+                              }
                             >
                               <Eye className="h-4 w-4 mr-2" />
                               View Job
@@ -595,7 +653,10 @@ export default function EnhancedManagerDashboard() {
               <CardHeader>
                 <CardTitle>KPI Report Generator</CardTitle>
                 <div className="flex items-center space-x-4">
-                  <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                  <Select
+                    value={selectedPeriod}
+                    onValueChange={setSelectedPeriod}
+                  >
                     <SelectTrigger className="w-48">
                       <SelectValue />
                     </SelectTrigger>
@@ -607,11 +668,14 @@ export default function EnhancedManagerDashboard() {
                       <SelectItem value="year">This Year</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button onClick={() => exportKPIReport('excel')}>
+                  <Button onClick={() => exportKPIReport("excel")}>
                     <Download className="h-4 w-4 mr-2" />
                     Export Excel
                   </Button>
-                  <Button onClick={() => exportKPIReport('pdf')} variant="outline">
+                  <Button
+                    onClick={() => exportKPIReport("pdf")}
+                    variant="outline"
+                  >
                     <Download className="h-4 w-4 mr-2" />
                     Export PDF
                   </Button>
@@ -623,21 +687,41 @@ export default function EnhancedManagerDashboard() {
                   <table className="w-full border-collapse border border-gray-300">
                     <thead>
                       <tr className="bg-gray-50">
-                        <th className="border border-gray-300 px-4 py-2 text-left">Period</th>
-                        <th className="border border-gray-300 px-4 py-2 text-left">Revenue</th>
-                        <th className="border border-gray-300 px-4 py-2 text-left">Jobs Completed</th>
-                        <th className="border border-gray-300 px-4 py-2 text-left">Efficiency</th>
-                        <th className="border border-gray-300 px-4 py-2 text-left">Customer Satisfaction</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">
+                          Period
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">
+                          Revenue
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">
+                          Jobs Completed
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">
+                          Efficiency
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">
+                          Customer Satisfaction
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {kpiData.map((data, index) => (
                         <tr key={index}>
-                          <td className="border border-gray-300 px-4 py-2">{data.period}</td>
-                          <td className="border border-gray-300 px-4 py-2">${data.revenue.toLocaleString()}</td>
-                          <td className="border border-gray-300 px-4 py-2">{data.jobsCompleted}</td>
-                          <td className="border border-gray-300 px-4 py-2">{data.efficiency}%</td>
-                          <td className="border border-gray-300 px-4 py-2">{data.customerSatisfaction}%</td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {data.period}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            ${data.revenue.toLocaleString()}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {data.jobsCompleted}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {data.efficiency}%
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {data.customerSatisfaction}%
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -653,7 +737,7 @@ export default function EnhancedManagerDashboard() {
               <CardHeader>
                 <CardTitle>Job Management Board</CardTitle>
                 <div className="flex space-x-2">
-                  <Button onClick={() => navigate('/coordinator/assign-jobs')}>
+                  <Button onClick={() => navigate("/coordinator/assign-jobs")}>
                     <PlusCircle className="h-4 w-4 mr-2" />
                     Create Job
                   </Button>
@@ -665,8 +749,9 @@ export default function EnhancedManagerDashboard() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600">
-                  Access to full job management, creation, assignment, and tracking functionality.
-                  Managers can view all jobs across teams and generate comprehensive reports.
+                  Access to full job management, creation, assignment, and
+                  tracking functionality. Managers can view all jobs across
+                  teams and generate comprehensive reports.
                 </p>
               </CardContent>
             </Card>
@@ -685,7 +770,9 @@ export default function EnhancedManagerDashboard() {
                       <div className="text-center">
                         <Users className="h-8 w-8 mx-auto mb-2 text-blue-500" />
                         <div className="text-2xl font-bold">12</div>
-                        <div className="text-sm text-gray-600">Total Team Members</div>
+                        <div className="text-sm text-gray-600">
+                          Total Team Members
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -694,7 +781,9 @@ export default function EnhancedManagerDashboard() {
                       <div className="text-center">
                         <Clock className="h-8 w-8 mx-auto mb-2 text-green-500" />
                         <div className="text-2xl font-bold">8.5h</div>
-                        <div className="text-sm text-gray-600">Avg Work Hours</div>
+                        <div className="text-sm text-gray-600">
+                          Avg Work Hours
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -703,7 +792,9 @@ export default function EnhancedManagerDashboard() {
                       <div className="text-center">
                         <Activity className="h-8 w-8 mx-auto mb-2 text-purple-500" />
                         <div className="text-2xl font-bold">96%</div>
-                        <div className="text-sm text-gray-600">Attendance Rate</div>
+                        <div className="text-sm text-gray-600">
+                          Attendance Rate
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -714,7 +805,9 @@ export default function EnhancedManagerDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Card>
                       <CardContent className="p-4">
-                        <h4 className="font-medium mb-2">This Week's Overtime</h4>
+                        <h4 className="font-medium mb-2">
+                          This Week's Overtime
+                        </h4>
                         <div className="space-y-2">
                           <div className="flex justify-between">
                             <span>Monday</span>
@@ -742,11 +835,15 @@ export default function EnhancedManagerDashboard() {
                           </div>
                           <div className="flex justify-between items-center">
                             <span>Medium Priority</span>
-                            <Badge className="bg-yellow-100 text-yellow-800">8</Badge>
+                            <Badge className="bg-yellow-100 text-yellow-800">
+                              8
+                            </Badge>
                           </div>
                           <div className="flex justify-between items-center">
                             <span>Low Priority</span>
-                            <Badge className="bg-green-100 text-green-800">7</Badge>
+                            <Badge className="bg-green-100 text-green-800">
+                              7
+                            </Badge>
                           </div>
                         </div>
                       </CardContent>
@@ -764,7 +861,9 @@ export default function EnhancedManagerDashboard() {
             <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold">User Management & Controls</h3>
+                  <h3 className="text-lg font-semibold">
+                    User Management & Controls
+                  </h3>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -783,7 +882,10 @@ export default function EnhancedManagerDashboard() {
 
                   <TabsContent value="users" className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <Input placeholder="Search users..." className="max-w-sm" />
+                      <Input
+                        placeholder="Search users..."
+                        className="max-w-sm"
+                      />
                       <Button>
                         <PlusCircle className="h-4 w-4 mr-2" />
                         Create User
@@ -792,14 +894,22 @@ export default function EnhancedManagerDashboard() {
 
                     <div className="space-y-2">
                       {teamMembers.map((member) => (
-                        <div key={member.id} className="flex items-center justify-between p-3 border rounded">
+                        <div
+                          key={member.id}
+                          className="flex items-center justify-between p-3 border rounded"
+                        >
                           <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm">
-                              {member.name.split(' ').map(n => n[0]).join('')}
+                              {member.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
                             </div>
                             <div>
                               <div className="font-medium">{member.name}</div>
-                              <div className="text-sm text-gray-600">{member.role}</div>
+                              <div className="text-sm text-gray-600">
+                                {member.role}
+                              </div>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -809,9 +919,16 @@ export default function EnhancedManagerDashboard() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => updateUserStatus(member.id, member.status === 'active' ? 'suspended' : 'active')}
+                              onClick={() =>
+                                updateUserStatus(
+                                  member.id,
+                                  member.status === "active"
+                                    ? "suspended"
+                                    : "active",
+                                )
+                              }
                             >
-                              {member.status === 'active' ? (
+                              {member.status === "active" ? (
                                 <>
                                   <UserX className="h-4 w-4 mr-1" />
                                   Suspend
@@ -837,7 +954,9 @@ export default function EnhancedManagerDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Card>
                         <CardHeader>
-                          <CardTitle className="text-base">Role Permissions</CardTitle>
+                          <CardTitle className="text-base">
+                            Role Permissions
+                          </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
                           <div className="flex items-center justify-between">
@@ -861,7 +980,9 @@ export default function EnhancedManagerDashboard() {
 
                       <Card>
                         <CardHeader>
-                          <CardTitle className="text-base">System Privileges</CardTitle>
+                          <CardTitle className="text-base">
+                            System Privileges
+                          </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
                           <div className="flex items-center space-x-2">
@@ -890,24 +1011,32 @@ export default function EnhancedManagerDashboard() {
                       <div className="p-3 border rounded">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium">Job JA-7762 completed</div>
+                            <div className="font-medium">
+                              Job JA-7762 completed
+                            </div>
                             <div className="text-sm text-gray-600">
                               by Dyondzani Clement Masinge • 2 minutes ago
                             </div>
                           </div>
-                          <Badge className="bg-green-100 text-green-800">Job Completed</Badge>
+                          <Badge className="bg-green-100 text-green-800">
+                            Job Completed
+                          </Badge>
                         </div>
                       </div>
-                      
+
                       <div className="p-3 border rounded">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium">Stock allocated to technician</div>
+                            <div className="font-medium">
+                              Stock allocated to technician
+                            </div>
                             <div className="text-sm text-gray-600">
                               by Stock Manager • 5 minutes ago
                             </div>
                           </div>
-                          <Badge className="bg-blue-100 text-blue-800">Stock Movement</Badge>
+                          <Badge className="bg-blue-100 text-blue-800">
+                            Stock Movement
+                          </Badge>
                         </div>
                       </div>
 
@@ -919,7 +1048,9 @@ export default function EnhancedManagerDashboard() {
                               by Lisa Brown • 8 minutes ago
                             </div>
                           </div>
-                          <Badge className="bg-yellow-100 text-yellow-800">Job Assignment</Badge>
+                          <Badge className="bg-yellow-100 text-yellow-800">
+                            Job Assignment
+                          </Badge>
                         </div>
                       </div>
                     </div>

@@ -13,7 +13,11 @@ import {
 } from "lucide-react";
 
 interface LocationPermissionHandlerProps {
-  onLocationReceived: (location: { latitude: number; longitude: number; address: string }) => void;
+  onLocationReceived: (location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => void;
   onError?: (error: string) => void;
   required?: boolean;
   className?: string;
@@ -25,10 +29,16 @@ export function LocationPermissionHandler({
   required = false,
   className = "",
 }: LocationPermissionHandlerProps) {
-  const [permissionStatus, setPermissionStatus] = useState<'unknown' | 'granted' | 'denied' | 'prompt'>('unknown');
+  const [permissionStatus, setPermissionStatus] = useState<
+    "unknown" | "granted" | "denied" | "prompt"
+  >("unknown");
   const [isLoading, setIsLoading] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<{latitude: number; longitude: number; address: string} | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+    address: string;
+  } | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     checkPermissionStatus();
@@ -36,33 +46,39 @@ export function LocationPermissionHandler({
 
   const checkPermissionStatus = async () => {
     try {
-      if ('permissions' in navigator && 'geolocation' in navigator.permissions) {
-        const permission = await navigator.permissions.query({ name: 'geolocation' });
+      if (
+        "permissions" in navigator &&
+        "geolocation" in navigator.permissions
+      ) {
+        const permission = await navigator.permissions.query({
+          name: "geolocation",
+        });
         setPermissionStatus(permission.state);
-        
+
         // Listen for permission changes
         permission.onchange = () => {
           setPermissionStatus(permission.state);
         };
       } else {
-        setPermissionStatus('unknown');
+        setPermissionStatus("unknown");
       }
     } catch (error) {
-      console.error('Error checking permission status:', error);
-      setPermissionStatus('unknown');
+      console.error("Error checking permission status:", error);
+      setPermissionStatus("unknown");
     }
   };
 
   const requestLocation = async () => {
     if (!navigator.geolocation) {
-      const error = 'Geolocation is not supported by this browser. Please enter location manually.';
+      const error =
+        "Geolocation is not supported by this browser. Please enter location manually.";
       setErrorMessage(error);
       onError?.(error);
       return;
     }
 
     setIsLoading(true);
-    setErrorMessage('');
+    setErrorMessage("");
 
     const handleSuccess = (position: GeolocationPosition) => {
       const location = {
@@ -70,32 +86,33 @@ export function LocationPermissionHandler({
         longitude: position.coords.longitude,
         address: `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`,
       };
-      
+
       setCurrentLocation(location);
       onLocationReceived(location);
       setIsLoading(false);
-      setPermissionStatus('granted');
+      setPermissionStatus("granted");
     };
 
     const handleError = (error: GeolocationPositionError) => {
-      let errorMsg = '';
-      
+      let errorMsg = "";
+
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          errorMsg = 'Location access denied. Please enable location permissions.';
-          setPermissionStatus('denied');
+          errorMsg =
+            "Location access denied. Please enable location permissions.";
+          setPermissionStatus("denied");
           break;
         case error.POSITION_UNAVAILABLE:
-          errorMsg = 'Location unavailable. Please check your GPS signal.';
+          errorMsg = "Location unavailable. Please check your GPS signal.";
           break;
         case error.TIMEOUT:
-          errorMsg = 'Location request timed out. Please try again.';
+          errorMsg = "Location request timed out. Please try again.";
           break;
         default:
-          errorMsg = 'Unable to get location. Please try again.';
+          errorMsg = "Unable to get location. Please try again.";
           break;
       }
-      
+
       setErrorMessage(errorMsg);
       onError?.(errorMsg);
       setIsLoading(false);
@@ -107,15 +124,11 @@ export function LocationPermissionHandler({
       (error) => {
         // If high accuracy fails, try with lower accuracy
         if (error.code === error.TIMEOUT) {
-          navigator.geolocation.getCurrentPosition(
-            handleSuccess,
-            handleError,
-            {
-              enableHighAccuracy: false,
-              timeout: 15000,
-              maximumAge: 60000,
-            }
-          );
+          navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+            enableHighAccuracy: false,
+            timeout: 15000,
+            maximumAge: 60000,
+          });
         } else {
           handleError(error);
         }
@@ -124,7 +137,7 @@ export function LocationPermissionHandler({
         enableHighAccuracy: true,
         timeout: 10000,
         maximumAge: 1000,
-      }
+      },
     );
   };
 
@@ -132,48 +145,50 @@ export function LocationPermissionHandler({
     const defaultLocation = {
       latitude: -33.0197,
       longitude: 27.9117,
-      address: 'Default Location (East London)',
+      address: "Default Location (East London)",
     };
-    
+
     setCurrentLocation(defaultLocation);
     onLocationReceived(defaultLocation);
-    setErrorMessage('');
+    setErrorMessage("");
   };
 
   const openLocationSettings = () => {
     // Open browser settings (this varies by browser)
-    if (navigator.userAgent.includes('Chrome')) {
-      window.open('chrome://settings/content/location', '_blank');
-    } else if (navigator.userAgent.includes('Firefox')) {
-      window.open('about:preferences#privacy', '_blank');
+    if (navigator.userAgent.includes("Chrome")) {
+      window.open("chrome://settings/content/location", "_blank");
+    } else if (navigator.userAgent.includes("Firefox")) {
+      window.open("about:preferences#privacy", "_blank");
     } else {
-      alert('Please enable location access in your browser settings:\n\n1. Click the location icon in your address bar\n2. Select "Allow" for location access\n3. Refresh the page and try again');
+      alert(
+        'Please enable location access in your browser settings:\n\n1. Click the location icon in your address bar\n2. Select "Allow" for location access\n3. Refresh the page and try again',
+      );
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'granted':
-        return 'bg-green-100 text-green-800';
-      case 'denied':
-        return 'bg-red-100 text-red-800';
-      case 'prompt':
-        return 'bg-yellow-100 text-yellow-800';
+      case "granted":
+        return "bg-green-100 text-green-800";
+      case "denied":
+        return "bg-red-100 text-red-800";
+      case "prompt":
+        return "bg-yellow-100 text-yellow-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'granted':
-        return 'Location access granted';
-      case 'denied':
-        return 'Location access denied';
-      case 'prompt':
-        return 'Location permission required';
+      case "granted":
+        return "Location access granted";
+      case "denied":
+        return "Location access denied";
+      case "prompt":
+        return "Location permission required";
       default:
-        return 'Checking location permissions';
+        return "Checking location permissions";
     }
   };
 
@@ -204,7 +219,9 @@ export function LocationPermissionHandler({
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
             <div className="flex items-center mb-2">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-              <span className="text-sm font-medium text-green-800">Location confirmed</span>
+              <span className="text-sm font-medium text-green-800">
+                Location confirmed
+              </span>
             </div>
             <div className="text-sm text-green-700">
               {currentLocation.address}
@@ -213,16 +230,20 @@ export function LocationPermissionHandler({
         )}
 
         <div className="space-y-2">
-          {permissionStatus === 'denied' ? (
+          {permissionStatus === "denied" ? (
             <div className="space-y-2">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <div className="flex items-start">
                   <Info className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
                   <div className="text-sm text-blue-800">
-                    <p className="font-medium mb-1">Location access is blocked</p>
+                    <p className="font-medium mb-1">
+                      Location access is blocked
+                    </p>
                     <p>To enable location access:</p>
                     <ol className="list-decimal list-inside mt-1 space-y-1">
-                      <li>Click the location icon in your browser's address bar</li>
+                      <li>
+                        Click the location icon in your browser's address bar
+                      </li>
                       <li>Select "Allow" for location access</li>
                       <li>Refresh the page and try again</li>
                     </ol>

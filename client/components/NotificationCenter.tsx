@@ -19,7 +19,13 @@ import {
 
 interface Notification {
   id: string;
-  type: "job_assigned" | "stock_assigned" | "job_status_changed" | "stock_requested" | "stock_returned" | "user_action";
+  type:
+    | "job_assigned"
+    | "stock_assigned"
+    | "job_status_changed"
+    | "stock_requested"
+    | "stock_returned"
+    | "user_action";
   title: string;
   message: string;
   timestamp: string;
@@ -36,7 +42,10 @@ interface NotificationCenterProps {
   userRole: "manager" | "coordinator" | "technician" | "stock_manager";
 }
 
-export function NotificationCenter({ userId, userRole }: NotificationCenterProps) {
+export function NotificationCenter({
+  userId,
+  userRole,
+}: NotificationCenterProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showPanel, setShowPanel] = useState(false);
@@ -45,17 +54,19 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
   // Fetch notifications on component mount
   useEffect(() => {
     fetchNotifications();
-    
+
     // Set up real-time notification listener
-    const eventSource = new EventSource(`/api/notifications/stream?userId=${userId}`);
-    
+    const eventSource = new EventSource(
+      `/api/notifications/stream?userId=${userId}`,
+    );
+
     eventSource.onmessage = (event) => {
       const newNotification = JSON.parse(event.data);
       addNotification(newNotification);
     };
 
     eventSource.onerror = () => {
-      console.error('Notification stream error');
+      console.error("Notification stream error");
       eventSource.close();
     };
 
@@ -66,32 +77,34 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
 
   // Update unread count when notifications change
   useEffect(() => {
-    const unread = notifications.filter(n => !n.read).length;
+    const unread = notifications.filter((n) => !n.read).length;
     setUnreadCount(unread);
   }, [notifications]);
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch(`/api/notifications/user/${userId}?role=${userRole}`);
+      const response = await fetch(
+        `/api/notifications/user/${userId}?role=${userRole}`,
+      );
       if (response.ok) {
         const data = await response.json();
         setNotifications(data);
       }
     } catch (error) {
-      console.error('Failed to fetch notifications:', error);
+      console.error("Failed to fetch notifications:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const addNotification = (notification: Notification) => {
-    setNotifications(prev => [notification, ...prev]);
-    
+    setNotifications((prev) => [notification, ...prev]);
+
     // Show browser notification if permission is granted
-    if (Notification.permission === 'granted') {
+    if (Notification.permission === "granted") {
       new Notification(notification.title, {
         body: notification.message,
-        icon: '/notification-icon.png',
+        icon: "/notification-icon.png",
         tag: notification.id,
       });
     }
@@ -100,38 +113,38 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
   const markAsRead = async (notificationId: string) => {
     try {
       await fetch(`/api/notifications/${notificationId}/read`, {
-        method: 'PUT',
+        method: "PUT",
       });
-      
-      setNotifications(prev =>
-        prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
       );
     } catch (error) {
-      console.error('Failed to mark notification as read:', error);
+      console.error("Failed to mark notification as read:", error);
     }
   };
 
   const markAllAsRead = async () => {
     try {
       await fetch(`/api/notifications/user/${userId}/read-all`, {
-        method: 'PUT',
+        method: "PUT",
       });
-      
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     } catch (error) {
-      console.error('Failed to mark all notifications as read:', error);
+      console.error("Failed to mark all notifications as read:", error);
     }
   };
 
   const deleteNotification = async (notificationId: string) => {
     try {
       await fetch(`/api/notifications/${notificationId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
+
+      setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
     } catch (error) {
-      console.error('Failed to delete notification:', error);
+      console.error("Failed to delete notification:", error);
     }
   };
 
@@ -171,20 +184,25 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
 
     if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)}h ago`;
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
   // Role-specific notification filtering
   const getFilteredNotifications = () => {
-    return notifications.filter(notification => {
+    return notifications.filter((notification) => {
       switch (userRole) {
         case "technician":
           return ["job_assigned", "stock_assigned"].includes(notification.type);
         case "coordinator":
-          return ["job_status_changed", "user_action"].includes(notification.type);
+          return ["job_status_changed", "user_action"].includes(
+            notification.type,
+          );
         case "stock_manager":
-          return ["stock_requested", "stock_returned"].includes(notification.type);
+          return ["stock_requested", "stock_returned"].includes(
+            notification.type,
+          );
         case "manager":
           return true; // Managers see all notifications
         default:
@@ -211,9 +229,7 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
             <Bell className="h-5 w-5" />
           )}
           {unreadCount > 0 && (
-            <Badge 
-              className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center p-0"
-            >
+            <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center p-0">
               {unreadCount > 99 ? "99+" : unreadCount}
             </Badge>
           )}
@@ -227,11 +243,7 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
                 <h3 className="font-semibold">Notifications</h3>
                 <div className="flex items-center space-x-2">
                   {unreadCount > 0 && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={markAllAsRead}
-                    >
+                    <Button size="sm" variant="ghost" onClick={markAllAsRead}>
                       Mark all read
                     </Button>
                   )}
@@ -261,7 +273,7 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
                     <div
                       key={notification.id}
                       className={`p-4 hover:bg-gray-50 ${
-                        !notification.read ? 'bg-blue-50' : ''
+                        !notification.read ? "bg-blue-50" : ""
                       }`}
                     >
                       <div className="flex items-start justify-between">
@@ -274,7 +286,7 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
                               <h4 className="text-sm font-medium text-gray-900 truncate">
                                 {notification.title}
                               </h4>
-                              <Badge 
+                              <Badge
                                 className={`text-xs ${getPriorityColor(notification.priority)}`}
                               >
                                 {notification.priority}
@@ -301,7 +313,9 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  onClick={() => deleteNotification(notification.id)}
+                                  onClick={() =>
+                                    deleteNotification(notification.id)
+                                  }
                                   className="h-6 px-2 text-red-500 hover:text-red-700"
                                 >
                                   <X className="h-3 w-3" />
@@ -325,7 +339,7 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
                   onClick={() => {
                     setShowPanel(false);
                     // Navigate to full notifications page
-                    window.location.href = '/notifications';
+                    window.location.href = "/notifications";
                   }}
                 >
                   View all notifications
@@ -349,36 +363,42 @@ export function NotificationCenter({ userId, userRole }: NotificationCenterProps
 
 // Hook for sending notifications
 export const useNotifications = () => {
-  const sendNotification = async (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+  const sendNotification = async (
+    notification: Omit<Notification, "id" | "timestamp" | "read">,
+  ) => {
     try {
-      const response = await fetch('/api/notifications', {
-        method: 'POST',
+      const response = await fetch("/api/notifications", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(notification),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send notification');
+        throw new Error("Failed to send notification");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Failed to send notification:', error);
+      console.error("Failed to send notification:", error);
       throw error;
     }
   };
 
   // Specific notification senders
-  const notifyJobAssigned = (technicianId: string, jobId: string, jobTitle: string) => {
+  const notifyJobAssigned = (
+    technicianId: string,
+    jobId: string,
+    jobTitle: string,
+  ) => {
     return sendNotification({
-      type: 'job_assigned',
-      title: 'New Job Assigned',
+      type: "job_assigned",
+      title: "New Job Assigned",
       message: `You have been assigned job: ${jobTitle}`,
-      priority: 'high',
+      priority: "high",
       userId: technicianId,
-      userRole: 'technician',
+      userRole: "technician",
       actionUrl: `/technician/jobs/${jobId}`,
       metadata: { jobId, jobTitle },
     });
@@ -386,52 +406,65 @@ export const useNotifications = () => {
 
   const notifyStockAssigned = (technicianId: string, stockItems: string[]) => {
     return sendNotification({
-      type: 'stock_assigned',
-      title: 'Stock Assigned',
-      message: `New stock items have been assigned to you: ${stockItems.join(', ')}`,
-      priority: 'medium',
+      type: "stock_assigned",
+      title: "Stock Assigned",
+      message: `New stock items have been assigned to you: ${stockItems.join(", ")}`,
+      priority: "medium",
       userId: technicianId,
-      userRole: 'technician',
-      actionUrl: '/technician/stock',
+      userRole: "technician",
+      actionUrl: "/technician/stock",
       metadata: { stockItems },
     });
   };
 
-  const notifyJobStatusChanged = (coordinatorId: string, jobId: string, status: string, technicianName: string) => {
+  const notifyJobStatusChanged = (
+    coordinatorId: string,
+    jobId: string,
+    status: string,
+    technicianName: string,
+  ) => {
     return sendNotification({
-      type: 'job_status_changed',
-      title: 'Job Status Updated',
+      type: "job_status_changed",
+      title: "Job Status Updated",
       message: `Job ${jobId} status changed to ${status} by ${technicianName}`,
-      priority: 'medium',
+      priority: "medium",
       userId: coordinatorId,
-      userRole: 'coordinator',
+      userRole: "coordinator",
       actionUrl: `/coordinator/jobs/${jobId}`,
       metadata: { jobId, status, technicianName },
     });
   };
 
-  const notifyStockRequested = (stockManagerId: string, technicianName: string, stockItems: string[]) => {
+  const notifyStockRequested = (
+    stockManagerId: string,
+    technicianName: string,
+    stockItems: string[],
+  ) => {
     return sendNotification({
-      type: 'stock_requested',
-      title: 'Stock Request',
-      message: `${technicianName} has requested: ${stockItems.join(', ')}`,
-      priority: 'high',
+      type: "stock_requested",
+      title: "Stock Request",
+      message: `${technicianName} has requested: ${stockItems.join(", ")}`,
+      priority: "high",
       userId: stockManagerId,
-      userRole: 'stock_manager',
-      actionUrl: '/stock-manager/requests',
+      userRole: "stock_manager",
+      actionUrl: "/stock-manager/requests",
       metadata: { technicianName, stockItems },
     });
   };
 
-  const notifyStockReturned = (stockManagerId: string, technicianName: string, stockItems: string[]) => {
+  const notifyStockReturned = (
+    stockManagerId: string,
+    technicianName: string,
+    stockItems: string[],
+  ) => {
     return sendNotification({
-      type: 'stock_returned',
-      title: 'Stock Returned',
-      message: `${technicianName} has returned: ${stockItems.join(', ')}`,
-      priority: 'medium',
+      type: "stock_returned",
+      title: "Stock Returned",
+      message: `${technicianName} has returned: ${stockItems.join(", ")}`,
+      priority: "medium",
       userId: stockManagerId,
-      userRole: 'stock_manager',
-      actionUrl: '/stock-manager/returns',
+      userRole: "stock_manager",
+      actionUrl: "/stock-manager/returns",
       metadata: { technicianName, stockItems },
     });
   };

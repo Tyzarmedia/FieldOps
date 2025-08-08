@@ -113,7 +113,7 @@ export default function EnhancedStockManager() {
       availableQuantity: 75,
       allocatedQuantity: 25,
       minimumLevel: 20,
-      unitPrice: 150.00,
+      unitPrice: 150.0,
       supplier: "TechCorp",
       lastRestocked: "2025-01-10",
       warehouse: "WH-001",
@@ -127,7 +127,7 @@ export default function EnhancedStockManager() {
       availableQuantity: 350,
       allocatedQuantity: 150,
       minimumLevel: 100,
-      unitPrice: 2.50,
+      unitPrice: 2.5,
       supplier: "ConnectTech",
       lastRestocked: "2025-01-08",
       warehouse: "WH-001",
@@ -141,7 +141,7 @@ export default function EnhancedStockManager() {
       availableQuantity: 12,
       allocatedQuantity: 38,
       minimumLevel: 15,
-      unitPrice: 120.00,
+      unitPrice: 120.0,
       supplier: "NetDevice",
       lastRestocked: "2025-01-05",
       warehouse: "WH-002",
@@ -225,86 +225,96 @@ export default function EnhancedStockManager() {
   ];
 
   // Filter stock items
-  const filteredStockItems = stockItems.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.code.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
+  const filteredStockItems = stockItems.filter((item) => {
+    const matchesSearch =
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.code.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || item.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   // Get low stock items
-  const lowStockItems = stockItems.filter(item => item.availableQuantity <= item.minimumLevel);
+  const lowStockItems = stockItems.filter(
+    (item) => item.availableQuantity <= item.minimumLevel,
+  );
 
   // Update minimum level
   const updateMinimumLevel = async (stockId: string, newLevel: number) => {
     try {
       const response = await fetch(`/api/stock/${stockId}/minimum-level`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ minimumLevel: newLevel }),
       });
 
       if (response.ok) {
-        setStockItems(prev =>
-          prev.map(item =>
-            item.id === stockId ? { ...item, minimumLevel: newLevel } : item
-          )
+        setStockItems((prev) =>
+          prev.map((item) =>
+            item.id === stockId ? { ...item, minimumLevel: newLevel } : item,
+          ),
         );
       }
     } catch (error) {
-      console.error('Failed to update minimum level:', error);
+      console.error("Failed to update minimum level:", error);
     }
   };
 
   // Approve/Reject stock return
-  const reviewStockReturn = async (returnId: string, action: 'approve' | 'reject', comments?: string) => {
+  const reviewStockReturn = async (
+    returnId: string,
+    action: "approve" | "reject",
+    comments?: string,
+  ) => {
     try {
       const response = await fetch(`/api/stock/returns/${returnId}/review`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           action,
           reviewComments: comments,
-          reviewedBy: 'Stock Manager',
+          reviewedBy: "Stock Manager",
           reviewDate: new Date().toISOString(),
         }),
       });
 
       if (response.ok) {
-        setStockReturns(prev =>
-          prev.map(returnItem =>
+        setStockReturns((prev) =>
+          prev.map((returnItem) =>
             returnItem.id === returnId
               ? {
                   ...returnItem,
-                  status: action === 'approve' ? 'approved' : 'rejected',
-                  reviewedBy: 'Stock Manager',
+                  status: action === "approve" ? "approved" : "rejected",
+                  reviewedBy: "Stock Manager",
                   reviewDate: new Date().toISOString(),
                   reviewComments: comments,
                 }
-              : returnItem
-          )
+              : returnItem,
+          ),
         );
 
         // If approved, update stock quantities
-        if (action === 'approve') {
-          const stockReturn = stockReturns.find(r => r.id === returnId);
+        if (action === "approve") {
+          const stockReturn = stockReturns.find((r) => r.id === returnId);
           if (stockReturn) {
-            stockReturn.items.forEach(item => {
-              if (item.condition === 'good') {
-                setStockItems(prev =>
-                  prev.map(stock =>
+            stockReturn.items.forEach((item) => {
+              if (item.condition === "good") {
+                setStockItems((prev) =>
+                  prev.map((stock) =>
                     stock.id === item.stockId
                       ? {
                           ...stock,
-                          availableQuantity: stock.availableQuantity + item.quantityReturned,
-                          allocatedQuantity: stock.allocatedQuantity - item.quantityReturned,
+                          availableQuantity:
+                            stock.availableQuantity + item.quantityReturned,
+                          allocatedQuantity:
+                            stock.allocatedQuantity - item.quantityReturned,
                         }
-                      : stock
-                  )
+                      : stock,
+                  ),
                 );
               }
             });
@@ -312,69 +322,72 @@ export default function EnhancedStockManager() {
         }
       }
     } catch (error) {
-      console.error('Failed to review stock return:', error);
+      console.error("Failed to review stock return:", error);
     }
   };
 
   // Bulk return processing
-  const processBulkReturns = async (returnIds: string[], action: 'approve' | 'reject') => {
+  const processBulkReturns = async (
+    returnIds: string[],
+    action: "approve" | "reject",
+  ) => {
     try {
-      const response = await fetch('/api/stock/returns/bulk-review', {
-        method: 'PUT',
+      const response = await fetch("/api/stock/returns/bulk-review", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           returnIds,
           action,
-          reviewedBy: 'Stock Manager',
+          reviewedBy: "Stock Manager",
           reviewDate: new Date().toISOString(),
         }),
       });
 
       if (response.ok) {
         // Update local state for all processed returns
-        setStockReturns(prev =>
-          prev.map(returnItem =>
+        setStockReturns((prev) =>
+          prev.map((returnItem) =>
             returnIds.includes(returnItem.id)
               ? {
                   ...returnItem,
-                  status: action === 'approve' ? 'approved' : 'rejected',
-                  reviewedBy: 'Stock Manager',
+                  status: action === "approve" ? "approved" : "rejected",
+                  reviewedBy: "Stock Manager",
                   reviewDate: new Date().toISOString(),
                 }
-              : returnItem
-          )
+              : returnItem,
+          ),
         );
       }
     } catch (error) {
-      console.error('Failed to process bulk returns:', error);
+      console.error("Failed to process bulk returns:", error);
     }
   };
 
   // Export stock report
-  const exportStockReport = async (format: 'excel' | 'pdf') => {
+  const exportStockReport = async (format: "excel" | "pdf") => {
     try {
       const response = await fetch(`/api/stock/export?format=${format}`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      
+
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        a.download = `stock-report.${format === 'excel' ? 'xlsx' : 'pdf'}`;
+        a.download = `stock-report.${format === "excel" ? "xlsx" : "pdf"}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       }
     } catch (error) {
-      console.error('Failed to export report:', error);
+      console.error("Failed to export report:", error);
     }
   };
 
@@ -413,15 +426,27 @@ export default function EnhancedStockManager() {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Stock Management</h1>
-              <p className="text-gray-600">Comprehensive inventory and allocation management</p>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Stock Management
+              </h1>
+              <p className="text-gray-600">
+                Comprehensive inventory and allocation management
+              </p>
             </div>
             <div className="flex items-center space-x-2">
-              <Button onClick={() => exportStockReport('excel')} variant="outline" size="sm">
+              <Button
+                onClick={() => exportStockReport("excel")}
+                variant="outline"
+                size="sm"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Export Excel
               </Button>
-              <Button onClick={() => exportStockReport('pdf')} variant="outline" size="sm">
+              <Button
+                onClick={() => exportStockReport("pdf")}
+                variant="outline"
+                size="sm"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Export PDF
               </Button>
@@ -437,7 +462,8 @@ export default function EnhancedStockManager() {
             <AlertTriangle className="h-5 w-5 text-orange-400" />
             <div className="ml-3">
               <p className="text-sm text-orange-700">
-                <strong>Low Stock Alert:</strong> {lowStockItems.length} items below minimum level
+                <strong>Low Stock Alert:</strong> {lowStockItems.length} items
+                below minimum level
               </p>
             </div>
           </div>
@@ -469,7 +495,10 @@ export default function EnhancedStockManager() {
                       className="w-full"
                     />
                   </div>
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <Select
+                    value={selectedCategory}
+                    onValueChange={setSelectedCategory}
+                  >
                     <SelectTrigger className="w-48">
                       <SelectValue />
                     </SelectTrigger>
@@ -492,40 +521,62 @@ export default function EnhancedStockManager() {
             {/* Stock Items Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredStockItems.map((item) => (
-                <Card key={item.id} className={item.availableQuantity <= item.minimumLevel ? "border-orange-300" : ""}>
+                <Card
+                  key={item.id}
+                  className={
+                    item.availableQuantity <= item.minimumLevel
+                      ? "border-orange-300"
+                      : ""
+                  }
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h3 className="font-semibold">{item.name}</h3>
-                        <p className="text-sm text-gray-600">Code: {item.code}</p>
+                        <p className="text-sm text-gray-600">
+                          Code: {item.code}
+                        </p>
                       </div>
                       <Package className="h-8 w-8 text-blue-500" />
                     </div>
-                    
+
                     <div className="space-y-2 mb-4">
                       <div className="flex justify-between">
                         <span className="text-sm">Available:</span>
-                        <span className={`font-medium ${item.availableQuantity <= item.minimumLevel ? 'text-orange-600' : ''}`}>
+                        <span
+                          className={`font-medium ${item.availableQuantity <= item.minimumLevel ? "text-orange-600" : ""}`}
+                        >
                           {item.availableQuantity}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm">Allocated:</span>
-                        <span className="font-medium">{item.allocatedQuantity}</span>
+                        <span className="font-medium">
+                          {item.allocatedQuantity}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm">Total:</span>
-                        <span className="font-medium">{item.totalQuantity}</span>
+                        <span className="font-medium">
+                          {item.totalQuantity}
+                        </span>
                       </div>
                     </div>
 
                     <div className="border-t pt-4">
                       <div className="flex items-center justify-between mb-2">
-                        <label className="text-sm font-medium">Minimum Level:</label>
+                        <label className="text-sm font-medium">
+                          Minimum Level:
+                        </label>
                         <Input
                           type="number"
                           value={item.minimumLevel}
-                          onChange={(e) => updateMinimumLevel(item.id, parseInt(e.target.value))}
+                          onChange={(e) =>
+                            updateMinimumLevel(
+                              item.id,
+                              parseInt(e.target.value),
+                            )
+                          }
                           className="w-20 h-8"
                           min="0"
                         />
@@ -539,7 +590,9 @@ export default function EnhancedStockManager() {
                     {item.availableQuantity <= item.minimumLevel && (
                       <div className="mt-3 p-2 bg-orange-50 rounded flex items-center">
                         <AlertTriangle className="h-4 w-4 text-orange-500 mr-2" />
-                        <span className="text-sm text-orange-700">Below minimum level</span>
+                        <span className="text-sm text-orange-700">
+                          Below minimum level
+                        </span>
                       </div>
                     )}
                   </CardContent>
@@ -564,9 +617,12 @@ export default function EnhancedStockManager() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="font-semibold">{allocation.technicianName}</h3>
+                        <h3 className="font-semibold">
+                          {allocation.technicianName}
+                        </h3>
                         <p className="text-sm text-gray-600">
-                          Allocated: {allocation.allocatedDate} • Location: {allocation.location}
+                          Allocated: {allocation.allocatedDate} • Location:{" "}
+                          {allocation.location}
                         </p>
                       </div>
                       <Badge className={getStatusColor(allocation.status)}>
@@ -576,16 +632,23 @@ export default function EnhancedStockManager() {
 
                     <div className="space-y-3">
                       {allocation.stockItems.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded"
+                        >
                           <div>
                             <div className="font-medium">{item.stockName}</div>
-                            <div className="text-sm text-gray-600">Code: {item.stockCode}</div>
+                            <div className="text-sm text-gray-600">
+                              Code: {item.stockCode}
+                            </div>
                           </div>
                           <div className="text-right">
                             <div className="text-sm">
-                              Allocated: {item.quantityAllocated} | 
-                              Used: {item.quantityUsed} | 
-                              Remaining: {item.quantityAllocated - item.quantityUsed - item.quantityReturned}
+                              Allocated: {item.quantityAllocated} | Used:{" "}
+                              {item.quantityUsed} | Remaining:{" "}
+                              {item.quantityAllocated -
+                                item.quantityUsed -
+                                item.quantityReturned}
                             </div>
                           </div>
                         </div>
@@ -612,11 +675,15 @@ export default function EnhancedStockManager() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Stock Returns</h2>
               <div className="flex space-x-2">
-                <Button 
-                  onClick={() => processBulkReturns(
-                    stockReturns.filter(r => r.status === 'pending').map(r => r.id), 
-                    'approve'
-                  )}
+                <Button
+                  onClick={() =>
+                    processBulkReturns(
+                      stockReturns
+                        .filter((r) => r.status === "pending")
+                        .map((r) => r.id),
+                      "approve",
+                    )
+                  }
                   variant="outline"
                   size="sm"
                 >
@@ -636,9 +703,12 @@ export default function EnhancedStockManager() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="font-semibold">{stockReturn.technicianName}</h3>
+                        <h3 className="font-semibold">
+                          {stockReturn.technicianName}
+                        </h3>
                         <p className="text-sm text-gray-600">
-                          Return Date: {stockReturn.returnDate} • ID: {stockReturn.id}
+                          Return Date: {stockReturn.returnDate} • ID:{" "}
+                          {stockReturn.id}
                         </p>
                       </div>
                       <Badge className={getStatusColor(stockReturn.status)}>
@@ -648,23 +718,36 @@ export default function EnhancedStockManager() {
 
                     {stockReturn.comments && (
                       <div className="mb-4 p-3 bg-blue-50 rounded">
-                        <p className="text-sm text-blue-800">{stockReturn.comments}</p>
+                        <p className="text-sm text-blue-800">
+                          {stockReturn.comments}
+                        </p>
                       </div>
                     )}
 
                     <div className="space-y-3 mb-4">
                       {stockReturn.items.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 border rounded">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 border rounded"
+                        >
                           <div>
                             <div className="font-medium">{item.stockName}</div>
-                            <div className="text-sm text-gray-600">Code: {item.stockCode}</div>
+                            <div className="text-sm text-gray-600">
+                              Code: {item.stockCode}
+                            </div>
                             {item.comments && (
-                              <div className="text-sm text-gray-500 mt-1">{item.comments}</div>
+                              <div className="text-sm text-gray-500 mt-1">
+                                {item.comments}
+                              </div>
                             )}
                           </div>
                           <div className="text-right">
-                            <div className="text-sm">Quantity: {item.quantityReturned}</div>
-                            <Badge className={getConditionColor(item.condition)}>
+                            <div className="text-sm">
+                              Quantity: {item.quantityReturned}
+                            </div>
+                            <Badge
+                              className={getConditionColor(item.condition)}
+                            >
                               {item.condition}
                             </Badge>
                           </div>
@@ -672,7 +755,7 @@ export default function EnhancedStockManager() {
                       ))}
                     </div>
 
-                    {stockReturn.status === 'pending' && (
+                    {stockReturn.status === "pending" && (
                       <div className="flex items-center space-x-4 pt-4 border-t">
                         <Textarea
                           placeholder="Review comments..."
@@ -681,7 +764,9 @@ export default function EnhancedStockManager() {
                         />
                         <div className="flex space-x-2">
                           <Button
-                            onClick={() => reviewStockReturn(stockReturn.id, 'approve')}
+                            onClick={() =>
+                              reviewStockReturn(stockReturn.id, "approve")
+                            }
                             size="sm"
                             className="bg-green-600 hover:bg-green-700"
                           >
@@ -689,7 +774,9 @@ export default function EnhancedStockManager() {
                             Approve
                           </Button>
                           <Button
-                            onClick={() => reviewStockReturn(stockReturn.id, 'reject')}
+                            onClick={() =>
+                              reviewStockReturn(stockReturn.id, "reject")
+                            }
                             size="sm"
                             variant="destructive"
                           >
@@ -706,7 +793,8 @@ export default function EnhancedStockManager() {
                           <strong>Review:</strong> {stockReturn.reviewComments}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
-                          By {stockReturn.reviewedBy} on {stockReturn.reviewDate}
+                          By {stockReturn.reviewedBy} on{" "}
+                          {stockReturn.reviewDate}
                         </div>
                       </div>
                     )}
@@ -724,8 +812,8 @@ export default function EnhancedStockManager() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600">
-                  Manage incoming stock requests from technicians. 
-                  Approve or reject requests and track stock allocation status.
+                  Manage incoming stock requests from technicians. Approve or
+                  reject requests and track stock allocation status.
                 </p>
               </CardContent>
             </Card>
@@ -738,7 +826,9 @@ export default function EnhancedStockManager() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Total Items</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Total Items
+                      </p>
                       <p className="text-2xl font-bold">{stockItems.length}</p>
                     </div>
                     <Package className="h-8 w-8 text-blue-500" />
@@ -750,8 +840,12 @@ export default function EnhancedStockManager() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Low Stock Items</p>
-                      <p className="text-2xl font-bold text-orange-600">{lowStockItems.length}</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Low Stock Items
+                      </p>
+                      <p className="text-2xl font-bold text-orange-600">
+                        {lowStockItems.length}
+                      </p>
                     </div>
                     <AlertTriangle className="h-8 w-8 text-orange-500" />
                   </div>
@@ -762,9 +856,14 @@ export default function EnhancedStockManager() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Pending Returns</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Pending Returns
+                      </p>
                       <p className="text-2xl font-bold">
-                        {stockReturns.filter(r => r.status === 'pending').length}
+                        {
+                          stockReturns.filter((r) => r.status === "pending")
+                            .length
+                        }
                       </p>
                     </div>
                     <Truck className="h-8 w-8 text-green-500" />
@@ -776,9 +875,14 @@ export default function EnhancedStockManager() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Active Allocations</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        Active Allocations
+                      </p>
                       <p className="text-2xl font-bold">
-                        {allocations.filter(a => a.status === 'active').length}
+                        {
+                          allocations.filter((a) => a.status === "active")
+                            .length
+                        }
                       </p>
                     </div>
                     <User className="h-8 w-8 text-purple-500" />
@@ -793,8 +897,8 @@ export default function EnhancedStockManager() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600">
-                  Detailed analytics and reporting on stock usage, allocation patterns, 
-                  and inventory optimization recommendations.
+                  Detailed analytics and reporting on stock usage, allocation
+                  patterns, and inventory optimization recommendations.
                 </p>
               </CardContent>
             </Card>

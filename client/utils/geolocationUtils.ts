@@ -26,22 +26,26 @@ class GeolocationUtils {
    * Check if geolocation is supported
    */
   isGeolocationSupported(): boolean {
-    return 'geolocation' in navigator;
+    return "geolocation" in navigator;
   }
 
   /**
    * Check geolocation permission status
    */
-  async checkPermission(): Promise<'granted' | 'denied' | 'prompt' | 'unknown'> {
+  async checkPermission(): Promise<
+    "granted" | "denied" | "prompt" | "unknown"
+  > {
     try {
-      if ('permissions' in navigator) {
-        const permission = await navigator.permissions.query({ name: 'geolocation' });
+      if ("permissions" in navigator) {
+        const permission = await navigator.permissions.query({
+          name: "geolocation",
+        });
         return permission.state;
       }
-      return 'unknown';
+      return "unknown";
     } catch (error) {
-      console.warn('Permission API not supported');
-      return 'unknown';
+      console.warn("Permission API not supported");
+      return "unknown";
     }
   }
 
@@ -51,15 +55,17 @@ class GeolocationUtils {
   async requestPermission(): Promise<boolean> {
     try {
       const permissionStatus = await this.checkPermission();
-      
-      if (permissionStatus === 'denied') {
-        console.error('Geolocation permission denied');
+
+      if (permissionStatus === "denied") {
+        console.error("Geolocation permission denied");
         return false;
       }
-      
+
       return true;
     } catch (error) {
-      console.warn('Could not check permission, proceeding with geolocation request');
+      console.warn(
+        "Could not check permission, proceeding with geolocation request",
+      );
       return true;
     }
   }
@@ -70,7 +76,13 @@ class GeolocationUtils {
   async getCurrentPosition(options?: PositionOptions): Promise<LocationResult> {
     return new Promise((resolve, reject) => {
       if (!this.isGeolocationSupported()) {
-        reject(this.createError(0, 'Geolocation not supported', 'Your browser does not support location services'));
+        reject(
+          this.createError(
+            0,
+            "Geolocation not supported",
+            "Your browser does not support location services",
+          ),
+        );
         return;
       }
 
@@ -78,7 +90,7 @@ class GeolocationUtils {
         enableHighAccuracy: true,
         timeout: 10000,
         maximumAge: 60000,
-        ...options
+        ...options,
       };
 
       const handleSuccess = (position: GeolocationPosition) => {
@@ -92,11 +104,13 @@ class GeolocationUtils {
 
       const handleError = (error: GeolocationPositionError) => {
         const geolocationError = this.parseGeolocationError(error);
-        
+
         // Try fallback with less strict settings
         if (error.code === error.TIMEOUT && defaultOptions.enableHighAccuracy) {
-          console.log('High accuracy location failed, trying with lower accuracy...');
-          
+          console.log(
+            "High accuracy location failed, trying with lower accuracy...",
+          );
+
           navigator.geolocation.getCurrentPosition(
             handleSuccess,
             (fallbackError) => {
@@ -106,14 +120,18 @@ class GeolocationUtils {
               enableHighAccuracy: false,
               timeout: 15000,
               maximumAge: 300000, // 5 minutes
-            }
+            },
           );
         } else {
           reject(geolocationError);
         }
       };
 
-      navigator.geolocation.getCurrentPosition(handleSuccess, handleError, defaultOptions);
+      navigator.geolocation.getCurrentPosition(
+        handleSuccess,
+        handleError,
+        defaultOptions,
+      );
     });
   }
 
@@ -123,10 +141,16 @@ class GeolocationUtils {
   watchPosition(
     onSuccess: (location: LocationResult) => void,
     onError: (error: GeolocationError) => void,
-    options?: PositionOptions
+    options?: PositionOptions,
   ): number | null {
     if (!this.isGeolocationSupported()) {
-      onError(this.createError(0, 'Geolocation not supported', 'Your browser does not support location services'));
+      onError(
+        this.createError(
+          0,
+          "Geolocation not supported",
+          "Your browser does not support location services",
+        ),
+      );
       return null;
     }
 
@@ -134,7 +158,7 @@ class GeolocationUtils {
       enableHighAccuracy: true,
       timeout: 10000,
       maximumAge: 5000,
-      ...options
+      ...options,
     };
 
     const handleSuccess = (position: GeolocationPosition) => {
@@ -153,7 +177,7 @@ class GeolocationUtils {
     this.watchId = navigator.geolocation.watchPosition(
       handleSuccess,
       handleError,
-      defaultOptions
+      defaultOptions,
     );
 
     return this.watchId;
@@ -176,7 +200,7 @@ class GeolocationUtils {
     lat1: number,
     lon1: number,
     lat2: number,
-    lon2: number
+    lon2: number,
   ): number {
     const R = 6371; // Radius of the Earth in kilometers
     const dLat = this.degToRad(lat2 - lat1);
@@ -200,9 +224,14 @@ class GeolocationUtils {
     userLon: number,
     targetLat: number,
     targetLon: number,
-    radiusKm: number
+    radiusKm: number,
   ): boolean {
-    const distance = this.calculateDistance(userLat, userLon, targetLat, targetLon);
+    const distance = this.calculateDistance(
+      userLat,
+      userLon,
+      targetLat,
+      targetLon,
+    );
     return distance <= radiusKm;
   }
 
@@ -213,33 +242,39 @@ class GeolocationUtils {
     return {
       latitude: -33.0197, // East London, South Africa
       longitude: 27.9117,
-      address: 'Default Location (East London)',
+      address: "Default Location (East London)",
     };
   }
 
   /**
    * Parse geolocation error into user-friendly format
    */
-  private parseGeolocationError(error: GeolocationPositionError): GeolocationError {
-    let userMessage = '';
-    let message = '';
+  private parseGeolocationError(
+    error: GeolocationPositionError,
+  ): GeolocationError {
+    let userMessage = "";
+    let message = "";
 
     switch (error.code) {
       case error.PERMISSION_DENIED:
-        message = 'User denied the request for Geolocation';
-        userMessage = 'Location access denied. Please enable location permissions in your browser settings.';
+        message = "User denied the request for Geolocation";
+        userMessage =
+          "Location access denied. Please enable location permissions in your browser settings.";
         break;
       case error.POSITION_UNAVAILABLE:
-        message = 'Location information is unavailable';
-        userMessage = 'Location unavailable. Please check your GPS signal or network connection.';
+        message = "Location information is unavailable";
+        userMessage =
+          "Location unavailable. Please check your GPS signal or network connection.";
         break;
       case error.TIMEOUT:
-        message = 'The request to get user location timed out';
-        userMessage = 'Location request timed out. Please check your connection and try again.';
+        message = "The request to get user location timed out";
+        userMessage =
+          "Location request timed out. Please check your connection and try again.";
         break;
       default:
-        message = 'An unknown error occurred while retrieving location';
-        userMessage = 'Unable to get your location. Please try again or enter your location manually.';
+        message = "An unknown error occurred while retrieving location";
+        userMessage =
+          "Unable to get your location. Please try again or enter your location manually.";
         break;
     }
 
@@ -253,7 +288,11 @@ class GeolocationUtils {
   /**
    * Create custom error
    */
-  private createError(code: number, message: string, userMessage: string): GeolocationError {
+  private createError(
+    code: number,
+    message: string,
+    userMessage: string,
+  ): GeolocationError {
     return { code, message, userMessage };
   }
 
@@ -278,7 +317,7 @@ class GeolocationUtils {
     try {
       // Mock implementation - replace with real geocoding service
       return `Location: ${this.formatCoordinates(lat, lon, 4)}`;
-      
+
       /* Real implementation example:
       const response = await fetch(
         `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=YOUR_API_KEY`
@@ -292,7 +331,7 @@ class GeolocationUtils {
       return this.formatCoordinates(lat, lon, 4);
       */
     } catch (error) {
-      console.error('Reverse geocoding failed:', error);
+      console.error("Reverse geocoding failed:", error);
       return this.formatCoordinates(lat, lon, 4);
     }
   }
@@ -303,7 +342,7 @@ class GeolocationUtils {
   async geocodeAddress(address: string): Promise<LocationResult | null> {
     try {
       if (!address.trim()) {
-        throw new Error('Address is required');
+        throw new Error("Address is required");
       }
 
       // Mock implementation - replace with real geocoding service
@@ -333,7 +372,7 @@ class GeolocationUtils {
       return null;
       */
     } catch (error) {
-      console.error('Geocoding failed:', error);
+      console.error("Geocoding failed:", error);
       return null;
     }
   }

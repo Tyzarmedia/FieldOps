@@ -50,14 +50,14 @@ class OvertimeService {
   async startOvertimeTracking(
     technicianId: string,
     assistantId: string | null,
-    workSessionId: string
+    workSessionId: string,
   ): Promise<OvertimeSession> {
     try {
-      const response = await fetch('/api/overtime/start-tracking', {
-        method: 'POST',
+      const response = await fetch("/api/overtime/start-tracking", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           technicianId,
@@ -69,12 +69,12 @@ class OvertimeService {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to start overtime tracking');
+        throw new Error("Failed to start overtime tracking");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error starting overtime tracking:', error);
+      console.error("Error starting overtime tracking:", error);
       throw error;
     }
   }
@@ -83,10 +83,11 @@ class OvertimeService {
    * Check if current work qualifies as overtime
    */
   isOvertimeWork(clockInTime: Date, currentTime: Date = new Date()): boolean {
-    const hoursWorked = (currentTime.getTime() - clockInTime.getTime()) / (1000 * 60 * 60);
+    const hoursWorked =
+      (currentTime.getTime() - clockInTime.getTime()) / (1000 * 60 * 60);
     const isAfterHours = currentTime.getHours() >= this.AFTER_HOURS_START;
     const isWeekend = this.WEEKEND_DAYS.includes(currentTime.getDay());
-    
+
     return hoursWorked > this.REGULAR_HOURS || isAfterHours || isWeekend;
   }
 
@@ -96,28 +97,28 @@ class OvertimeService {
   async getOvertimeJobs(
     sessionId: string,
     startTime: string,
-    endTime: string
+    endTime: string,
   ): Promise<OvertimeJob[]> {
     try {
       const response = await fetch(
         `/api/overtime/jobs?sessionId=${sessionId}&start=${startTime}&end=${endTime}`,
         {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
-        throw new Error('Failed to get overtime jobs');
+        throw new Error("Failed to get overtime jobs");
       }
 
       const jobs = await response.json();
-      
+
       // Filter jobs completed after regular hours
       return jobs.filter((job: any) => this.isJobAfterHours(job.completedTime));
     } catch (error) {
-      console.error('Error getting overtime jobs:', error);
+      console.error("Error getting overtime jobs:", error);
       return [];
     }
   }
@@ -129,7 +130,7 @@ class OvertimeService {
     const completedDate = new Date(completedTime);
     const hour = completedDate.getHours();
     const isWeekend = this.WEEKEND_DAYS.includes(completedDate.getDay());
-    
+
     return hour >= this.AFTER_HOURS_START || isWeekend;
   }
 
@@ -141,17 +142,22 @@ class OvertimeService {
     technicianId: string,
     assistantId: string | null,
     clockInTime: string,
-    clockOutTime: string
+    clockOutTime: string,
   ): Promise<OvertimeClaim[]> {
     try {
       const clockIn = new Date(clockInTime);
       const clockOut = new Date(clockOutTime);
-      const totalHours = (clockOut.getTime() - clockIn.getTime()) / (1000 * 60 * 60);
+      const totalHours =
+        (clockOut.getTime() - clockIn.getTime()) / (1000 * 60 * 60);
       const overtimeHours = Math.max(0, totalHours - this.REGULAR_HOURS);
 
       // Get jobs completed during overtime
-      const overtimeJobs = await this.getOvertimeJobs(sessionId, clockInTime, clockOutTime);
-      
+      const overtimeJobs = await this.getOvertimeJobs(
+        sessionId,
+        clockInTime,
+        clockOutTime,
+      );
+
       // Get technician and assistant info
       const [technicianInfo, assistantInfo] = await Promise.all([
         this.getUserInfo(technicianId),
@@ -172,7 +178,11 @@ class OvertimeService {
           regularHours: Math.min(totalHours, this.REGULAR_HOURS),
           totalHours,
           jobsCompleted: overtimeJobs,
-          comments: this.generateClaimComments(overtimeJobs, totalHours, "technician"),
+          comments: this.generateClaimComments(
+            overtimeJobs,
+            totalHours,
+            "technician",
+          ),
         });
         claims.push(technicianClaim);
 
@@ -188,7 +198,11 @@ class OvertimeService {
             regularHours: Math.min(totalHours, this.REGULAR_HOURS),
             totalHours,
             jobsCompleted: overtimeJobs,
-            comments: this.generateClaimComments(overtimeJobs, totalHours, "assistant"),
+            comments: this.generateClaimComments(
+              overtimeJobs,
+              totalHours,
+              "assistant",
+            ),
           });
           claims.push(assistantClaim);
         }
@@ -196,7 +210,7 @@ class OvertimeService {
 
       return claims;
     } catch (error) {
-      console.error('Error creating overtime claim:', error);
+      console.error("Error creating overtime claim:", error);
       throw error;
     }
   }
@@ -207,54 +221,59 @@ class OvertimeService {
   private generateClaimComments(
     overtimeJobs: OvertimeJob[],
     totalHours: number,
-    role: "technician" | "assistant"
+    role: "technician" | "assistant",
   ): string {
-    const jobsList = overtimeJobs.map(job => job.workOrderNumber).join(', ');
+    const jobsList = overtimeJobs.map((job) => job.workOrderNumber).join(", ");
     const roleText = role === "assistant" ? "as assistant" : "as technician";
-    
+
     let comments = `Overtime claim for ${totalHours.toFixed(2)} hours worked ${roleText}.`;
-    
+
     if (overtimeJobs.length > 0) {
       comments += ` Work orders completed after hours: ${jobsList}.`;
-      
+
       // Add details about each job
-      const jobDetails = overtimeJobs.map(job => 
-        `${job.workOrderNumber} (${job.title}) - ${job.hoursSpent.toFixed(1)}h at ${job.location}`
-      ).join('; ');
-      
+      const jobDetails = overtimeJobs
+        .map(
+          (job) =>
+            `${job.workOrderNumber} (${job.title}) - ${job.hoursSpent.toFixed(1)}h at ${job.location}`,
+        )
+        .join("; ");
+
       comments += ` Job details: ${jobDetails}.`;
     }
-    
+
     comments += ` Automatically generated from work session data.`;
-    
+
     return comments;
   }
 
   /**
    * Create individual claim record
    */
-  private async createClaimRecord(claimData: Omit<OvertimeClaim, 'id' | 'claimDate' | 'status'>): Promise<OvertimeClaim> {
+  private async createClaimRecord(
+    claimData: Omit<OvertimeClaim, "id" | "claimDate" | "status">,
+  ): Promise<OvertimeClaim> {
     try {
-      const response = await fetch('/api/overtime/claims', {
-        method: 'POST',
+      const response = await fetch("/api/overtime/claims", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           ...claimData,
           claimDate: new Date().toISOString(),
-          status: 'pending',
+          status: "pending",
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create overtime claim');
+        throw new Error("Failed to create overtime claim");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error creating claim record:', error);
+      console.error("Error creating claim record:", error);
       throw error;
     }
   }
@@ -262,21 +281,23 @@ class OvertimeService {
   /**
    * Get user information
    */
-  private async getUserInfo(userId: string): Promise<{ id: string; name: string; role: string }> {
+  private async getUserInfo(
+    userId: string,
+  ): Promise<{ id: string; name: string; role: string }> {
     try {
       const response = await fetch(`/api/users/${userId}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get user info');
+        throw new Error("Failed to get user info");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error getting user info:', error);
+      console.error("Error getting user info:", error);
       throw error;
     }
   }
@@ -290,23 +311,23 @@ class OvertimeService {
         `/api/assistants/available?warehouse=${technicianWarehouse}`,
         {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
-        throw new Error('Failed to get available assistants');
+        throw new Error("Failed to get available assistants");
       }
 
       const assistants = await response.json();
-      
+
       // Include assistants who have previously worked overtime with technicians
       const assistantsWithHistory = await this.addOvertimeHistory(assistants);
-      
+
       return assistantsWithHistory;
     } catch (error) {
-      console.error('Error getting available assistants:', error);
+      console.error("Error getting available assistants:", error);
       return [];
     }
   }
@@ -316,9 +337,9 @@ class OvertimeService {
    */
   private async addOvertimeHistory(assistants: any[]): Promise<any[]> {
     try {
-      const response = await fetch('/api/overtime/assistant-history', {
+      const response = await fetch("/api/overtime/assistant-history", {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
@@ -327,14 +348,18 @@ class OvertimeService {
       }
 
       const history = await response.json();
-      
-      return assistants.map(assistant => ({
+
+      return assistants.map((assistant) => ({
         ...assistant,
-        overtimeHistory: history.filter((h: any) => h.assistantId === assistant.id),
-        hasOvertimeHistory: history.some((h: any) => h.assistantId === assistant.id),
+        overtimeHistory: history.filter(
+          (h: any) => h.assistantId === assistant.id,
+        ),
+        hasOvertimeHistory: history.some(
+          (h: any) => h.assistantId === assistant.id,
+        ),
       }));
     } catch (error) {
-      console.error('Error adding overtime history:', error);
+      console.error("Error adding overtime history:", error);
       return assistants;
     }
   }
@@ -344,20 +369,20 @@ class OvertimeService {
    */
   async getOvertimeClaims(status?: string): Promise<OvertimeClaim[]> {
     try {
-      const queryParams = status ? `?status=${status}` : '';
+      const queryParams = status ? `?status=${status}` : "";
       const response = await fetch(`/api/overtime/claims${queryParams}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get overtime claims');
+        throw new Error("Failed to get overtime claims");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error getting overtime claims:', error);
+      console.error("Error getting overtime claims:", error);
       return [];
     }
   }
@@ -367,20 +392,20 @@ class OvertimeService {
    */
   async reviewOvertimeClaim(
     claimId: string,
-    action: 'approve' | 'reject',
-    comments?: string
+    action: "approve" | "reject",
+    comments?: string,
   ): Promise<void> {
     try {
       const response = await fetch(`/api/overtime/claims/${claimId}/review`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           action,
           comments,
-          reviewedBy: localStorage.getItem('userId'),
+          reviewedBy: localStorage.getItem("userId"),
           reviewDate: new Date().toISOString(),
         }),
       });
@@ -400,33 +425,33 @@ class OvertimeService {
   async exportOvertimeReport(
     startDate: string,
     endDate: string,
-    format: 'excel' | 'pdf' = 'excel'
+    format: "excel" | "pdf" = "excel",
   ): Promise<void> {
     try {
       const response = await fetch(
         `/api/overtime/export?start=${startDate}&end=${endDate}&format=${format}`,
         {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
-        throw new Error('Failed to export overtime report');
+        throw new Error("Failed to export overtime report");
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `overtime-report-${startDate}-${endDate}.${format === 'excel' ? 'xlsx' : 'pdf'}`;
+      a.download = `overtime-report-${startDate}-${endDate}.${format === "excel" ? "xlsx" : "pdf"}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Error exporting overtime report:', error);
+      console.error("Error exporting overtime report:", error);
       throw error;
     }
   }
