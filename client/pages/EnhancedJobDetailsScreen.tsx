@@ -249,34 +249,41 @@ export default function EnhancedJobDetailsScreen() {
 
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          errorMessage += 'Permission denied. Please enable location access in your browser settings.';
+          errorMessage += 'Permission denied. Using default location for job tracking.';
+          // Set default location immediately when permission is denied
+          setCurrentLocation({
+            latitude: -33.0197, // East London coordinates
+            longitude: 27.9117,
+          });
           break;
         case error.POSITION_UNAVAILABLE:
-          errorMessage += 'Location information unavailable. Please check your GPS or network connection.';
+          errorMessage += 'Location information unavailable. Using default location.';
+          setCurrentLocation({
+            latitude: -33.0197,
+            longitude: 27.9117,
+          });
           break;
         case error.TIMEOUT:
           errorMessage += 'Location request timed out. Trying again...';
+          // Try fallback for timeout
+          setTimeout(() => {
+            getCurrentLocationFallback();
+          }, 5000);
           break;
         default:
-          errorMessage += 'Unknown error occurred while getting location.';
+          errorMessage += 'Unknown error occurred. Using default location.';
+          setCurrentLocation({
+            latitude: -33.0197,
+            longitude: 27.9117,
+          });
           break;
       }
 
       console.error(errorMessage);
-      console.error('Error details:', {
+      console.error('Location error details:', {
         code: error.code,
-        message: error.message,
-        PERMISSION_DENIED: error.PERMISSION_DENIED,
-        POSITION_UNAVAILABLE: error.POSITION_UNAVAILABLE,
-        TIMEOUT: error.TIMEOUT
+        message: error.message
       });
-
-      // Try to get location again after a delay for timeout errors
-      if (error.code === error.TIMEOUT) {
-        setTimeout(() => {
-          getCurrentLocationFallback();
-        }, 5000);
-      }
     };
 
     const getCurrentLocationFallback = () => {
