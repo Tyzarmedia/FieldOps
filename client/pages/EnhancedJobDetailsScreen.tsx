@@ -706,7 +706,7 @@ export default function EnhancedJobDetailsScreen() {
                   />
                   {imageFormData.faultAfterFixing && (
                     <p className="text-sm text-green-600 mt-1">
-                      �� {imageFormData.faultAfterFixing.name}
+                      ✓ {imageFormData.faultAfterFixing.name}
                     </p>
                   )}
                 </div>
@@ -1460,14 +1460,9 @@ export default function EnhancedJobDetailsScreen() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Date
                   </label>
-                  <Input
-                    type="datetime-local"
-                    value={signOffData.date}
-                    onChange={(e) =>
-                      handleSignOffChange("date", e.target.value)
-                    }
-                    className="w-full"
-                  />
+                  <div className="text-lg font-medium text-gray-900">
+                    08/08/2025 06:39 PM
+                  </div>
                 </div>
 
                 {/* Comments */}
@@ -1499,22 +1494,96 @@ export default function EnhancedJobDetailsScreen() {
                   />
                 </div>
 
-                {/* Name & Surname */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Name & Surname
-                  </label>
-                  <Input
-                    value={signOffData.nameAndSurname}
-                    onChange={(e) =>
-                      handleSignOffChange("nameAndSurname", e.target.value)
-                    }
-                  />
+                {/* Completion Checklist */}
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <h3 className="font-semibold mb-4 text-gray-900">Job Completion Checklist</h3>
+                  <div className="space-y-3">
+                    {/* UDF Completed */}
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id="udf-completed"
+                        checked={signOffData.udfCompleted}
+                        onCheckedChange={(checked) =>
+                          handleSignOffChange("udfCompleted", checked)
+                        }
+                        className="w-5 h-5"
+                      />
+                      <label htmlFor="udf-completed" className="text-sm font-medium text-gray-700">
+                        UDF (User Defined Fields) completed and uploaded
+                      </label>
+                    </div>
+
+                    {/* Images Uploaded */}
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id="images-uploaded"
+                        checked={signOffData.imagesUploaded}
+                        onCheckedChange={(checked) =>
+                          handleSignOffChange("imagesUploaded", checked)
+                        }
+                        className="w-5 h-5"
+                      />
+                      <label htmlFor="images-uploaded" className="text-sm font-medium text-gray-700">
+                        Required images uploaded (Before/After light levels, fault finding, fault after fixing)
+                      </label>
+                    </div>
+
+                    {/* Stock Usage */}
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id="stock-checked"
+                        checked={signOffData.stockChecked}
+                        onCheckedChange={(checked) =>
+                          handleSignOffChange("stockChecked", checked)
+                        }
+                        className="w-5 h-5"
+                      />
+                      <label htmlFor="stock-checked" className="text-sm font-medium text-gray-700">
+                        Stock usage documented (Stock used or No stock used confirmed)
+                      </label>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Signature Area */}
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
-                  <p className="text-gray-400 text-lg">TAP TO SIGN</p>
+                {/* Digital Signature Area */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Digital Signature
+                  </label>
+                  <div
+                    className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                      signOffData.signature
+                        ? 'border-green-300 bg-green-50'
+                        : 'border-gray-300 bg-gray-50 hover:border-gray-400'
+                    }`}
+                    onClick={() => {
+                      // Simulate signature capture
+                      if (!signOffData.signature) {
+                        handleSignOffChange("signature", `${technician.name} - ${new Date().toLocaleString()}`);
+                      }
+                    }}
+                  >
+                    {signOffData.signature ? (
+                      <div className="space-y-2">
+                        <div className="text-2xl font-script text-gray-800 italic">
+                          {technician.name}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Signed on {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}
+                        </div>
+                        <div className="text-xs text-green-600 font-medium">
+                          ✓ Digitally Signed
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="text-gray-400 text-lg">TAP TO SIGN</div>
+                        <div className="text-sm text-gray-500">
+                          Tap here to add your digital signature
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Terms & Conditions */}
@@ -1545,12 +1614,24 @@ export default function EnhancedJobDetailsScreen() {
                   <Button
                     onClick={handleCompleteJob}
                     className="flex-1 py-6 text-lg bg-green-500 hover:bg-green-600"
-                    disabled={!signOffData.acceptTerms}
+                    disabled={!signOffData.acceptTerms || !signOffData.udfCompleted || !signOffData.imagesUploaded || !signOffData.stockChecked || !signOffData.signature}
                   >
                     Complete
                     <CheckCircle className="h-5 w-5 ml-2" />
                   </Button>
                 </div>
+
+                {/* Completion Status */}
+                {(!signOffData.acceptTerms || !signOffData.udfCompleted || !signOffData.imagesUploaded || !signOffData.stockChecked || !signOffData.signature) && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-center">
+                      <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2" />
+                      <span className="text-sm text-yellow-800 font-medium">
+                        Complete all checklist items and sign to finish the job
+                      </span>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
