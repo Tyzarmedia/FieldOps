@@ -189,7 +189,11 @@ export default function CreateJobWithGeolocation() {
           break;
       }
 
-      console.error("Geolocation error:", error);
+      console.error(errorMessage);
+      console.error('Geolocation error details:', {
+        code: error.code,
+        message: error.message
+      });
       alert(errorMessage);
       setLocationLoading(false);
     };
