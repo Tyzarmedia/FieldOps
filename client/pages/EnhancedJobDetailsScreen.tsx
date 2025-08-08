@@ -685,6 +685,16 @@ export default function EnhancedJobDetailsScreen() {
           </div>
         </div>
 
+        {/* Proximity Status */}
+        {jobStatus === 'assigned' && isNearJobLocation && (
+          <div className="text-center mb-4">
+            <div className="bg-blue-500/20 rounded-lg px-4 py-2 inline-block">
+              <div className="text-sm font-medium">Auto-start in {120 - proximityTimer}s</div>
+              <div className="text-xs text-white/80">You are near the job location</div>
+            </div>
+          </div>
+        )}
+
         {/* Start/Stop/Pause Buttons */}
         <div className="flex justify-center space-x-4 mb-6">
           {jobStatus === 'assigned' && (
@@ -696,7 +706,7 @@ export default function EnhancedJobDetailsScreen() {
               Start
             </Button>
           )}
-          
+
           {jobStatus === 'in-progress' && (
             <>
               <Button
@@ -720,10 +730,7 @@ export default function EnhancedJobDetailsScreen() {
             <>
               <Button
                 className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
-                onClick={() => {
-                  setJobStatus('in-progress');
-                  setIsTimerRunning(true);
-                }}
+                onClick={resumeJob}
               >
                 <Play className="h-4 w-4 mr-2" />
                 Resume
