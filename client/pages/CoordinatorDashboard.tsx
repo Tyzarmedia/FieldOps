@@ -34,8 +34,52 @@ import {
   Zap,
 } from "lucide-react";
 
+interface TechnicianJob {
+  id: string;
+  title: string;
+  status: "assigned" | "accepted" | "in-progress" | "completed" | "paused";
+  priority: "low" | "medium" | "high" | "urgent";
+  technicianId: string;
+  technicianName: string;
+  client: {
+    name: string;
+    address: string;
+  };
+  estimatedDuration: number;
+  actualDuration?: number;
+  startTime?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  isOvertime?: boolean;
+  workOrderNumber?: string;
+}
+
+interface TechnicianStatus {
+  id: string;
+  name: string;
+  status: "available" | "busy" | "offline" | "on-break";
+  currentJob?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+    lastUpdate: string;
+  };
+  todayStats: {
+    jobsCompleted: number;
+    hoursWorked: number;
+    distanceTraveled: number;
+    overtimeHours: number;
+  };
+}
+
 export default function CoordinatorDashboard() {
   const [selectedTechnician, setSelectedTechnician] = useState("");
+  const [allTechnicianJobs, setAllTechnicianJobs] = useState<TechnicianJob[]>([]);
+  const [technicianStatuses, setTechnicianStatuses] = useState<TechnicianStatus[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedTab, setSelectedTab] = useState("overview");
   const navigate = useNavigate();
 
   const myStats = {
