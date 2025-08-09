@@ -660,6 +660,20 @@ export default function TechnicianDashboard() {
           </div>
         </div>
 
+        {/* Nearby Job Alert */}
+        {nearbyJob && (
+          <div className="text-center mb-4">
+            <div className="bg-blue-500/20 rounded-lg px-4 py-2 inline-block">
+              <div className="text-sm font-medium">
+                📍 You're near a job location
+              </div>
+              <div className="text-xs text-white/80">
+                Job will auto-start in proximity
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Stats Display */}
         <div className="flex justify-between items-center">
           <div className="text-center">
