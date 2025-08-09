@@ -1071,26 +1071,30 @@ export default function EnhancedJobDetailsScreen() {
           <h3 className="text-xl font-semibold mb-3">#{jobDetails.id}215784</h3>
           <Badge
             className={`px-4 py-1 text-sm ${
-              jobStatus === "assigned" && jobDetails.status === "assigned"
+              jobDetails.status === "assigned"
                 ? "bg-orange-500/80 text-white"
-                : jobStatus === "assigned" && jobDetails.status === "accepted"
-                  ? "bg-purple-500/80 text-white"
-                  : jobStatus === "in-progress"
+                : jobDetails.status === "accepted"
+                  ? "bg-blue-500/80 text-white"
+                  : jobDetails.status === "in-progress" || jobDetails.status === "In Progress"
                     ? "bg-green-500/80 text-white"
-                    : jobStatus === "paused"
+                    : jobDetails.status === "paused"
                       ? "bg-yellow-500/80 text-white"
-                      : "bg-gray-500/80 text-white"
+                      : jobDetails.status === "completed"
+                        ? "bg-purple-500/80 text-white"
+                        : "bg-gray-500/80 text-white"
             }`}
           >
-            {jobStatus === "assigned" && jobDetails.status === "assigned"
+            {jobDetails.status === "assigned"
               ? "Assigned"
-              : jobStatus === "assigned" && jobDetails.status === "accepted"
+              : jobDetails.status === "accepted"
                 ? "Accepted"
-                : jobStatus === "in-progress"
+                : jobDetails.status === "in-progress" || jobDetails.status === "In Progress"
                   ? "In Progress"
-                  : jobStatus === "paused"
+                  : jobDetails.status === "paused"
                     ? "Paused"
-                    : "Completed"}
+                    : jobDetails.status === "completed"
+                      ? "Completed"
+                      : jobDetails.status.charAt(0).toUpperCase() + jobDetails.status.slice(1)}
           </Badge>
         </div>
 
