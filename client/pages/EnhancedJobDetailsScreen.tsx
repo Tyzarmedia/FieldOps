@@ -93,6 +93,8 @@ export default function EnhancedJobDetailsScreen() {
   const [proximityTimer, setProximityTimer] = useState(0);
   const [isNearJobLocation, setIsNearJobLocation] = useState(false);
   const [autoStartCountdown, setAutoStartCountdown] = useState(0);
+  const [showLocationPermission, setShowLocationPermission] = useState(false);
+  const [locationRequired, setLocationRequired] = useState(false);
   const [technician] = useState({
     id: "tech001",
     name: "Dyondzani Clement Masinge",
