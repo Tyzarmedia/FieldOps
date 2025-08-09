@@ -83,6 +83,24 @@ export default function NetworkAssessmentScreen() {
     Core: ["DWDM", "SONET/SDH", "IP/MPLS"],
   };
 
+  const reachOptionsData = [
+    "GPON - Gigabit Passive Optical Network",
+    "EPON - Ethernet Passive Optical Network",
+    "XGS-PON - 10G Symmetrical PON",
+    "NG-PON2 - Next Generation PON 2",
+    "Point-to-Point Fiber",
+    "Active Ethernet",
+  ];
+
+  const coreOptionsData = [
+    "DWDM - Dense Wavelength Division Multiplexing",
+    "SONET/SDH - Synchronous Digital Hierarchy",
+    "IP/MPLS - Internet Protocol/Multiprotocol Label Switching",
+    "OTN - Optical Transport Network",
+    "Carrier Ethernet",
+    "Metro Ethernet",
+  ];
+
   const runAssessment = async () => {
     setIsAssessing(true);
     // Simulate network test
