@@ -1130,6 +1130,34 @@ export default function EnhancedJobDetailsScreen() {
         </div>
       </div>
 
+      {/* Location Permission Handler */}
+      {showLocationPermission && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-4">
+              <h3 className="text-lg font-semibold mb-4 text-center">
+                Location Required for Job Tracking
+              </h3>
+              <LocationPermissionHandler
+                onLocationReceived={handleLocationReceived}
+                onError={handleLocationError}
+                required={locationRequired}
+                className="mb-4"
+              />
+              {!locationRequired && (
+                <Button
+                  onClick={() => setShowLocationPermission(false)}
+                  variant="outline"
+                  className="w-full mt-4"
+                >
+                  Skip Location Access
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Timer Overlay */}
       {showTimerOverlay && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
