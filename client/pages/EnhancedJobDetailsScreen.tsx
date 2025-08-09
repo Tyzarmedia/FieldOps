@@ -48,6 +48,7 @@ import {
   CircleDot,
   Play,
   Pause,
+  Square,
 } from "lucide-react";
 
 interface JobDetails {
