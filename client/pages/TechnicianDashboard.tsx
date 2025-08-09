@@ -598,13 +598,13 @@ export default function TechnicianDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="p-6">
+      <div className="p-4">
         {/* Job Status Summary - Moved to top */}
-        <div className="bg-white rounded-2xl p-6 shadow-md mb-6">
-          <h3 className="font-semibold text-gray-800 mb-4">
+        <div className="bg-white rounded-xl p-4 shadow-lg mb-4">
+          <h3 className="font-semibold text-gray-800 mb-3 text-lg">
             Today's Job Status
           </h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
                 {isLoading ? "..." : jobStats.assigned}
