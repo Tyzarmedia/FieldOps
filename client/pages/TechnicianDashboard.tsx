@@ -618,6 +618,27 @@ export default function TechnicianDashboard() {
           </Button>
 
           <div className="flex items-center space-x-2">
+            {/* Location Tracking Status */}
+            {isLocationTracking ? (
+              <div className="flex items-center space-x-1 bg-green-500/20 px-2 py-1 rounded-lg">
+                <Navigation className="h-4 w-4 text-green-200" />
+                <span className="text-xs text-green-200">GPS Active</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-1 bg-yellow-500/20 px-2 py-1 rounded-lg">
+                <MapPin className="h-4 w-4 text-yellow-200" />
+                <span className="text-xs text-yellow-200">GPS Off</span>
+              </div>
+            )}
+
+            {/* Nearby Job Indicator */}
+            {nearbyJob && (
+              <div className="flex items-center space-x-1 bg-blue-500/20 px-2 py-1 rounded-lg">
+                <Briefcase className="h-4 w-4 text-blue-200" />
+                <span className="text-xs text-blue-200">Near Job</span>
+              </div>
+            )}
+
             {/* Network Status Indicator */}
             {networkErrors > 0 && (
               <div className="flex items-center space-x-1 bg-red-500/20 px-2 py-1 rounded-lg">
