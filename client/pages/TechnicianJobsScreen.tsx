@@ -708,6 +708,35 @@ export default function TechnicianJobsScreen() {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Location Permission Handler */}
+      {showLocationPermission && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-4">
+              <h3 className="text-lg font-semibold mb-4 text-center">
+                Location Access Required
+              </h3>
+              <p className="text-sm text-gray-600 mb-4 text-center">
+                Location access is required for job tracking and proximity detection.
+              </p>
+              <LocationPermissionHandler
+                onLocationReceived={handleLocationReceived}
+                onError={handleLocationError}
+                required={false}
+                className="mb-4"
+              />
+              <Button
+                onClick={() => setShowLocationPermission(false)}
+                variant="outline"
+                className="w-full mt-4"
+              >
+                Skip for Now
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
         <div className="flex items-center justify-between mb-6">
