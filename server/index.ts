@@ -49,6 +49,9 @@ export function createServer() {
   // Technician Status API
   app.use("/api/technician-status", technicianStatusRouter);
 
+  // Network Assessments API
+  app.use("/api/network-assessments", networkAssessmentsRouter);
+
   // Job Management API
   app.get("/api/jobs", getJobs);
   app.get("/api/jobs/technician/:technicianId", getJobsByTechnician);
