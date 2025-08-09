@@ -971,10 +971,10 @@ export default function EnhancedJobDetailsScreen() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3">
         {/* Header Title Row */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-xl font-bold">Job Details</h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-lg font-bold">Job Details</h1>
           <div className="flex items-center space-x-3">
             <Button
               variant="ghost"
