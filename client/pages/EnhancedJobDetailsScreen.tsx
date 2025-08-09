@@ -1104,7 +1104,20 @@ export default function EnhancedJobDetailsScreen() {
             <Calendar className="h-8 w-8 text-white" />
             <div>
               <p className="text-sm text-white/80">Created On</p>
-              <p className="font-semibold">Aug 7, 2025</p>
+              <p className="font-semibold">
+                {jobDetails.createdDate
+                  ? new Date(jobDetails.createdDate).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })
+                  : new Date().toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })
+                }
+              </p>
             </div>
           </div>
           <div className="bg-white/20 rounded-2xl p-4 flex-1 flex items-center space-x-3">
