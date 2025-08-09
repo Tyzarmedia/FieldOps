@@ -56,6 +56,7 @@ import ApplyLeaveScreen from "./pages/ApplyLeaveScreen";
 import NetworkAssessmentScreen from "./pages/NetworkAssessmentScreen";
 import ManagerNetworkAssessmentsScreen from "./pages/ManagerNetworkAssessmentsScreen";
 import TechnicianSettingsScreen from "./pages/TechnicianSettingsScreen";
+import LocationTestScreen from "./pages/LocationTestScreen";
 
 const queryClient = new QueryClient();
 
