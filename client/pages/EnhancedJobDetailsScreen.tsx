@@ -269,6 +269,45 @@ export default function EnhancedJobDetailsScreen() {
     }
   }, [jobDetails.status, jobStatus]);
 
+  // Real-time job status polling
+  useEffect(() => {
+    const pollJobStatus = async () => {
+      try {
+        const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/status`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            const serverStatus = result.data.status;
+
+            // Sync local status with server status
+            if (serverStatus !== jobDetails.status) {
+              setJobDetails(prev => ({ ...prev, status: serverStatus }));
+            }
+
+            // Update job status state
+            if (serverStatus === "in-progress") {
+              setJobStatus("in-progress");
+              setIsTimerRunning(true);
+            } else if (serverStatus === "paused") {
+              setJobStatus("paused");
+              setIsTimerRunning(false);
+            } else if (serverStatus === "completed") {
+              setJobStatus("completed");
+              setIsTimerRunning(false);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error polling job status:", error);
+      }
+    };
+
+    // Poll every 5 seconds for real-time updates
+    const interval = setInterval(pollJobStatus, 5000);
+
+    return () => clearInterval(interval);
+  }, [jobDetails.id, jobDetails.status]);
+
   // Handle location received from permission handler
   const handleLocationReceived = (location: {
     latitude: number;
