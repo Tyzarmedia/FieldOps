@@ -427,7 +427,11 @@ export default function TechnicianDashboard() {
         navigate("/technician/analytics");
         break;
       case "sync":
-        // Sync data
+        // Force refresh data with retry
+        console.log('Manual sync triggered');
+        setNetworkErrors(0); // Reset error count
+        fetchJobStats();
+        fetchClockData();
         break;
       case "close":
         navigate("/clock-in");
