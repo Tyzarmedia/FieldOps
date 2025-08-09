@@ -44,28 +44,19 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
             loadedNotifications = result.data;
           }
         } else {
-          // Fallback to mock data if API fails
-          loadedNotifications = [
-            {
-              id: "1",
-              type: "job_assigned",
-              title: "New Job Assigned",
-              message: "FTTH Installation - SA-688808 has been assigned to you",
-              timestamp: new Date().toISOString(),
-              read: false,
-              priority: "high",
-            },
-            {
-              id: "2",
-              type: "stock_assigned",
-              title: "Stock Assigned",
-              message:
-                "Fiber Optic Cable (500 meters) has been assigned to your inventory",
-              timestamp: new Date(Date.now() - 300000).toISOString(), // 5 minutes ago
-              read: false,
-              priority: "medium",
-            },
-          ];
+          // Check if we have cached notifications in localStorage first
+          const cachedNotifications = localStorage.getItem(`notifications-${technicianId}`);
+          if (cachedNotifications) {
+            try {
+              loadedNotifications = JSON.parse(cachedNotifications);
+            } catch (e) {
+              console.warn('Failed to parse cached notifications');
+              loadedNotifications = [];
+            }
+          } else {
+            // Only create mock data if no cached data exists
+            loadedNotifications = [];
+          }
         }
 
         // Filter out deleted notifications
