@@ -309,6 +309,14 @@ export default function App() {
                 element={<LocationTestScreen />}
               />
               <Route
+                path="/stock-requests"
+                element={<StockRequestScreen />}
+              />
+              <Route
+                path="/stock-manager"
+                element={<StockManagerDashboard />}
+              />
+              <Route
                 path="/fleet"
                 element={
                   <ProtectedRoute>
