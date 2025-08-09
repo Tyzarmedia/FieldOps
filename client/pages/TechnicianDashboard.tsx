@@ -201,6 +201,10 @@ export default function TechnicianDashboard() {
       }
     } catch (error) {
       console.error("Error fetching job stats:", error);
+
+      // Increment error count for intelligent retry logic
+      setNetworkErrors(prev => prev + 1);
+
       // Use cached data or default values when network fails
       const cachedStats = localStorage.getItem('technicianJobStats');
       if (cachedStats) {
