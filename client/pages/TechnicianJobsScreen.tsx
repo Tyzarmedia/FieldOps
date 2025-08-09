@@ -383,11 +383,11 @@ export default function TechnicianJobsScreen() {
                   </Button>
                   <Button
                     size="sm"
-                    className="bg-green-600 text-white hover:bg-green-700"
-                    onClick={() => handleJobAction(selectedJob, "complete")}
+                    className="bg-orange-500 text-white hover:bg-orange-600"
+                    onClick={() => handleJobAction(selectedJob, "pause")}
                   >
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Complete Job
+                    <Pause className="h-4 w-4 mr-2" />
+                    Pause Job
                   </Button>
                 </>
               )}
