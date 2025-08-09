@@ -858,26 +858,53 @@ export default function EnhancedJobDetailsScreen() {
       return;
     }
 
+    const quantityRequested = parseInt(stockFormData.quantity);
+
     try {
+      // Check warehouse availability first
+      const availabilityResponse = await fetch(
+        `/api/stock/check-availability/${stockFormData.selectedStock.id}/${quantityRequested}`,
+      );
+
+      if (!availabilityResponse.ok) {
+        toast({
+          title: "Stock Check Failed",
+          description: "Unable to verify stock availability.",
+        });
+        return;
+      }
+
+      const availability = await availabilityResponse.json();
+
+      if (!availability.available) {
+        toast({
+          title: "Insufficient Stock",
+          description: `Only ${availability.availableQuantity} units available. Requested: ${quantityRequested}`,
+        });
+        return;
+      }
+
       // Auto-link work order number and recognize technician warehouse
       const response = await fetch(
-        `/api/jobs/${jobDetails.id}/allocate-stock`,
+        `/api/job-mgmt/jobs/${jobDetails.id}/allocate-stock`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             stockId: stockFormData.selectedStock.id,
+            stockCode: stockFormData.selectedStock.code,
+            stockName: stockFormData.selectedStock.name,
             warehouseNumber: technician.warehouse || "WH-EL-001", // Auto-detect from logged-in user
-            quantity: parseInt(stockFormData.quantity),
+            quantity: quantityRequested,
             technicianId: technician.id,
-            workOrderNumber:
-              jobDetails.workOrderNumber || `WO-${jobDetails.id}`, // Auto-link work order
+            workOrderNumber: `WO-${jobDetails.id}`, // Auto-link work order
             jobId: jobDetails.id,
             ticketNumber: jobDetails.id,
             allocatedDate: new Date().toISOString(),
             allocatedBy: technician.name,
-            stockLocation: technician.warehouse,
+            stockLocation: technician.warehouse || "WH-EL-001",
             autoLinked: true, // Flag to indicate automatic linking
+            realTimeUpdate: true, // Flag for real-time warehouse deduction
           }),
         },
       );
@@ -885,17 +912,36 @@ export default function EnhancedJobDetailsScreen() {
       if (response.ok) {
         const allocationResult = await response.json();
 
-        // Update local stock tracking
+        // Update local stock tracking with server response
         setAllocatedStock((prev) => [
           ...prev,
           {
-            id: `stock-${Date.now()}`,
+            id: allocationResult.allocationId || `stock-${Date.now()}`,
             code: stockFormData.selectedStock.code,
             name: stockFormData.selectedStock.name,
-            quantity: parseInt(stockFormData.quantity),
+            quantity: quantityRequested,
             allocatedAt: new Date().toISOString(),
+            warehouseBalance: allocationResult.newWarehouseBalance,
+            allocationStatus: "allocated",
           },
         ]);
+
+        // Real-time warehouse update notification
+        if (allocationResult.warehouseUpdated) {
+          // Send real-time notification to stock manager
+          fetch("/api/notifications/stock-allocated", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              technicianId: technician.id,
+              jobId: jobDetails.id,
+              stockCode: stockFormData.selectedStock.code,
+              quantity: quantityRequested,
+              newBalance: allocationResult.newWarehouseBalance,
+              timestamp: new Date().toISOString(),
+            }),
+          }).catch((err) => console.error("Failed to send notification:", err));
+        }
 
         setShowStockForm(false);
         setStockFormData({
@@ -907,13 +953,21 @@ export default function EnhancedJobDetailsScreen() {
 
         // Show success toast
         toast({
-          title: "Stock Allocated",
-          description: `${stockFormData.selectedStock.code} - Quantity: ${stockFormData.quantity} allocated successfully.`,
+          title: "Stock Allocated Successfully",
+          description: `${stockFormData.selectedStock.code} - Quantity: ${quantityRequested} allocated. Warehouse updated in real-time.`,
         });
+
+        // Mark stock as completed for sign-off
+        setSignOffData(prev => ({
+          ...prev,
+          stockChecked: true
+        }));
+
       } else {
+        const errorData = await response.json();
         toast({
           title: "Allocation Failed",
-          description: "Failed to allocate stock. Please try again.",
+          description: errorData.message || "Failed to allocate stock. Please try again.",
         });
       }
     } catch (error) {
