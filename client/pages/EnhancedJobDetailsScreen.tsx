@@ -1099,11 +1099,11 @@ export default function EnhancedJobDetailsScreen() {
         </div>
 
         {/* Info Cards */}
-        <div className="flex justify-between space-x-4">
-          <div className="bg-white/20 rounded-2xl p-4 flex-1 flex items-center space-x-3">
-            <Calendar className="h-8 w-8 text-white" />
+        <div className="flex justify-between space-x-3">
+          <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center space-x-2">
+            <Calendar className="h-6 w-6 text-white" />
             <div>
-              <p className="text-sm text-white/80">Created On</p>
+              <p className="text-xs text-white/80">Created On</p>
               <p className="font-semibold">
                 {jobDetails.createdDate
                   ? new Date(jobDetails.createdDate).toLocaleDateString('en-US', {
