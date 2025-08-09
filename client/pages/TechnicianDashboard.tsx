@@ -333,10 +333,19 @@ export default function TechnicianDashboard() {
 
     loadInitialData();
 
-    // Set up real-time updates every minute
+    // Set up intelligent polling based on network status
     const interval = setInterval(() => {
-      fetchJobStats();
-      fetchClockData();
+      // Use exponential backoff when there are network errors
+      const backoffFactor = Math.min(networkErrors, 5); // Cap at 5
+      const shouldPoll = networkErrors === 0 ||
+        (Date.now() - lastSuccessfulFetch) > (60000 * Math.pow(2, backoffFactor));
+
+      if (shouldPoll) {
+        fetchJobStats();
+        fetchClockData();
+      } else {
+        console.log(`Skipping API calls due to ${networkErrors} consecutive network errors`);
+      }
     }, 60000);
 
     return () => clearInterval(interval);
