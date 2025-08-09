@@ -662,6 +662,14 @@ export default function TechnicianDashboard() {
               </div>
             )}
 
+            {/* Overtime Indicator */}
+            {isOvertimeActive && (
+              <div className="flex items-center space-x-1 bg-purple-500/20 px-2 py-1 rounded-lg">
+                <Timer className="h-4 w-4 text-purple-200" />
+                <span className="text-xs text-purple-200">Overtime</span>
+              </div>
+            )}
+
             {/* Network Status Indicator */}
             {networkErrors > 0 && (
               <div className="flex items-center space-x-1 bg-red-500/20 px-2 py-1 rounded-lg">
