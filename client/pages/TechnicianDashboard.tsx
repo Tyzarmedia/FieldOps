@@ -549,6 +549,11 @@ export default function TechnicianDashboard() {
   };
 
   const handleClockOut = () => {
+    // Stop all tracking services before clocking out
+    logoutDetectionService.stopDetection();
+    locationTrackingService.stopTracking();
+    overtimeTrackingService.stopTracking();
+
     navigate("/clock-in");
   };
 
