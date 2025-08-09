@@ -88,6 +88,36 @@ export default function TechnicianJobsScreen() {
 
   const currentTechnicianId = "tech001"; // In real app, this would come from auth
 
+  // Handle location permission on component mount
+  useEffect(() => {
+    // Request location permission when the technician screen loads
+    setShowLocationPermission(true);
+  }, []);
+
+  // Handle location received from permission handler
+  const handleLocationReceived = (location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
+    setCurrentLocation({
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+    setShowLocationPermission(false);
+  };
+
+  // Handle location permission error
+  const handleLocationError = (error: string) => {
+    console.error("Location error:", error);
+    // Use default location as fallback
+    setCurrentLocation({
+      latitude: -33.0197, // East London coordinates
+      longitude: 27.9117,
+    });
+    setShowLocationPermission(false);
+  };
+
   // Load jobs from backend API
   useEffect(() => {
     const loadJobs = async (showLoader = true) => {
