@@ -126,6 +126,14 @@ function MobileProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/login" replace />;
   }
 
+  // Check if technician/assistant needs to clock in
+  if (userRole === "Technician" || userRole === "AssistantTechnician") {
+    const isClockedIn = localStorage.getItem("isClockedIn") === "true";
+    if (!isClockedIn) {
+      return <Navigate to="/clock-in" replace />;
+    }
+  }
+
   // No Layout wrapper for mobile routes
   return <>{children}</>;
 }
