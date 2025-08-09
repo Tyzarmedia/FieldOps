@@ -544,6 +544,13 @@ export default function TechnicianDashboard() {
           </Button>
 
           <div className="flex items-center space-x-2">
+            {/* Network Status Indicator */}
+            {networkErrors > 0 && (
+              <div className="flex items-center space-x-1 bg-red-500/20 px-2 py-1 rounded-lg">
+                <AlertCircle className="h-4 w-4 text-red-200" />
+                <span className="text-xs text-red-200">Offline</span>
+              </div>
+            )}
             <NotificationSystem
               technicianId={userData.employeeId || "tech001"}
             />
