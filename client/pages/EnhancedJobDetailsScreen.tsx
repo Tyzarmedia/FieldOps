@@ -776,68 +776,94 @@ export default function EnhancedJobDetailsScreen() {
 
   const submitImageForm = async () => {
     const formData = new FormData();
+    const uploadedFiles: string[] = [];
+
+    // Add job metadata
+    formData.append("jobId", jobDetails.id);
+    formData.append("technicianId", technician.id);
+    formData.append("uploadDate", new Date().toISOString());
+
     Object.entries(imageFormData).forEach(([key, file]) => {
       if (file) {
         formData.append(key, file);
+        uploadedFiles.push(key);
       }
     });
 
+    if (uploadedFiles.length === 0) {
+      toast({
+        title: "No Images Selected",
+        description: "Please select at least one image to upload.",
+      });
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/images`, {
+      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/images`, {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        // Mock response for uploaded images
-        const newPhotos = [
-          {
-            id: "before-light-levels",
-            name: "Before Light Levels",
-            url: "/placeholder.svg",
-            type: "Before Light Levels",
-          },
-          {
-            id: "fault-finding",
-            name: "Fault Finding",
-            url: "/placeholder.svg",
-            type: "Fault Finding",
-          },
-          {
-            id: "fault-after-fixing",
-            name: "Fault After Fixing",
-            url: "/placeholder.svg",
-            type: "Fault After Fixing",
-          },
-          {
-            id: "light-levels-after-fix",
-            name: "Light Levels After Fix",
-            url: "/placeholder.svg",
-            type: "Light Levels After Fix",
-          },
-        ];
-        setJobPhotos(newPhotos);
-        setShowImageForm(false);
-        setImageFormData({
-          beforeLightLevels: null,
-          faultFinding: null,
-          faultAfterFixing: null,
-          lightLevelsAfterFix: null,
-        });
+        const result = await response.json();
 
-        // Show success toast
-        toast({
-          title: "Images Uploaded",
-          description: "All job images have been uploaded successfully.",
-        });
+        if (result.success) {
+          // Use actual uploaded image data from server
+          const newPhotos = result.uploadedImages.map((img: any) => ({
+            id: img.id,
+            name: img.originalName,
+            url: img.url,
+            type: img.category,
+            uploadedBy: technician.name,
+            uploadedDate: new Date().toISOString(),
+          }));
+
+          setJobPhotos(prev => [...prev, ...newPhotos]);
+          setShowImageForm(false);
+          setImageFormData({
+            beforeLightLevels: null,
+            faultFinding: null,
+            faultAfterFixing: null,
+            lightLevelsAfterFix: null,
+          });
+
+          // Mark images as completed for sign-off
+          setSignOffData(prev => ({
+            ...prev,
+            imagesUploaded: true
+          }));
+
+          // Show success toast
+          toast({
+            title: "Images Uploaded Successfully",
+            description: `${uploadedFiles.length} images uploaded successfully.`,
+          });
+
+          // Send notification to coordinator/manager
+          fetch("/api/notifications/images-uploaded", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jobId: jobDetails.id,
+              technicianId: technician.id,
+              imageCount: uploadedFiles.length,
+              timestamp: new Date().toISOString(),
+            }),
+          }).catch((err) => console.error("Failed to send notification:", err));
+
+        } else {
+          throw new Error(result.message || "Upload failed");
+        }
       } else {
-        toast({
-          title: "Upload Failed",
-          description: "Failed to upload images. Please try again.",
-        });
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Upload failed with status ${response.status}`);
       }
     } catch (error) {
       console.error("Failed to upload images:", error);
+      toast({
+        title: "Upload Failed",
+        description: error instanceof Error ? error.message : "Failed to upload images. Please try again.",
+      });
     }
   };
 
