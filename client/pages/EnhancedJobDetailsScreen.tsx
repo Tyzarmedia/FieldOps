@@ -1173,18 +1173,7 @@ export default function EnhancedJobDetailsScreen() {
 
             {/* Timer Controls */}
             <div className="flex justify-center space-x-2">
-              {jobStatus === "assigned" && jobDetails.status === "assigned" && (
-                <Button
-                  onClick={acceptJob}
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
-                  size="sm"
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Accept
-                </Button>
-              )}
-
-              {jobStatus === "assigned" && jobDetails.status === "accepted" && (
+              {jobDetails.status === "accepted" && (
                 <Button
                   onClick={startJob}
                   className="bg-green-500 hover:bg-green-600 text-white"
@@ -1307,7 +1296,7 @@ export default function EnhancedJobDetailsScreen() {
                   />
                   {imageFormData.faultFinding && (
                     <p className="text-sm text-green-600 mt-1">
-                      ✓ {imageFormData.faultFinding.name}
+                      �� {imageFormData.faultFinding.name}
                     </p>
                   )}
                 </div>
