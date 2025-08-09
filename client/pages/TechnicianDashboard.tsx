@@ -60,6 +60,8 @@ export default function TechnicianDashboard() {
   const [isLocationTracking, setIsLocationTracking] = useState(false);
   const [nearbyJob, setNearbyJob] = useState<{jobId: string; distance: number} | null>(null);
   const [totalDistance, setTotalDistance] = useState(0);
+  const [overtimeSession, setOvertimeSession] = useState<OvertimeSession | null>(null);
+  const [isOvertimeActive, setIsOvertimeActive] = useState(false);
   const navigate = useNavigate();
 
   // Fetch user data from database
