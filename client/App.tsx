@@ -303,6 +303,10 @@ export default function App() {
                 element={<TechnicianSettingsScreen />}
               />
               <Route
+                path="/location-test"
+                element={<LocationTestScreen />}
+              />
+              <Route
                 path="/fleet"
                 element={
                   <ProtectedRoute>
