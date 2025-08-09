@@ -705,6 +705,20 @@ export default function TechnicianDashboard() {
           </div>
         )}
 
+        {/* Overtime Alert */}
+        {isOvertimeActive && overtimeSession && (
+          <div className="text-center mb-4">
+            <div className="bg-purple-500/20 rounded-lg px-4 py-2 inline-block">
+              <div className="text-sm font-medium">
+                ⏰ Overtime automatically detected
+              </div>
+              <div className="text-xs text-white/80">
+                {overtimeSession.totalHours.toFixed(1)}h | WO: {overtimeSession.workOrderNumbers.join(', ') || 'General'}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Stats Display */}
         <div className="flex justify-between items-center">
           <div className="text-center">
