@@ -92,6 +92,65 @@ export const updateJob: RequestHandler = (req, res) => {
   }
 };
 
+// Allocate stock to job
+export const allocateStock: RequestHandler = (req, res) => {
+  const { jobId } = req.params;
+  const stockData = req.body;
+  const db = readDatabase();
+
+  try {
+    // Find the job
+    const jobIndex = (db.jobs || []).findIndex((job: any) => job.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    // Initialize stock allocations if not exists
+    if (!db.jobs[jobIndex].allocatedStock) {
+      db.jobs[jobIndex].allocatedStock = [];
+    }
+
+    // Add stock allocation with unique ID
+    const allocation = {
+      id: `ALLOC-${Date.now()}`,
+      ...stockData,
+      allocatedAt: new Date().toISOString(),
+    };
+
+    db.jobs[jobIndex].allocatedStock.push(allocation);
+    db.jobs[jobIndex].updatedAt = new Date().toISOString();
+
+    // Also track in separate stock allocations for reporting
+    if (!db.stockAllocations) {
+      db.stockAllocations = [];
+    }
+    db.stockAllocations.push({
+      ...allocation,
+      jobId,
+    });
+
+    if (writeDatabase(db)) {
+      res.json({
+        success: true,
+        allocation,
+        message: "Stock allocated successfully"
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        error: "Failed to save stock allocation"
+      });
+    }
+  } catch (error) {
+    console.error("Error allocating stock:", error);
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+};
+
 // Close job with time tracking and maintenance class
 export const closeJob: RequestHandler = (req, res) => {
   const { jobId } = req.params;
