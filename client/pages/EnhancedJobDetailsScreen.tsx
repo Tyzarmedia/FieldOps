@@ -975,23 +975,71 @@ export default function EnhancedJobDetailsScreen() {
         {/* Header Title Row */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-lg font-bold">Job Details</h1>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
+            {/* Job Control Buttons */}
+            {jobDetails.status === "accepted" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+                onClick={startJob}
+              >
+                <Play className="h-4 w-4 mr-1" />
+                Start
+              </Button>
+            )}
+
+            {jobStatus === "in-progress" && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+                  onClick={pauseJob}
+                >
+                  <Pause className="h-4 w-4 mr-1" />
+                  Pause
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+                  onClick={stopJob}
+                >
+                  <Square className="h-4 w-4 mr-1" />
+                  Stop
+                </Button>
+              </>
+            )}
+
+            {jobStatus === "paused" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+                onClick={resumeJob}
+              >
+                <Play className="h-4 w-4 mr-1" />
+                Resume
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/20 rounded-full h-10 w-10"
+              className="text-white hover:bg-white/20 rounded-full h-8 w-8"
               onClick={() => setShowTimerOverlay(!showTimerOverlay)}
               title="View Timer"
             >
-              <Clock className="h-6 w-6" />
+              <Clock className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/20 rounded-full h-10 w-10"
+              className="text-white hover:bg-white/20 rounded-full h-8 w-8"
               onClick={() => navigate("/technician/jobs")}
             >
-              <X className="h-6 w-6" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </div>
