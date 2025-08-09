@@ -260,119 +260,43 @@ export default function EnhancedJobDetailsScreen() {
     }
   };
 
-  // Geolocation tracking
+  // Check if location is needed for job operations
   useEffect(() => {
-    if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by this browser");
-      return;
+    // Show location permission handler when job requires location tracking
+    if (jobDetails.status === "accepted" || jobStatus === "in-progress") {
+      setLocationRequired(true);
+      setShowLocationPermission(true);
     }
+  }, [jobDetails.status, jobStatus]);
 
-    const handleLocationSuccess = (position: GeolocationPosition) => {
-      const newLocation = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      };
-      setCurrentLocation(newLocation);
-      checkProximity(newLocation);
-    };
+  // Handle location received from permission handler
+  const handleLocationReceived = (location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
+    setCurrentLocation({
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+    setShowLocationPermission(false);
+    checkProximity({
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+  };
 
-    const handleLocationError = (error: GeolocationPositionError) => {
-      let userMessage = "";
-      let shouldShowWarning = false;
-
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          userMessage =
-            "Location access denied. Using default location for job tracking.";
-          shouldShowWarning = true;
-          setCurrentLocation({
-            latitude: -33.0197, // East London coordinates
-            longitude: 27.9117,
-          });
-          break;
-        case error.POSITION_UNAVAILABLE:
-          userMessage =
-            "Location unavailable. Using default location for job tracking.";
-          shouldShowWarning = true;
-          setCurrentLocation({
-            latitude: -33.0197,
-            longitude: 27.9117,
-          });
-          break;
-        case error.TIMEOUT:
-          userMessage =
-            "Location request timed out. Retrying with lower accuracy...";
-          warning("Location Timeout", userMessage);
-          // Try fallback for timeout
-          setTimeout(() => {
-            getCurrentLocationFallback();
-          }, 5000);
-          break;
-        default:
-          userMessage =
-            "Unable to get location. Using default location for job tracking.";
-          shouldShowWarning = true;
-          setCurrentLocation({
-            latitude: -33.0197,
-            longitude: 27.9117,
-          });
-          break;
-      }
-
-      // Log detailed error information for debugging
-      geolocationUtils.logGeolocationError(error, "EnhancedJobDetailsScreen");
-
-      // Show user-friendly notification
-      if (shouldShowWarning) {
-        warning("Location Access", userMessage);
-      }
-    };
-
-    const getCurrentLocationFallback = () => {
-      navigator.geolocation.getCurrentPosition(
-        handleLocationSuccess,
-        (error) => {
-          // Log fallback error using improved utility
-          geolocationUtils.logGeolocationError(
-            error,
-            "EnhancedJobDetailsScreen - Fallback",
-          );
-
-          // Use default location if all else fails
-          setCurrentLocation({
-            latitude: -33.0197, // East London coordinates as fallback
-            longitude: 27.9117,
-          });
-
-          notifyError(
-            "Location Failed",
-            "Using default location due to location service failure.",
-          );
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 15000,
-          maximumAge: 60000,
-        },
-      );
-    };
-
-    const watchId = navigator.geolocation.watchPosition(
-      handleLocationSuccess,
-      handleLocationError,
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 5000,
-      },
-    );
-
-    return () => {
-      if (watchId) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-    };
-  }, []);
+  // Handle location permission error
+  const handleLocationError = (error: string) => {
+    console.error("Location error:", error);
+    // Use default location as fallback
+    setCurrentLocation({
+      latitude: -33.0197, // East London coordinates
+      longitude: 27.9117,
+    });
+    setShowLocationPermission(false);
+    warning("Location Required", "Using default location for job tracking. Some features may be limited.");
+  };
 
   // Check proximity to job location
   const checkProximity = (currentPos: {
