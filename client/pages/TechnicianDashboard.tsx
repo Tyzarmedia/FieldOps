@@ -404,6 +404,7 @@ export default function TechnicianDashboard() {
     return () => {
       locationTrackingService.stopTracking();
       overtimeTrackingService.stopTracking();
+      logoutDetectionService.stopDetection();
       clearInterval(overtimeCheckInterval);
     };
   }, []);
