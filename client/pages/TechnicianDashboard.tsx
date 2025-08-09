@@ -125,8 +125,8 @@ export default function TechnicianDashboard() {
         return Promise.race([
           fetch(url),
           new Promise<Response>((_, reject) =>
-            setTimeout(() => reject(new Error('Network timeout')), timeout)
-          )
+            setTimeout(() => reject(new Error("Network timeout")), timeout),
+          ),
         ]);
       };
 
@@ -159,8 +159,11 @@ export default function TechnicianDashboard() {
             setJobStats(stats);
 
             // Cache successful job stats for offline use
-            localStorage.setItem('technicianJobStats', JSON.stringify(stats));
-            localStorage.setItem('technicianJobStatsTimestamp', Date.now().toString());
+            localStorage.setItem("technicianJobStats", JSON.stringify(stats));
+            localStorage.setItem(
+              "technicianJobStatsTimestamp",
+              Date.now().toString(),
+            );
 
             // Reset error count on successful fetch
             setNetworkErrors(0);
@@ -193,8 +196,14 @@ export default function TechnicianDashboard() {
           if (statsResult.success && statsResult.data) {
             setJobStats(statsResult.data);
             // Cache successful stats response
-            localStorage.setItem('technicianJobStats', JSON.stringify(statsResult.data));
-            localStorage.setItem('technicianJobStatsTimestamp', Date.now().toString());
+            localStorage.setItem(
+              "technicianJobStats",
+              JSON.stringify(statsResult.data),
+            );
+            localStorage.setItem(
+              "technicianJobStatsTimestamp",
+              Date.now().toString(),
+            );
           }
         } catch (jsonError) {
           console.log("Stats API returned invalid JSON:", jsonError);
@@ -204,16 +213,16 @@ export default function TechnicianDashboard() {
       console.error("Error fetching job stats:", error);
 
       // Increment error count for intelligent retry logic
-      setNetworkErrors(prev => prev + 1);
+      setNetworkErrors((prev) => prev + 1);
 
       // Use cached data or default values when network fails
-      const cachedStats = localStorage.getItem('technicianJobStats');
+      const cachedStats = localStorage.getItem("technicianJobStats");
       if (cachedStats) {
         try {
           setJobStats(JSON.parse(cachedStats));
-          console.log('Using cached job stats due to network error');
+          console.log("Using cached job stats due to network error");
         } catch (parseError) {
-          console.warn('Failed to parse cached job stats:', parseError);
+          console.warn("Failed to parse cached job stats:", parseError);
         }
       }
       // Keep default values if no cache available
@@ -232,8 +241,8 @@ export default function TechnicianDashboard() {
         return Promise.race([
           fetch(url),
           new Promise<Response>((_, reject) =>
-            setTimeout(() => reject(new Error('Network timeout')), timeout)
-          )
+            setTimeout(() => reject(new Error("Network timeout")), timeout),
+          ),
         ]);
       };
 
@@ -285,7 +294,7 @@ export default function TechnicianDashboard() {
     } catch (error) {
       console.error("Error fetching clock data:", error);
       // Always fallback to localStorage when network fails
-      console.log('Using localStorage fallback due to network/database error');
+      console.log("Using localStorage fallback due to network/database error");
       updateTimeAndDistanceFromStorage();
     }
   };
@@ -342,14 +351,17 @@ export default function TechnicianDashboard() {
     const interval = setInterval(() => {
       // Use exponential backoff when there are network errors
       const backoffFactor = Math.min(networkErrors, 5); // Cap at 5
-      const shouldPoll = networkErrors === 0 ||
-        (Date.now() - lastSuccessfulFetch) > (60000 * Math.pow(2, backoffFactor));
+      const shouldPoll =
+        networkErrors === 0 ||
+        Date.now() - lastSuccessfulFetch > 60000 * Math.pow(2, backoffFactor);
 
       if (shouldPoll) {
         fetchJobStats();
         fetchClockData();
       } else {
-        console.log(`Skipping API calls due to ${networkErrors} consecutive network errors`);
+        console.log(
+          `Skipping API calls due to ${networkErrors} consecutive network errors`,
+        );
       }
     }, 60000);
 
@@ -432,7 +444,7 @@ export default function TechnicianDashboard() {
         break;
       case "sync":
         // Force refresh data with retry
-        console.log('Manual sync triggered');
+        console.log("Manual sync triggered");
         setNetworkErrors(0); // Reset error count
         fetchJobStats();
         fetchClockData();

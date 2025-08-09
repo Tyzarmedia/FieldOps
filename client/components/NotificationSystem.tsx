@@ -43,16 +43,21 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
           if (result.success) {
             loadedNotifications = result.data;
             // Cache successful API response
-            localStorage.setItem(`notifications-${technicianId}`, JSON.stringify(loadedNotifications));
+            localStorage.setItem(
+              `notifications-${technicianId}`,
+              JSON.stringify(loadedNotifications),
+            );
           }
         } else {
           // Check if we have cached notifications in localStorage first
-          const cachedNotifications = localStorage.getItem(`notifications-${technicianId}`);
+          const cachedNotifications = localStorage.getItem(
+            `notifications-${technicianId}`,
+          );
           if (cachedNotifications) {
             try {
               loadedNotifications = JSON.parse(cachedNotifications);
             } catch (e) {
-              console.warn('Failed to parse cached notifications');
+              console.warn("Failed to parse cached notifications");
               loadedNotifications = [];
             }
           } else {
@@ -71,7 +76,10 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
 
         // Update cache with filtered notifications
         if (filteredNotifications.length > 0) {
-          localStorage.setItem(`notifications-${technicianId}`, JSON.stringify(filteredNotifications));
+          localStorage.setItem(
+            `notifications-${technicianId}`,
+            JSON.stringify(filteredNotifications),
+          );
         }
       } catch (error) {
         console.error("Error loading notifications:", error);

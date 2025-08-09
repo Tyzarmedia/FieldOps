@@ -325,13 +325,15 @@ export default function EnhancedJobDetailsScreen() {
       }
     };
 
-
     const getCurrentLocationFallback = () => {
       navigator.geolocation.getCurrentPosition(
         handleLocationSuccess,
         (error) => {
           // Log fallback error using improved utility
-          geolocationUtils.logGeolocationError(error, "EnhancedJobDetailsScreen - Fallback");
+          geolocationUtils.logGeolocationError(
+            error,
+            "EnhancedJobDetailsScreen - Fallback",
+          );
 
           // Use default location if all else fails
           setCurrentLocation({
@@ -461,15 +463,18 @@ export default function EnhancedJobDetailsScreen() {
   // Accept job
   const acceptJob = async () => {
     try {
-      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/accept`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          acceptedTime: new Date().toISOString(),
-          location: currentLocation,
-        }),
-      });
+      const response = await fetch(
+        `/api/job-mgmt/jobs/${jobDetails.id}/accept`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            technicianId: technician.id,
+            acceptedTime: new Date().toISOString(),
+            location: currentLocation,
+          }),
+        },
+      );
 
       if (response.ok) {
         setJobDetails((prev) => ({ ...prev, status: "accepted" }));
@@ -1124,7 +1129,8 @@ export default function EnhancedJobDetailsScreen() {
                 ? "bg-orange-500/80 text-white"
                 : jobDetails.status === "accepted"
                   ? "bg-blue-500/80 text-white"
-                  : jobDetails.status === "in-progress" || jobDetails.status === "In Progress"
+                  : jobDetails.status === "in-progress" ||
+                      jobDetails.status === "In Progress"
                     ? "bg-green-500/80 text-white"
                     : jobDetails.status === "paused"
                       ? "bg-yellow-500/80 text-white"
@@ -1137,13 +1143,15 @@ export default function EnhancedJobDetailsScreen() {
               ? "Assigned"
               : jobDetails.status === "accepted"
                 ? "Accepted"
-                : jobDetails.status === "in-progress" || jobDetails.status === "In Progress"
+                : jobDetails.status === "in-progress" ||
+                    jobDetails.status === "In Progress"
                   ? "In Progress"
                   : jobDetails.status === "paused"
                     ? "Paused"
                     : jobDetails.status === "completed"
                       ? "Completed"
-                      : jobDetails.status.charAt(0).toUpperCase() + jobDetails.status.slice(1)}
+                      : jobDetails.status.charAt(0).toUpperCase() +
+                        jobDetails.status.slice(1)}
           </Badge>
         </div>
 
@@ -1155,17 +1163,19 @@ export default function EnhancedJobDetailsScreen() {
               <p className="text-xs text-white/80">Created On</p>
               <p className="font-semibold">
                 {jobDetails.createdDate
-                  ? new Date(jobDetails.createdDate).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                    })
-                  : new Date().toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                    })
-                }
+                  ? new Date(jobDetails.createdDate).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      },
+                    )
+                  : new Date().toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
               </p>
             </div>
           </div>
@@ -1178,13 +1188,15 @@ export default function EnhancedJobDetailsScreen() {
                   ? "Assigned"
                   : jobDetails.status === "accepted"
                     ? "Accepted"
-                    : jobDetails.status === "in-progress" || jobDetails.status === "In Progress"
+                    : jobDetails.status === "in-progress" ||
+                        jobDetails.status === "In Progress"
                       ? "In Progress"
                       : jobDetails.status === "paused"
                         ? "Paused"
                         : jobDetails.status === "completed"
                           ? "Completed"
-                          : jobDetails.status.charAt(0).toUpperCase() + jobDetails.status.slice(1)}
+                          : jobDetails.status.charAt(0).toUpperCase() +
+                            jobDetails.status.slice(1)}
               </p>
             </div>
           </div>

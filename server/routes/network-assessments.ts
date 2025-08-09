@@ -78,7 +78,7 @@ router.get("/", (req, res) => {
   try {
     const db = readDatabase();
     const assessments = db.networkAssessments || [];
-    
+
     res.json({
       success: true,
       data: assessments,
@@ -99,9 +99,9 @@ router.get("/technician/:technicianId", (req, res) => {
     const { technicianId } = req.params;
     const db = readDatabase();
     const assessments = (db.networkAssessments || []).filter(
-      (assessment: any) => assessment.technicianId === technicianId
+      (assessment: any) => assessment.technicianId === technicianId,
     );
-    
+
     res.json({
       success: true,
       data: assessments,
@@ -122,16 +122,16 @@ router.get("/:assessmentId", (req, res) => {
     const { assessmentId } = req.params;
     const db = readDatabase();
     const assessment = (db.networkAssessments || []).find(
-      (a: any) => a.id === assessmentId
+      (a: any) => a.id === assessmentId,
     );
-    
+
     if (!assessment) {
       return res.status(404).json({
         success: false,
         error: "Network assessment not found",
       });
     }
-    
+
     res.json({
       success: true,
       data: assessment,
@@ -152,29 +152,29 @@ router.put("/:assessmentId", (req, res) => {
     const { assessmentId } = req.params;
     const updates = req.body;
     const db = readDatabase();
-    
+
     if (!db.networkAssessments) {
       db.networkAssessments = [];
     }
-    
+
     const assessmentIndex = db.networkAssessments.findIndex(
-      (a: any) => a.id === assessmentId
+      (a: any) => a.id === assessmentId,
     );
-    
+
     if (assessmentIndex === -1) {
       return res.status(404).json({
         success: false,
         error: "Network assessment not found",
       });
     }
-    
+
     // Update assessment
     db.networkAssessments[assessmentIndex] = {
       ...db.networkAssessments[assessmentIndex],
       ...updates,
       lastModified: new Date().toISOString(),
     };
-    
+
     if (writeDatabase(db)) {
       res.json({
         success: true,
@@ -202,28 +202,28 @@ router.delete("/:assessmentId", (req, res) => {
   try {
     const { assessmentId } = req.params;
     const db = readDatabase();
-    
+
     if (!db.networkAssessments) {
       return res.status(404).json({
         success: false,
         error: "Network assessment not found",
       });
     }
-    
+
     const assessmentIndex = db.networkAssessments.findIndex(
-      (a: any) => a.id === assessmentId
+      (a: any) => a.id === assessmentId,
     );
-    
+
     if (assessmentIndex === -1) {
       return res.status(404).json({
         success: false,
         error: "Network assessment not found",
       });
     }
-    
+
     // Remove assessment
     db.networkAssessments.splice(assessmentIndex, 1);
-    
+
     if (writeDatabase(db)) {
       res.json({
         success: true,

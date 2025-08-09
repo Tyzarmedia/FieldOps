@@ -176,7 +176,11 @@ export default function NetworkAssessmentScreen() {
   };
 
   // Get current location
-  const getCurrentLocation = (): Promise<{latitude: number, longitude: number, address: string} | null> => {
+  const getCurrentLocation = (): Promise<{
+    latitude: number;
+    longitude: number;
+    address: string;
+  } | null> => {
     return new Promise((resolve) => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -190,7 +194,7 @@ export default function NetworkAssessmentScreen() {
           (error) => {
             console.warn("Geolocation error:", error);
             resolve(null);
-          }
+          },
         );
       } else {
         resolve(null);

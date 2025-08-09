@@ -133,12 +133,12 @@ export const allocateStock: RequestHandler = (req, res) => {
       res.json({
         success: true,
         allocation,
-        message: "Stock allocated successfully"
+        message: "Stock allocated successfully",
       });
     } else {
       res.status(500).json({
         success: false,
-        error: "Failed to save stock allocation"
+        error: "Failed to save stock allocation",
       });
     }
   } catch (error) {
@@ -146,7 +146,7 @@ export const allocateStock: RequestHandler = (req, res) => {
     res.status(500).json({
       success: false,
       error: "Internal server error",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };
