@@ -157,9 +157,9 @@ function DashboardRouter() {
     case "CEO":
       return <CeoDashboard />;
     case "Manager":
-      return <ManagerDashboard />;
+      return <EnhancedManagerDashboard />;
     case "Coordinator":
-      return <CoordinatorDashboard />;
+      return <EnhancedCoordinatorDashboard />;
     case "Technician":
       // Redirect to mobile-first route
       return <Navigate to="/technician" replace />;
