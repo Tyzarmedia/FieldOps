@@ -1,3 +1,5 @@
+import { logError, getUserFriendlyErrorMessage } from './errorUtils';
+
 interface LocationResult {
   latitude: number;
   longitude: number;
@@ -308,6 +310,37 @@ class GeolocationUtils {
    */
   formatCoordinates(lat: number, lon: number, precision: number = 6): string {
     return `${lat.toFixed(precision)}, ${lon.toFixed(precision)}`;
+  }
+
+  /**
+   * Log geolocation error with proper formatting for debugging
+   */
+  logGeolocationError(error: GeolocationPositionError, context?: string): void {
+    const contextStr = context ? ` - ${context}` : '';
+    logError(error, `Geolocation${contextStr}`);
+
+    // Additional geolocation-specific details
+    const geolocationDetails = {
+      errorName: this.getErrorCodeName(error.code),
+      userMessage: this.parseGeolocationError(error).userMessage
+    };
+    console.error('Geolocation error details:', geolocationDetails);
+  }
+
+  /**
+   * Get human-readable error code name
+   */
+  private getErrorCodeName(code: number): string {
+    switch (code) {
+      case 1:
+        return "PERMISSION_DENIED";
+      case 2:
+        return "POSITION_UNAVAILABLE";
+      case 3:
+        return "TIMEOUT";
+      default:
+        return "UNKNOWN_ERROR";
+    }
   }
 
   /**

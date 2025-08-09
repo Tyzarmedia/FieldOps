@@ -20,6 +20,7 @@ import {
   Settings,
   LogOut,
   UserCheck,
+  AlertCircle,
 } from "lucide-react";
 
 interface JobStats {
@@ -52,6 +53,8 @@ export default function TechnicianDashboard() {
   });
   const [latestJob, setLatestJob] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [networkErrors, setNetworkErrors] = useState(0);
+  const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState(Date.now());
   const navigate = useNavigate();
 
   // Fetch user data from database
@@ -117,8 +120,18 @@ export default function TechnicianDashboard() {
       const employeeId =
         userData.employeeId || localStorage.getItem("employeeId") || "tech001";
 
+      // Add network timeout and error handling
+      const fetchWithTimeout = (url: string, timeout = 5000) => {
+        return Promise.race([
+          fetch(url),
+          new Promise<Response>((_, reject) =>
+            setTimeout(() => reject(new Error("Network timeout")), timeout),
+          ),
+        ]);
+      };
+
       // Fetch jobs for technician
-      const jobsResponse = await fetch(
+      const jobsResponse = await fetchWithTimeout(
         `/api/job-mgmt/jobs/technician/${employeeId}`,
       );
 
@@ -145,6 +158,17 @@ export default function TechnicianDashboard() {
             };
             setJobStats(stats);
 
+            // Cache successful job stats for offline use
+            localStorage.setItem("technicianJobStats", JSON.stringify(stats));
+            localStorage.setItem(
+              "technicianJobStatsTimestamp",
+              Date.now().toString(),
+            );
+
+            // Reset error count on successful fetch
+            setNetworkErrors(0);
+            setLastSuccessfulFetch(Date.now());
+
             // Get latest job
             const sortedJobs = jobs.sort(
               (a: any, b: any) =>
@@ -161,7 +185,7 @@ export default function TechnicianDashboard() {
       }
 
       // Also try the stats endpoint for more accurate data
-      const statsResponse = await fetch(
+      const statsResponse = await fetchWithTimeout(
         `/api/job-mgmt/jobs/stats/${employeeId}`,
       );
 
@@ -171,6 +195,15 @@ export default function TechnicianDashboard() {
 
           if (statsResult.success && statsResult.data) {
             setJobStats(statsResult.data);
+            // Cache successful stats response
+            localStorage.setItem(
+              "technicianJobStats",
+              JSON.stringify(statsResult.data),
+            );
+            localStorage.setItem(
+              "technicianJobStatsTimestamp",
+              Date.now().toString(),
+            );
           }
         } catch (jsonError) {
           console.log("Stats API returned invalid JSON:", jsonError);
@@ -178,7 +211,21 @@ export default function TechnicianDashboard() {
       }
     } catch (error) {
       console.error("Error fetching job stats:", error);
-      // Keep default values on error
+
+      // Increment error count for intelligent retry logic
+      setNetworkErrors((prev) => prev + 1);
+
+      // Use cached data or default values when network fails
+      const cachedStats = localStorage.getItem("technicianJobStats");
+      if (cachedStats) {
+        try {
+          setJobStats(JSON.parse(cachedStats));
+          console.log("Using cached job stats due to network error");
+        } catch (parseError) {
+          console.warn("Failed to parse cached job stats:", parseError);
+        }
+      }
+      // Keep default values if no cache available
     }
   };
 
@@ -188,7 +235,18 @@ export default function TechnicianDashboard() {
       const employeeId =
         userData.employeeId || localStorage.getItem("employeeId") || "tech001";
       const today = new Date().toISOString().split("T")[0];
-      const response = await fetch(
+
+      // Add network timeout and error handling
+      const fetchWithTimeout = (url: string, timeout = 5000) => {
+        return Promise.race([
+          fetch(url),
+          new Promise<Response>((_, reject) =>
+            setTimeout(() => reject(new Error("Network timeout")), timeout),
+          ),
+        ]);
+      };
+
+      const response = await fetchWithTimeout(
         `/api/db/clock-records/${employeeId}/${today}`,
       );
 
@@ -224,6 +282,10 @@ export default function TechnicianDashboard() {
         setWorkingHours(formatHours(clockRecord.totalWorkingHours || 0));
         setDistanceTraveled(clockRecord.totalDistance?.toFixed(1) || "0.0");
         console.log("Clock data loaded from database");
+
+        // Reset error count on successful fetch
+        setNetworkErrors(0);
+        setLastSuccessfulFetch(Date.now());
       } else {
         // API returned valid JSON but no data found - use localStorage fallback
         console.log("No clock data in database, using localStorage fallback");
@@ -231,6 +293,8 @@ export default function TechnicianDashboard() {
       }
     } catch (error) {
       console.error("Error fetching clock data:", error);
+      // Always fallback to localStorage when network fails
+      console.log("Using localStorage fallback due to network/database error");
       updateTimeAndDistanceFromStorage();
     }
   };
@@ -283,10 +347,22 @@ export default function TechnicianDashboard() {
 
     loadInitialData();
 
-    // Set up real-time updates every minute
+    // Set up intelligent polling based on network status
     const interval = setInterval(() => {
-      fetchJobStats();
-      fetchClockData();
+      // Use exponential backoff when there are network errors
+      const backoffFactor = Math.min(networkErrors, 5); // Cap at 5
+      const shouldPoll =
+        networkErrors === 0 ||
+        Date.now() - lastSuccessfulFetch > 60000 * Math.pow(2, backoffFactor);
+
+      if (shouldPoll) {
+        fetchJobStats();
+        fetchClockData();
+      } else {
+        console.log(
+          `Skipping API calls due to ${networkErrors} consecutive network errors`,
+        );
+      }
     }, 60000);
 
     return () => clearInterval(interval);
@@ -367,7 +443,11 @@ export default function TechnicianDashboard() {
         navigate("/technician/analytics");
         break;
       case "sync":
-        // Sync data
+        // Force refresh data with retry
+        console.log("Manual sync triggered");
+        setNetworkErrors(0); // Reset error count
+        fetchJobStats();
+        fetchClockData();
         break;
       case "close":
         navigate("/clock-in");
@@ -485,6 +565,13 @@ export default function TechnicianDashboard() {
           </Button>
 
           <div className="flex items-center space-x-2">
+            {/* Network Status Indicator */}
+            {networkErrors > 0 && (
+              <div className="flex items-center space-x-1 bg-red-500/20 px-2 py-1 rounded-lg">
+                <AlertCircle className="h-4 w-4 text-red-200" />
+                <span className="text-xs text-red-200">Offline</span>
+              </div>
+            )}
             <NotificationSystem
               technicianId={userData.employeeId || "tech001"}
             />
@@ -523,13 +610,13 @@ export default function TechnicianDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="p-6">
+      <div className="p-4">
         {/* Job Status Summary - Moved to top */}
-        <div className="bg-white rounded-2xl p-6 shadow-md mb-6">
-          <h3 className="font-semibold text-gray-800 mb-4">
+        <div className="bg-white rounded-xl p-4 shadow-lg mb-4">
+          <h3 className="font-semibold text-gray-800 mb-3 text-lg">
             Today's Job Status
           </h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
                 {isLoading ? "..." : jobStats.assigned}
@@ -558,22 +645,22 @@ export default function TechnicianDashboard() {
         </div>
 
         {/* Dashboard Cards Grid - Only 4 cards */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {dashboardCards.map((card) => {
             const IconComponent = card.icon;
             return (
               <Card
                 key={card.id}
-                className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
+                className="bg-white hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-lg"
                 onClick={card.action}
               >
-                <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-4">
-                    <div className={`${card.color} p-4 rounded-2xl`}>
-                      <IconComponent className="h-8 w-8 text-white" />
+                <CardContent className="p-4 text-center">
+                  <div className="flex justify-center mb-3">
+                    <div className={`${card.color} p-3 rounded-xl shadow-md`}>
+                      <IconComponent className="h-6 w-6 text-white" />
                     </div>
                   </div>
-                  <h3 className="font-semibold text-gray-800 mb-2">
+                  <h3 className="font-semibold text-gray-800 text-sm leading-tight mb-1">
                     {card.title}
                   </h3>
                 </CardContent>

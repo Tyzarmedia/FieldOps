@@ -184,6 +184,11 @@ function getNavigationForRole(role: string) {
           href: "/job-analytics",
           icon: LayoutDashboard,
         },
+        {
+          name: "Network Assessments",
+          href: "/manager/network-assessments",
+          icon: Network,
+        },
         { name: "Job Board", href: "/job-board", icon: ClipboardList },
       ];
 

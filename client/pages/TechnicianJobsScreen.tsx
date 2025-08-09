@@ -383,11 +383,11 @@ export default function TechnicianJobsScreen() {
                   </Button>
                   <Button
                     size="sm"
-                    className="bg-green-600 text-white hover:bg-green-700"
-                    onClick={() => handleJobAction(selectedJob, "complete")}
+                    className="bg-orange-500 text-white hover:bg-orange-600"
+                    onClick={() => handleJobAction(selectedJob, "pause")}
                   >
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Complete Job
+                    <Pause className="h-4 w-4 mr-2" />
+                    Pause Job
                   </Button>
                 </>
               )}
@@ -907,28 +907,16 @@ export default function TechnicianJobsScreen() {
                     </Button>
                   )}
                   {job.status === "in-progress" && (
-                    <div className="flex space-x-2">
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleJobAction(job, "pause");
-                        }}
-                        className="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-full"
-                      >
-                        <Pause className="h-4 w-4 mr-2" />
-                        Pause
-                      </Button>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleJobAction(job, "complete");
-                        }}
-                        className="flex-1 bg-purple-500 hover:bg-purple-600 text-white rounded-full"
-                      >
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Complete
-                      </Button>
-                    </div>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleJobAction(job, "pause");
+                      }}
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full"
+                    >
+                      <Pause className="h-4 w-4 mr-2" />
+                      Pause Job
+                    </Button>
                   )}
                   {job.status === "completed" && (
                     <Button

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { geolocationUtils } from "@/utils/geolocationUtils";
 import { useNotification } from "@/components/ui/notification";
 import { JobTimer } from "@/components/JobTimer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -47,6 +48,7 @@ import {
   CircleDot,
   Play,
   Pause,
+  Square,
 } from "lucide-react";
 
 interface JobDetails {
@@ -315,12 +317,7 @@ export default function EnhancedJobDetailsScreen() {
       }
 
       // Log detailed error information for debugging
-      console.error("Geolocation error details:", {
-        code: error.code,
-        message: error.message,
-        errorName: getErrorName(error.code),
-        userMessage,
-      });
+      geolocationUtils.logGeolocationError(error, "EnhancedJobDetailsScreen");
 
       // Show user-friendly notification
       if (shouldShowWarning) {
@@ -328,28 +325,15 @@ export default function EnhancedJobDetailsScreen() {
       }
     };
 
-    const getErrorName = (code: number): string => {
-      switch (code) {
-        case 1:
-          return "PERMISSION_DENIED";
-        case 2:
-          return "POSITION_UNAVAILABLE";
-        case 3:
-          return "TIMEOUT";
-        default:
-          return "UNKNOWN_ERROR";
-      }
-    };
-
     const getCurrentLocationFallback = () => {
       navigator.geolocation.getCurrentPosition(
         handleLocationSuccess,
         (error) => {
-          console.error("Fallback location request failed:", {
-            code: error.code,
-            message: error.message,
-            errorName: getErrorName(error.code),
-          });
+          // Log fallback error using improved utility
+          geolocationUtils.logGeolocationError(
+            error,
+            "EnhancedJobDetailsScreen - Fallback",
+          );
 
           // Use default location if all else fails
           setCurrentLocation({
@@ -479,15 +463,18 @@ export default function EnhancedJobDetailsScreen() {
   // Accept job
   const acceptJob = async () => {
     try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/accept`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          acceptedTime: new Date().toISOString(),
-          location: currentLocation,
-        }),
-      });
+      const response = await fetch(
+        `/api/job-mgmt/jobs/${jobDetails.id}/accept`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            technicianId: technician.id,
+            acceptedTime: new Date().toISOString(),
+            location: currentLocation,
+          }),
+        },
+      );
 
       if (response.ok) {
         setJobDetails((prev) => ({ ...prev, status: "accepted" }));
@@ -990,27 +977,75 @@ export default function EnhancedJobDetailsScreen() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3">
         {/* Header Title Row */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-xl font-bold">Job Details</h1>
-          <div className="flex items-center space-x-3">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-lg font-bold">Job Details</h1>
+          <div className="flex items-center space-x-2">
+            {/* Job Control Buttons */}
+            {jobDetails.status === "accepted" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+                onClick={startJob}
+              >
+                <Play className="h-4 w-4 mr-1" />
+                Start
+              </Button>
+            )}
+
+            {jobStatus === "in-progress" && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+                  onClick={pauseJob}
+                >
+                  <Pause className="h-4 w-4 mr-1" />
+                  Pause
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+                  onClick={stopJob}
+                >
+                  <Square className="h-4 w-4 mr-1" />
+                  Stop
+                </Button>
+              </>
+            )}
+
+            {jobStatus === "paused" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+                onClick={resumeJob}
+              >
+                <Play className="h-4 w-4 mr-1" />
+                Resume
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/20 rounded-full h-10 w-10"
+              className="text-white hover:bg-white/20 rounded-full h-8 w-8"
               onClick={() => setShowTimerOverlay(!showTimerOverlay)}
               title="View Timer"
             >
-              <Clock className="h-6 w-6" />
+              <Clock className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/20 rounded-full h-10 w-10"
+              className="text-white hover:bg-white/20 rounded-full h-8 w-8"
               onClick={() => navigate("/technician/jobs")}
             >
-              <X className="h-6 w-6" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -1033,17 +1068,7 @@ export default function EnhancedJobDetailsScreen() {
 
         {/* Job Actions */}
         <div className="flex justify-center space-x-4 mb-6">
-          {jobStatus === "assigned" && jobDetails.status === "assigned" && (
-            <Button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2"
-              onClick={acceptJob}
-            >
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Accept
-            </Button>
-          )}
-
-          {jobStatus === "assigned" && jobDetails.status === "accepted" && (
+          {jobDetails.status === "accepted" && (
             <Button
               className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
               onClick={startJob}
@@ -1093,59 +1118,85 @@ export default function EnhancedJobDetailsScreen() {
         </div>
 
         {/* Company and Job Info */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold mb-2">
+        <div className="text-center mb-4">
+          <h2 className="text-lg font-bold mb-1">
             Vumatel (Pty) Ltd - Central
           </h2>
-          <h3 className="text-xl font-semibold mb-3">#{jobDetails.id}215784</h3>
+          <h3 className="text-md font-semibold mb-2">#{jobDetails.id}215784</h3>
           <Badge
             className={`px-4 py-1 text-sm ${
-              jobStatus === "assigned" && jobDetails.status === "assigned"
+              jobDetails.status === "assigned"
                 ? "bg-orange-500/80 text-white"
-                : jobStatus === "assigned" && jobDetails.status === "accepted"
-                  ? "bg-purple-500/80 text-white"
-                  : jobStatus === "in-progress"
+                : jobDetails.status === "accepted"
+                  ? "bg-blue-500/80 text-white"
+                  : jobDetails.status === "in-progress" ||
+                      jobDetails.status === "In Progress"
                     ? "bg-green-500/80 text-white"
-                    : jobStatus === "paused"
+                    : jobDetails.status === "paused"
                       ? "bg-yellow-500/80 text-white"
-                      : "bg-gray-500/80 text-white"
+                      : jobDetails.status === "completed"
+                        ? "bg-purple-500/80 text-white"
+                        : "bg-gray-500/80 text-white"
             }`}
           >
-            {jobStatus === "assigned" && jobDetails.status === "assigned"
+            {jobDetails.status === "assigned"
               ? "Assigned"
-              : jobStatus === "assigned" && jobDetails.status === "accepted"
+              : jobDetails.status === "accepted"
                 ? "Accepted"
-                : jobStatus === "in-progress"
+                : jobDetails.status === "in-progress" ||
+                    jobDetails.status === "In Progress"
                   ? "In Progress"
-                  : jobStatus === "paused"
+                  : jobDetails.status === "paused"
                     ? "Paused"
-                    : "Completed"}
+                    : jobDetails.status === "completed"
+                      ? "Completed"
+                      : jobDetails.status.charAt(0).toUpperCase() +
+                        jobDetails.status.slice(1)}
           </Badge>
         </div>
 
         {/* Info Cards */}
-        <div className="flex justify-between space-x-4">
-          <div className="bg-white/20 rounded-2xl p-4 flex-1 flex items-center space-x-3">
-            <Calendar className="h-8 w-8 text-white" />
+        <div className="flex justify-between space-x-3">
+          <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center space-x-2">
+            <Calendar className="h-6 w-6 text-white" />
             <div>
-              <p className="text-sm text-white/80">Created On</p>
-              <p className="font-semibold">Aug 7, 2025</p>
+              <p className="text-xs text-white/80">Created On</p>
+              <p className="font-semibold">
+                {jobDetails.createdDate
+                  ? new Date(jobDetails.createdDate).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      },
+                    )
+                  : new Date().toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+              </p>
             </div>
           </div>
-          <div className="bg-white/20 rounded-2xl p-4 flex-1 flex items-center space-x-3">
-            <CircleDot className="h-8 w-8 text-blue-400" />
+          <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center space-x-2">
+            <CircleDot className="h-6 w-6 text-blue-400" />
             <div>
-              <p className="text-sm text-white/80">Status</p>
+              <p className="text-xs text-white/80">Status</p>
               <p className="font-semibold">
-                {jobStatus === "assigned" && jobDetails.status === "assigned"
+                {jobDetails.status === "assigned"
                   ? "Assigned"
-                  : jobStatus === "assigned" && jobDetails.status === "accepted"
+                  : jobDetails.status === "accepted"
                     ? "Accepted"
-                    : jobStatus === "in-progress"
+                    : jobDetails.status === "in-progress" ||
+                        jobDetails.status === "In Progress"
                       ? "In Progress"
-                      : jobStatus === "paused"
+                      : jobDetails.status === "paused"
                         ? "Paused"
-                        : "Completed"}
+                        : jobDetails.status === "completed"
+                          ? "Completed"
+                          : jobDetails.status.charAt(0).toUpperCase() +
+                            jobDetails.status.slice(1)}
               </p>
             </div>
           </div>
@@ -1202,18 +1253,7 @@ export default function EnhancedJobDetailsScreen() {
 
             {/* Timer Controls */}
             <div className="flex justify-center space-x-2">
-              {jobStatus === "assigned" && jobDetails.status === "assigned" && (
-                <Button
-                  onClick={acceptJob}
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
-                  size="sm"
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Accept
-                </Button>
-              )}
-
-              {jobStatus === "assigned" && jobDetails.status === "accepted" && (
+              {jobDetails.status === "accepted" && (
                 <Button
                   onClick={startJob}
                   className="bg-green-500 hover:bg-green-600 text-white"
@@ -1336,7 +1376,7 @@ export default function EnhancedJobDetailsScreen() {
                   />
                   {imageFormData.faultFinding && (
                     <p className="text-sm text-green-600 mt-1">
-                      ✓ {imageFormData.faultFinding.name}
+                      �� {imageFormData.faultFinding.name}
                     </p>
                   )}
                 </div>

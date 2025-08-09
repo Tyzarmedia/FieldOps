@@ -111,6 +111,97 @@ export default function NetworkAssessmentScreen() {
     return speed >= threshold ? "Good" : "Needs Improvement";
   };
 
+  // Save assessment report with images
+  const saveAssessmentReport = async () => {
+    try {
+      const technicianId = localStorage.getItem("employeeId") || "tech001";
+      const technicianName = localStorage.getItem("userName") || "Technician";
+
+      // Get current location
+      const location = await getCurrentLocation();
+
+      const assessmentReport = {
+        id: `NA-${Date.now()}`,
+        technicianId,
+        technicianName,
+        assessmentDate: new Date().toISOString(),
+        location: {
+          latitude: location?.latitude || 0,
+          longitude: location?.longitude || 0,
+          address: location?.address || "Unknown location",
+        },
+        coreOptions: assessmentData.coreOptions,
+        reachOptions: assessmentData.reachOptions,
+        signalStrength: assessmentData.signalStrength,
+        downloadSpeed: assessmentData.downloadSpeed,
+        uploadSpeed: assessmentData.uploadSpeed,
+        networkType: assessmentData.networkType,
+        connectedDevices: assessmentData.connectedDevices,
+        issuesFound: assessmentData.issuesFound,
+        notes: assessmentData.notes,
+        images: capturedImages, // Include all captured images
+        status: "completed",
+      };
+
+      // Submit to database
+      const response = await fetch("/api/network-assessments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(assessmentReport),
+      });
+
+      if (response.ok) {
+        alert("Network assessment saved successfully!");
+        // Reset form
+        setAssessmentData({
+          coreOptions: "",
+          reachOptions: "",
+          signalStrength: -50,
+          downloadSpeed: 100,
+          uploadSpeed: 50,
+          networkType: "fiber",
+          connectedDevices: 5,
+          issuesFound: false,
+          notes: "",
+        });
+        setCapturedImages([]);
+        navigate("/technician");
+      } else {
+        throw new Error("Failed to save assessment");
+      }
+    } catch (error) {
+      console.error("Error saving assessment:", error);
+      alert("Failed to save assessment. Please try again.");
+    }
+  };
+
+  // Get current location
+  const getCurrentLocation = (): Promise<{
+    latitude: number;
+    longitude: number;
+    address: string;
+  } | null> => {
+    return new Promise((resolve) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              address: `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`,
+            });
+          },
+          (error) => {
+            console.warn("Geolocation error:", error);
+            resolve(null);
+          },
+        );
+      } else {
+        resolve(null);
+      }
+    });
+  };
+
   const signalInfo = getSignalStatus(assessmentData.signalStrength);
 
   return (
@@ -376,7 +467,7 @@ export default function NetworkAssessmentScreen() {
         {/* Save Report */}
         <Button
           className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 text-lg font-semibold"
-          onClick={() => console.log("Saving assessment report")}
+          onClick={saveAssessmentReport}
         >
           Save Assessment Report
         </Button>

@@ -95,7 +95,13 @@ export default function ClockInScreen({
 
             setLastLocation(newLocation);
           },
-          (error) => console.log("Geolocation error:", error),
+          (error) => {
+            console.error("Geolocation error:", {
+              code: error.code,
+              message: error.message,
+              timestamp: new Date().toISOString()
+            });
+          },
           { enableHighAccuracy: true },
         );
       }

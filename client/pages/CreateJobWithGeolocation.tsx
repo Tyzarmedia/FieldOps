@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { geolocationUtils } from "@/utils/geolocationUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -196,29 +197,12 @@ export default function CreateJobWithGeolocation() {
       }
 
       // Log detailed error information for debugging
-      console.error("Geolocation error details:", {
-        code: error.code,
-        message: error.message,
-        errorName: getErrorName(error.code),
-        userMessage,
-      });
+      geolocationUtils.logGeolocationError(error, "CreateJobWithGeolocation");
 
       alert(userMessage);
       setLocationLoading(false);
     };
 
-    const getErrorName = (code: number): string => {
-      switch (code) {
-        case 1:
-          return "PERMISSION_DENIED";
-        case 2:
-          return "POSITION_UNAVAILABLE";
-        case 3:
-          return "TIMEOUT";
-        default:
-          return "UNKNOWN_ERROR";
-      }
-    };
 
     // First try with high accuracy
     navigator.geolocation.getCurrentPosition(

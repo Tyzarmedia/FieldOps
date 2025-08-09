@@ -54,6 +54,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import ApplyLeaveScreen from "./pages/ApplyLeaveScreen";
 import NetworkAssessmentScreen from "./pages/NetworkAssessmentScreen";
+import ManagerNetworkAssessmentsScreen from "./pages/ManagerNetworkAssessmentsScreen";
 import TechnicianSettingsScreen from "./pages/TechnicianSettingsScreen";
 
 const queryClient = new QueryClient();
@@ -123,6 +124,14 @@ function MobileProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (!userRole) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Check if technician/assistant needs to clock in
+  if (userRole === "Technician" || userRole === "AssistantTechnician") {
+    const isClockedIn = localStorage.getItem("isClockedIn") === "true";
+    if (!isClockedIn) {
+      return <Navigate to="/clock-in" replace />;
+    }
   }
 
   // No Layout wrapper for mobile routes
@@ -363,6 +372,14 @@ export default function App() {
                       title="Job Analytics"
                       description="Job completion rates, efficiency metrics, and trend analysis."
                     />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager/network-assessments"
+                element={
+                  <ProtectedRoute>
+                    <ManagerNetworkAssessmentsScreen />
                   </ProtectedRoute>
                 }
               />
