@@ -273,6 +273,97 @@ export default function NetworkAssessmentScreen() {
                 }
               />
             </div>
+
+            <div className="space-y-2">
+              <Label>Network Area Type</Label>
+              <Select
+                value={assessmentData.networkAreaType}
+                onValueChange={(value) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    networkAreaType: value,
+                    networkTechnologyType: "" // Reset technology when area changes
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select network area type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {networkAreaTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {assessmentData.networkAreaType && (
+              <div className="space-y-2">
+                <Label>Network Technology Type</Label>
+                <Select
+                  value={assessmentData.networkTechnologyType}
+                  onValueChange={(value) =>
+                    setAssessmentData({ ...assessmentData, networkTechnologyType: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select technology type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {networkTechnologyTypes[assessmentData.networkAreaType as keyof typeof networkTechnologyTypes]?.map((tech) => (
+                      <SelectItem key={tech} value={tech}>
+                        {tech}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label>Reach Options</Label>
+              <Select
+                value={assessmentData.reachOptions}
+                onValueChange={(value) =>
+                  setAssessmentData({ ...assessmentData, reachOptions: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select reach option" />
+                </SelectTrigger>
+                <SelectContent>
+                  {reachOptionsData.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Core Options</Label>
+              <Select
+                value={assessmentData.coreOptions}
+                onValueChange={(value) =>
+                  setAssessmentData({ ...assessmentData, coreOptions: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select core option" />
+                </SelectTrigger>
+                <SelectContent>
+                  {coreOptionsData.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label>Test Type</Label>
               <Select
