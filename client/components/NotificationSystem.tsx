@@ -42,6 +42,8 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
           const result = await response.json();
           if (result.success) {
             loadedNotifications = result.data;
+            // Cache successful API response
+            localStorage.setItem(`notifications-${technicianId}`, JSON.stringify(loadedNotifications));
           }
         } else {
           // Check if we have cached notifications in localStorage first
