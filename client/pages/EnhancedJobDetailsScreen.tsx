@@ -697,28 +697,70 @@ export default function EnhancedJobDetailsScreen() {
 
   const handleUpdateUdf = async () => {
     try {
-      const response = await fetch(`/api/jobs/${jobId}/udf`, {
+      // Validate required UDF fields
+      const requiredFields = ["faultResolved", "faultSolutionType", "maintenanceIssueClass"];
+      const missingFields = requiredFields.filter(field => !udfData[field as keyof typeof udfData]);
+
+      if (missingFields.length > 0) {
+        toast({
+          title: "Missing Required Fields",
+          description: `Please complete: ${missingFields.join(", ")}`,
+        });
+        return;
+      }
+
+      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/udf`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(udfData),
+        body: JSON.stringify({
+          ...udfData,
+          jobId: jobDetails.id,
+          technicianId: technician.id,
+          updatedBy: technician.name,
+          updatedDate: new Date().toISOString(),
+          workOrderNumber: `WO-${jobDetails.id}`,
+        }),
       });
 
       if (response.ok) {
-        toast({
-          title: "UDF Updated",
-          description: "User defined fields have been saved successfully.",
-        });
+        const result = await response.json();
+
+        if (result.success) {
+          // Mark UDF as completed for sign-off
+          setSignOffData(prev => ({
+            ...prev,
+            udfCompleted: true
+          }));
+
+          toast({
+            title: "UDF Updated Successfully",
+            description: "User defined fields have been saved successfully.",
+          });
+
+          // Send notification to manager/coordinator
+          fetch("/api/notifications/udf-completed", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jobId: jobDetails.id,
+              technicianId: technician.id,
+              technicianName: technician.name,
+              timestamp: new Date().toISOString(),
+            }),
+          }).catch((err) => console.error("Failed to send notification:", err));
+
+        } else {
+          throw new Error(result.message || "UDF update failed");
+        }
       } else {
-        toast({
-          title: "Update Failed",
-          description: "Failed to update UDF. Please try again.",
-        });
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Update failed with status ${response.status}`);
       }
     } catch (error) {
       console.error("Failed to update UDF:", error);
       toast({
         title: "Update Failed",
-        description: "Failed to update UDF. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to update UDF. Please try again.",
       });
     }
   };
