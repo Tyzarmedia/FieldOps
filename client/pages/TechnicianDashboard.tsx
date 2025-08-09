@@ -379,6 +379,10 @@ export default function TechnicianDashboard() {
       overtimeTrackingService.startTracking(employeeId);
       console.log('Overtime tracking initialized successfully');
 
+      // Start logout detection
+      logoutDetectionService.startDetection(employeeId);
+      console.log('Logout detection initialized successfully');
+
       // Check current overtime session
       const currentSession = overtimeTrackingService.getCurrentSession();
       if (currentSession) {
