@@ -208,7 +208,18 @@ export default function TechnicianDashboard() {
       const employeeId =
         userData.employeeId || localStorage.getItem("employeeId") || "tech001";
       const today = new Date().toISOString().split("T")[0];
-      const response = await fetch(
+
+      // Add network timeout and error handling
+      const fetchWithTimeout = (url: string, timeout = 5000) => {
+        return Promise.race([
+          fetch(url),
+          new Promise<Response>((_, reject) =>
+            setTimeout(() => reject(new Error('Network timeout')), timeout)
+          )
+        ]);
+      };
+
+      const response = await fetchWithTimeout(
         `/api/db/clock-records/${employeeId}/${today}`,
       );
 
@@ -251,6 +262,8 @@ export default function TechnicianDashboard() {
       }
     } catch (error) {
       console.error("Error fetching clock data:", error);
+      // Always fallback to localStorage when network fails
+      console.log('Using localStorage fallback due to network/database error');
       updateTimeAndDistanceFromStorage();
     }
   };
