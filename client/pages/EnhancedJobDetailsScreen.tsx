@@ -2619,21 +2619,129 @@ export default function EnhancedJobDetailsScreen() {
                   </Button>
                 </div>
 
-                {/* Completion Status */}
-                {(!signOffData.acceptTerms ||
-                  !signOffData.udfCompleted ||
-                  !signOffData.imagesUploaded ||
-                  !signOffData.stockChecked ||
-                  !signOffData.signature) && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <div className="flex items-center">
-                      <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2" />
-                      <span className="text-sm text-yellow-800 font-medium">
-                        Complete all checklist items and sign to finish the job
-                      </span>
+                {/* Detailed Completion Status */}
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+                    <CheckCircle className="h-5 w-5 text-blue-600 mr-2" />
+                    Job Completion Status
+                  </h4>
+                  <div className="space-y-3">
+                    {/* UDF Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">UDF Fields Completed</span>
+                      <div className="flex items-center">
+                        {signOffData.udfCompleted ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span className={`ml-2 text-sm font-medium ${
+                          signOffData.udfCompleted ? "text-green-600" : "text-orange-600"
+                        }`}>
+                          {signOffData.udfCompleted ? "Complete" : "Pending"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Images Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">Images Uploaded</span>
+                      <div className="flex items-center">
+                        {signOffData.imagesUploaded ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span className={`ml-2 text-sm font-medium ${
+                          signOffData.imagesUploaded ? "text-green-600" : "text-orange-600"
+                        }`}>
+                          {signOffData.imagesUploaded ? `${jobPhotos.length} Images` : "No Images"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Stock Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">Stock Allocation</span>
+                      <div className="flex items-center">
+                        {signOffData.stockChecked ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span className={`ml-2 text-sm font-medium ${
+                          signOffData.stockChecked ? "text-green-600" : "text-orange-600"
+                        }`}>
+                          {signOffData.stockChecked ? `${allocatedStock.length} Items` : "None Allocated"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Signature Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">Digital Signature</span>
+                      <div className="flex items-center">
+                        {signOffData.signature ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span className={`ml-2 text-sm font-medium ${
+                          signOffData.signature ? "text-green-600" : "text-orange-600"
+                        }`}>
+                          {signOffData.signature ? "Signed" : "Not Signed"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Terms Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">Terms Accepted</span>
+                      <div className="flex items-center">
+                        {signOffData.acceptTerms ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span className={`ml-2 text-sm font-medium ${
+                          signOffData.acceptTerms ? "text-green-600" : "text-orange-600"
+                        }`}>
+                          {signOffData.acceptTerms ? "Accepted" : "Not Accepted"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Overall Progress */}
+                    <div className="border-t pt-3 mt-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">Overall Progress</span>
+                        <span className="text-sm font-medium text-blue-600">
+                          {[
+                            signOffData.udfCompleted,
+                            signOffData.imagesUploaded,
+                            signOffData.stockChecked,
+                            signOffData.signature,
+                            signOffData.acceptTerms
+                          ].filter(Boolean).length}/5 Complete
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${([
+                              signOffData.udfCompleted,
+                              signOffData.imagesUploaded,
+                              signOffData.stockChecked,
+                              signOffData.signature,
+                              signOffData.acceptTerms
+                            ].filter(Boolean).length / 5) * 100}%`
+                          }}
+                        ></div>
+                      </div>
                     </div>
                   </div>
-                )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
