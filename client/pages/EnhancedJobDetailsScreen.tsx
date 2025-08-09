@@ -460,8 +460,8 @@ export default function EnhancedJobDetailsScreen() {
   // Accept job
   const acceptJob = async () => {
     try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/accept`, {
-        method: "POST",
+      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/accept`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: technician.id,
