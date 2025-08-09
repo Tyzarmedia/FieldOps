@@ -52,6 +52,8 @@ export default function TechnicianDashboard() {
   });
   const [latestJob, setLatestJob] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [networkErrors, setNetworkErrors] = useState(0);
+  const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState(Date.now());
   const navigate = useNavigate();
 
   // Fetch user data from database
