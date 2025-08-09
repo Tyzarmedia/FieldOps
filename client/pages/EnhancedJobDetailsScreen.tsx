@@ -1125,15 +1125,17 @@ export default function EnhancedJobDetailsScreen() {
             <div>
               <p className="text-sm text-white/80">Status</p>
               <p className="font-semibold">
-                {jobStatus === "assigned" && jobDetails.status === "assigned"
+                {jobDetails.status === "assigned"
                   ? "Assigned"
-                  : jobStatus === "assigned" && jobDetails.status === "accepted"
+                  : jobDetails.status === "accepted"
                     ? "Accepted"
-                    : jobStatus === "in-progress"
+                    : jobDetails.status === "in-progress" || jobDetails.status === "In Progress"
                       ? "In Progress"
-                      : jobStatus === "paused"
+                      : jobDetails.status === "paused"
                         ? "Paused"
-                        : "Completed"}
+                        : jobDetails.status === "completed"
+                          ? "Completed"
+                          : jobDetails.status.charAt(0).toUpperCase() + jobDetails.status.slice(1)}
               </p>
             </div>
           </div>
