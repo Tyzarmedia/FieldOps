@@ -117,8 +117,18 @@ export default function TechnicianDashboard() {
       const employeeId =
         userData.employeeId || localStorage.getItem("employeeId") || "tech001";
 
+      // Add network timeout and error handling
+      const fetchWithTimeout = (url: string, timeout = 5000) => {
+        return Promise.race([
+          fetch(url),
+          new Promise<Response>((_, reject) =>
+            setTimeout(() => reject(new Error('Network timeout')), timeout)
+          )
+        ]);
+      };
+
       // Fetch jobs for technician
-      const jobsResponse = await fetch(
+      const jobsResponse = await fetchWithTimeout(
         `/api/job-mgmt/jobs/technician/${employeeId}`,
       );
 
@@ -161,7 +171,7 @@ export default function TechnicianDashboard() {
       }
 
       // Also try the stats endpoint for more accurate data
-      const statsResponse = await fetch(
+      const statsResponse = await fetchWithTimeout(
         `/api/job-mgmt/jobs/stats/${employeeId}`,
       );
 
@@ -178,7 +188,17 @@ export default function TechnicianDashboard() {
       }
     } catch (error) {
       console.error("Error fetching job stats:", error);
-      // Keep default values on error
+      // Use cached data or default values when network fails
+      const cachedStats = localStorage.getItem('technicianJobStats');
+      if (cachedStats) {
+        try {
+          setJobStats(JSON.parse(cachedStats));
+          console.log('Using cached job stats due to network error');
+        } catch (parseError) {
+          console.warn('Failed to parse cached job stats:', parseError);
+        }
+      }
+      // Keep default values if no cache available
     }
   };
 
