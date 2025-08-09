@@ -368,6 +368,14 @@ export default function App() {
                 }
               />
               <Route
+                path="/manager/network-assessments"
+                element={
+                  <ProtectedRoute>
+                    <ManagerNetworkAssessmentsScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/job-board"
                 element={
                   <ProtectedRoute>
