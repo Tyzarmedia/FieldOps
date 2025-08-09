@@ -633,22 +633,22 @@ export default function TechnicianDashboard() {
         </div>
 
         {/* Dashboard Cards Grid - Only 4 cards */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {dashboardCards.map((card) => {
             const IconComponent = card.icon;
             return (
               <Card
                 key={card.id}
-                className="bg-white hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md"
+                className="bg-white hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-lg"
                 onClick={card.action}
               >
-                <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-4">
-                    <div className={`${card.color} p-4 rounded-2xl`}>
-                      <IconComponent className="h-8 w-8 text-white" />
+                <CardContent className="p-4 text-center">
+                  <div className="flex justify-center mb-3">
+                    <div className={`${card.color} p-3 rounded-xl shadow-md`}>
+                      <IconComponent className="h-6 w-6 text-white" />
                     </div>
                   </div>
-                  <h3 className="font-semibold text-gray-800 mb-2">
+                  <h3 className="font-semibold text-gray-800 text-sm leading-tight mb-1">
                     {card.title}
                   </h3>
                 </CardContent>
