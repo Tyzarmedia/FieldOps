@@ -20,6 +20,7 @@ import jobManagementRouter from "./routes/job-management";
 import stockManagementRouter from "./routes/stock-management";
 import notificationsRouter from "./routes/notifications";
 import technicianStatusRouter from "./routes/technician-status";
+import networkAssessmentsRouter from "./routes/network-assessments";
 
 export function createServer() {
   const app = express();
