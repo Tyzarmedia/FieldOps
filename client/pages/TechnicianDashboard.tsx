@@ -24,6 +24,8 @@ import {
   LogOut,
   UserCheck,
   AlertCircle,
+  MapPin,
+  Navigation,
 } from "lucide-react";
 
 interface JobStats {
