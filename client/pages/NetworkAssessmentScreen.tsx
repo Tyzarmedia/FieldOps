@@ -177,14 +177,24 @@ export default function NetworkAssessmentScreen() {
         alert("Network assessment saved successfully!");
         // Reset form
         setAssessmentData({
+          networkAreaType: "",
+          networkTechnologyType: "",
+          location: "",
+          testType: "",
+          signalStrength: -65,
+          downloadSpeed: 45.2,
+          uploadSpeed: 12.8,
+          latency: 28,
+          packetLoss: 0.1,
+          issuesFound: "",
+          recommendedActions: "",
+          priority: "medium",
+          coordinates: "",
+          equipmentLabel: "",
           coreOptions: "",
           reachOptions: "",
-          signalStrength: -50,
-          downloadSpeed: 100,
-          uploadSpeed: 50,
           networkType: "fiber",
           connectedDevices: 5,
-          issuesFound: false,
           notes: "",
         });
         setCapturedImages([]);
