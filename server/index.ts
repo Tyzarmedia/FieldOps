@@ -52,6 +52,7 @@ export function createServer() {
   app.get("/api/jobs/technician/:technicianId", getJobsByTechnician);
   app.post("/api/jobs", createJob);
   app.put("/api/jobs/:jobId", updateJob);
+  app.post("/api/jobs/:jobId/allocate-stock", allocateStock);
   app.post("/api/jobs/:jobId/close", closeJob);
   app.post("/api/jobs/:jobId/start-tracking", startJobTracking);
   app.post("/api/jobs/:jobId/toggle-tracking", toggleJobTracking);
