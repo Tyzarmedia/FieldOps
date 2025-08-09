@@ -325,9 +325,15 @@ export default function TechnicianDashboard() {
       const minutes = diffInMinutes % 60;
       setWorkingHours(`${hours}:${minutes.toString().padStart(2, "0")}`);
 
-      // Simulate distance based on time (0.5 km per hour)
-      const distanceKm = (diffInMinutes / 60) * 0.5;
-      setDistanceTraveled(distanceKm.toFixed(1));
+      // Use real distance tracking if available, otherwise simulate
+      const realDistance = locationTrackingService.getTotalDistanceTraveled();
+      if (realDistance > 0) {
+        setDistanceTraveled(realDistance.toFixed(1));
+      } else {
+        // Fallback to simulation if no real tracking data
+        const distanceKm = (diffInMinutes / 60) * 0.5;
+        setDistanceTraveled(distanceKm.toFixed(1));
+      }
     }
   };
 
