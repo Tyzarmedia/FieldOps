@@ -20,6 +20,7 @@ import {
   Settings,
   LogOut,
   UserCheck,
+  AlertCircle,
 } from "lucide-react";
 
 interface JobStats {
