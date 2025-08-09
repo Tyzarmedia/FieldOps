@@ -113,8 +113,14 @@ export function LocationPermissionHandler({
           break;
       }
 
-      setErrorMessage(errorMsg);
-      onError?.(errorMsg);
+      // Only show error if location is required
+      if (required) {
+        setErrorMessage(errorMsg);
+        onError?.(errorMsg);
+      } else {
+        // For optional location, just log and continue
+        console.log("Location access optional:", errorMsg);
+      }
       setIsLoading(false);
     };
 
