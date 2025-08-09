@@ -68,6 +68,11 @@ export function NotificationSystem({ technicianId }: NotificationSystemProps) {
 
         setNotifications(filteredNotifications);
         setUnreadCount(filteredNotifications.filter((n) => !n.read).length);
+
+        // Update cache with filtered notifications
+        if (filteredNotifications.length > 0) {
+          localStorage.setItem(`notifications-${technicianId}`, JSON.stringify(filteredNotifications));
+        }
       } catch (error) {
         console.error("Error loading notifications:", error);
       }
