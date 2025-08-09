@@ -376,7 +376,7 @@ export default function NetworkAssessmentScreen() {
         {/* Save Report */}
         <Button
           className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 text-lg font-semibold"
-          onClick={() => console.log("Saving assessment report")}
+          onClick={saveAssessmentReport}
         >
           Save Assessment Report
         </Button>
