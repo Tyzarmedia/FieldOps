@@ -340,9 +340,9 @@ export default function TechnicianDashboard() {
     }
   };
 
-  // Initialize location tracking
+  // Initialize location and overtime tracking
   useEffect(() => {
-    const initializeLocationTracking = async () => {
+    const initializeTracking = async () => {
       const employeeId = localStorage.getItem("employeeId") || "tech001";
 
       // Start comprehensive location tracking
@@ -373,13 +373,33 @@ export default function TechnicianDashboard() {
       } else {
         console.error('Failed to initialize location tracking');
       }
+
+      // Start overtime tracking
+      overtimeTrackingService.startTracking(employeeId);
+      console.log('Overtime tracking initialized successfully');
+
+      // Check current overtime session
+      const currentSession = overtimeTrackingService.getCurrentSession();
+      if (currentSession) {
+        setOvertimeSession(currentSession);
+        setIsOvertimeActive(true);
+      }
     };
 
-    initializeLocationTracking();
+    initializeTracking();
+
+    // Set up overtime check interval
+    const overtimeCheckInterval = setInterval(() => {
+      const currentSession = overtimeTrackingService.getCurrentSession();
+      setOvertimeSession(currentSession);
+      setIsOvertimeActive(!!currentSession);
+    }, 30000); // Check every 30 seconds
 
     // Cleanup on unmount
     return () => {
       locationTrackingService.stopTracking();
+      overtimeTrackingService.stopTracking();
+      clearInterval(overtimeCheckInterval);
     };
   }, []);
 
