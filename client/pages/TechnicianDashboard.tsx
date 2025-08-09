@@ -161,6 +161,10 @@ export default function TechnicianDashboard() {
             localStorage.setItem('technicianJobStats', JSON.stringify(stats));
             localStorage.setItem('technicianJobStatsTimestamp', Date.now().toString());
 
+            // Reset error count on successful fetch
+            setNetworkErrors(0);
+            setLastSuccessfulFetch(Date.now());
+
             // Get latest job
             const sortedJobs = jobs.sort(
               (a: any, b: any) =>
