@@ -57,6 +57,8 @@ import NetworkAssessmentScreen from "./pages/NetworkAssessmentScreen";
 import ManagerNetworkAssessmentsScreen from "./pages/ManagerNetworkAssessmentsScreen";
 import TechnicianSettingsScreen from "./pages/TechnicianSettingsScreen";
 import LocationTestScreen from "./pages/LocationTestScreen";
+import StockRequestScreen from "./pages/StockRequestScreen";
+import StockManagerDashboard from "./pages/StockManagerDashboard";
 
 const queryClient = new QueryClient();
 
