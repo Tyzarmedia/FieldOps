@@ -1064,11 +1064,11 @@ export default function EnhancedJobDetailsScreen() {
         </div>
 
         {/* Company and Job Info */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold mb-2">
+        <div className="text-center mb-4">
+          <h2 className="text-lg font-bold mb-1">
             Vumatel (Pty) Ltd - Central
           </h2>
-          <h3 className="text-xl font-semibold mb-3">#{jobDetails.id}215784</h3>
+          <h3 className="text-md font-semibold mb-2">#{jobDetails.id}215784</h3>
           <Badge
             className={`px-4 py-1 text-sm ${
               jobDetails.status === "assigned"
