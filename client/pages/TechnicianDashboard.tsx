@@ -56,6 +56,9 @@ export default function TechnicianDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [networkErrors, setNetworkErrors] = useState(0);
   const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState(Date.now());
+  const [isLocationTracking, setIsLocationTracking] = useState(false);
+  const [nearbyJob, setNearbyJob] = useState<{jobId: string; distance: number} | null>(null);
+  const [totalDistance, setTotalDistance] = useState(0);
   const navigate = useNavigate();
 
   // Fetch user data from database
