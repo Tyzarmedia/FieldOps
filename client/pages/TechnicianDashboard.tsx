@@ -538,8 +538,13 @@ export default function TechnicianDashboard() {
   };
 
   const handleLogout = () => {
+    // Trigger logout detection for auto clock-out
+    logoutDetectionService.forceLogout();
+
+    // Clear user session data
     localStorage.removeItem("userRole");
     localStorage.removeItem("userEmail");
+
     navigate("/login");
   };
 
