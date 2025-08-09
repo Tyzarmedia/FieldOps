@@ -383,12 +383,74 @@ export default function NetworkAssessmentScreen() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-2">
+              <Label>Equipment Label</Label>
+              <Input
+                placeholder="Enter equipment label/ID"
+                value={assessmentData.equipmentLabel}
+                onChange={(e) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    equipmentLabel: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Connected Devices</Label>
+              <Input
+                type="number"
+                placeholder="Number of connected devices"
+                value={assessmentData.connectedDevices}
+                onChange={(e) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    connectedDevices: parseInt(e.target.value) || 0,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Issues Found</Label>
+              <Textarea
+                placeholder="Describe any issues found during assessment"
+                value={assessmentData.issuesFound}
+                onChange={(e) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    issuesFound: e.target.value,
+                  })
+                }
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Notes</Label>
+              <Textarea
+                placeholder="Additional notes and observations"
+                value={assessmentData.notes}
+                onChange={(e) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    notes: e.target.value,
+                  })
+                }
+                rows={3}
+              />
+            </div>
+
             <Button
               onClick={runAssessment}
               disabled={
                 isAssessing ||
                 !assessmentData.location ||
-                !assessmentData.testType
+                !assessmentData.testType ||
+                !assessmentData.networkAreaType ||
+                !assessmentData.reachOptions ||
+                !assessmentData.coreOptions
               }
               className="w-full bg-blue-500 hover:bg-blue-600 text-white"
             >
