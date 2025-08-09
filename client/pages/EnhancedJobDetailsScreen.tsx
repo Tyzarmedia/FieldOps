@@ -1120,10 +1120,10 @@ export default function EnhancedJobDetailsScreen() {
               </p>
             </div>
           </div>
-          <div className="bg-white/20 rounded-2xl p-4 flex-1 flex items-center space-x-3">
-            <CircleDot className="h-8 w-8 text-blue-400" />
+          <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center space-x-2">
+            <CircleDot className="h-6 w-6 text-blue-400" />
             <div>
-              <p className="text-sm text-white/80">Status</p>
+              <p className="text-xs text-white/80">Status</p>
               <p className="font-semibold">
                 {jobDetails.status === "assigned"
                   ? "Assigned"
