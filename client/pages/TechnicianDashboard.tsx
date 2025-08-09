@@ -273,6 +273,10 @@ export default function TechnicianDashboard() {
         setWorkingHours(formatHours(clockRecord.totalWorkingHours || 0));
         setDistanceTraveled(clockRecord.totalDistance?.toFixed(1) || "0.0");
         console.log("Clock data loaded from database");
+
+        // Reset error count on successful fetch
+        setNetworkErrors(0);
+        setLastSuccessfulFetch(Date.now());
       } else {
         // API returned valid JSON but no data found - use localStorage fallback
         console.log("No clock data in database, using localStorage fallback");
