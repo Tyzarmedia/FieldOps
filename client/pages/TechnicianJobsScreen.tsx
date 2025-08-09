@@ -310,6 +310,10 @@ export default function TechnicianJobsScreen() {
         updateJobStatus(job.id, "accepted");
         break;
       case "start":
+        if (!currentLocation) {
+          setShowLocationPermission(true);
+          return;
+        }
         updateJobStatus(job.id, "in-progress");
         break;
       case "pause":
