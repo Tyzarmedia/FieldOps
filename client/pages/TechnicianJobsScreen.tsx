@@ -752,6 +752,14 @@ export default function TechnicianJobsScreen() {
             <h1 className="text-xl font-semibold">Jobs</h1>
           </div>
           <div className="flex space-x-2 items-center">
+            {/* Location Status Indicator */}
+            {currentLocation && (
+              <div className="flex items-center space-x-1 bg-green-500/20 px-2 py-1 rounded-lg">
+                <Navigation className="h-4 w-4 text-green-200" />
+                <span className="text-xs text-green-200">GPS</span>
+              </div>
+            )}
+
             <NotificationSystem technicianId="tech001" />
             <Button
               variant="ghost"
