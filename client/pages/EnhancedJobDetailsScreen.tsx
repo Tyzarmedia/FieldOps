@@ -1014,17 +1014,7 @@ export default function EnhancedJobDetailsScreen() {
 
         {/* Job Actions */}
         <div className="flex justify-center space-x-4 mb-6">
-          {jobStatus === "assigned" && jobDetails.status === "assigned" && (
-            <Button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2"
-              onClick={acceptJob}
-            >
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Accept
-            </Button>
-          )}
-
-          {jobStatus === "assigned" && jobDetails.status === "accepted" && (
+          {jobDetails.status === "accepted" && (
             <Button
               className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
               onClick={startJob}
