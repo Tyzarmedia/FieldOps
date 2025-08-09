@@ -79,6 +79,11 @@ export default function TechnicianJobsScreen() {
   const [showStockUsageDialog, setShowStockUsageDialog] = useState(false);
   const [stockUsage, setStockUsage] = useState([]);
   const [availableStock, setAvailableStock] = useState([]);
+  const [showLocationPermission, setShowLocationPermission] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const navigate = useNavigate();
 
   const currentTechnicianId = "tech001"; // In real app, this would come from auth
