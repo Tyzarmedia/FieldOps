@@ -54,6 +54,11 @@ export default function NetworkAssessmentScreen() {
     priority: "medium",
     coordinates: "",
     equipmentLabel: "",
+    coreOptions: "",
+    reachOptions: "",
+    networkType: "fiber",
+    connectedDevices: 5,
+    notes: "",
   });
 
   const networkAreaTypes = [
