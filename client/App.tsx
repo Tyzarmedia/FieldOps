@@ -59,6 +59,8 @@ import TechnicianSettingsScreen from "./pages/TechnicianSettingsScreen";
 import LocationTestScreen from "./pages/LocationTestScreen";
 import StockRequestScreen from "./pages/StockRequestScreen";
 import StockManagerDashboard from "./pages/StockManagerDashboard";
+import EnhancedCoordinatorDashboard from "./pages/EnhancedCoordinatorDashboard";
+import EnhancedManagerDashboard from "./pages/EnhancedManagerDashboard";
 
 const queryClient = new QueryClient();
 
