@@ -185,6 +185,9 @@ export default function TechnicianDashboard() {
 
           if (statsResult.success && statsResult.data) {
             setJobStats(statsResult.data);
+            // Cache successful stats response
+            localStorage.setItem('technicianJobStats', JSON.stringify(statsResult.data));
+            localStorage.setItem('technicianJobStatsTimestamp', Date.now().toString());
           }
         } catch (jsonError) {
           console.log("Stats API returned invalid JSON:", jsonError);
