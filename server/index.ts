@@ -6,6 +6,7 @@ import {
   getJobsByTechnician,
   createJob,
   updateJob,
+  allocateStock,
   closeJob,
   startJobTracking,
   toggleJobTracking,
