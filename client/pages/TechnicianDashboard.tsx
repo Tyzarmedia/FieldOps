@@ -331,6 +331,49 @@ export default function TechnicianDashboard() {
     }
   };
 
+  // Initialize location tracking
+  useEffect(() => {
+    const initializeLocationTracking = async () => {
+      const employeeId = localStorage.getItem("employeeId") || "tech001";
+
+      // Start comprehensive location tracking
+      const trackingStarted = await locationTrackingService.startTracking(employeeId);
+      setIsLocationTracking(trackingStarted);
+
+      if (trackingStarted) {
+        // Add location update callback
+        locationTrackingService.addLocationCallback((location) => {
+          console.log('Location update received:', location);
+
+          // Check if near any job
+          const proximityCheck = locationTrackingService.isNearAnyJob();
+          if (proximityCheck.isNear && proximityCheck.jobId) {
+            setNearbyJob({
+              jobId: proximityCheck.jobId,
+              distance: proximityCheck.distance || 0
+            });
+          } else {
+            setNearbyJob(null);
+          }
+
+          // Update total distance
+          setTotalDistance(locationTrackingService.getTotalDistanceTraveled());
+        });
+
+        console.log('Location tracking initialized successfully');
+      } else {
+        console.error('Failed to initialize location tracking');
+      }
+    };
+
+    initializeLocationTracking();
+
+    // Cleanup on unmount
+    return () => {
+      locationTrackingService.stopTracking();
+    };
+  }, []);
+
   // Initial data loading
   useEffect(() => {
     const loadInitialData = async () => {
