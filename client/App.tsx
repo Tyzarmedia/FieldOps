@@ -319,6 +319,14 @@ export default function App() {
                 element={<StockManagerDashboard />}
               />
               <Route
+                path="/enhanced-coordinator"
+                element={<EnhancedCoordinatorDashboard />}
+              />
+              <Route
+                path="/enhanced-manager"
+                element={<EnhancedManagerDashboard />}
+              />
+              <Route
                 path="/fleet"
                 element={
                   <ProtectedRoute>
