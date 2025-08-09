@@ -155,6 +155,10 @@ export default function TechnicianDashboard() {
             };
             setJobStats(stats);
 
+            // Cache successful job stats for offline use
+            localStorage.setItem('technicianJobStats', JSON.stringify(stats));
+            localStorage.setItem('technicianJobStatsTimestamp', Date.now().toString());
+
             // Get latest job
             const sortedJobs = jobs.sort(
               (a: any, b: any) =>
