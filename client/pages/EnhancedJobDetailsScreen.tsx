@@ -495,8 +495,28 @@ export default function EnhancedJobDetailsScreen() {
     );
   };
 
-  // Update job status
-  const updateJobStatus = async (newStatus: string) => {
+  // Update job status with comprehensive validation
+  const updateJobStatus = async (newStatus: JobStatus) => {
+    const userRole = localStorage.getItem("userRole") || "Technician";
+
+    // Update job status data before checking transitions
+    const updatedJobStatusData = {
+      ...jobStatusData,
+      isNearJobLocation: isNearJobLocation,
+      udfCompleted: signOffData.udfCompleted,
+      stockUsageRecorded: allocatedStock.some(stock => stock.quantityUsed > 0),
+    };
+
+    // Check if transition is allowed
+    if (!canTransitionTo(jobDetails.status, newStatus, updatedJobStatusData, userRole)) {
+      const statusConfig = getStatusConfig(newStatus);
+      showNotification.error(
+        "Status Change Not Allowed",
+        `Cannot change to ${statusConfig.label}. Check requirements and permissions.`
+      );
+      return;
+    }
+
     try {
       const response = await fetch(
         `/api/job-mgmt/jobs/${jobDetails.id}/status`,
@@ -505,7 +525,11 @@ export default function EnhancedJobDetailsScreen() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             status: newStatus,
-            technicianId: localStorage.getItem("employeeId") || "tech001",
+            technicianId: technician.id,
+            timestamp: new Date().toISOString(),
+            location: currentLocation,
+            statusData: updatedJobStatusData,
+            jobTimer: jobTimer,
           }),
         },
       );
@@ -513,16 +537,34 @@ export default function EnhancedJobDetailsScreen() {
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
-          setJobDetails((prev) => ({ ...prev, status: newStatus as any }));
+          setJobDetails((prev) => ({ ...prev, status: newStatus }));
+          setJobStatusData(updatedJobStatusData);
           setShowStatusModal(false);
-          success("Status Updated", `Job status updated to ${newStatus}`);
+
+          const statusConfig = getStatusConfig(newStatus);
+          showNotification.success(
+            "Status Updated",
+            `Job status changed to ${statusConfig.label}`
+          );
+
+          // Update internal job status tracking
+          if (newStatus === "in-progress") {
+            setJobStatus("in-progress");
+            setIsTimerRunning(true);
+          } else if (newStatus === "stopped" || newStatus === "job-completed") {
+            setJobStatus("completed");
+            setIsTimerRunning(false);
+          }
+
+          // Notify relevant parties
+          await notifyStatusChange(newStatus);
         }
       } else {
         throw new Error("Failed to update status");
       }
     } catch (error) {
       console.error("Error updating job status:", error);
-      error("Update Failed", "Failed to update job status. Please try again.");
+      showNotification.error("Update Failed", "Failed to update job status. Please try again.");
     }
   };
 
