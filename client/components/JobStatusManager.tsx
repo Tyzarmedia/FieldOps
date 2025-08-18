@@ -59,9 +59,10 @@ export const JobStatusManager = ({
   compact = false
 }: JobStatusManagerProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  
-  const statusConfig = getStatusConfig(currentStatus);
-  const availableTransitions = getAvailableTransitions(currentStatus, jobData, userRole);
+
+  const normalizedCurrentStatus = normalizeStatus(currentStatus as string);
+  const statusConfig = getStatusConfig(normalizedCurrentStatus);
+  const availableTransitions = getAvailableTransitions(normalizedCurrentStatus, jobData, userRole);
 
   const handleStatusChange = async (newStatus: JobStatus) => {
     setIsLoading(true);
