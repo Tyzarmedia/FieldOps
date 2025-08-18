@@ -207,7 +207,7 @@ export function LocationPermissionHandler({
           </div>
         )}
 
-        {currentLocation && (
+        {location && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
             <div className="flex items-center mb-2">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
@@ -216,9 +216,18 @@ export function LocationPermissionHandler({
               </span>
             </div>
             <div className="text-sm text-green-700">
-              {currentLocation.address}
+              {location.address}
             </div>
           </div>
+        )}
+
+        {isLoading && (
+          <LocationTimeoutProgress
+            isActive={isLoading}
+            strategy={strategy}
+            onCancel={canCancel ? cancelRequest : undefined}
+            maxTimeout={30000}
+          />
         )}
 
         <div className="space-y-2">
