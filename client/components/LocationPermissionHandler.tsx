@@ -124,27 +124,29 @@ export function LocationPermissionHandler({
       setIsLoading(false);
     };
 
-    // First attempt with high accuracy
-    navigator.geolocation.getCurrentPosition(
-      handleSuccess,
-      (error) => {
-        // If high accuracy fails, try with lower accuracy
-        if (error.code === error.TIMEOUT) {
-          navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
-            enableHighAccuracy: false,
-            timeout: 15000,
-            maximumAge: 60000,
-          });
-        } else {
-          handleError(error);
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 1000,
-      },
-    );
+    // Use the improved geolocationUtils with progressive timeout strategy
+    import { geolocationUtils } from "@/utils/geolocationUtils";
+
+    geolocationUtils.getCurrentPosition()
+      .then((result) => {
+        const location = {
+          latitude: result.latitude,
+          longitude: result.longitude,
+          address: result.address || `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
+        };
+        handleSuccess({ coords: { latitude: result.latitude, longitude: result.longitude, accuracy: result.accuracy || 0 } } as GeolocationPosition);
+      })
+      .catch((error) => {
+        // Create a mock GeolocationPositionError for compatibility
+        const geoError = {
+          code: error.code || 3,
+          message: error.message || "Location error",
+          PERMISSION_DENIED: 1,
+          POSITION_UNAVAILABLE: 2,
+          TIMEOUT: 3,
+        } as GeolocationPositionError;
+        handleError(geoError);
+      });
   };
 
   const useDefaultLocation = () => {
