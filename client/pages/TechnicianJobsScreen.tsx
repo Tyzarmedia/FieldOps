@@ -161,21 +161,21 @@ export default function TechnicianJobsScreen() {
         if (showLoader) setLoading(true);
 
         const url = `/api/job-mgmt/jobs/technician/${currentTechnicianId}`;
-        console.log('Fetching jobs from:', url);
+        console.log("Fetching jobs from:", url);
 
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
 
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
+        console.log("Response status:", response.status);
+        console.log("Response ok:", response.ok);
 
         if (response.ok) {
           const result = await response.json();
-          console.log('API Response:', result);
+          console.log("API Response:", result);
 
           if (result.success && result.data) {
             // Convert backend jobs to frontend format
@@ -227,25 +227,31 @@ export default function TechnicianJobsScreen() {
             }));
             setJobs(formattedJobs);
             calculateJobStats(formattedJobs);
-            console.log('Successfully loaded', formattedJobs.length, 'jobs');
+            console.log("Successfully loaded", formattedJobs.length, "jobs");
           } else {
-            console.error('API response missing success/data:', result);
+            console.error("API response missing success/data:", result);
           }
         } else {
-          console.error("Failed to fetch jobs - Status:", response.status, response.statusText);
+          console.error(
+            "Failed to fetch jobs - Status:",
+            response.status,
+            response.statusText,
+          );
           const errorText = await response.text();
           console.error("Error response body:", errorText);
         }
       } catch (error) {
         console.error("Error fetching jobs:", error);
         console.error("Error details:", {
-          name: error instanceof Error ? error.name : 'Unknown',
+          name: error instanceof Error ? error.name : "Unknown",
           message: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined
+          stack: error instanceof Error ? error.stack : undefined,
         });
 
         // Fallback to show user-friendly error
-        alert(`Failed to load jobs: ${error instanceof Error ? error.message : 'Network error'}. Please check your connection and try again.`);
+        alert(
+          `Failed to load jobs: ${error instanceof Error ? error.message : "Network error"}. Please check your connection and try again.`,
+        );
       } finally {
         if (showLoader) setLoading(false);
       }
@@ -262,7 +268,7 @@ export default function TechnicianJobsScreen() {
 
   // Manual refresh function for user-triggered retry
   const handleRefresh = () => {
-    console.log('Manual refresh triggered');
+    console.log("Manual refresh triggered");
     loadJobs(true);
   };
 
