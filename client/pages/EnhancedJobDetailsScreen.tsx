@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { showNotification } from "@/hooks/useNotification";
+import { useConfirmationDialog } from "@/components/ConfirmationDialog";
+import { Play, Pause, Square } from "lucide-react";
 import { geolocationUtils } from "@/utils/geolocationUtils";
 import { useNotification } from "@/components/ui/notification";
 import { JobTimer } from "@/components/JobTimer";
