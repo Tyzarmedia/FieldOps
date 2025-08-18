@@ -40,6 +40,7 @@ import {
   Save,
   Calendar,
   AlertTriangle,
+  AlertCircle,
   Wifi,
   Activity,
   Phone,
