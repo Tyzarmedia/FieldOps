@@ -1422,54 +1422,53 @@ export default function EnhancedJobDetailsScreen() {
             </div>
           )}
 
-        {/* Job Actions */}
-        <div className="flex justify-center space-x-4 mb-6">
-          {jobDetails.status === "accepted" && (
-            <Button
-              className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
-              onClick={startJob}
-            >
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Start
-            </Button>
-          )}
-
+        {/* Top Control Buttons */}
+        <div className="flex justify-center space-x-8 mb-6">
           {jobStatus === "in-progress" && (
             <>
               <Button
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-2"
+                variant="ghost"
+                size="lg"
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
                 onClick={pauseJob}
               >
-                <Pause className="h-4 w-4 mr-2" />
-                Pause
+                <Pause className="h-5 w-5 mb-1" />
+                <span className="text-xs">Pause</span>
               </Button>
               <Button
-                className="bg-red-500 hover:bg-red-600 text-white px-8 py-2"
+                variant="ghost"
+                size="lg"
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
                 onClick={stopJob}
               >
-                <X className="h-4 w-4 mr-2" />
-                Stop
+                <X className="h-5 w-5 mb-1" />
+                <span className="text-xs">Stop</span>
               </Button>
             </>
           )}
 
+          {jobDetails.status === "accepted" && (
+            <Button
+              variant="ghost"
+              size="lg"
+              className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
+              onClick={startJob}
+            >
+              <Play className="h-5 w-5 mb-1" />
+              <span className="text-xs">Start</span>
+            </Button>
+          )}
+
           {jobStatus === "paused" && (
-            <>
-              <Button
-                className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
-                onClick={resumeJob}
-              >
-                <Play className="h-4 w-4 mr-2" />
-                Resume
-              </Button>
-              <Button
-                className="bg-red-500 hover:bg-red-600 text-white px-8 py-2"
-                onClick={stopJob}
-              >
-                <X className="h-4 w-4 mr-2" />
-                Stop
-              </Button>
-            </>
+            <Button
+              variant="ghost"
+              size="lg"
+              className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
+              onClick={resumeJob}
+            >
+              <Play className="h-5 w-5 mb-1" />
+              <span className="text-xs">Resume</span>
+            </Button>
           )}
         </div>
 
