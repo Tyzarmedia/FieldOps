@@ -97,6 +97,7 @@ export default function EnhancedJobDetailsScreen() {
   const [showLocationPermission, setShowLocationPermission] = useState(false);
   const [locationRequired, setLocationRequired] = useState(false);
   const [showGalleryOptions, setShowGalleryOptions] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
   const [technician] = useState({
     id: "tech001",
     name: "Dyondzani Clement Masinge",
