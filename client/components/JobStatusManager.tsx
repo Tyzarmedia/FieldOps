@@ -14,12 +14,13 @@ import {
   RefreshCw, 
   AlertTriangle 
 } from 'lucide-react';
-import { 
-  JobStatus, 
-  JOB_STATUS_CONFIG, 
-  canTransitionTo, 
-  getAvailableTransitions, 
-  getStatusConfig 
+import {
+  JobStatus,
+  JOB_STATUS_CONFIG,
+  canTransitionTo,
+  getAvailableTransitions,
+  getStatusConfig,
+  normalizeStatus
 } from '@/types/jobStatus';
 
 interface JobStatusManagerProps {
