@@ -330,6 +330,12 @@ class LogoutDetectionService {
 
   // Send logout event for tracking and notifications
   private async sendLogoutEvent(logoutEvent: LogoutEvent): Promise<void> {
+    // Check if we're online before attempting API calls
+    if (!navigator.onLine) {
+      console.warn("Device is offline, skipping logout event API calls");
+      return;
+    }
+
     try {
       // Try to send logout event
       const eventResponse = await fetch("/api/events/logout", {
