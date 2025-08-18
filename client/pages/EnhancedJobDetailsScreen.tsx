@@ -2482,65 +2482,169 @@ export default function EnhancedJobDetailsScreen() {
           </TabsContent>
 
           {/* Stocks Tab */}
-          <TabsContent value="stocks" className="space-y-4">
-            <div className="relative min-h-[400px] bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-              {allocatedStock.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full">
-                  <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 text-lg">No Stock Allocated</p>
-                </div>
-              ) : (
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-900">
-                    Allocated Stock
-                  </h3>
-                  <div className="space-y-3">
-                    {allocatedStock.map((stock) => (
-                      <div
-                        key={stock.id}
-                        className="bg-white rounded-lg border p-4 shadow-sm"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <Package className="h-6 w-6 text-blue-600" />
+          <TabsContent value="stocks" className="flex-1 flex flex-col">
+            <div className="relative flex-1 flex flex-col bg-gray-50 rounded-lg border-2 border-dashed border-gray-300" style={{minHeight: 'calc(100vh - 280px)'}}>
+              <div className="flex-1 flex flex-col">
+                {allocatedStock.length === 0 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center">
+                    <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg">No Stocks</p>
+                  </div>
+                ) : (
+                  <div className="flex-1 flex flex-col">
+                    {/* Search Bar */}
+                    <div className="p-4 border-b bg-white">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input
+                          placeholder="Search anything..."
+                          value={stockSearchQuery}
+                          onChange={(e) => setStockSearchQuery(e.target.value)}
+                          className="pl-10 bg-gray-50 border-0"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Stock List Headers */}
+                    <div className="px-4 py-3 bg-gray-100 border-b">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-8"></div>
+                        <div className="flex-1 text-sm font-medium text-gray-600">Code</div>
+                        <div className="flex-1 text-sm font-medium text-gray-600">Description</div>
+                      </div>
+                    </div>
+
+                    {/* Stock Items */}
+                    <div className="flex-1 overflow-y-auto">
+                      {allocatedStock
+                        .filter(stock =>
+                          stock.code.toLowerCase().includes(stockSearchQuery.toLowerCase()) ||
+                          stock.name.toLowerCase().includes(stockSearchQuery.toLowerCase())
+                        )
+                        .map((stock, index) => (
+                        <div key={stock.id} className="border-b border-gray-200">
+                          {/* Stock Row */}
+                          <div
+                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                            onClick={() => setExpandedStockId(expandedStockId === stock.id ? null : stock.id)}
+                          >
+                            <div className="flex items-center space-x-4">
+                              <div className="w-8 flex justify-center">
+                                {expandedStockId === stock.id ? (
+                                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                                ) : (
+                                  <ChevronUp className="h-4 w-4 text-gray-400" />
+                                )}
                               </div>
-                              <div>
-                                <p className="font-medium text-gray-900">
-                                  {stock.code}
-                                </p>
-                                <p className="text-sm text-gray-600">
-                                  {stock.name}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  Allocated:{" "}
-                                  {new Date(
-                                    stock.allocatedAt,
-                                  ).toLocaleDateString()}
-                                </p>
+                              <div className="flex-1 text-sm font-medium text-gray-900">
+                                {stock.code}
+                              </div>
+                              <div className="flex-1 text-sm text-gray-600 truncate">
+                                {stock.name}
                               </div>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <span className="text-lg font-semibold text-gray-900">
-                              {stock.quantity}
-                            </span>
-                            <p className="text-xs text-gray-500">Units</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
-              <Button
-                onClick={() => setShowStockForm(true)}
-                className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
-              >
-                <Plus className="h-6 w-6" />
-              </Button>
+                          {/* Expanded Details */}
+                          {expandedStockId === stock.id && (
+                            <div className="px-4 pb-4 bg-gray-50">
+                              <div className="space-y-3 pt-3">
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                  <div>
+                                    <span className="font-medium text-gray-900">Code</span>
+                                    <p className="text-gray-600">{stock.code}</p>
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-gray-900">Container</span>
+                                    <p className="text-gray-600">{stock.warehouse || 'VAN462'}</p>
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-gray-900">Description</span>
+                                    <p className="text-gray-600">{stock.name}</p>
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-gray-900">Qty Used</span>
+                                    <p className="text-gray-600">{stock.quantity}</p>
+                                  </div>
+                                  <div className="col-span-2">
+                                    <span className="font-medium text-gray-900">Comments</span>
+                                    <p className="text-gray-600">{stock.notes || '-'}</p>
+                                  </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex justify-center space-x-8 pt-4">
+                                  <Button
+                                    variant="ghost"
+                                    className="flex flex-col items-center space-y-1 text-blue-500"
+                                    onClick={() => {
+                                      // Handle edit
+                                      setStockFormData({
+                                        code: stock.code,
+                                        container: stock.warehouse || 'VAN462',
+                                        qtyUsed: stock.quantity.toString(),
+                                        description: stock.name,
+                                        comments: stock.notes || ''
+                                      });
+                                      setShowStockForm(true);
+                                    }}
+                                  >
+                                    <PenTool className="h-5 w-5" />
+                                    <span className="text-xs">Edit</span>
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    className="flex flex-col items-center space-y-1 text-red-500"
+                                    onClick={() => {
+                                      // Handle delete
+                                      const newStock = allocatedStock.filter(s => s.id !== stock.id);
+                                      setAllocatedStock(newStock);
+                                    }}
+                                  >
+                                    <Trash2 className="h-5 w-5" />
+                                    <span className="text-xs">Delete</span>
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Stock Action Buttons */}
+              <div className="absolute bottom-4 right-4 flex flex-col-reverse items-end space-y-reverse space-y-3">
+                {/* Add Stock button - show when expanded */}
+                {showStockOptions && (
+                  <>
+                    <Button
+                      onClick={() => {
+                        setShowStockOptions(false);
+                        setShowStockForm(true);
+                      }}
+                      className="h-14 w-auto px-4 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg flex items-center space-x-2"
+                    >
+                      <Package className="h-5 w-5" />
+                      <span className="text-sm font-medium">Add Stock</span>
+                    </Button>
+                  </>
+                )}
+
+                {/* Main plus/close button */}
+                <Button
+                  onClick={() => setShowStockOptions(!showStockOptions)}
+                  className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+                >
+                  {showStockOptions ? (
+                    <X className="h-6 w-6" />
+                  ) : (
+                    <Plus className="h-6 w-6" />
+                  )}
+                </Button>
+              </div>
             </div>
           </TabsContent>
 
