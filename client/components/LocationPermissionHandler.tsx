@@ -81,7 +81,7 @@ export function LocationPermissionHandler({
     }
   };
 
-  const requestLocation = async () => {
+  const handleLocationRequest = async () => {
     if (!navigator.geolocation) {
       const error =
         "Geolocation is not supported by this browser. Please enter location manually.";
@@ -90,40 +90,41 @@ export function LocationPermissionHandler({
       return;
     }
 
-    setIsLoading(true);
     setErrorMessage("");
+    const result = await requestLocation();
 
-    const handleSuccess = (position: GeolocationPosition) => {
-      const location = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        address: `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`,
+    if (result) {
+      const locationData = {
+        latitude: result.latitude,
+        longitude: result.longitude,
+        address: result.address || `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
       };
-
-      setCurrentLocation(location);
-      onLocationReceived(location);
-      setIsLoading(false);
+      onLocationReceived(locationData);
       setPermissionStatus("granted");
-    };
+    }
+  };
 
-    const handleError = (error: GeolocationPositionError) => {
-      let errorMsg = "";
+  // Handle location changes from the hook
+  useEffect(() => {
+    if (location) {
+      const locationData = {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        address: location.address || `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`,
+      };
+      onLocationReceived(locationData);
+      setPermissionStatus("granted");
+    }
+  }, [location, onLocationReceived]);
 
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          errorMsg =
-            "Location access denied. Please enable location permissions.";
-          setPermissionStatus("denied");
-          break;
-        case error.POSITION_UNAVAILABLE:
-          errorMsg = "Location unavailable. Please check your GPS signal.";
-          break;
-        case error.TIMEOUT:
-          errorMsg = "Location request timed out. Please try again.";
-          break;
-        default:
-          errorMsg = "Unable to get location. Please try again.";
-          break;
+  // Handle errors from the hook
+  useEffect(() => {
+    if (error) {
+      let errorMsg = error.userMessage || "Unable to get location. Please try again.";
+
+      if (error.code === 1) {
+        setPermissionStatus("denied");
+        errorMsg = "Location access denied. Please enable location permissions.";
       }
 
       // Only show error if location is required
@@ -134,31 +135,8 @@ export function LocationPermissionHandler({
         // For optional location, just log and continue
         console.log("Location access optional:", errorMsg);
       }
-      setIsLoading(false);
-    };
-
-    // Use the improved geolocationUtils with progressive timeout strategy
-    geolocationUtils.getCurrentPosition()
-      .then((result) => {
-        const location = {
-          latitude: result.latitude,
-          longitude: result.longitude,
-          address: result.address || `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
-        };
-        handleSuccess({ coords: { latitude: result.latitude, longitude: result.longitude, accuracy: result.accuracy || 0 } } as GeolocationPosition);
-      })
-      .catch((error) => {
-        // Create a mock GeolocationPositionError for compatibility
-        const geoError = {
-          code: error.code || 3,
-          message: error.message || "Location error",
-          PERMISSION_DENIED: 1,
-          POSITION_UNAVAILABLE: 2,
-          TIMEOUT: 3,
-        } as GeolocationPositionError;
-        handleError(geoError);
-      });
-  };
+    }
+  }, [error, required, onError]);
 
   const useDefaultLocation = () => {
     const defaultLocation = {
