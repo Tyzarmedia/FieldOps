@@ -64,6 +64,7 @@ import {
   Play,
   Pause,
   Square,
+  ImageIcon,
 } from "lucide-react";
 
 interface JobDetails {
@@ -321,6 +322,26 @@ export default function EnhancedJobDetailsScreen() {
     { id: 5, code: "SF-LX", name: "SFP Module - LX", warehouseQty: 25 },
     { id: 6, code: "ONT-G2", name: "ONT Device - G2", warehouseQty: 12 },
   ]);
+
+  // Helper function to get status dot color based on job status
+  const getStatusDotColor = (status: string) => {
+    switch (status) {
+      case "assigned":
+      case "accepted":
+        return "bg-blue-400"; // Blue for assigned/accepted
+      case "completed":
+      case "job-completed":
+        return "bg-green-400"; // Green for completed
+      case "in-progress":
+        return "bg-yellow-400"; // Yellow for in-progress
+      case "stopped":
+      case "job-incomplete":
+        return "bg-red-400"; // Red for stopped/incomplete
+      case "paused":
+      default:
+        return "bg-gray-400"; // Gray for paused (fallback)
+    }
+  };
 
   // Job data state
   const [jobDetails, setJobDetails] = useState<JobDetails>({
@@ -1535,29 +1556,6 @@ export default function EnhancedJobDetailsScreen() {
 
         {/* Top Control Buttons */}
         <div className="flex justify-center space-x-8 mb-6">
-          {jobStatus === "in-progress" && (
-            <>
-              <Button
-                variant="ghost"
-                size="lg"
-                className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
-                onClick={pauseJob}
-              >
-                <Pause className="h-5 w-5 mb-1" />
-                <span className="text-xs">Pause</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="lg"
-                className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
-                onClick={stopJob}
-              >
-                <X className="h-5 w-5 mb-1" />
-                <span className="text-xs">Stop</span>
-              </Button>
-            </>
-          )}
-
           {jobDetails.status === "accepted" && (
             <Button
               variant="ghost"
@@ -1677,7 +1675,9 @@ export default function EnhancedJobDetailsScreen() {
           </div>
           <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+              <div
+                className={`w-3 h-3 ${getStatusDotColor(jobStatus || jobDetails.status)} rounded-full`}
+              ></div>
               <div>
                 <p className="text-xs text-white/80">Status</p>
                 <p className="font-semibold">
@@ -2835,7 +2835,7 @@ export default function EnhancedJobDetailsScreen() {
               </div>
 
               {/* Gallery Action Buttons */}
-              <div className="absolute bottom-4 right-4 flex flex-col-reverse items-end space-y-reverse space-y-3">
+              <div className="absolute bottom-4 right-4 flex flex-col items-end space-y-3">
                 {/* Gallery and Camera buttons - show when expanded */}
                 {showGalleryOptions && (
                   <>
@@ -2859,7 +2859,7 @@ export default function EnhancedJobDetailsScreen() {
                       }}
                       className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
                     >
-                      <Camera className="h-6 w-6" />
+                      <ImageIcon className="h-6 w-6" />
                     </Button>
                     <div className="text-xs text-gray-600 mr-2">Gallery</div>
 

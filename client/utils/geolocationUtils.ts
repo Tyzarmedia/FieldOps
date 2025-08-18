@@ -1,4 +1,4 @@
-import { logError, getUserFriendlyErrorMessage } from './errorUtils';
+import { logError, getUserFriendlyErrorMessage } from "./errorUtils";
 
 interface LocationResult {
   latitude: number;
@@ -73,7 +73,7 @@ class GeolocationUtils {
   }
 
   /**
-   * Get current position with comprehensive error handling
+   * Get current position with progressive timeout strategy
    */
   async getCurrentPosition(options?: PositionOptions): Promise<LocationResult> {
     return new Promise((resolve, reject) => {
@@ -88,12 +88,50 @@ class GeolocationUtils {
         return;
       }
 
-      const defaultOptions: PositionOptions = {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 60000,
-        ...options,
-      };
+      // Progressive timeout strategy - try multiple approaches
+      const strategies = [
+        {
+          name: "Quick high accuracy",
+          options: {
+            enableHighAccuracy: true,
+            timeout: 8000,
+            maximumAge: 30000,
+          },
+        },
+        {
+          name: "Extended high accuracy",
+          options: {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 60000,
+          },
+        },
+        {
+          name: "Fast low accuracy",
+          options: {
+            enableHighAccuracy: false,
+            timeout: 15000,
+            maximumAge: 120000,
+          },
+        },
+        {
+          name: "Extended low accuracy",
+          options: {
+            enableHighAccuracy: false,
+            timeout: 30000,
+            maximumAge: 300000, // 5 minutes
+          },
+        },
+      ];
+
+      // Apply any custom options to all strategies
+      if (options) {
+        strategies.forEach((strategy) => {
+          strategy.options = { ...strategy.options, ...options };
+        });
+      }
+
+      let currentStrategy = 0;
 
       const handleSuccess = (position: GeolocationPosition) => {
         const result: LocationResult = {
@@ -101,44 +139,71 @@ class GeolocationUtils {
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
         };
+        console.log(
+          `✅ Location acquired using strategy: ${strategies[currentStrategy]?.name || "unknown"}`,
+        );
         resolve(result);
       };
 
-      const handleError = (error: GeolocationPositionError) => {
-        const geolocationError = this.parseGeolocationError(error);
-
-        // Try fallback with less strict settings
-        if (error.code === error.TIMEOUT && defaultOptions.enableHighAccuracy) {
-          console.log(
-            "High accuracy location failed, trying with lower accuracy...",
+      const tryNextStrategy = () => {
+        if (currentStrategy >= strategies.length) {
+          // All strategies failed
+          reject(
+            this.createError(
+              3,
+              "All location strategies failed",
+              "Unable to get your location after multiple attempts. Please check your GPS signal, move to an area with better reception, or enter your location manually.",
+            ),
           );
-
-          navigator.geolocation.getCurrentPosition(
-            handleSuccess,
-            (fallbackError) => {
-              reject(this.parseGeolocationError(fallbackError));
-            },
-            {
-              enableHighAccuracy: false,
-              timeout: 15000,
-              maximumAge: 300000, // 5 minutes
-            },
-          );
-        } else {
-          reject(geolocationError);
+          return;
         }
+
+        const strategy = strategies[currentStrategy];
+        console.log(
+          `🔄 Trying location strategy ${currentStrategy + 1}/${strategies.length}: ${strategy.name}`,
+        );
+
+        const handleError = (error: GeolocationPositionError) => {
+          console.log(`❌ Strategy "${strategy.name}" failed:`, {
+            code: error.code,
+            message: error.message,
+            strategy: strategy.name,
+          });
+
+          // If it's a timeout and we have more strategies, try the next one
+          if (
+            error.code === error.TIMEOUT &&
+            currentStrategy < strategies.length - 1
+          ) {
+            currentStrategy++;
+            setTimeout(tryNextStrategy, 1000); // Brief delay before next attempt
+          } else if (error.code === error.PERMISSION_DENIED) {
+            // Permission denied - don't try other strategies
+            reject(this.parseGeolocationError(error));
+          } else if (currentStrategy < strategies.length - 1) {
+            // Other errors - try next strategy
+            currentStrategy++;
+            setTimeout(tryNextStrategy, 1000);
+          } else {
+            // Final strategy failed
+            reject(this.parseGeolocationError(error));
+          }
+        };
+
+        navigator.geolocation.getCurrentPosition(
+          handleSuccess,
+          handleError,
+          strategy.options,
+        );
       };
 
-      navigator.geolocation.getCurrentPosition(
-        handleSuccess,
-        handleError,
-        defaultOptions,
-      );
+      // Start with the first strategy
+      tryNextStrategy();
     });
   }
 
   /**
-   * Watch position with error handling
+   * Watch position with progressive timeout and retry logic
    */
   watchPosition(
     onSuccess: (location: LocationResult) => void,
@@ -156,14 +221,22 @@ class GeolocationUtils {
       return null;
     }
 
-    const defaultOptions: PositionOptions = {
+    // Start with more lenient settings for continuous tracking
+    const watchOptions: PositionOptions = {
       enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 5000,
+      timeout: 20000, // Longer timeout for watch
+      maximumAge: 30000, // 30 seconds cache
       ...options,
     };
 
+    let errorCount = 0;
+    const maxErrors = 3;
+    let lastSuccessTime = Date.now();
+
     const handleSuccess = (position: GeolocationPosition) => {
+      errorCount = 0; // Reset error count on success
+      lastSuccessTime = Date.now();
+
       const result: LocationResult = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
@@ -173,13 +246,50 @@ class GeolocationUtils {
     };
 
     const handleError = (error: GeolocationPositionError) => {
-      onError(this.parseGeolocationError(error));
+      errorCount++;
+      const timeSinceLastSuccess = Date.now() - lastSuccessTime;
+
+      console.log(`Watch position error ${errorCount}/${maxErrors}:`, {
+        code: error.code,
+        message: error.message,
+        timeSinceLastSuccess: Math.round(timeSinceLastSuccess / 1000) + "s",
+      });
+
+      // If we've had too many consecutive errors, switch to lower accuracy
+      if (errorCount >= maxErrors && watchOptions.enableHighAccuracy) {
+        console.log("🔄 Switching to low accuracy mode for watch position");
+
+        // Clear current watch
+        if (this.watchId !== null) {
+          navigator.geolocation.clearWatch(this.watchId);
+        }
+
+        // Restart with lower accuracy
+        watchOptions.enableHighAccuracy = false;
+        watchOptions.timeout = 30000; // Even longer timeout
+        watchOptions.maximumAge = 60000; // 1 minute cache
+        errorCount = 0; // Reset error count
+
+        this.watchId = navigator.geolocation.watchPosition(
+          handleSuccess,
+          handleError,
+          watchOptions,
+        );
+      } else if (
+        errorCount < maxErrors ||
+        error.code === error.PERMISSION_DENIED
+      ) {
+        // Only report error to callback after several failures or on permission denied
+        if (errorCount >= maxErrors || error.code === error.PERMISSION_DENIED) {
+          onError(this.parseGeolocationError(error));
+        }
+      }
     };
 
     this.watchId = navigator.geolocation.watchPosition(
       handleSuccess,
       handleError,
-      defaultOptions,
+      watchOptions,
     );
 
     return this.watchId;
@@ -316,15 +426,22 @@ class GeolocationUtils {
    * Log geolocation error with proper formatting for debugging
    */
   logGeolocationError(error: GeolocationPositionError, context?: string): void {
-    const contextStr = context ? ` - ${context}` : '';
-    logError(error, `Geolocation${contextStr}`);
+    const contextStr = context ? ` - ${context}` : "";
 
-    // Additional geolocation-specific details
-    const geolocationDetails = {
-      errorName: this.getErrorCodeName(error.code),
-      userMessage: this.parseGeolocationError(error).userMessage
+    // Create properly formatted error info for logging
+    const errorInfo = {
+      code: error.code,
+      codeName: this.getErrorCodeName(error.code),
+      message: error.message,
+      userMessage: this.parseGeolocationError(error).userMessage,
+      timestamp: new Date().toISOString(),
+      context: contextStr,
     };
-    console.error('Geolocation error details:', geolocationDetails);
+
+    console.error(`Geolocation Error${contextStr}:`, errorInfo);
+
+    // Also log to standard error util for consistency
+    logError(errorInfo, `Geolocation${contextStr}`);
   }
 
   /**

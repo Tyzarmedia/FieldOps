@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useLocationRequest } from "@/hooks/useLocationRequest";
+import { LocationTimeoutProgress } from "@/components/LocationTimeoutProgress";
 import {
   MapPin,
   AlertCircle,
@@ -32,12 +34,23 @@ export function LocationPermissionHandler({
   const [permissionStatus, setPermissionStatus] = useState<
     "unknown" | "granted" | "denied" | "prompt"
   >("unknown");
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<{
-    latitude: number;
-    longitude: number;
-    address: string;
-  } | null>(null);
+
+  const {
+    isLoading,
+    location,
+    error,
+    strategy,
+    progress,
+    canCancel,
+    requestLocation,
+    cancelRequest,
+    useDefaultLocation: useDefaultLocationFromHook,
+  } = useLocationRequest({
+    enableProgress: true,
+    maxTimeout: 30000,
+    fallbackToDefault: !required,
+  });
+
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
@@ -68,7 +81,7 @@ export function LocationPermissionHandler({
     }
   };
 
-  const requestLocation = async () => {
+  const handleLocationRequest = async () => {
     if (!navigator.geolocation) {
       const error =
         "Geolocation is not supported by this browser. Please enter location manually.";
@@ -77,40 +90,47 @@ export function LocationPermissionHandler({
       return;
     }
 
-    setIsLoading(true);
     setErrorMessage("");
+    const result = await requestLocation();
 
-    const handleSuccess = (position: GeolocationPosition) => {
-      const location = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        address: `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`,
+    if (result) {
+      const locationData = {
+        latitude: result.latitude,
+        longitude: result.longitude,
+        address:
+          result.address ||
+          `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
       };
-
-      setCurrentLocation(location);
-      onLocationReceived(location);
-      setIsLoading(false);
+      onLocationReceived(locationData);
       setPermissionStatus("granted");
-    };
+    }
+  };
 
-    const handleError = (error: GeolocationPositionError) => {
-      let errorMsg = "";
+  // Handle location changes from the hook
+  useEffect(() => {
+    if (location) {
+      const locationData = {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        address:
+          location.address ||
+          `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`,
+      };
+      onLocationReceived(locationData);
+      setPermissionStatus("granted");
+    }
+  }, [location, onLocationReceived]);
 
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          errorMsg =
-            "Location access denied. Please enable location permissions.";
-          setPermissionStatus("denied");
-          break;
-        case error.POSITION_UNAVAILABLE:
-          errorMsg = "Location unavailable. Please check your GPS signal.";
-          break;
-        case error.TIMEOUT:
-          errorMsg = "Location request timed out. Please try again.";
-          break;
-        default:
-          errorMsg = "Unable to get location. Please try again.";
-          break;
+  // Handle errors from the hook
+  useEffect(() => {
+    if (error) {
+      let errorMsg =
+        error.userMessage || "Unable to get location. Please try again.";
+
+      if (error.code === 1) {
+        setPermissionStatus("denied");
+        errorMsg =
+          "Location access denied. Please enable location permissions.";
       }
 
       // Only show error if location is required
@@ -121,42 +141,14 @@ export function LocationPermissionHandler({
         // For optional location, just log and continue
         console.log("Location access optional:", errorMsg);
       }
-      setIsLoading(false);
-    };
+    }
+  }, [error, required, onError]);
 
-    // First attempt with high accuracy
-    navigator.geolocation.getCurrentPosition(
-      handleSuccess,
-      (error) => {
-        // If high accuracy fails, try with lower accuracy
-        if (error.code === error.TIMEOUT) {
-          navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
-            enableHighAccuracy: false,
-            timeout: 15000,
-            maximumAge: 60000,
-          });
-        } else {
-          handleError(error);
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 1000,
-      },
-    );
-  };
-
-  const useDefaultLocation = () => {
-    const defaultLocation = {
-      latitude: -33.0197,
-      longitude: 27.9117,
-      address: "Default Location (East London)",
-    };
-
-    setCurrentLocation(defaultLocation);
-    onLocationReceived(defaultLocation);
-    setErrorMessage("");
+  const handleUseDefaultLocation = () => {
+    const result = useDefaultLocationFromHook();
+    if (result) {
+      setErrorMessage("");
+    }
   };
 
   const openLocationSettings = () => {
@@ -221,7 +213,7 @@ export function LocationPermissionHandler({
           </div>
         )}
 
-        {currentLocation && (
+        {location && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
             <div className="flex items-center mb-2">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
@@ -229,10 +221,17 @@ export function LocationPermissionHandler({
                 Location confirmed
               </span>
             </div>
-            <div className="text-sm text-green-700">
-              {currentLocation.address}
-            </div>
+            <div className="text-sm text-green-700">{location.address}</div>
           </div>
+        )}
+
+        {isLoading && (
+          <LocationTimeoutProgress
+            isActive={isLoading}
+            strategy={strategy}
+            onCancel={canCancel ? cancelRequest : undefined}
+            maxTimeout={30000}
+          />
         )}
 
         <div className="space-y-2">
@@ -277,14 +276,14 @@ export function LocationPermissionHandler({
             </div>
           ) : (
             <Button
-              onClick={requestLocation}
+              onClick={handleLocationRequest}
               disabled={isLoading}
               className="w-full"
             >
               {isLoading ? (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Getting location...
+                  {strategy || "Getting location..."}
                 </>
               ) : (
                 <>
@@ -297,7 +296,7 @@ export function LocationPermissionHandler({
 
           {!required && (
             <Button
-              onClick={useDefaultLocation}
+              onClick={handleUseDefaultLocation}
               variant="outline"
               className="w-full"
               disabled={isLoading}
@@ -307,7 +306,7 @@ export function LocationPermissionHandler({
           )}
         </div>
 
-        {required && !currentLocation && (
+        {required && !location && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
             <div className="flex items-center">
               <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />

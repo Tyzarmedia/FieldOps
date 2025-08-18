@@ -159,11 +159,24 @@ export default function TechnicianJobsScreen() {
     const loadJobs = async (showLoader = true) => {
       try {
         if (showLoader) setLoading(true);
-        const response = await fetch(
-          `/api/job-mgmt/jobs/technician/${currentTechnicianId}`,
-        );
+
+        const url = `/api/job-mgmt/jobs/technician/${currentTechnicianId}`;
+        console.log("Fetching jobs from:", url);
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log("Response status:", response.status);
+        console.log("Response ok:", response.ok);
+
         if (response.ok) {
           const result = await response.json();
+          console.log("API Response:", result);
+
           if (result.success && result.data) {
             // Convert backend jobs to frontend format
             const formattedJobs: Job[] = result.data.map((job: any) => ({
@@ -214,12 +227,31 @@ export default function TechnicianJobsScreen() {
             }));
             setJobs(formattedJobs);
             calculateJobStats(formattedJobs);
+            console.log("Successfully loaded", formattedJobs.length, "jobs");
+          } else {
+            console.error("API response missing success/data:", result);
           }
         } else {
-          console.error("Failed to fetch jobs");
+          console.error(
+            "Failed to fetch jobs - Status:",
+            response.status,
+            response.statusText,
+          );
+          const errorText = await response.text();
+          console.error("Error response body:", errorText);
         }
       } catch (error) {
         console.error("Error fetching jobs:", error);
+        console.error("Error details:", {
+          name: error instanceof Error ? error.name : "Unknown",
+          message: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        });
+
+        // Fallback to show user-friendly error
+        alert(
+          `Failed to load jobs: ${error instanceof Error ? error.message : "Network error"}. Please check your connection and try again.`,
+        );
       } finally {
         if (showLoader) setLoading(false);
       }
@@ -233,6 +265,12 @@ export default function TechnicianJobsScreen() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Manual refresh function for user-triggered retry
+  const handleRefresh = () => {
+    console.log("Manual refresh triggered");
+    loadJobs(true);
+  };
 
   const tabs = [
     {
@@ -827,30 +865,22 @@ export default function TechnicianJobsScreen() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20"
+              onClick={handleRefresh}
+              disabled={loading}
+              title="Refresh jobs"
+            >
+              <RefreshCw
+                className={`h-5 w-5 ${loading ? "animate-spin" : ""}`}
+              />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20"
               onClick={() => navigate("/")}
             >
               <X className="h-6 w-6" />
             </Button>
-          </div>
-        </div>
-
-        {/* Job Status Summary */}
-        <div className="grid grid-cols-4 gap-3 mb-4">
-          <div className="bg-white/20 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold">{jobStats.assigned}</div>
-            <div className="text-xs text-white/80">Assigned</div>
-          </div>
-          <div className="bg-white/20 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold">{jobStats.accepted}</div>
-            <div className="text-xs text-white/80">Accepted</div>
-          </div>
-          <div className="bg-white/20 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold">{jobStats.inProgress}</div>
-            <div className="text-xs text-white/80">In Progress</div>
-          </div>
-          <div className="bg-white/20 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold">{jobStats.completed}</div>
-            <div className="text-xs text-white/80">Completed</div>
           </div>
         </div>
 
