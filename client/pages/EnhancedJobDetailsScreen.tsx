@@ -1477,36 +1477,7 @@ export default function EnhancedJobDetailsScreen() {
             Vumatel (Pty) Ltd - Central
           </h2>
           <h3 className="text-md font-semibold mb-2">#{jobDetails.id}215784</h3>
-          <Badge
-            className={`px-4 py-1 text-sm ${
-              jobDetails.status === "assigned"
-                ? "bg-orange-500/80 text-white"
-                : jobDetails.status === "accepted"
-                  ? "bg-blue-500/80 text-white"
-                  : jobDetails.status === "in-progress" ||
-                      jobDetails.status === "In Progress"
-                    ? "bg-green-500/80 text-white"
-                    : jobDetails.status === "paused"
-                      ? "bg-yellow-500/80 text-white"
-                      : jobDetails.status === "completed"
-                        ? "bg-purple-500/80 text-white"
-                        : "bg-gray-500/80 text-white"
-            }`}
-          >
-            {jobDetails.status === "assigned"
-              ? "Assigned"
-              : jobDetails.status === "accepted"
-                ? "Accepted"
-                : jobDetails.status === "in-progress" ||
-                    jobDetails.status === "In Progress"
-                  ? "In Progress"
-                  : jobDetails.status === "paused"
-                    ? "Paused"
-                    : jobDetails.status === "completed"
-                      ? "Completed"
-                      : jobDetails.status.charAt(0).toUpperCase() +
-                        jobDetails.status.slice(1)}
-          </Badge>
+          <JobStatusBadge status={jobDetails.status} size="lg" />
         </div>
 
         {/* Info Cards */}
