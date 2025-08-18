@@ -100,6 +100,40 @@ router.post("/", (req, res) => {
   }
 });
 
+// Create UDF completion notification
+router.post("/udf-completed", (req, res) => {
+  try {
+    const { jobId, technicianId, technicianName, timestamp } = req.body;
+
+    const notification = createNotification({
+      technicianId: 'manager001', // In real app, would notify relevant managers/coordinators
+      type: 'info',
+      title: 'UDF Completed',
+      message: `User Defined Fields completed by ${technicianName} for job ${jobId}`,
+      priority: 'medium',
+      metadata: {
+        jobId,
+        technicianId,
+        technicianName,
+        timestamp,
+        action: 'udf_completed'
+      }
+    });
+
+    res.json({
+      success: true,
+      data: notification,
+      message: "UDF completion notification created successfully",
+    });
+  } catch (error) {
+    console.error("Error creating UDF completion notification:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create UDF completion notification",
+    });
+  }
+});
+
 // Create overtime notification
 router.post("/overtime", (req, res) => {
   try {
