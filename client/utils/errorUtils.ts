@@ -7,33 +7,51 @@
  */
 export function stringifyError(error: any): string {
   if (!error) return 'Unknown error';
-  
+
   // Handle GeolocationPositionError specifically
-  if (error.code !== undefined && error.message !== undefined) {
+  if (error.code !== undefined && error.message !== undefined && typeof error.code === 'number') {
+    const geolocationErrorNames = {
+      1: 'PERMISSION_DENIED',
+      2: 'POSITION_UNAVAILABLE',
+      3: 'TIMEOUT'
+    };
+
     return JSON.stringify({
+      type: 'GeolocationPositionError',
       code: error.code,
+      codeName: geolocationErrorNames[error.code] || 'UNKNOWN_ERROR',
       message: error.message,
       timestamp: new Date().toISOString()
     }, null, 2);
   }
-  
+
   // Handle standard Error objects
   if (error instanceof Error) {
     return JSON.stringify({
+      type: 'Error',
       name: error.name,
       message: error.message,
       stack: error.stack,
       timestamp: new Date().toISOString()
     }, null, 2);
   }
-  
-  // Handle other objects
-  try {
-    return JSON.stringify(error, null, 2);
-  } catch (stringifyError) {
-    // Fallback if JSON.stringify fails
-    return `Error object (stringify failed): ${String(error)}`;
+
+  // Handle plain objects
+  if (typeof error === 'object' && error !== null) {
+    try {
+      return JSON.stringify({
+        type: 'Object',
+        content: error,
+        timestamp: new Date().toISOString()
+      }, null, 2);
+    } catch (stringifyError) {
+      // Fallback if JSON.stringify fails (circular references, etc.)
+      return `Error object (stringify failed): ${Object.prototype.toString.call(error)}`;
+    }
   }
+
+  // Handle primitives
+  return `Error: ${String(error)} (${typeof error})`;
 }
 
 /**
