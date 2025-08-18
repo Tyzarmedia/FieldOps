@@ -75,10 +75,10 @@ export const JobStatusManager = ({
 
   if (compact) {
     return (
-      <Badge 
+      <Badge
         className={`${statusConfig.bgColor} ${statusConfig.textColor} flex items-center space-x-1`}
       >
-        {getStatusIcon(currentStatus)}
+        {getStatusIcon(normalizedCurrentStatus)}
         <span>{statusConfig.label}</span>
       </Badge>
     );
