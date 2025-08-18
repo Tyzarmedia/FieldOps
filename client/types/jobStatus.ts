@@ -284,7 +284,21 @@ export const STATUS_TRANSITION_CONDITIONS: StatusTransitionCondition[] = [
 
 // Helper functions
 export const getStatusConfig = (status: JobStatus): JobStatusConfig => {
-  return JOB_STATUS_CONFIG[status];
+  const config = JOB_STATUS_CONFIG[status];
+  if (!config) {
+    console.warn(`No configuration found for status: ${status}`);
+    // Return a default config for unknown status
+    return {
+      label: status.toString(),
+      color: "#6B7280",
+      bgColor: "bg-gray-500",
+      textColor: "text-gray-800",
+      description: `Unknown status: ${status}`,
+      allowedTransitions: [],
+      icon: "help-circle"
+    };
+  }
+  return config;
 };
 
 export const canTransitionTo = (
