@@ -450,6 +450,98 @@ router.put("/jobs/:jobId/start", (req, res) => {
   }
 });
 
+// Pause job (Technician action)
+router.put("/jobs/:jobId/pause", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { technicianId, location, timeSpent } = req.body;
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    const job = jobs[jobIndex];
+    if (
+      job.assignedTechnician !== technicianId &&
+      job.assistantTechnician !== technicianId
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to pause this job",
+      });
+    }
+
+    jobs[jobIndex].status = "Paused";
+    jobs[jobIndex].pausedDate = new Date().toISOString();
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    if (timeSpent) {
+      jobs[jobIndex].timeSpent = timeSpent;
+    }
+
+    if (location) {
+      jobs[jobIndex].pauseLocation = location;
+    }
+
+    res.json({
+      success: true,
+      data: jobs[jobIndex],
+      message: "Job paused successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to pause job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Resume job (Technician action)
+router.put("/jobs/:jobId/resume", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { technicianId, location } = req.body;
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    const job = jobs[jobIndex];
+    if (
+      job.assignedTechnician !== technicianId &&
+      job.assistantTechnician !== technicianId
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to resume this job",
+      });
+    }
+
+    jobs[jobIndex].status = "In Progress";
+    jobs[jobIndex].resumedDate = new Date().toISOString();
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    if (location) {
+      jobs[jobIndex].resumeLocation = location;
+    }
+
+    res.json({
+      success: true,
+      data: jobs[jobIndex],
+      message: "Job resumed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to resume job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Update UDF data (Technician action)
 router.put("/jobs/:jobId/udf", (req, res) => {
   try {
