@@ -829,6 +829,21 @@
       "createdAt": "2025-08-18T18:43:10.612Z",
       "updatedAt": "2025-08-18T18:44:19.571Z",
       "endTime": "2025-08-18T18:44:16.790Z"
+    },
+    {
+      "id": "OT-1755543006895",
+      "technicianId": "tech001",
+      "startTime": "2025-08-18T15:00:03.924Z",
+      "totalHours": 3.8348419444444444,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 575.2262916666666,
+      "createdAt": "2025-08-18T18:50:09.913Z",
+      "updatedAt": "2025-08-18T18:50:12.077Z",
+      "endTime": "2025-08-18T18:50:09.355Z"
     }
   ]
 }
