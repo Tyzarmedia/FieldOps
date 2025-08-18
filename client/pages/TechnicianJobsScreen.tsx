@@ -77,6 +77,13 @@ export default function TechnicianJobsScreen() {
   const [isJobPaused, setIsJobPaused] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [jobStats, setJobStats] = useState({
+    assigned: 0,
+    accepted: 0,
+    inProgress: 0,
+    completed: 0,
+    total: 0
+  });
   const [showStockUsageDialog, setShowStockUsageDialog] = useState(false);
   const [stockUsage, setStockUsage] = useState([]);
   const [availableStock, setAvailableStock] = useState([]);
