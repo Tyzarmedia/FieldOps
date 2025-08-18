@@ -266,7 +266,7 @@ export default function ClockInScreen({
 
     // Navigate to appropriate dashboard if we just clocked in
     if (wasClockingIn) {
-      if (userRole === "Assistant Technician") {
+      if (userRole === "Assistant Technician" || userRole === "AssistantTechnician") {
         navigate("/assistant-technician");
       } else {
         navigate("/technician");
