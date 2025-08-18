@@ -3046,6 +3046,97 @@ export default function EnhancedJobDetailsScreen() {
           </Button>
         </div>
       </div>
+
+      {/* Status Update Modal */}
+      {showStatusModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold">Update Job Status</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowStatusModal(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="text-sm text-gray-600 mb-4">
+                  Current Status: <span className="font-medium">{jobDetails.status.toUpperCase()}</span>
+                </div>
+
+                {/* Status Options */}
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => updateJobStatus("assigned")}
+                    className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg"
+                  >
+                    Assigned
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("accepted")}
+                    className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-lg"
+                  >
+                    Accepted
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("in-progress")}
+                    className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg"
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    In Progress
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("tech-finished")}
+                    className="bg-lime-500 hover:bg-lime-600 text-white p-3 rounded-lg"
+                  >
+                    Tech Finished
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("sent-back-to-tech")}
+                    className="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg"
+                  >
+                    Sent Back To Tech
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("completed")}
+                    className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg"
+                  >
+                    Job Completed
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("stopped")}
+                    className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-lg"
+                  >
+                    Stopped
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("convert-to-installation")}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white p-3 rounded-lg"
+                  >
+                    Convert To Installation
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("sage-error-resubmit")}
+                    className="bg-red-700 hover:bg-red-800 text-white p-3 rounded-lg"
+                  >
+                    Sage Error - Resubmit
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("total-jobs")}
+                    className="bg-black hover:bg-gray-800 text-white p-3 rounded-lg"
+                  >
+                    Total Jobs
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
