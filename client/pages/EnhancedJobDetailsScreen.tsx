@@ -2377,8 +2377,8 @@ export default function EnhancedJobDetailsScreen() {
           </TabsContent>
 
           {/* Gallery Tab */}
-          <TabsContent value="gallery" className="space-y-4">
-            <div className="relative min-h-[400px] flex flex-col items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+          <TabsContent value="gallery" className="flex-1 flex flex-col">
+            <div className="relative flex-1 flex flex-col bg-gray-50 rounded-lg border-2 border-dashed border-gray-300" style={{minHeight: 'calc(100vh - 280px)'}}>
               {jobPhotos.length === 0 ? (
                 <div className="text-center">
                   <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
