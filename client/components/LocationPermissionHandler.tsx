@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { geolocationUtils } from "@/utils/geolocationUtils";
+import { useLocationRequest } from "@/hooks/useLocationRequest";
+import { LocationTimeoutProgress } from "@/components/LocationTimeoutProgress";
 import {
   MapPin,
   AlertCircle,
