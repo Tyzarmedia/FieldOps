@@ -970,12 +970,12 @@ export default function EnhancedJobDetailsScreen() {
   );
 
   const submitStockForm = async () => {
-    if (!stockFormData.selectedStock || !stockFormData.quantity) {
+    if (!legacyStockForm.selectedStock || !legacyStockForm.quantity) {
       alert("Please select stock and enter quantity");
       return;
     }
 
-    const quantityRequested = parseInt(stockFormData.quantity);
+    const quantityRequested = parseInt(legacyStockForm.quantity);
 
     try {
       // Check warehouse availability first
