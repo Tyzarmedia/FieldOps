@@ -360,7 +360,12 @@ class LogoutDetectionService {
         );
       }
     } catch (error) {
-      console.warn("Error sending logout event (non-critical):", error);
+      // Handle specific fetch errors
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
+        console.warn("Network error sending logout event - server may be unreachable (non-critical)");
+      } else {
+        console.warn("Error sending logout event (non-critical):", error);
+      }
       // Don't throw error - this is not critical for the logout process
     }
   }
