@@ -980,7 +980,7 @@ export default function EnhancedJobDetailsScreen() {
     try {
       // Check warehouse availability first
       const availabilityResponse = await fetch(
-        `/api/stock/check-availability/${stockFormData.selectedStock.id}/${quantityRequested}`,
+        `/api/stock/check-availability/${legacyStockForm.selectedStock.id}/${quantityRequested}`,
       );
 
       if (!availabilityResponse.ok) {
