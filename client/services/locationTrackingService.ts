@@ -368,8 +368,6 @@ class LocationTrackingService {
 
   // Handle location errors
   private handleLocationError(error: any): void {
-    console.error('Location tracking error:', error);
-    
     // Log error but continue tracking
     geolocationUtils.logGeolocationError(error, 'LocationTrackingService');
   }
