@@ -1721,6 +1721,18 @@ export default function EnhancedJobDetailsScreen() {
 
           {/* Form Content */}
           <div className="flex-1 p-4 space-y-6">
+            {/* User Warehouse Info */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-blue-900">Your Assigned Warehouse</p>
+                  <p className="text-xs text-blue-700">{technician.warehouse} - {technician.warehouseId}</p>
+                </div>
+                <div className="text-blue-600">
+                  <Package className="h-5 w-5" />
+                </div>
+              </div>
+            </div>
             {/* Code */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
