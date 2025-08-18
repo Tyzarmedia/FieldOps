@@ -72,9 +72,9 @@ export function logError(error: any, context?: string): void {
  */
 export function getUserFriendlyErrorMessage(error: any): string {
   if (!error) return 'An unknown error occurred';
-  
-  // Handle GeolocationPositionError
-  if (error.code !== undefined) {
+
+  // Handle GeolocationPositionError (check for numeric code property)
+  if (error.code !== undefined && typeof error.code === 'number') {
     switch (error.code) {
       case 1:
         return 'Location access denied. Please enable location permissions in your browser settings.';
@@ -86,16 +86,28 @@ export function getUserFriendlyErrorMessage(error: any): string {
         return 'Unable to get your location. Please try again or enter your location manually.';
     }
   }
-  
+
   // Handle standard Error objects
   if (error instanceof Error) {
     return error.message || 'An unexpected error occurred';
   }
-  
+
   // Handle string errors
   if (typeof error === 'string') {
     return error;
   }
-  
+
+  // Handle objects that might have error properties
+  if (typeof error === 'object' && error !== null) {
+    if (error.message && typeof error.message === 'string') {
+      return error.message;
+    }
+    if (error.userMessage && typeof error.userMessage === 'string') {
+      return error.userMessage;
+    }
+    // Fallback for unknown objects
+    return 'An unexpected error occurred. Please try again.';
+  }
+
   return 'An unexpected error occurred. Please try again.';
 }
