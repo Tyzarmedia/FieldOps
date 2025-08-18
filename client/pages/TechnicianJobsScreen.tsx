@@ -102,6 +102,18 @@ export default function TechnicianJobsScreen() {
 
   const currentTechnicianId = "tech001"; // In real app, this would come from auth
 
+  // Calculate job statistics
+  const calculateJobStats = (jobList: Job[]) => {
+    const stats = {
+      assigned: jobList.filter(job => job.status === "assigned").length,
+      accepted: jobList.filter(job => job.status === "accepted").length,
+      inProgress: jobList.filter(job => job.status === "in-progress").length,
+      completed: jobList.filter(job => job.status === "completed").length,
+      total: jobList.length
+    };
+    setJobStats(stats);
+  };
+
   // Handle location permission on component mount
   useEffect(() => {
     // Check if user is clocked in and location service is available
