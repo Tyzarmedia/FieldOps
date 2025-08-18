@@ -713,40 +713,44 @@ export default function EnhancedJobDetailsScreen() {
     });
   };
 
-  const pauseJob = async () => {
-    try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/pause`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          pauseTime: new Date().toISOString(),
-          timeSpent: jobTimer,
-          location: currentLocation,
-        }),
-      });
+  const pauseJob = () => {
+    showConfirmation({
+      title: 'Pause Job',
+      message: `Are you sure you want to pause work on "${jobDetails.title}"? You can resume it later.`,
+      confirmText: 'Pause Job',
+      variant: 'warning',
+      icon: <Pause className="h-6 w-6 text-yellow-600" />,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/jobs/${jobDetails.id}/pause`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              technicianId: technician.id,
+              pauseTime: new Date().toISOString(),
+              timeSpent: jobTimer,
+              location: currentLocation,
+            }),
+          });
 
-      if (response.ok) {
-        setJobStatus("paused");
-        setIsTimerRunning(false);
+          if (response.ok) {
+            setJobStatus("paused");
+            setIsTimerRunning(false);
 
-        // Show success toast
-        toast({
-          title: "Job Paused",
-          description: "Job has been paused successfully.",
-        });
+            // Show success notification
+            showNotification.warning("Job Paused", "Job has been paused successfully.");
 
-        // Notify manager and coordinator
-        await notifyStatusChange("paused");
-      } else {
-        toast({
-          title: "Failed to Pause Job",
-          description: "Unable to pause the job. Please try again.",
-        });
+            // Notify manager and coordinator
+            await notifyStatusChange("paused");
+          } else {
+            showNotification.error("Failed to Pause Job", "Unable to pause the job. Please try again.");
+          }
+        } catch (error) {
+          console.error("Failed to pause job:", error);
+          showNotification.error("Error", "An error occurred while pausing the job.");
+        }
       }
-    } catch (error) {
-      console.error("Failed to pause job:", error);
-    }
+    });
   };
 
   const stopJob = async () => {
