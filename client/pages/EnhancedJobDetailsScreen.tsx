@@ -71,7 +71,7 @@ interface JobDetails {
     address: string;
     phone: string;
   };
-  status: "assigned" | "accepted" | "in-progress" | "completed";
+  status: JobStatus;
   priority: "low" | "medium" | "high" | "urgent";
   estimatedDuration: string;
   description: string;
