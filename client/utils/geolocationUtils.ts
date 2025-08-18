@@ -1,4 +1,4 @@
-import { logError, getUserFriendlyErrorMessage } from './errorUtils';
+import { logError, getUserFriendlyErrorMessage } from "./errorUtils";
 
 interface LocationResult {
   latitude: number;
@@ -316,7 +316,7 @@ class GeolocationUtils {
    * Log geolocation error with proper formatting for debugging
    */
   logGeolocationError(error: GeolocationPositionError, context?: string): void {
-    const contextStr = context ? ` - ${context}` : '';
+    const contextStr = context ? ` - ${context}` : "";
 
     // Create properly formatted error info for logging
     const errorInfo = {
@@ -325,7 +325,7 @@ class GeolocationUtils {
       message: error.message,
       userMessage: this.parseGeolocationError(error).userMessage,
       timestamp: new Date().toISOString(),
-      context: contextStr
+      context: contextStr,
     };
 
     console.error(`Geolocation Error${contextStr}:`, errorInfo);

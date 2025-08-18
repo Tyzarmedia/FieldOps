@@ -102,7 +102,7 @@ class LocationService {
           console.error("Location permission error:", {
             code: error.code,
             message: error.message,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
           this.state.status = error.code === 1 ? "denied" : "unknown";
           this.notifyListeners();
@@ -161,7 +161,7 @@ class LocationService {
         console.error("Location tracking error:", {
           code: error.code,
           message: error.message,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         // Don't stop tracking on errors, just log them
       },
@@ -258,7 +258,7 @@ class LocationService {
           console.error("Manual location update error:", {
             code: error.code,
             message: error.message,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
           resolve(false);
         },

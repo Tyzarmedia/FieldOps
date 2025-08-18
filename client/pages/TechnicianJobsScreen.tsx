@@ -834,7 +834,6 @@ export default function TechnicianJobsScreen() {
           </div>
         </div>
 
-
         {/* Date Filters */}
         <div className="flex items-center space-x-4 mb-4">
           <div className="flex items-center space-x-2">

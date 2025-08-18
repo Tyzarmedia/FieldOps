@@ -1,4 +1,4 @@
-import { geolocationUtils, LocationResult } from '@/utils/geolocationUtils';
+import { geolocationUtils, LocationResult } from "@/utils/geolocationUtils";
 
 interface JobLocation {
   id: string;
@@ -52,14 +52,14 @@ class LocationTrackingService {
   async startTracking(technicianId: string): Promise<boolean> {
     try {
       if (this.isTracking) {
-        console.log('Location tracking already active');
+        console.log("Location tracking already active");
         return true;
       }
 
       // Check and request permissions
       const hasPermission = await geolocationUtils.requestPermission();
       if (!hasPermission) {
-        console.error('Location permission denied');
+        console.error("Location permission denied");
         return false;
       }
 
@@ -74,19 +74,19 @@ class LocationTrackingService {
           enableHighAccuracy: true,
           timeout: 15000,
           maximumAge: 5000,
-        }
+        },
       );
 
       if (this.watchId !== null) {
         this.isTracking = true;
-        console.log('Location tracking started successfully');
+        console.log("Location tracking started successfully");
         return true;
       } else {
-        console.error('Failed to start location tracking');
+        console.error("Failed to start location tracking");
         return false;
       }
     } catch (error) {
-      console.error('Error starting location tracking:', error);
+      console.error("Error starting location tracking:", error);
       return false;
     }
   }
@@ -99,7 +99,7 @@ class LocationTrackingService {
     }
     this.isTracking = false;
     this.clearAllProximityTimers();
-    console.log('Location tracking stopped');
+    console.log("Location tracking stopped");
   }
 
   // Add callback for location updates
@@ -127,12 +127,13 @@ class LocationTrackingService {
     }
 
     for (const job of this.nearbyJobs) {
-      const distance = geolocationUtils.calculateDistance(
-        this.currentLocation.latitude,
-        this.currentLocation.longitude,
-        job.latitude,
-        job.longitude
-      ) * 1000; // Convert to meters
+      const distance =
+        geolocationUtils.calculateDistance(
+          this.currentLocation.latitude,
+          this.currentLocation.longitude,
+          job.latitude,
+          job.longitude,
+        ) * 1000; // Convert to meters
 
       if (distance <= job.radius) {
         return { isNear: true, jobId: job.jobId, distance };
@@ -146,15 +147,17 @@ class LocationTrackingService {
   getDistanceToJob(jobId: string): number | null {
     if (!this.currentLocation) return null;
 
-    const job = this.nearbyJobs.find(j => j.jobId === jobId);
+    const job = this.nearbyJobs.find((j) => j.jobId === jobId);
     if (!job) return null;
 
-    return geolocationUtils.calculateDistance(
-      this.currentLocation.latitude,
-      this.currentLocation.longitude,
-      job.latitude,
-      job.longitude
-    ) * 1000; // Convert to meters
+    return (
+      geolocationUtils.calculateDistance(
+        this.currentLocation.latitude,
+        this.currentLocation.longitude,
+        job.latitude,
+        job.longitude,
+      ) * 1000
+    ); // Convert to meters
   }
 
   // Get location history
@@ -170,14 +173,14 @@ class LocationTrackingService {
     for (let i = 1; i < this.locationHistory.length; i++) {
       const prev = this.locationHistory[i - 1];
       const curr = this.locationHistory[i];
-      
+
       const distance = geolocationUtils.calculateDistance(
         prev.latitude,
         prev.longitude,
         curr.latitude,
-        curr.longitude
+        curr.longitude,
       );
-      
+
       totalDistance += distance;
     }
 
@@ -192,7 +195,9 @@ class LocationTrackingService {
   // Load job locations from server
   private async loadJobLocations(technicianId: string): Promise<void> {
     try {
-      const response = await fetch(`/api/job-mgmt/jobs/technician/${technicianId}/locations`);
+      const response = await fetch(
+        `/api/job-mgmt/jobs/technician/${technicianId}/locations`,
+      );
       if (response.ok) {
         const result = await response.json();
         if (result.success && result.data) {
@@ -201,19 +206,24 @@ class LocationTrackingService {
             jobId: job.jobId,
             latitude: job.latitude || job.coordinates?.latitude || -33.0197,
             longitude: job.longitude || job.coordinates?.longitude || 27.9117,
-            address: job.address || 'Unknown location',
+            address: job.address || "Unknown location",
             radius: job.proximityRadius || this.autoStartConfig.proximityRadius,
           }));
-          console.log(`Loaded ${this.nearbyJobs.length} job locations for proximity detection`);
+          console.log(
+            `Loaded ${this.nearbyJobs.length} job locations for proximity detection`,
+          );
         }
       }
     } catch (error) {
-      console.error('Error loading job locations:', error);
+      console.error("Error loading job locations:", error);
     }
   }
 
   // Handle location updates
-  private async handleLocationUpdate(location: LocationResult, technicianId: string): Promise<void> {
+  private async handleLocationUpdate(
+    location: LocationResult,
+    technicianId: string,
+  ): Promise<void> {
     this.currentLocation = location;
 
     // Create location update record
@@ -243,7 +253,7 @@ class LocationTrackingService {
 
     // Add to history
     this.locationHistory.push(locationUpdate);
-    
+
     // Keep only last 100 locations
     if (this.locationHistory.length > 100) {
       this.locationHistory = this.locationHistory.slice(-100);
@@ -253,11 +263,11 @@ class LocationTrackingService {
     await this.sendLocationUpdate(locationUpdate);
 
     // Notify callbacks
-    this.trackingCallbacks.forEach(callback => {
+    this.trackingCallbacks.forEach((callback) => {
       try {
         callback(location);
       } catch (error) {
-        console.error('Error in location callback:', error);
+        console.error("Error in location callback:", error);
       }
     });
   }
@@ -269,7 +279,7 @@ class LocationTrackingService {
       let secondsNear = 0;
       const timerId = setInterval(async () => {
         secondsNear++;
-        
+
         // Check if still near the job
         const proximityCheck = this.isNearAnyJob();
         if (!proximityCheck.isNear || proximityCheck.jobId !== jobId) {
@@ -294,22 +304,26 @@ class LocationTrackingService {
   }
 
   // Auto-start job when conditions are met
-  private async autoStartJob(jobId: string, technicianId: string, proximitySeconds: number): Promise<void> {
+  private async autoStartJob(
+    jobId: string,
+    technicianId: string,
+    proximitySeconds: number,
+  ): Promise<void> {
     try {
       // Check job status first
       const jobResponse = await fetch(`/api/job-mgmt/jobs/${jobId}/status`);
       if (!jobResponse.ok) return;
 
       const jobResult = await jobResponse.json();
-      if (!jobResult.success || jobResult.data.status !== 'accepted') {
+      if (!jobResult.success || jobResult.data.status !== "accepted") {
         console.log(`Job ${jobId} not in accepted status, skipping auto-start`);
         return;
       }
 
       // Auto-start the job
       const response = await fetch(`/api/job-mgmt/jobs/${jobId}/auto-start`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId,
           startTime: new Date().toISOString(),
@@ -324,22 +338,30 @@ class LocationTrackingService {
         const result = await response.json();
         if (result.success) {
           console.log(`Job ${jobId} auto-started successfully`);
-          
+
           // Send notification
-          await this.sendAutoStartNotification(jobId, technicianId, proximitySeconds);
+          await this.sendAutoStartNotification(
+            jobId,
+            technicianId,
+            proximitySeconds,
+          );
         }
       }
     } catch (error) {
-      console.error('Error auto-starting job:', error);
+      console.error("Error auto-starting job:", error);
     }
   }
 
   // Send auto-start notification
-  private async sendAutoStartNotification(jobId: string, technicianId: string, proximitySeconds: number): Promise<void> {
+  private async sendAutoStartNotification(
+    jobId: string,
+    technicianId: string,
+    proximitySeconds: number,
+  ): Promise<void> {
     try {
-      await fetch('/api/notifications/job-auto-started', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/notifications/job-auto-started", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           jobId,
           technicianId,
@@ -349,27 +371,29 @@ class LocationTrackingService {
         }),
       });
     } catch (error) {
-      console.error('Error sending auto-start notification:', error);
+      console.error("Error sending auto-start notification:", error);
     }
   }
 
   // Send location update to server
-  private async sendLocationUpdate(locationUpdate: LocationUpdate): Promise<void> {
+  private async sendLocationUpdate(
+    locationUpdate: LocationUpdate,
+  ): Promise<void> {
     try {
-      await fetch('/api/location/updates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/location/updates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(locationUpdate),
       });
     } catch (error) {
-      console.error('Error sending location update:', error);
+      console.error("Error sending location update:", error);
     }
   }
 
   // Handle location errors
   private handleLocationError(error: any): void {
     // Log error but continue tracking
-    geolocationUtils.logGeolocationError(error, 'LocationTrackingService');
+    geolocationUtils.logGeolocationError(error, "LocationTrackingService");
   }
 
   // Clear all proximity timers
