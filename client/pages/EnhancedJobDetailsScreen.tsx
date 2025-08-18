@@ -11,6 +11,7 @@ import {
   getAvailableTransitions,
   getStatusConfig
 } from "@/types/jobStatus";
+import { JobStatusManager, JobStatusBadge } from "@/components/JobStatusManager";
 import { geolocationUtils } from "@/utils/geolocationUtils";
 import { useNotification } from "@/components/ui/notification";
 import { JobTimer } from "@/components/JobTimer";
