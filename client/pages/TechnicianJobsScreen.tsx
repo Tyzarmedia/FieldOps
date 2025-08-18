@@ -830,6 +830,26 @@ export default function TechnicianJobsScreen() {
           </div>
         </div>
 
+        {/* Job Status Summary */}
+        <div className="grid grid-cols-4 gap-3 mb-4">
+          <div className="bg-white/20 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold">{jobStats.assigned}</div>
+            <div className="text-xs text-white/80">Assigned</div>
+          </div>
+          <div className="bg-white/20 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold">{jobStats.accepted}</div>
+            <div className="text-xs text-white/80">Accepted</div>
+          </div>
+          <div className="bg-white/20 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold">{jobStats.inProgress}</div>
+            <div className="text-xs text-white/80">In Progress</div>
+          </div>
+          <div className="bg-white/20 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold">{jobStats.completed}</div>
+            <div className="text-xs text-white/80">Completed</div>
+          </div>
+        </div>
+
         {/* Date Filters */}
         <div className="flex items-center space-x-4 mb-4">
           <div className="flex items-center space-x-2">
