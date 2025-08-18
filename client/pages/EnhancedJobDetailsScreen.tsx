@@ -1442,28 +1442,7 @@ export default function EnhancedJobDetailsScreen() {
             <h1 className="text-lg font-bold">Job Details</h1>
           </div>
           <div className="flex items-center space-x-2">
-            {/* Job Control Buttons */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
-              onClick={startJob}
-              disabled={jobStatus === "in-progress" || jobStatus === "completed"}
-            >
-              <Play className="h-4 w-4 mr-1" />
-              Start
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
-              onClick={stopJob}
-              disabled={jobStatus !== "in-progress"}
-            >
-              <Square className="h-4 w-4 mr-1" />
-              Stop
-            </Button>
-
+            {/* Header Control Buttons - removed start/stop as requested */}
             <Button
               variant="ghost"
               size="sm"
