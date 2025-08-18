@@ -13,7 +13,7 @@ export function LocationTimeoutProgress({
   isActive,
   onCancel,
   maxTimeout = 30000, // 30 seconds default
-  strategy = "Getting location"
+  strategy = "Getting location",
 }: LocationTimeoutProgressProps) {
   const [progress, setProgress] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -22,7 +22,7 @@ export function LocationTimeoutProgress({
   const phases = [
     { name: "Connecting to GPS", icon: Satellite, duration: 8000 },
     { name: "Acquiring signal", icon: Signal, duration: 12000 },
-    { name: "Calculating position", icon: MapPin, duration: 10000 }
+    { name: "Calculating position", icon: MapPin, duration: 10000 },
   ];
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export function LocationTimeoutProgress({
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       setElapsedTime(elapsed);
-      
+
       const progressPercent = Math.min((elapsed / maxTimeout) * 100, 100);
       setProgress(progressPercent);
 
@@ -84,14 +84,17 @@ export function LocationTimeoutProgress({
           <Progress value={progress} className="h-2" />
         </div>
       </div>
-      
+
       <div className="text-xs text-blue-700 space-y-1">
         <p>📍 Getting your precise location...</p>
         {elapsedTime > 10000 && (
           <p>🔄 Trying different location methods for better accuracy</p>
         )}
         {elapsedTime > 20000 && (
-          <p>⏱️ This is taking longer than usual. You may be indoors or in an area with poor GPS signal.</p>
+          <p>
+            ⏱️ This is taking longer than usual. You may be indoors or in an
+            area with poor GPS signal.
+          </p>
         )}
       </div>
 

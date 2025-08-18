@@ -869,7 +869,9 @@ export default function TechnicianJobsScreen() {
               disabled={loading}
               title="Refresh jobs"
             >
-              <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-5 w-5 ${loading ? "animate-spin" : ""}`}
+              />
             </Button>
             <Button
               variant="ghost"

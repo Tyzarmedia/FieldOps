@@ -95,15 +95,17 @@ class LocationService {
         longitude: result.longitude,
         timestamp: Date.now(),
         accuracy: result.accuracy,
-        address: result.address || `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
+        address:
+          result.address ||
+          `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
       });
       this.notifyListeners();
       return true;
     } catch (error: any) {
       console.error("Location permission error:", {
-        code: error.code || 'unknown',
-        message: error.message || 'Unknown error',
-        userMessage: error.userMessage || 'Location access failed',
+        code: error.code || "unknown",
+        message: error.message || "Unknown error",
+        userMessage: error.userMessage || "Location access failed",
         timestamp: new Date().toISOString(),
       });
 
@@ -248,14 +250,16 @@ class LocationService {
         longitude: result.longitude,
         timestamp: Date.now(),
         accuracy: result.accuracy,
-        address: result.address || `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
+        address:
+          result.address ||
+          `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
       });
       return true;
     } catch (error: any) {
       console.error("Manual location update error:", {
-        code: error.code || 'unknown',
-        message: error.message || 'Unknown error',
-        userMessage: error.userMessage || 'Location update failed',
+        code: error.code || "unknown",
+        message: error.message || "Unknown error",
+        userMessage: error.userMessage || "Location update failed",
         timestamp: new Date().toISOString(),
       });
       return false;

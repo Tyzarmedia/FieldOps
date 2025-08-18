@@ -97,7 +97,9 @@ export function LocationPermissionHandler({
       const locationData = {
         latitude: result.latitude,
         longitude: result.longitude,
-        address: result.address || `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
+        address:
+          result.address ||
+          `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
       };
       onLocationReceived(locationData);
       setPermissionStatus("granted");
@@ -110,7 +112,9 @@ export function LocationPermissionHandler({
       const locationData = {
         latitude: location.latitude,
         longitude: location.longitude,
-        address: location.address || `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`,
+        address:
+          location.address ||
+          `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`,
       };
       onLocationReceived(locationData);
       setPermissionStatus("granted");
@@ -120,11 +124,13 @@ export function LocationPermissionHandler({
   // Handle errors from the hook
   useEffect(() => {
     if (error) {
-      let errorMsg = error.userMessage || "Unable to get location. Please try again.";
+      let errorMsg =
+        error.userMessage || "Unable to get location. Please try again.";
 
       if (error.code === 1) {
         setPermissionStatus("denied");
-        errorMsg = "Location access denied. Please enable location permissions.";
+        errorMsg =
+          "Location access denied. Please enable location permissions.";
       }
 
       // Only show error if location is required
@@ -215,9 +221,7 @@ export function LocationPermissionHandler({
                 Location confirmed
               </span>
             </div>
-            <div className="text-sm text-green-700">
-              {location.address}
-            </div>
+            <div className="text-sm text-green-700">{location.address}</div>
           </div>
         )}
 

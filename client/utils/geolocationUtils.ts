@@ -96,7 +96,7 @@ class GeolocationUtils {
             enableHighAccuracy: true,
             timeout: 8000,
             maximumAge: 30000,
-          }
+          },
         },
         {
           name: "Extended high accuracy",
@@ -104,7 +104,7 @@ class GeolocationUtils {
             enableHighAccuracy: true,
             timeout: 20000,
             maximumAge: 60000,
-          }
+          },
         },
         {
           name: "Fast low accuracy",
@@ -112,7 +112,7 @@ class GeolocationUtils {
             enableHighAccuracy: false,
             timeout: 15000,
             maximumAge: 120000,
-          }
+          },
         },
         {
           name: "Extended low accuracy",
@@ -120,13 +120,13 @@ class GeolocationUtils {
             enableHighAccuracy: false,
             timeout: 30000,
             maximumAge: 300000, // 5 minutes
-          }
-        }
+          },
+        },
       ];
 
       // Apply any custom options to all strategies
       if (options) {
-        strategies.forEach(strategy => {
+        strategies.forEach((strategy) => {
           strategy.options = { ...strategy.options, ...options };
         });
       }
@@ -139,33 +139,42 @@ class GeolocationUtils {
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
         };
-        console.log(`✅ Location acquired using strategy: ${strategies[currentStrategy]?.name || 'unknown'}`);
+        console.log(
+          `✅ Location acquired using strategy: ${strategies[currentStrategy]?.name || "unknown"}`,
+        );
         resolve(result);
       };
 
       const tryNextStrategy = () => {
         if (currentStrategy >= strategies.length) {
           // All strategies failed
-          reject(this.createError(
-            3,
-            "All location strategies failed",
-            "Unable to get your location after multiple attempts. Please check your GPS signal, move to an area with better reception, or enter your location manually."
-          ));
+          reject(
+            this.createError(
+              3,
+              "All location strategies failed",
+              "Unable to get your location after multiple attempts. Please check your GPS signal, move to an area with better reception, or enter your location manually.",
+            ),
+          );
           return;
         }
 
         const strategy = strategies[currentStrategy];
-        console.log(`🔄 Trying location strategy ${currentStrategy + 1}/${strategies.length}: ${strategy.name}`);
+        console.log(
+          `🔄 Trying location strategy ${currentStrategy + 1}/${strategies.length}: ${strategy.name}`,
+        );
 
         const handleError = (error: GeolocationPositionError) => {
           console.log(`❌ Strategy "${strategy.name}" failed:`, {
             code: error.code,
             message: error.message,
-            strategy: strategy.name
+            strategy: strategy.name,
           });
 
           // If it's a timeout and we have more strategies, try the next one
-          if (error.code === error.TIMEOUT && currentStrategy < strategies.length - 1) {
+          if (
+            error.code === error.TIMEOUT &&
+            currentStrategy < strategies.length - 1
+          ) {
             currentStrategy++;
             setTimeout(tryNextStrategy, 1000); // Brief delay before next attempt
           } else if (error.code === error.PERMISSION_DENIED) {
@@ -184,7 +193,7 @@ class GeolocationUtils {
         navigator.geolocation.getCurrentPosition(
           handleSuccess,
           handleError,
-          strategy.options
+          strategy.options,
         );
       };
 
@@ -243,12 +252,12 @@ class GeolocationUtils {
       console.log(`Watch position error ${errorCount}/${maxErrors}:`, {
         code: error.code,
         message: error.message,
-        timeSinceLastSuccess: Math.round(timeSinceLastSuccess / 1000) + 's'
+        timeSinceLastSuccess: Math.round(timeSinceLastSuccess / 1000) + "s",
       });
 
       // If we've had too many consecutive errors, switch to lower accuracy
       if (errorCount >= maxErrors && watchOptions.enableHighAccuracy) {
-        console.log('🔄 Switching to low accuracy mode for watch position');
+        console.log("🔄 Switching to low accuracy mode for watch position");
 
         // Clear current watch
         if (this.watchId !== null) {
@@ -264,9 +273,12 @@ class GeolocationUtils {
         this.watchId = navigator.geolocation.watchPosition(
           handleSuccess,
           handleError,
-          watchOptions
+          watchOptions,
         );
-      } else if (errorCount < maxErrors || error.code === error.PERMISSION_DENIED) {
+      } else if (
+        errorCount < maxErrors ||
+        error.code === error.PERMISSION_DENIED
+      ) {
         // Only report error to callback after several failures or on permission denied
         if (errorCount >= maxErrors || error.code === error.PERMISSION_DENIED) {
           onError(this.parseGeolocationError(error));

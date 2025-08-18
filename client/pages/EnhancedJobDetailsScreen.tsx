@@ -1555,7 +1555,6 @@ export default function EnhancedJobDetailsScreen() {
 
         {/* Top Control Buttons */}
         <div className="flex justify-center space-x-8 mb-6">
-
           {jobDetails.status === "accepted" && (
             <Button
               variant="ghost"
@@ -1675,7 +1674,9 @@ export default function EnhancedJobDetailsScreen() {
           </div>
           <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className={`w-3 h-3 ${getStatusDotColor(jobStatus || jobDetails.status)} rounded-full`}></div>
+              <div
+                className={`w-3 h-3 ${getStatusDotColor(jobStatus || jobDetails.status)} rounded-full`}
+              ></div>
               <div>
                 <p className="text-xs text-white/80">Status</p>
                 <p className="font-semibold">
