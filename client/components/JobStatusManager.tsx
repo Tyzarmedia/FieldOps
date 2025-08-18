@@ -91,10 +91,10 @@ export const JobStatusManager = ({
           <CardTitle className="text-lg flex items-center space-x-2">
             <span>Current Status</span>
           </CardTitle>
-          <Badge 
+          <Badge
             className={`${statusConfig.bgColor} ${statusConfig.textColor} flex items-center space-x-1`}
           >
-            {getStatusIcon(currentStatus)}
+            {getStatusIcon(normalizedCurrentStatus)}
             <span>{statusConfig.label}</span>
           </Badge>
         </div>
