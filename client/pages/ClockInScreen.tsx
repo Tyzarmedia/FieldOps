@@ -444,9 +444,13 @@ export default function ClockInScreen({
 
   const handleClose = () => {
     // Navigate to appropriate dashboard based on user role
-    if (userRole === "Assistant Technician") {
+    console.log("Closing clock-in screen, userRole:", userRole);
+    if (userRole === "Assistant Technician" || userRole === "AssistantTechnician") {
       navigate("/assistant-technician");
+    } else if (userRole === "Technician") {
+      navigate("/technician");
     } else {
+      // Fallback to technician dashboard for any technician-like role
       navigate("/technician");
     }
   };
