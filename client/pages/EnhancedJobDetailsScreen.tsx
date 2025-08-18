@@ -263,8 +263,12 @@ export default function EnhancedJobDetailsScreen() {
 
   // Check if location is needed for job operations
   useEffect(() => {
+    // Check if location permission was already granted this session
+    const locationGrantedThisSession = sessionStorage.getItem("locationPermissionGranted");
+
     // Show location permission handler when job requires location tracking
-    if (jobDetails.status === "accepted" || jobStatus === "in-progress") {
+    // but only if not already granted this session
+    if ((jobDetails.status === "accepted" || jobStatus === "in-progress") && !locationGrantedThisSession) {
       setLocationRequired(true);
       setShowLocationPermission(true);
     }
