@@ -323,6 +323,10 @@ export default function EnhancedJobDetailsScreen() {
       latitude: location.latitude,
       longitude: location.longitude,
     });
+
+    // Remember that location permission was granted this session
+    sessionStorage.setItem("locationPermissionGranted", "true");
+
     setShowLocationPermission(false);
     checkProximity({
       latitude: location.latitude,
