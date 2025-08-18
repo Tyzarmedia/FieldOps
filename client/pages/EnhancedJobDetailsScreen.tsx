@@ -753,40 +753,44 @@ export default function EnhancedJobDetailsScreen() {
     });
   };
 
-  const stopJob = async () => {
-    try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/stop`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          endTime: new Date().toISOString(),
-          totalTime: jobTimer,
-          location: currentLocation,
-        }),
-      });
+  const stopJob = () => {
+    showConfirmation({
+      title: 'Stop Job',
+      message: `Are you sure you want to stop work on "${jobDetails.title}"? This will mark the job as completed and end time tracking.`,
+      confirmText: 'Stop Job',
+      variant: 'destructive',
+      icon: <Square className="h-6 w-6 text-red-600" />,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/jobs/${jobDetails.id}/stop`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              technicianId: technician.id,
+              endTime: new Date().toISOString(),
+              totalTime: jobTimer,
+              location: currentLocation,
+            }),
+          });
 
-      if (response.ok) {
-        setJobStatus("completed");
-        setIsTimerRunning(false);
+          if (response.ok) {
+            setJobStatus("completed");
+            setIsTimerRunning(false);
 
-        // Show success toast
-        toast({
-          title: "Job Stopped",
-          description: "Job has been stopped successfully.",
-        });
+            // Show success notification
+            showNotification.success("Job Stopped", "Job has been stopped successfully.");
 
-        // Notify manager and coordinator
-        await notifyStatusChange("completed");
-      } else {
-        toast({
-          title: "Failed to Stop Job",
-          description: "Unable to stop the job. Please try again.",
-        });
+            // Notify manager and coordinator
+            await notifyStatusChange("completed");
+          } else {
+            showNotification.error("Failed to Stop Job", "Unable to stop the job. Please try again.");
+          }
+        } catch (error) {
+          console.error("Failed to stop job:", error);
+          showNotification.error("Error", "An error occurred while stopping the job.");
+        }
       }
-    } catch (error) {
-      console.error("Failed to stop job:", error);
-    }
+    });
   };
 
   // Resume job from paused state
