@@ -74,6 +74,7 @@ export default function EnhancedJobDetailsScreen() {
   const navigate = useNavigate();
   const { jobId } = useParams();
   const { toast } = useToast();
+  const { showConfirmation, ConfirmationDialog } = useConfirmationDialog();
   const { success, error: notifyError, warning } = useNotification();
   const [activeTab, setActiveTab] = useState("details");
   const [showTimerOverlay, setShowTimerOverlay] = useState(false);
