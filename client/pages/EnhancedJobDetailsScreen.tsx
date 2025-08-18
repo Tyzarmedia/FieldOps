@@ -833,7 +833,7 @@ export default function EnhancedJobDetailsScreen() {
       onConfirm: async () => {
         try {
           const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/start`, {
-            method: "POST",
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               technicianId: technician.id,
