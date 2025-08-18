@@ -260,6 +260,12 @@ export default function TechnicianJobsScreen() {
     return () => clearInterval(interval);
   }, []);
 
+  // Manual refresh function for user-triggered retry
+  const handleRefresh = () => {
+    console.log('Manual refresh triggered');
+    loadJobs(true);
+  };
+
   const tabs = [
     {
       id: "assigned",
