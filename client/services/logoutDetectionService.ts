@@ -347,25 +347,15 @@ class LogoutDetectionService {
   private async sendLogoutEvent(logoutEvent: LogoutEvent): Promise<void> {
     // Check if we're online before attempting API calls
     if (!navigator.onLine) {
-      console.warn("Device is offline, skipping logout event API calls");
+      console.log("Device is offline, skipping logout event API calls");
       return;
     }
 
+    // Try to send notification using existing notifications endpoint (if available)
     try {
-      // Try to send logout event
-      const eventResponse = await fetch("/api/events/logout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(logoutEvent),
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
 
-      if (eventResponse.ok) {
-        console.log("Logout event sent successfully");
-      } else {
-        console.warn("Failed to send logout event, but continuing");
-      }
-
-      // Try to send notification using existing notifications endpoint
       const notificationResponse = await fetch("/api/notifications/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -377,25 +367,25 @@ class LogoutDetectionService {
           priority: "medium",
           timestamp: logoutEvent.logoutTime,
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (notificationResponse.ok) {
         console.log("Auto clock-out notification sent successfully");
       } else {
-        console.warn(
-          "Failed to send auto clock-out notification, but continuing",
-        );
+        console.log("Notification endpoint not available (non-critical)");
       }
     } catch (error) {
-      // Handle specific fetch errors
-      if (error instanceof Error && error.message.includes("Failed to fetch")) {
-        console.warn(
-          "Network error sending logout event - server may be unreachable (non-critical)",
-        );
-      } else {
-        console.warn("Error sending logout event (non-critical):", error);
+      // Handle specific fetch errors gracefully - this is non-critical
+      if (error instanceof Error) {
+        if (error.name === "AbortError") {
+          console.log("Logout notification request timed out (non-critical)");
+        } else if (error.message.includes("Failed to fetch")) {
+          console.log("Logout notification network error (non-critical)");
+        }
       }
-      // Don't throw error - this is not critical for the logout process
     }
   }
 
