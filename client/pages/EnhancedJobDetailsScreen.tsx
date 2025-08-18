@@ -1761,6 +1761,12 @@ export default function EnhancedJobDetailsScreen() {
               onClick={() => {
                 // Handle stock addition
                 if (stockFormData.code && stockFormData.container && stockFormData.qtyUsed) {
+                  // Validate that the selected container belongs to the user
+                  const userHasAccess = userWarehouses.some(wh => wh.id === stockFormData.container);
+                  if (!userHasAccess) {
+                    alert("You don't have access to allocate stock from this warehouse");
+                    return;
+                  }
                   const newStock = {
                     id: `stock-${Date.now()}`,
                     code: stockFormData.code,
