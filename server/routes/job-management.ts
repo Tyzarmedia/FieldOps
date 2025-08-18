@@ -177,6 +177,33 @@ router.get("/jobs/:jobId", (req, res) => {
   }
 });
 
+// Get job status for polling
+router.get("/jobs/:jobId/status", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const job = jobs.find((j) => j.id === jobId);
+
+    if (!job) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        status: job.status,
+        lastModified: job.lastModified,
+        id: job.id
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch job status",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Create new job (Coordinator only)
 router.post("/jobs", (req, res) => {
   try {
