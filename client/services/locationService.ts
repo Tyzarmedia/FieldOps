@@ -99,7 +99,11 @@ class LocationService {
           resolve(true);
         },
         (error) => {
-          console.error("Location permission error:", error);
+          console.error("Location permission error:", {
+            code: error.code,
+            message: error.message,
+            timestamp: new Date().toISOString()
+          });
           this.state.status = error.code === 1 ? "denied" : "unknown";
           this.notifyListeners();
           resolve(false);
@@ -154,7 +158,11 @@ class LocationService {
         });
       },
       (error) => {
-        console.error("Location tracking error:", error);
+        console.error("Location tracking error:", {
+          code: error.code,
+          message: error.message,
+          timestamp: new Date().toISOString()
+        });
         // Don't stop tracking on errors, just log them
       },
       {
@@ -247,7 +255,11 @@ class LocationService {
           resolve(true);
         },
         (error) => {
-          console.error("Manual location update error:", error);
+          console.error("Manual location update error:", {
+            code: error.code,
+            message: error.message,
+            timestamp: new Date().toISOString()
+          });
           resolve(false);
         },
         {
