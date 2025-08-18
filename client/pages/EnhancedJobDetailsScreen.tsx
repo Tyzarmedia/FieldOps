@@ -348,6 +348,34 @@ export default function EnhancedJobDetailsScreen() {
     warning("Location Required", "Using default location for job tracking. Some features may be limited.");
   };
 
+  // Update job status
+  const updateJobStatus = async (newStatus: string) => {
+    try {
+      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: newStatus,
+          technicianId: localStorage.getItem("employeeId") || "tech001"
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setJobDetails(prev => ({ ...prev, status: newStatus as any }));
+          setShowStatusModal(false);
+          success("Status Updated", `Job status updated to ${newStatus}`);
+        }
+      } else {
+        throw new Error('Failed to update status');
+      }
+    } catch (error) {
+      console.error("Error updating job status:", error);
+      error("Update Failed", "Failed to update job status. Please try again.");
+    }
+  };
+
   // Check proximity to job location
   const checkProximity = (currentPos: {
     latitude: number;
