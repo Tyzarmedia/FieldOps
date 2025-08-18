@@ -1498,7 +1498,7 @@ export default function EnhancedJobDetailsScreen() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className={`${getHeaderColorByStatus(jobStatus || jobDetails.status)} text-white p-3`}>
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3">
         {/* Header Title Row */}
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center space-x-3">
