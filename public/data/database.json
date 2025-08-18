@@ -643,15 +643,16 @@
       "id": "OT-1755533420064",
       "technicianId": "tech001",
       "startTime": "2025-08-09T15:00:49.273Z",
-      "totalHours": 217.36748666666668,
+      "totalHours": 217.3798588888889,
       "isAutoDetected": true,
       "workOrderNumbers": [],
       "reason": "Extended hours - worked beyond 8 hours",
       "status": "pending",
       "rate": 150,
-      "totalAmount": 32605.123000000003,
+      "totalAmount": 32606.978833333334,
       "createdAt": "2025-08-18T16:10:23.419Z",
-      "updatedAt": "2025-08-18T16:22:54.951Z"
+      "updatedAt": "2025-08-18T16:23:39.351Z",
+      "endTime": "2025-08-18T16:23:36.765Z"
     }
   ]
 }
