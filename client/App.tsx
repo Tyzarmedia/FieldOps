@@ -196,6 +196,7 @@ export default function App() {
         <NotificationProvider>
           <Toaster />
           <Sonner />
+          <NotificationOverlay />
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
