@@ -147,10 +147,10 @@ export const JobStatusBadge = ({
   };
 
   return (
-    <Badge 
+    <Badge
       className={`${config.bgColor} ${config.textColor} flex items-center space-x-1 ${sizeClasses[size]}`}
     >
-      {getStatusIcon(status)}
+      {getStatusIcon(normalizedStatus)}
       <span>{config.label}</span>
     </Badge>
   );
