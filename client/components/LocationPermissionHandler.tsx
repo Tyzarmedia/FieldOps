@@ -272,14 +272,14 @@ export function LocationPermissionHandler({
             </div>
           ) : (
             <Button
-              onClick={requestLocation}
+              onClick={handleLocationRequest}
               disabled={isLoading}
               className="w-full"
             >
               {isLoading ? (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Getting location...
+                  {strategy || "Getting location..."}
                 </>
               ) : (
                 <>
@@ -292,7 +292,7 @@ export function LocationPermissionHandler({
 
           {!required && (
             <Button
-              onClick={useDefaultLocation}
+              onClick={handleUseDefaultLocation}
               variant="outline"
               className="w-full"
               disabled={isLoading}
