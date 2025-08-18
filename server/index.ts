@@ -61,6 +61,9 @@ export function createServer() {
   // Payroll API
   app.get("/api/payroll/overtime-rate/:technicianId", getOvertimeRate);
 
+  // Warehouse Stock API
+  app.use("/api/warehouse-stock", warehouseStockRouter);
+
   // Job Management API
   app.get("/api/jobs", getJobs);
   app.get("/api/jobs/technician/:technicianId", getJobsByTechnician);
