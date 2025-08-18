@@ -127,7 +127,7 @@ export default function EnhancedJobDetailsScreen() {
         const employeeId = localStorage.getItem("employeeId") || "tech001";
 
         // Try to fetch user's warehouse assignments from API
-        const response = await fetch(`/api/db/employees/${employeeId}/warehouses`);
+        const response = await fetch(`/api/warehouse-stock/user/${employeeId}/warehouses`);
 
         if (response.ok) {
           const result = await response.json();
