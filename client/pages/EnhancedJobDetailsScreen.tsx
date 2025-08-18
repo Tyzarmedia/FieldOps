@@ -963,10 +963,10 @@ export default function EnhancedJobDetailsScreen() {
     (stock) =>
       stock.code
         .toLowerCase()
-        .includes(stockFormData.searchQuery.toLowerCase()) ||
+        .includes(legacyStockForm.searchQuery.toLowerCase()) ||
       stock.name
         .toLowerCase()
-        .includes(stockFormData.searchQuery.toLowerCase()),
+        .includes(legacyStockForm.searchQuery.toLowerCase()),
   );
 
   const submitStockForm = async () => {
