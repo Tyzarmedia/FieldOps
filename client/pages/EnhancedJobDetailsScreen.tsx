@@ -1050,6 +1050,16 @@ export default function EnhancedJobDetailsScreen() {
 
   const handleUpdateUdf = async () => {
     try {
+      // Close any open Select dropdowns before showing popup
+      const openSelectTriggers = document.querySelectorAll('[data-state="open"]');
+      openSelectTriggers.forEach((trigger) => {
+        const closeEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+        trigger.dispatchEvent(closeEvent);
+      });
+
+      // Brief delay to allow dropdowns to close
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       // Validate required UDF fields
       const requiredFields = [
         "faultResolved",
