@@ -1542,27 +1542,60 @@ export default function EnhancedJobDetailsScreen() {
         <div className="text-center mb-4">
           <h2 className="text-lg font-bold mb-1">BRITELINKMCT</h2>
           <h3 className="text-md font-semibold mb-2">#{jobDetails.id}</h3>
-          <div className="flex justify-center space-x-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg"
-              onClick={startJob}
-              disabled={jobStatus === "in-progress" || jobStatus === "completed"}
-            >
-              <Play className="h-4 w-4 mr-1" />
-              Start
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg"
-              onClick={stopJob}
-              disabled={jobStatus !== "in-progress"}
-            >
-              <Square className="h-4 w-4 mr-1" />
-              Stop
-            </Button>
+          <div className="flex justify-center space-x-4">
+            {/* Professional Job Control Buttons */}
+            {(jobStatus === "assigned" || jobStatus === "completed" || jobDetails.status === "accepted") && (
+              <div className="bg-green-500 hover:bg-green-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                   onClick={startJob}
+              >
+                <div className="bg-white/20 rounded-full p-1">
+                  <Play className="h-5 w-5" />
+                </div>
+                <span className="font-semibold">Start Job</span>
+              </div>
+            )}
+
+            {jobStatus === "in-progress" && (
+              <>
+                <div className="bg-yellow-500 hover:bg-yellow-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                     onClick={pauseJob}
+                >
+                  <div className="bg-white/20 rounded-full p-1">
+                    <Pause className="h-5 w-5" />
+                  </div>
+                  <span className="font-semibold">Pause</span>
+                </div>
+                <div className="bg-red-500 hover:bg-red-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                     onClick={stopJob}
+                >
+                  <div className="bg-white/20 rounded-full p-1">
+                    <Square className="h-5 w-5" />
+                  </div>
+                  <span className="font-semibold">Stop Job</span>
+                </div>
+              </>
+            )}
+
+            {jobStatus === "paused" && (
+              <>
+                <div className="bg-green-500 hover:bg-green-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                     onClick={resumeJob}
+                >
+                  <div className="bg-white/20 rounded-full p-1">
+                    <Play className="h-5 w-5" />
+                  </div>
+                  <span className="font-semibold">Resume</span>
+                </div>
+                <div className="bg-red-500 hover:bg-red-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                     onClick={stopJob}
+                >
+                  <div className="bg-white/20 rounded-full p-1">
+                    <Square className="h-5 w-5" />
+                  </div>
+                  <span className="font-semibold">Stop Job</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
