@@ -38,6 +38,12 @@ export default function ClockInScreen({
   const [showFeedbackOverlay, setShowFeedbackOverlay] = useState(false);
   const [dailyFeedback, setDailyFeedback] = useState("");
   const [feedbackRating, setFeedbackRating] = useState<number | null>(null);
+  const [locationState, setLocationState] = useState<LocationPermissionState>({
+    status: 'unknown',
+    isTracking: false,
+    lastKnownLocation: null,
+    clockedIn: false
+  });
   const navigate = useNavigate();
 
   // Get user initials
