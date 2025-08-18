@@ -204,6 +204,8 @@ export default function ClockInScreen({
   };
 
   const handleClockToggle = async () => {
+    const wasClockingIn = !isClockedIn; // Track if we're clocking in before state changes
+
     if (isClockedIn) {
       // Clock Out
       setIsClockingIn(true);
@@ -262,8 +264,8 @@ export default function ClockInScreen({
     setIsClockingIn(false);
     setSliderPosition(0);
 
-    // Navigate to appropriate dashboard if clocking in (isClockedIn will be true after clocking in)
-    if (isClockedIn) {
+    // Navigate to appropriate dashboard if we just clocked in
+    if (wasClockingIn) {
       if (userRole === "Assistant Technician") {
         navigate("/assistant-technician");
       } else {
