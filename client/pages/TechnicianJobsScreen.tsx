@@ -865,6 +865,16 @@ export default function TechnicianJobsScreen() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20"
+              onClick={handleRefresh}
+              disabled={loading}
+              title="Refresh jobs"
+            >
+              <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20"
               onClick={() => navigate("/")}
             >
               <X className="h-6 w-6" />
