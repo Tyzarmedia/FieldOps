@@ -322,6 +322,24 @@ export default function EnhancedJobDetailsScreen() {
     { id: 6, code: "ONT-G2", name: "ONT Device - G2", warehouseQty: 12 },
   ]);
 
+  // Helper function to get header color based on job status
+  const getHeaderColorByStatus = (status: string) => {
+    switch (status) {
+      case "assigned":
+      case "accepted":
+        return "bg-gradient-to-r from-blue-500 to-blue-600"; // Blue for assigned/accepted
+      case "in-progress":
+        return "bg-gradient-to-r from-green-500 to-green-600"; // Green for in progress
+      case "paused":
+        return "bg-gradient-to-r from-yellow-500 to-yellow-600"; // Yellow for paused
+      case "completed":
+      case "job-completed":
+        return "bg-gradient-to-r from-red-500 to-red-600"; // Red for completed
+      default:
+        return "bg-gradient-to-r from-gray-500 to-gray-600"; // Default gray
+    }
+  };
+
   // Job data state
   const [jobDetails, setJobDetails] = useState<JobDetails>({
     id: jobId || "JA-7762",
