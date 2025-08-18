@@ -238,33 +238,28 @@ class LocationService {
       return false;
     }
 
-    return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.updateLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            timestamp: Date.now(),
-            accuracy: position.coords.accuracy,
-            address: `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`,
-          });
-          resolve(true);
-        },
-        (error) => {
-          console.error("Manual location update error:", {
-            code: error.code,
-            message: error.message,
-            timestamp: new Date().toISOString(),
-          });
-          resolve(false);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 1000,
-        },
-      );
-    });
+    try {
+      // Use the improved geolocationUtils with progressive timeout strategy
+      const { geolocationUtils } = await import("@/utils/geolocationUtils");
+      const result = await geolocationUtils.getCurrentPosition();
+
+      this.updateLocation({
+        latitude: result.latitude,
+        longitude: result.longitude,
+        timestamp: Date.now(),
+        accuracy: result.accuracy,
+        address: result.address || `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
+      });
+      return true;
+    } catch (error: any) {
+      console.error("Manual location update error:", {
+        code: error.code || 'unknown',
+        message: error.message || 'Unknown error',
+        userMessage: error.userMessage || 'Location update failed',
+        timestamp: new Date().toISOString(),
+      });
+      return false;
+    }
   }
 }
 
