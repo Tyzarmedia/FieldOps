@@ -54,6 +54,12 @@ export function createServer() {
   // Network Assessments API
   app.use("/api/network-assessments", networkAssessmentsRouter);
 
+  // Overtime API
+  app.use("/api/overtime", overtimeRouter);
+
+  // Payroll API
+  app.get("/api/payroll/overtime-rate/:technicianId", getOvertimeRate);
+
   // Job Management API
   app.get("/api/jobs", getJobs);
   app.get("/api/jobs/technician/:technicianId", getJobsByTechnician);
