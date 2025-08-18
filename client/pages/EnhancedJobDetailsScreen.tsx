@@ -2361,12 +2361,71 @@ export default function EnhancedJobDetailsScreen() {
                 </div>
               )}
 
-              <Button
-                onClick={() => setShowImageForm(true)}
-                className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
-              >
-                <Plus className="h-6 w-6" />
-              </Button>
+              {/* Gallery Action Buttons */}
+              <div className="absolute bottom-4 right-4 flex flex-col-reverse items-end space-y-reverse space-y-3">
+                {/* Gallery and Camera buttons - show when expanded */}
+                {showGalleryOptions && (
+                  <>
+                    <Button
+                      onClick={() => {
+                        // Handle gallery access
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.multiple = true;
+                        input.onchange = (e) => {
+                          const files = (e.target as HTMLInputElement).files;
+                          if (files) {
+                            // Handle selected files from gallery
+                            console.log('Selected files from gallery:', files);
+                            // Add your gallery handling logic here
+                          }
+                        };
+                        input.click();
+                        setShowGalleryOptions(false);
+                      }}
+                      className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+                    >
+                      <Camera className="h-6 w-6" />
+                    </Button>
+                    <div className="text-xs text-gray-600 mr-2">Gallery</div>
+
+                    <Button
+                      onClick={() => {
+                        // Handle camera access
+                        navigator.mediaDevices?.getUserMedia({ video: true })
+                          .then(stream => {
+                            // Create video element or handle camera
+                            console.log('Camera stream:', stream);
+                            // Add your camera handling logic here
+                            stream.getTracks().forEach(track => track.stop()); // Stop for now
+                          })
+                          .catch(err => {
+                            console.error('Camera access denied:', err);
+                            alert('Camera access denied. Please allow camera permissions.');
+                          });
+                        setShowGalleryOptions(false);
+                      }}
+                      className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+                    >
+                      <Camera className="h-6 w-6" />
+                    </Button>
+                    <div className="text-xs text-gray-600 mr-2">Camera</div>
+                  </>
+                )}
+
+                {/* Main plus/close button */}
+                <Button
+                  onClick={() => setShowGalleryOptions(!showGalleryOptions)}
+                  className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+                >
+                  {showGalleryOptions ? (
+                    <X className="h-6 w-6" />
+                  ) : (
+                    <Plus className="h-6 w-6" />
+                  )}
+                </Button>
+              </div>
             </div>
           </TabsContent>
 
