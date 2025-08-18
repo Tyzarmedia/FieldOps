@@ -248,6 +248,9 @@ export default function ClockInScreen({
       setIsClockedIn(false);
       setDailyClockIns(currentClockIns);
 
+      // Stop location tracking
+      locationService.handleClockOut();
+
       // Save clock record to database
       await saveClockRecordToDatabase(currentClockIns);
 
@@ -276,6 +279,15 @@ export default function ClockInScreen({
 
       setIsClockedIn(true);
       setDailyClockIns(updatedClockIns);
+
+      // Request location permission and start tracking
+      const locationGranted = await locationService.handleClockIn();
+
+      if (locationGranted) {
+        showNotification.locationGranted();
+      } else {
+        showNotification.locationDenied();
+      }
 
       // Save clock record to database
       await saveClockRecordToDatabase(updatedClockIns);
