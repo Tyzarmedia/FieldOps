@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, CheckCircle, X } from 'lucide-react';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertTriangle, CheckCircle, X } from "lucide-react";
 
 interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -11,7 +11,7 @@ interface ConfirmationDialogProps {
   message: string;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'default' | 'destructive' | 'warning';
+  variant?: "default" | "destructive" | "warning";
   icon?: React.ReactNode;
 }
 
@@ -21,10 +21,10 @@ export const ConfirmationDialog = ({
   onConfirm,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
-  variant = 'default',
-  icon
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  variant = "default",
+  icon,
 }: ConfirmationDialogProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -42,32 +42,35 @@ export const ConfirmationDialog = ({
 
   const getVariantStyles = () => {
     switch (variant) {
-      case 'destructive':
+      case "destructive":
         return {
-          iconColor: 'text-red-600',
-          confirmButton: 'bg-red-600 hover:bg-red-700 text-white',
-          borderColor: 'border-red-200'
+          iconColor: "text-red-600",
+          confirmButton: "bg-red-600 hover:bg-red-700 text-white",
+          borderColor: "border-red-200",
         };
-      case 'warning':
+      case "warning":
         return {
-          iconColor: 'text-yellow-600',
-          confirmButton: 'bg-yellow-600 hover:bg-yellow-700 text-white',
-          borderColor: 'border-yellow-200'
+          iconColor: "text-yellow-600",
+          confirmButton: "bg-yellow-600 hover:bg-yellow-700 text-white",
+          borderColor: "border-yellow-200",
         };
       default:
         return {
-          iconColor: 'text-blue-600',
-          confirmButton: 'bg-blue-600 hover:bg-blue-700 text-white',
-          borderColor: 'border-blue-200'
+          iconColor: "text-blue-600",
+          confirmButton: "bg-blue-600 hover:bg-blue-700 text-white",
+          borderColor: "border-blue-200",
         };
     }
   };
 
   const styles = getVariantStyles();
 
-  const defaultIcon = variant === 'destructive' ? 
-    <AlertTriangle className={`h-6 w-6 ${styles.iconColor}`} /> :
-    <CheckCircle className={`h-6 w-6 ${styles.iconColor}`} />;
+  const defaultIcon =
+    variant === "destructive" ? (
+      <AlertTriangle className={`h-6 w-6 ${styles.iconColor}`} />
+    ) : (
+      <CheckCircle className={`h-6 w-6 ${styles.iconColor}`} />
+    );
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[9999]">
@@ -87,16 +90,12 @@ export const ConfirmationDialog = ({
             </Button>
           </div>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           <p className="text-gray-700">{message}</p>
-          
+
           <div className="flex justify-end space-x-2">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={isProcessing}
-            >
+            <Button variant="outline" onClick={onClose} disabled={isProcessing}>
               {cancelText}
             </Button>
             <Button
@@ -127,18 +126,18 @@ export const useConfirmationDialog = () => {
     title: string;
     message: string;
     onConfirm: () => void | Promise<void>;
-    variant?: 'default' | 'destructive' | 'warning';
+    variant?: "default" | "destructive" | "warning";
     confirmText?: string;
     cancelText?: string;
     icon?: React.ReactNode;
   }>({
     isOpen: false,
-    title: '',
-    message: '',
+    title: "",
+    message: "",
     onConfirm: () => {},
   });
 
-  const showConfirmation = (options: Omit<typeof dialog, 'isOpen'>) => {
+  const showConfirmation = (options: Omit<typeof dialog, "isOpen">) => {
     setDialog({
       ...options,
       isOpen: true,
@@ -146,7 +145,7 @@ export const useConfirmationDialog = () => {
   };
 
   const hideConfirmation = () => {
-    setDialog(prev => ({ ...prev, isOpen: false }));
+    setDialog((prev) => ({ ...prev, isOpen: false }));
   };
 
   const ConfirmationDialogComponent = () => (

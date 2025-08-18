@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export interface NotificationData {
   id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: "success" | "error" | "warning" | "info";
   title: string;
   message: string;
   duration?: number; // in milliseconds, default 4000
@@ -24,15 +24,17 @@ let globalState: NotificationState = { notifications: [] };
 const listeners = new Set<(state: NotificationState) => void>();
 
 const notifyListeners = () => {
-  listeners.forEach(listener => listener({ ...globalState }));
+  listeners.forEach((listener) => listener({ ...globalState }));
 };
 
-const addNotification = (notification: Omit<NotificationData, 'id'>): string => {
+const addNotification = (
+  notification: Omit<NotificationData, "id">,
+): string => {
   const id = generateId();
   const newNotification: NotificationData = {
     ...notification,
     id,
-    duration: notification.duration || 4000
+    duration: notification.duration || 4000,
   };
 
   globalState.notifications = [newNotification, ...globalState.notifications];
@@ -47,7 +49,9 @@ const addNotification = (notification: Omit<NotificationData, 'id'>): string => 
 };
 
 const removeNotification = (id: string) => {
-  globalState.notifications = globalState.notifications.filter(n => n.id !== id);
+  globalState.notifications = globalState.notifications.filter(
+    (n) => n.id !== id,
+  );
   notifyListeners();
 };
 
@@ -58,52 +62,61 @@ const clearAllNotifications = () => {
 
 // Convenience functions for different notification types
 export const showNotification = {
-  success: (title: string, message: string, options?: Partial<NotificationData>) =>
-    addNotification({ type: 'success', title, message, ...options }),
-  
-  error: (title: string, message: string, options?: Partial<NotificationData>) =>
-    addNotification({ type: 'error', title, message, ...options }),
-  
-  warning: (title: string, message: string, options?: Partial<NotificationData>) =>
-    addNotification({ type: 'warning', title, message, ...options }),
-  
+  success: (
+    title: string,
+    message: string,
+    options?: Partial<NotificationData>,
+  ) => addNotification({ type: "success", title, message, ...options }),
+
+  error: (
+    title: string,
+    message: string,
+    options?: Partial<NotificationData>,
+  ) => addNotification({ type: "error", title, message, ...options }),
+
+  warning: (
+    title: string,
+    message: string,
+    options?: Partial<NotificationData>,
+  ) => addNotification({ type: "warning", title, message, ...options }),
+
   info: (title: string, message: string, options?: Partial<NotificationData>) =>
-    addNotification({ type: 'info', title, message, ...options }),
+    addNotification({ type: "info", title, message, ...options }),
 
   // Special notification for job acceptance
   jobAccepted: (jobTitle: string, workOrderNumber?: string) =>
     addNotification({
-      type: 'success',
-      title: 'Job Accepted',
-      message: `${jobTitle}${workOrderNumber ? ` (${workOrderNumber})` : ''} has been accepted successfully.`,
-      duration: 5000
+      type: "success",
+      title: "Job Accepted",
+      message: `${jobTitle}${workOrderNumber ? ` (${workOrderNumber})` : ""} has been accepted successfully.`,
+      duration: 5000,
     }),
 
   // Special notification for job completion
   jobCompleted: (jobTitle: string, workOrderNumber?: string) =>
     addNotification({
-      type: 'success',
-      title: 'Job Completed',
-      message: `${jobTitle}${workOrderNumber ? ` (${workOrderNumber})` : ''} has been completed successfully.`,
-      duration: 5000
+      type: "success",
+      title: "Job Completed",
+      message: `${jobTitle}${workOrderNumber ? ` (${workOrderNumber})` : ""} has been completed successfully.`,
+      duration: 5000,
     }),
 
   // Location permission notifications
   locationGranted: () =>
     addNotification({
-      type: 'success',
-      title: 'Location Access Granted',
-      message: 'GPS tracking is now active for job proximity detection.',
-      duration: 3000
+      type: "success",
+      title: "Location Access Granted",
+      message: "GPS tracking is now active for job proximity detection.",
+      duration: 3000,
     }),
 
   locationDenied: () =>
     addNotification({
-      type: 'warning',
-      title: 'Location Access Denied',
-      message: 'Some features may be limited without location access.',
-      duration: 5000
-    })
+      type: "warning",
+      title: "Location Access Denied",
+      message: "Some features may be limited without location access.",
+      duration: 5000,
+    }),
 };
 
 export const useNotification = () => {
@@ -132,6 +145,6 @@ export const useNotification = () => {
     removeNotification: dismiss,
     clearAll: clear,
     subscribe,
-    show: showNotification
+    show: showNotification,
   };
 };

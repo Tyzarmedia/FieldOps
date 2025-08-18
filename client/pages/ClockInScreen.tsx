@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, Edit3, MapPin, Navigation } from "lucide-react";
-import { locationService, LocationPermissionState } from "@/services/locationService";
+import {
+  locationService,
+  LocationPermissionState,
+} from "@/services/locationService";
 import { showNotification } from "@/hooks/useNotification";
 
 interface ClockInScreenProps {
@@ -39,10 +42,10 @@ export default function ClockInScreen({
   const [dailyFeedback, setDailyFeedback] = useState("");
   const [feedbackRating, setFeedbackRating] = useState<number | null>(null);
   const [locationState, setLocationState] = useState<LocationPermissionState>({
-    status: 'unknown',
+    status: "unknown",
     isTracking: false,
     lastKnownLocation: null,
-    clockedIn: false
+    clockedIn: false,
   });
   const navigate = useNavigate();
 
@@ -79,7 +82,7 @@ export default function ClockInScreen({
       if (state.lastKnownLocation) {
         setLastLocation({
           lat: state.lastKnownLocation.latitude,
-          lng: state.lastKnownLocation.longitude
+          lng: state.lastKnownLocation.longitude,
         });
       }
     });
@@ -122,7 +125,7 @@ export default function ClockInScreen({
             console.error("Geolocation error:", {
               code: error.code,
               message: error.message,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             });
           },
           { enableHighAccuracy: true },
@@ -300,7 +303,10 @@ export default function ClockInScreen({
 
     // Navigate to appropriate dashboard if we just clocked in
     if (wasClockingIn) {
-      if (userRole === "Assistant Technician" || userRole === "AssistantTechnician") {
+      if (
+        userRole === "Assistant Technician" ||
+        userRole === "AssistantTechnician"
+      ) {
         navigate("/assistant-technician");
       } else {
         navigate("/technician");
@@ -481,7 +487,10 @@ export default function ClockInScreen({
   const handleClose = () => {
     // Navigate to appropriate dashboard based on user role
     console.log("Closing clock-in screen, userRole:", userRole);
-    if (userRole === "Assistant Technician" || userRole === "AssistantTechnician") {
+    if (
+      userRole === "Assistant Technician" ||
+      userRole === "AssistantTechnician"
+    ) {
       navigate("/assistant-technician");
     } else if (userRole === "Technician") {
       navigate("/technician");

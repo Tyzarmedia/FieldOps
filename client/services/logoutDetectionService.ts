@@ -307,10 +307,12 @@ class LogoutDetectionService {
         clearTimeout(timeoutId);
 
         if (fetchError instanceof Error) {
-          if (fetchError.name === 'AbortError') {
+          if (fetchError.name === "AbortError") {
             console.warn("Clock-out API request timed out after 5 seconds");
-          } else if (fetchError.message.includes('Failed to fetch')) {
-            console.warn("Network error during clock-out API call - server may be unreachable");
+          } else if (fetchError.message.includes("Failed to fetch")) {
+            console.warn(
+              "Network error during clock-out API call - server may be unreachable",
+            );
           } else {
             console.warn("Fetch error during clock-out:", fetchError.message);
           }
@@ -373,8 +375,10 @@ class LogoutDetectionService {
       }
     } catch (error) {
       // Handle specific fetch errors
-      if (error instanceof Error && error.message.includes('Failed to fetch')) {
-        console.warn("Network error sending logout event - server may be unreachable (non-critical)");
+      if (error instanceof Error && error.message.includes("Failed to fetch")) {
+        console.warn(
+          "Network error sending logout event - server may be unreachable (non-critical)",
+        );
       } else {
         console.warn("Error sending logout event (non-critical):", error);
       }

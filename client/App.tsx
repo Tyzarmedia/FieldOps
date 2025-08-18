@@ -308,14 +308,8 @@ export default function App() {
                 path="/technician-settings"
                 element={<TechnicianSettingsScreen />}
               />
-              <Route
-                path="/location-test"
-                element={<LocationTestScreen />}
-              />
-              <Route
-                path="/stock-requests"
-                element={<StockRequestScreen />}
-              />
+              <Route path="/location-test" element={<LocationTestScreen />} />
+              <Route path="/stock-requests" element={<StockRequestScreen />} />
               <Route
                 path="/stock-manager"
                 element={<StockManagerDashboard />}

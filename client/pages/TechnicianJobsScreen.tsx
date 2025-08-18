@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NotificationSystem } from "@/components/NotificationSystem";
-import { locationService, LocationPermissionState } from "@/services/locationService";
+import {
+  locationService,
+  LocationPermissionState,
+} from "@/services/locationService";
 import { LocationPermissionHandler } from "@/components/LocationPermissionHandler";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -82,7 +85,7 @@ export default function TechnicianJobsScreen() {
     accepted: 0,
     inProgress: 0,
     completed: 0,
-    total: 0
+    total: 0,
   });
   const [showStockUsageDialog, setShowStockUsageDialog] = useState(false);
   const [stockUsage, setStockUsage] = useState([]);
@@ -92,10 +95,10 @@ export default function TechnicianJobsScreen() {
     longitude: number;
   } | null>(null);
   const [locationState, setLocationState] = useState<LocationPermissionState>({
-    status: 'unknown',
+    status: "unknown",
     isTracking: false,
     lastKnownLocation: null,
-    clockedIn: false
+    clockedIn: false,
   });
   const [showLocationPermission, setShowLocationPermission] = useState(false);
   const navigate = useNavigate();
@@ -105,11 +108,11 @@ export default function TechnicianJobsScreen() {
   // Calculate job statistics
   const calculateJobStats = (jobList: Job[]) => {
     const stats = {
-      assigned: jobList.filter(job => job.status === "assigned").length,
-      accepted: jobList.filter(job => job.status === "accepted").length,
-      inProgress: jobList.filter(job => job.status === "in-progress").length,
-      completed: jobList.filter(job => job.status === "completed").length,
-      total: jobList.length
+      assigned: jobList.filter((job) => job.status === "assigned").length,
+      accepted: jobList.filter((job) => job.status === "accepted").length,
+      inProgress: jobList.filter((job) => job.status === "in-progress").length,
+      completed: jobList.filter((job) => job.status === "completed").length,
+      total: jobList.length,
     };
     setJobStats(stats);
   };
@@ -118,7 +121,7 @@ export default function TechnicianJobsScreen() {
   useEffect(() => {
     // Check if user is clocked in and location service is available
     const isClockedIn = localStorage.getItem("isClockedIn") === "true";
-    if (isClockedIn && locationState.status === 'unknown') {
+    if (isClockedIn && locationState.status === "unknown") {
       // Location service will handle permission if user is clocked in
       // Only show location permission modal if not clocked in and no location
       if (!isClockedIn && !currentLocation) {
@@ -751,7 +754,8 @@ export default function TechnicianJobsScreen() {
                 Location Access Required
               </h3>
               <p className="text-sm text-gray-600 mb-4 text-center">
-                Location access is required for job tracking and proximity detection.
+                Location access is required for job tracking and proximity
+                detection.
               </p>
               <LocationPermissionHandler
                 onLocationReceived={handleLocationReceived}

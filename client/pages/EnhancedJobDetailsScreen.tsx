@@ -8,9 +8,12 @@ import {
   JOB_STATUS_CONFIG,
   canTransitionTo,
   getAvailableTransitions,
-  getStatusConfig
+  getStatusConfig,
 } from "@/types/jobStatus";
-import { JobStatusManager, JobStatusBadge } from "@/components/JobStatusManager";
+import {
+  JobStatusManager,
+  JobStatusBadge,
+} from "@/components/JobStatusManager";
 import { geolocationUtils } from "@/utils/geolocationUtils";
 import { useNotification } from "@/components/ui/notification";
 import { JobTimer } from "@/components/JobTimer";
@@ -503,15 +506,24 @@ export default function EnhancedJobDetailsScreen() {
       ...jobStatusData,
       isNearJobLocation: isNearJobLocation,
       udfCompleted: signOffData.udfCompleted,
-      stockUsageRecorded: allocatedStock.some(stock => stock.quantityUsed > 0),
+      stockUsageRecorded: allocatedStock.some(
+        (stock) => stock.quantityUsed > 0,
+      ),
     };
 
     // Check if transition is allowed
-    if (!canTransitionTo(jobDetails.status, newStatus, updatedJobStatusData, userRole)) {
+    if (
+      !canTransitionTo(
+        jobDetails.status,
+        newStatus,
+        updatedJobStatusData,
+        userRole,
+      )
+    ) {
       const statusConfig = getStatusConfig(newStatus);
       showNotification.error(
         "Status Change Not Allowed",
-        `Cannot change to ${statusConfig.label}. Check requirements and permissions.`
+        `Cannot change to ${statusConfig.label}. Check requirements and permissions.`,
       );
       return;
     }
@@ -543,7 +555,7 @@ export default function EnhancedJobDetailsScreen() {
           const statusConfig = getStatusConfig(newStatus);
           showNotification.success(
             "Status Updated",
-            `Job status changed to ${statusConfig.label}`
+            `Job status changed to ${statusConfig.label}`,
           );
 
           // Update internal job status tracking
@@ -563,7 +575,10 @@ export default function EnhancedJobDetailsScreen() {
       }
     } catch (error) {
       console.error("Error updating job status:", error);
-      showNotification.error("Update Failed", "Failed to update job status. Please try again.");
+      showNotification.error(
+        "Update Failed",
+        "Failed to update job status. Please try again.",
+      );
     }
   };
 
@@ -676,7 +691,10 @@ export default function EnhancedJobDetailsScreen() {
         setJobDetails((prev) => ({ ...prev, status: "accepted" }));
 
         // Show custom sliding notification
-        showNotification.jobAccepted(jobDetails.title, jobDetails.workOrderNumber);
+        showNotification.jobAccepted(
+          jobDetails.title,
+          jobDetails.workOrderNumber,
+        );
 
         // Notify manager and coordinator
         await notifyStatusChange("accepted");
@@ -738,10 +756,10 @@ export default function EnhancedJobDetailsScreen() {
   // Manual job start
   const startJob = () => {
     showConfirmation({
-      title: 'Start Job',
+      title: "Start Job",
       message: `Are you sure you want to start working on "${jobDetails.title}"? This will begin time tracking for this job.`,
-      confirmText: 'Start Job',
-      variant: 'default',
+      confirmText: "Start Job",
+      variant: "default",
       icon: <Play className="h-6 w-6 text-green-600" />,
       onConfirm: async () => {
         try {
@@ -762,27 +780,36 @@ export default function EnhancedJobDetailsScreen() {
             setProximityTimer(0);
 
             // Show success notification
-            showNotification.success("Job Started", "Job has been successfully started.");
+            showNotification.success(
+              "Job Started",
+              "Job has been successfully started.",
+            );
 
             // Notify manager and coordinator
             await notifyStatusChange("started");
           } else {
-            showNotification.error("Failed to Start Job", "Unable to start the job. Please try again.");
+            showNotification.error(
+              "Failed to Start Job",
+              "Unable to start the job. Please try again.",
+            );
           }
         } catch (error) {
           console.error("Failed to start job:", error);
-          showNotification.error("Error", "An error occurred while starting the job.");
+          showNotification.error(
+            "Error",
+            "An error occurred while starting the job.",
+          );
         }
-      }
+      },
     });
   };
 
   const pauseJob = () => {
     showConfirmation({
-      title: 'Pause Job',
+      title: "Pause Job",
       message: `Are you sure you want to pause work on "${jobDetails.title}"? You can resume it later.`,
-      confirmText: 'Pause Job',
-      variant: 'warning',
+      confirmText: "Pause Job",
+      variant: "warning",
       icon: <Pause className="h-6 w-6 text-yellow-600" />,
       onConfirm: async () => {
         try {
@@ -802,27 +829,36 @@ export default function EnhancedJobDetailsScreen() {
             setIsTimerRunning(false);
 
             // Show success notification
-            showNotification.warning("Job Paused", "Job has been paused successfully.");
+            showNotification.warning(
+              "Job Paused",
+              "Job has been paused successfully.",
+            );
 
             // Notify manager and coordinator
             await notifyStatusChange("paused");
           } else {
-            showNotification.error("Failed to Pause Job", "Unable to pause the job. Please try again.");
+            showNotification.error(
+              "Failed to Pause Job",
+              "Unable to pause the job. Please try again.",
+            );
           }
         } catch (error) {
           console.error("Failed to pause job:", error);
-          showNotification.error("Error", "An error occurred while pausing the job.");
+          showNotification.error(
+            "Error",
+            "An error occurred while pausing the job.",
+          );
         }
-      }
+      },
     });
   };
 
   const stopJob = () => {
     showConfirmation({
-      title: 'Stop Job',
+      title: "Stop Job",
       message: `Are you sure you want to stop work on "${jobDetails.title}"? This will mark the job as completed and end time tracking.`,
-      confirmText: 'Stop Job',
-      variant: 'destructive',
+      confirmText: "Stop Job",
+      variant: "destructive",
       icon: <Square className="h-6 w-6 text-red-600" />,
       onConfirm: async () => {
         try {
@@ -842,18 +878,27 @@ export default function EnhancedJobDetailsScreen() {
             setIsTimerRunning(false);
 
             // Show success notification
-            showNotification.success("Job Stopped", "Job has been stopped successfully.");
+            showNotification.success(
+              "Job Stopped",
+              "Job has been stopped successfully.",
+            );
 
             // Notify manager and coordinator
             await notifyStatusChange("completed");
           } else {
-            showNotification.error("Failed to Stop Job", "Unable to stop the job. Please try again.");
+            showNotification.error(
+              "Failed to Stop Job",
+              "Unable to stop the job. Please try again.",
+            );
           }
         } catch (error) {
           console.error("Failed to stop job:", error);
-          showNotification.error("Error", "An error occurred while stopping the job.");
+          showNotification.error(
+            "Error",
+            "An error occurred while stopping the job.",
+          );
         }
-      }
+      },
     });
   };
 
@@ -3413,8 +3458,12 @@ export default function EnhancedJobDetailsScreen() {
                   ...jobStatusData,
                   isNearJobLocation: isNearJobLocation,
                   udfCompleted: signOffData.udfCompleted,
-                  stockUsageRecorded: allocatedStock.some(stock => stock.quantityUsed > 0),
-                  customerSignOff: signOffData.customerSignatureData ? true : false,
+                  stockUsageRecorded: allocatedStock.some(
+                    (stock) => stock.quantityUsed > 0,
+                  ),
+                  customerSignOff: signOffData.customerSignatureData
+                    ? true
+                    : false,
                 }}
                 userRole={localStorage.getItem("userRole") || "Technician"}
                 onStatusChange={updateJobStatus}
