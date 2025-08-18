@@ -138,16 +138,11 @@ export function LocationPermissionHandler({
     }
   }, [error, required, onError]);
 
-  const useDefaultLocation = () => {
-    const defaultLocation = {
-      latitude: -33.0197,
-      longitude: 27.9117,
-      address: "Default Location (East London)",
-    };
-
-    setCurrentLocation(defaultLocation);
-    onLocationReceived(defaultLocation);
-    setErrorMessage("");
+  const handleUseDefaultLocation = () => {
+    const result = useDefaultLocationFromHook();
+    if (result) {
+      setErrorMessage("");
+    }
   };
 
   const openLocationSettings = () => {
