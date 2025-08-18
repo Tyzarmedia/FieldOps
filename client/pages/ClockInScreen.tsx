@@ -438,7 +438,9 @@ export default function ClockInScreen({
   // Make the entire slider clickable
   const handleSliderClick = (e: React.MouseEvent) => {
     if (!isClockingIn && !isDragging) {
-      handleClockIn();
+      e.preventDefault();
+      e.stopPropagation();
+      handleClockToggle();
     }
   };
 
