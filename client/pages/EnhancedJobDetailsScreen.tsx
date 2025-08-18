@@ -3428,6 +3428,9 @@ export default function EnhancedJobDetailsScreen() {
           </div>
         </div>
       )}
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog />
     </div>
   );
 }
