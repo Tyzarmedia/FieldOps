@@ -974,8 +974,8 @@ export default function EnhancedJobDetailsScreen() {
   // Resume job from paused state
   const resumeJob = async () => {
     try {
-      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/start`, {
-        method: "POST",
+      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/resume`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: technician.id,
