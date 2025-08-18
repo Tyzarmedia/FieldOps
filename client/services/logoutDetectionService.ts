@@ -262,6 +262,12 @@ class LogoutDetectionService {
 
   // Perform clock out operations
   private async performClockOut(logoutEvent: LogoutEvent): Promise<void> {
+    // Check if we're online before attempting API calls
+    if (!navigator.onLine) {
+      console.warn("Device is offline, skipping clock-out API call");
+      return;
+    }
+
     try {
       // Try to use the database clock records endpoint
       const clockRecord = {
