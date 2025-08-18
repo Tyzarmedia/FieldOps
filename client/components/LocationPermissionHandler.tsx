@@ -34,12 +34,23 @@ export function LocationPermissionHandler({
   const [permissionStatus, setPermissionStatus] = useState<
     "unknown" | "granted" | "denied" | "prompt"
   >("unknown");
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<{
-    latitude: number;
-    longitude: number;
-    address: string;
-  } | null>(null);
+
+  const {
+    isLoading,
+    location,
+    error,
+    strategy,
+    progress,
+    canCancel,
+    requestLocation,
+    cancelRequest,
+    useDefaultLocation: useDefaultLocationFromHook,
+  } = useLocationRequest({
+    enableProgress: true,
+    maxTimeout: 30000,
+    fallbackToDefault: !required,
+  });
+
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
