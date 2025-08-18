@@ -1474,10 +1474,8 @@ export default function EnhancedJobDetailsScreen() {
 
         {/* Company and Job Info */}
         <div className="text-center mb-4">
-          <h2 className="text-lg font-bold mb-1">
-            Vumatel (Pty) Ltd - Central
-          </h2>
-          <h3 className="text-md font-semibold mb-2">#{jobDetails.id}215784</h3>
+          <h2 className="text-lg font-bold mb-1">BRITELINKMCT</h2>
+          <h3 className="text-md font-semibold mb-2">#{jobDetails.id}</h3>
           <JobStatusBadge status={jobDetails.status} size="lg" />
         </div>
 
