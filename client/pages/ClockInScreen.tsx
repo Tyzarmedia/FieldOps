@@ -262,8 +262,8 @@ export default function ClockInScreen({
     setIsClockingIn(false);
     setSliderPosition(0);
 
-    // Navigate to appropriate dashboard if clocking in
-    if (!isClockedIn) {
+    // Navigate to appropriate dashboard if clocking in (isClockedIn will be true after clocking in)
+    if (isClockedIn) {
       if (userRole === "Assistant Technician") {
         navigate("/assistant-technician");
       } else {
