@@ -302,7 +302,7 @@ export function LocationPermissionHandler({
           )}
         </div>
 
-        {required && !currentLocation && (
+        {required && !location && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
             <div className="flex items-center">
               <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
