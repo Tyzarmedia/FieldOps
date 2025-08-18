@@ -4,6 +4,13 @@ import { useToast } from "@/hooks/use-toast";
 import { showNotification } from "@/hooks/useNotification";
 import { useConfirmationDialog } from "@/components/ConfirmationDialog";
 import { Play, Pause, Square } from "lucide-react";
+import {
+  JobStatus,
+  JOB_STATUS_CONFIG,
+  canTransitionTo,
+  getAvailableTransitions,
+  getStatusConfig
+} from "@/types/jobStatus";
 import { geolocationUtils } from "@/utils/geolocationUtils";
 import { useNotification } from "@/components/ui/notification";
 import { JobTimer } from "@/components/JobTimer";
