@@ -1170,6 +1170,15 @@ export default function EnhancedJobDetailsScreen() {
               variant="ghost"
               size="sm"
               className="text-white hover:bg-white/20 rounded-full h-8 w-8"
+              onClick={() => setShowStatusModal(true)}
+              title="Update Status"
+            >
+              <Settings className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 rounded-full h-8 w-8"
               onClick={() => navigate("/technician/jobs")}
             >
               <X className="h-4 w-4" />
