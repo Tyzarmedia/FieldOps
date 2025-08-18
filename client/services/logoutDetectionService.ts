@@ -253,20 +253,32 @@ class LogoutDetectionService {
   // Perform clock out operations
   private async performClockOut(logoutEvent: LogoutEvent): Promise<void> {
     try {
-      const response = await fetch('/api/clock/auto-out', {
+      // Try to use the database clock records endpoint
+      const clockRecord = {
+        technicianId: logoutEvent.technicianId,
+        date: new Date().toISOString().split('T')[0],
+        clockOutTime: logoutEvent.clockOutTime,
+        totalWorkingHours: logoutEvent.workingHours,
+        totalDistance: logoutEvent.distanceTraveled || 0,
+        reason: logoutEvent.reason,
+        autoClockOut: true,
+        location: logoutEvent.location
+      };
+
+      const response = await fetch('/api/db/clock-records', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(logoutEvent),
+        body: JSON.stringify(clockRecord),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to perform auto clock-out');
+      if (response.ok) {
+        console.log('Auto clock-out recorded successfully in database');
+      } else {
+        console.warn('Failed to record auto clock-out in database, proceeding with local storage update');
       }
-
-      console.log('Auto clock-out recorded successfully');
     } catch (error) {
-      console.error('Error performing clock out:', error);
-      throw error;
+      console.warn('Error performing clock out API call, proceeding with local storage update:', error);
+      // Don't throw error - allow the logout process to continue even if API fails
     }
   }
 
