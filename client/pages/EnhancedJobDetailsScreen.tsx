@@ -96,6 +96,7 @@ export default function EnhancedJobDetailsScreen() {
   const [autoStartCountdown, setAutoStartCountdown] = useState(0);
   const [showLocationPermission, setShowLocationPermission] = useState(false);
   const [locationRequired, setLocationRequired] = useState(false);
+  const [showGalleryOptions, setShowGalleryOptions] = useState(false);
   const [technician] = useState({
     id: "tech001",
     name: "Dyondzani Clement Masinge",
