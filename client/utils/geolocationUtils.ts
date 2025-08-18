@@ -73,7 +73,7 @@ class GeolocationUtils {
   }
 
   /**
-   * Get current position with comprehensive error handling
+   * Get current position with progressive timeout strategy
    */
   async getCurrentPosition(options?: PositionOptions): Promise<LocationResult> {
     return new Promise((resolve, reject) => {
@@ -88,12 +88,50 @@ class GeolocationUtils {
         return;
       }
 
-      const defaultOptions: PositionOptions = {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 60000,
-        ...options,
-      };
+      // Progressive timeout strategy - try multiple approaches
+      const strategies = [
+        {
+          name: "Quick high accuracy",
+          options: {
+            enableHighAccuracy: true,
+            timeout: 8000,
+            maximumAge: 30000,
+          }
+        },
+        {
+          name: "Extended high accuracy",
+          options: {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 60000,
+          }
+        },
+        {
+          name: "Fast low accuracy",
+          options: {
+            enableHighAccuracy: false,
+            timeout: 15000,
+            maximumAge: 120000,
+          }
+        },
+        {
+          name: "Extended low accuracy",
+          options: {
+            enableHighAccuracy: false,
+            timeout: 30000,
+            maximumAge: 300000, // 5 minutes
+          }
+        }
+      ];
+
+      // Apply any custom options to all strategies
+      if (options) {
+        strategies.forEach(strategy => {
+          strategy.options = { ...strategy.options, ...options };
+        });
+      }
+
+      let currentStrategy = 0;
 
       const handleSuccess = (position: GeolocationPosition) => {
         const result: LocationResult = {
@@ -101,39 +139,57 @@ class GeolocationUtils {
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
         };
+        console.log(`✅ Location acquired using strategy: ${strategies[currentStrategy]?.name || 'unknown'}`);
         resolve(result);
       };
 
-      const handleError = (error: GeolocationPositionError) => {
-        const geolocationError = this.parseGeolocationError(error);
-
-        // Try fallback with less strict settings
-        if (error.code === error.TIMEOUT && defaultOptions.enableHighAccuracy) {
-          console.log(
-            "High accuracy location failed, trying with lower accuracy...",
-          );
-
-          navigator.geolocation.getCurrentPosition(
-            handleSuccess,
-            (fallbackError) => {
-              reject(this.parseGeolocationError(fallbackError));
-            },
-            {
-              enableHighAccuracy: false,
-              timeout: 15000,
-              maximumAge: 300000, // 5 minutes
-            },
-          );
-        } else {
-          reject(geolocationError);
+      const tryNextStrategy = () => {
+        if (currentStrategy >= strategies.length) {
+          // All strategies failed
+          reject(this.createError(
+            3,
+            "All location strategies failed",
+            "Unable to get your location after multiple attempts. Please check your GPS signal, move to an area with better reception, or enter your location manually."
+          ));
+          return;
         }
+
+        const strategy = strategies[currentStrategy];
+        console.log(`🔄 Trying location strategy ${currentStrategy + 1}/${strategies.length}: ${strategy.name}`);
+
+        const handleError = (error: GeolocationPositionError) => {
+          console.log(`❌ Strategy "${strategy.name}" failed:`, {
+            code: error.code,
+            message: error.message,
+            strategy: strategy.name
+          });
+
+          // If it's a timeout and we have more strategies, try the next one
+          if (error.code === error.TIMEOUT && currentStrategy < strategies.length - 1) {
+            currentStrategy++;
+            setTimeout(tryNextStrategy, 1000); // Brief delay before next attempt
+          } else if (error.code === error.PERMISSION_DENIED) {
+            // Permission denied - don't try other strategies
+            reject(this.parseGeolocationError(error));
+          } else if (currentStrategy < strategies.length - 1) {
+            // Other errors - try next strategy
+            currentStrategy++;
+            setTimeout(tryNextStrategy, 1000);
+          } else {
+            // Final strategy failed
+            reject(this.parseGeolocationError(error));
+          }
+        };
+
+        navigator.geolocation.getCurrentPosition(
+          handleSuccess,
+          handleError,
+          strategy.options
+        );
       };
 
-      navigator.geolocation.getCurrentPosition(
-        handleSuccess,
-        handleError,
-        defaultOptions,
-      );
+      // Start with the first strategy
+      tryNextStrategy();
     });
   }
 
