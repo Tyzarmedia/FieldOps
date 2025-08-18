@@ -169,14 +169,27 @@ export default function EnhancedJobDetailsScreen() {
 
     return warehouseMap[employeeId] || warehouseMap["tech001"];
   };
-  const [technician] = useState({
-    id: "tech001",
-    name: "Dyondzani Clement Masinge",
+  const [technician, setTechnician] = useState({
+    id: localStorage.getItem("employeeId") || "tech001",
+    name: localStorage.getItem("userName") || "Dyondzani Clement Masinge",
     phone: "+27123456789",
     location: "East London",
     warehouse: localStorage.getItem("userWarehouse") || "VAN462", // Get from logged-in user
     warehouseId: localStorage.getItem("userWarehouseId") || "WH-EL-001",
   });
+
+  // Update technician warehouse when it changes
+  useEffect(() => {
+    const warehouse = localStorage.getItem("userWarehouse");
+    const warehouseId = localStorage.getItem("userWarehouseId");
+    if (warehouse && warehouseId) {
+      setTechnician(prev => ({
+        ...prev,
+        warehouse,
+        warehouseId
+      }));
+    }
+  }, [userWarehouses]);
 
   // Job timing details
   const assignedTime = new Date("2025-07-18T16:02:00");
