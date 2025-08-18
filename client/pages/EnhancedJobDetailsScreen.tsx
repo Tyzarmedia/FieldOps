@@ -113,6 +113,8 @@ export default function EnhancedJobDetailsScreen() {
     name: "Dyondzani Clement Masinge",
     phone: "+27123456789",
     location: "East London",
+    warehouse: localStorage.getItem("userWarehouse") || "VAN462", // Get from logged-in user
+    warehouseId: localStorage.getItem("userWarehouseId") || "WH-EL-001",
   });
 
   // Job timing details
