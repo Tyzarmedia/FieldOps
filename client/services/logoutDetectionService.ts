@@ -391,9 +391,12 @@ class LogoutDetectionService {
 
   // Register session start
   private async registerSessionStart(): Promise<void> {
-    if (!this.technicianId) return;
+    if (!this.technicianId || !navigator.onLine) return;
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+
       await fetch("/api/session/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -403,9 +406,20 @@ class LogoutDetectionService {
           userAgent: navigator.userAgent,
           sessionId: this.generateSessionId(),
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+      console.log("Session start registered successfully");
     } catch (error) {
-      console.error("Error registering session start:", error);
+      // Handle errors gracefully - session registration is non-critical
+      if (error instanceof Error) {
+        if (error.name === "AbortError") {
+          console.log("Session start request timed out (non-critical)");
+        } else if (error.message.includes("Failed to fetch")) {
+          console.log("Session start endpoint not available (non-critical)");
+        }
+      }
     }
   }
 
