@@ -285,26 +285,42 @@ class LogoutDetectionService {
   // Send logout event for tracking and notifications
   private async sendLogoutEvent(logoutEvent: LogoutEvent): Promise<void> {
     try {
-      await fetch('/api/events/logout', {
+      // Try to send logout event
+      const eventResponse = await fetch('/api/events/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(logoutEvent),
       });
 
-      // Send notification to manager/coordinator
-      await fetch('/api/notifications/auto-clockout', {
+      if (eventResponse.ok) {
+        console.log('Logout event sent successfully');
+      } else {
+        console.warn('Failed to send logout event, but continuing');
+      }
+
+      // Try to send notification using existing notifications endpoint
+      const notificationResponse = await fetch('/api/notifications/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           technicianId: logoutEvent.technicianId,
-          reason: logoutEvent.reason,
-          workingHours: logoutEvent.workingHours,
+          type: 'auto_clockout',
+          title: 'Auto Clock-Out Detected',
+          message: `Technician automatically clocked out. Reason: ${logoutEvent.reason}. Hours worked: ${logoutEvent.workingHours.toFixed(1)}h`,
+          priority: 'medium',
           timestamp: logoutEvent.logoutTime,
         }),
       });
 
+      if (notificationResponse.ok) {
+        console.log('Auto clock-out notification sent successfully');
+      } else {
+        console.warn('Failed to send auto clock-out notification, but continuing');
+      }
+
     } catch (error) {
-      console.error('Error sending logout event:', error);
+      console.warn('Error sending logout event (non-critical):', error);
+      // Don't throw error - this is not critical for the logout process
     }
   }
 
