@@ -170,9 +170,12 @@ class LogoutDetectionService {
 
   // Send heartbeat to server
   private async sendHeartbeat(): Promise<void> {
-    if (!this.technicianId) return;
+    if (!this.technicianId || !navigator.onLine) return;
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+
       const response = await fetch("/api/session/heartbeat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -182,14 +185,24 @@ class LogoutDetectionService {
           isActive: !document.hidden,
           lastActivity: new Date(this.lastActivity).toISOString(),
         }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        console.warn("Heartbeat failed, session may be invalid");
-        // Could trigger logout if server indicates session is invalid
+        // Endpoint doesn't exist or server error - this is non-critical
+        console.log("Heartbeat endpoint not available (non-critical)");
       }
     } catch (error) {
-      console.error("Heartbeat error:", error);
+      // Handle network errors gracefully - heartbeat is non-critical
+      if (error instanceof Error) {
+        if (error.name === "AbortError") {
+          console.log("Heartbeat request timed out (non-critical)");
+        } else if (error.message.includes("Failed to fetch")) {
+          console.log("Heartbeat network error (non-critical)");
+        }
+      }
     }
   }
 
