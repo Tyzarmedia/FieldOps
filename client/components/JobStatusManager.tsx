@@ -130,14 +130,15 @@ export const JobStatusManager = ({
 };
 
 // Status display component for job lists
-export const JobStatusBadge = ({ 
-  status, 
-  size = "default" 
-}: { 
-  status: JobStatus; 
-  size?: "sm" | "default" | "lg" 
+export const JobStatusBadge = ({
+  status,
+  size = "default"
+}: {
+  status: JobStatus | string;
+  size?: "sm" | "default" | "lg"
 }) => {
-  const config = getStatusConfig(status);
+  const normalizedStatus = normalizeStatus(status as string);
+  const config = getStatusConfig(normalizedStatus);
   
   const sizeClasses = {
     sm: "text-xs px-2 py-1",
