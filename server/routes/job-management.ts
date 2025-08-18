@@ -444,6 +444,67 @@ router.put("/jobs/:jobId/start", (req, res) => {
   }
 });
 
+// Update UDF data (Technician action)
+router.put("/jobs/:jobId/udf", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { technicianId, ...udfData } = req.body;
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    const job = jobs[jobIndex];
+    if (
+      job.assignedTechnician !== technicianId &&
+      job.assistantTechnician !== technicianId
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to update UDF for this job",
+      });
+    }
+
+    // Update UDF data
+    jobs[jobIndex].udfData = {
+      ...jobs[jobIndex].udfData,
+      ...udfData,
+      lastUpdated: new Date().toISOString(),
+      updatedBy: technicianId
+    };
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    // Create notification for managers/coordinators about UDF completion
+    try {
+      createNotification({
+        technicianId: 'manager001', // In real app, would notify all relevant managers
+        type: 'info',
+        title: 'UDF Updated',
+        message: `User Defined Fields updated for ${job.title} by technician`,
+        priority: 'low'
+      });
+    } catch (error) {
+      console.warn('Error creating UDF update notification:', error);
+    }
+
+    res.json({
+      success: true,
+      data: {
+        jobId: job.id,
+        udfData: jobs[jobIndex].udfData
+      },
+      message: "UDF data updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to update UDF data",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Complete job (Technician action)
 router.put("/jobs/:jobId/complete", (req, res) => {
   try {
