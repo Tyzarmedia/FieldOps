@@ -194,7 +194,7 @@ class GeolocationUtils {
   }
 
   /**
-   * Watch position with error handling
+   * Watch position with progressive timeout and retry logic
    */
   watchPosition(
     onSuccess: (location: LocationResult) => void,
@@ -212,14 +212,22 @@ class GeolocationUtils {
       return null;
     }
 
-    const defaultOptions: PositionOptions = {
+    // Start with more lenient settings for continuous tracking
+    const watchOptions: PositionOptions = {
       enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 5000,
+      timeout: 20000, // Longer timeout for watch
+      maximumAge: 30000, // 30 seconds cache
       ...options,
     };
 
+    let errorCount = 0;
+    const maxErrors = 3;
+    let lastSuccessTime = Date.now();
+
     const handleSuccess = (position: GeolocationPosition) => {
+      errorCount = 0; // Reset error count on success
+      lastSuccessTime = Date.now();
+
       const result: LocationResult = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
@@ -229,13 +237,47 @@ class GeolocationUtils {
     };
 
     const handleError = (error: GeolocationPositionError) => {
-      onError(this.parseGeolocationError(error));
+      errorCount++;
+      const timeSinceLastSuccess = Date.now() - lastSuccessTime;
+
+      console.log(`Watch position error ${errorCount}/${maxErrors}:`, {
+        code: error.code,
+        message: error.message,
+        timeSinceLastSuccess: Math.round(timeSinceLastSuccess / 1000) + 's'
+      });
+
+      // If we've had too many consecutive errors, switch to lower accuracy
+      if (errorCount >= maxErrors && watchOptions.enableHighAccuracy) {
+        console.log('🔄 Switching to low accuracy mode for watch position');
+
+        // Clear current watch
+        if (this.watchId !== null) {
+          navigator.geolocation.clearWatch(this.watchId);
+        }
+
+        // Restart with lower accuracy
+        watchOptions.enableHighAccuracy = false;
+        watchOptions.timeout = 30000; // Even longer timeout
+        watchOptions.maximumAge = 60000; // 1 minute cache
+        errorCount = 0; // Reset error count
+
+        this.watchId = navigator.geolocation.watchPosition(
+          handleSuccess,
+          handleError,
+          watchOptions
+        );
+      } else if (errorCount < maxErrors || error.code === error.PERMISSION_DENIED) {
+        // Only report error to callback after several failures or on permission denied
+        if (errorCount >= maxErrors || error.code === error.PERMISSION_DENIED) {
+          onError(this.parseGeolocationError(error));
+        }
+      }
     };
 
     this.watchId = navigator.geolocation.watchPosition(
       handleSuccess,
       handleError,
-      defaultOptions,
+      watchOptions,
     );
 
     return this.watchId;
