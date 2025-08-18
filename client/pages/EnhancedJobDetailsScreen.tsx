@@ -608,11 +608,8 @@ export default function EnhancedJobDetailsScreen() {
       if (response.ok) {
         setJobDetails((prev) => ({ ...prev, status: "accepted" }));
 
-        // Show success toast
-        toast({
-          title: "Job Accepted",
-          description: "Job has been accepted successfully.",
-        });
+        // Show custom sliding notification
+        showNotification.jobAccepted(jobDetails.title, jobDetails.workOrderNumber);
 
         // Notify manager and coordinator
         await notifyStatusChange("accepted");
