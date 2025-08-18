@@ -170,8 +170,8 @@ export default function EnhancedJobDetailsScreen() {
     lightLevelsAfterFix: null as File | null,
   });
 
-  // Stock form data
-  const [stockFormData, setStockFormData] = useState({
+  // Legacy stock form data - keeping for compatibility
+  const [legacyStockForm, setLegacyStockForm] = useState({
     searchQuery: "",
     selectedStock: null as any,
     warehouseNumber: "",
