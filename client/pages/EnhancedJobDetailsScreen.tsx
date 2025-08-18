@@ -2646,6 +2646,14 @@ export default function EnhancedJobDetailsScreen() {
                     <Button
                       onClick={() => {
                         setShowStockOptions(false);
+                        // Pre-populate with user's warehouse
+                        setStockFormData({
+                          code: "",
+                          container: technician.warehouse,
+                          qtyUsed: "",
+                          description: "",
+                          comments: ""
+                        });
                         setShowStockForm(true);
                       }}
                       className="h-14 w-auto px-4 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg flex items-center space-x-2"
