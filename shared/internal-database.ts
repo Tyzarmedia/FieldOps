@@ -247,6 +247,12 @@ export interface InternalNetworkAssessment {
   equipmentLabel: string;
   testType: string;
 
+  // Network Options
+  coreOptions: string;
+  reachOptions: string;
+  networkType?: string;
+  connectedDevices?: number;
+
   // Test Results
   signalStrength?: number;
   downloadSpeed?: number;
@@ -258,6 +264,7 @@ export interface InternalNetworkAssessment {
   priority: "low" | "medium" | "high" | "critical";
   issuesFound: string;
   recommendedActions: string;
+  notes?: string;
 
   images: string[];
   timestamp: string;
