@@ -96,9 +96,16 @@ export default function TechnicianJobsScreen() {
 
   // Handle location permission on component mount
   useEffect(() => {
-    // Request location permission when the technician screen loads
-    setShowLocationPermission(true);
-  }, []);
+    // Check if user is clocked in and location service is available
+    const isClockedIn = localStorage.getItem("isClockedIn") === "true";
+    if (isClockedIn && locationState.status === 'unknown') {
+      // Location service will handle permission if user is clocked in
+      // Only show location permission modal if not clocked in and no location
+      if (!isClockedIn && !currentLocation) {
+        setShowLocationPermission(true);
+      }
+    }
+  }, [locationState.status, currentLocation]);
 
   // Handle location received from permission handler
   const handleLocationReceived = (location: {
