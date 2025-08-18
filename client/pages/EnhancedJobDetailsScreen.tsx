@@ -108,6 +108,17 @@ export default function EnhancedJobDetailsScreen() {
     description: "",
     comments: ""
   });
+
+  // User's available warehouses - in real app this would come from user profile/API
+  const [userWarehouses] = useState([
+    {
+      id: "VAN462",
+      name: "VAN462",
+      description: "Main Service Van",
+      isDefault: true
+    },
+    // Add more warehouses if user has access to multiple
+  ]);
   const [technician] = useState({
     id: "tech001",
     name: "Dyondzani Clement Masinge",
