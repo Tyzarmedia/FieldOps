@@ -351,6 +351,41 @@ export const getStatusPriority = (status: JobStatus): number => {
     "convert-to-installation": 5, // Same as tech-finished
     "sage-error-resubmit": 6 // Same as completed
   };
-  
+
   return priorities[status] || 0;
+};
+
+// Normalize legacy or API status values to our JobStatus type
+export const normalizeStatus = (status: string): JobStatus => {
+  // Handle common legacy status mappings
+  const statusMappings: Record<string, JobStatus> = {
+    "open": "assigned",
+    "assigned": "assigned",
+    "accepted": "accepted",
+    "in-progress": "in-progress",
+    "in progress": "in-progress",
+    "inprogress": "in-progress",
+    "completed": "job-completed",
+    "complete": "job-completed",
+    "finished": "tech-finished",
+    "paused": "stopped",
+    "cancelled": "stopped",
+    "canceled": "stopped",
+    "tech-finished": "tech-finished",
+    "sent-back-to-tech": "sent-back-to-tech",
+    "job-completed": "job-completed",
+    "stopped": "stopped",
+    "convert-to-installation": "convert-to-installation",
+    "sage-error-resubmit": "sage-error-resubmit",
+    "scheduled": "scheduled"
+  };
+
+  const normalizedStatus = statusMappings[status.toLowerCase()];
+
+  if (!normalizedStatus) {
+    console.warn(`Unknown status '${status}', defaulting to 'assigned'`);
+    return "assigned";
+  }
+
+  return normalizedStatus;
 };
