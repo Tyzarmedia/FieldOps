@@ -2833,7 +2833,7 @@ export default function EnhancedJobDetailsScreen() {
               </div>
 
               {/* Gallery Action Buttons */}
-              <div className="absolute bottom-4 right-4 flex flex-col-reverse items-end space-y-reverse space-y-3">
+              <div className="absolute bottom-4 right-4 flex flex-col items-end space-y-3">
                 {/* Gallery and Camera buttons - show when expanded */}
                 {showGalleryOptions && (
                   <>
@@ -2857,7 +2857,7 @@ export default function EnhancedJobDetailsScreen() {
                       }}
                       className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
                     >
-                      <Camera className="h-6 w-6" />
+                      <ImageIcon className="h-6 w-6" />
                     </Button>
                     <div className="text-xs text-gray-600 mr-2">Gallery</div>
 
