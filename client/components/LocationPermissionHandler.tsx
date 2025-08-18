@@ -126,8 +126,6 @@ export function LocationPermissionHandler({
     };
 
     // Use the improved geolocationUtils with progressive timeout strategy
-    import { geolocationUtils } from "@/utils/geolocationUtils";
-
     geolocationUtils.getCurrentPosition()
       .then((result) => {
         const location = {
