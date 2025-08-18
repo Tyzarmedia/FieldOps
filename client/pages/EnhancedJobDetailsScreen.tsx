@@ -1776,8 +1776,8 @@ export default function EnhancedJobDetailsScreen() {
       )}
 
       {/* Content Area */}
-      <div className="p-4 pb-24">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <div className="flex-1 flex flex-col p-4 pb-24">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col">
           {/* Details Tab */}
           <TabsContent value="details" className="space-y-4">
             {/* Client Contacts */}
