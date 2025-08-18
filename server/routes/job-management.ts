@@ -93,8 +93,8 @@ router.get("/jobs/technician/:technicianId/active", (req, res) => {
     const activeJobs = jobs.filter(
       (job) =>
         (job.assignedTechnician === technicianId ||
-         job.assistantTechnician === technicianId) &&
-        (job.status === "In Progress" || job.status === "Accepted")
+          job.assistantTechnician === technicianId) &&
+        (job.status === "In Progress" || job.status === "Accepted"),
     );
     res.json({ success: true, data: activeJobs });
   } catch (error) {
@@ -113,8 +113,10 @@ router.get("/jobs/technician/:technicianId/locations", (req, res) => {
     const technicianJobs = jobs.filter(
       (job) =>
         (job.assignedTechnician === technicianId ||
-         job.assistantTechnician === technicianId) &&
-        (job.status === "Assigned" || job.status === "Accepted" || job.status === "In Progress")
+          job.assistantTechnician === technicianId) &&
+        (job.status === "Assigned" ||
+          job.status === "Accepted" ||
+          job.status === "In Progress"),
     );
 
     // Extract location data from jobs
@@ -192,8 +194,8 @@ router.get("/jobs/:jobId/status", (req, res) => {
       data: {
         status: job.status,
         lastModified: job.lastModified,
-        id: job.id
-      }
+        id: job.id,
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -240,7 +242,11 @@ router.post("/jobs", (req, res) => {
 router.put("/jobs/:jobId/assign", (req, res) => {
   try {
     const { jobId } = req.params;
-    const { technicianId, assistantId, assignedBy = 'coordinator001' } = req.body;
+    const {
+      technicianId,
+      assistantId,
+      assignedBy = "coordinator001",
+    } = req.body;
 
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
     if (jobIndex === -1) {
@@ -266,7 +272,7 @@ router.put("/jobs/:jobId/assign", (req, res) => {
       assignedTo: technicianId,
       assistantId: assistantId || null,
       assignedAt: new Date().toISOString(),
-      action: 'assigned'
+      action: "assigned",
     });
 
     // Create notification for the assigned technician
@@ -274,13 +280,13 @@ router.put("/jobs/:jobId/assign", (req, res) => {
       try {
         createNotification({
           technicianId: techId,
-          type: 'job_assigned',
-          title: 'New Job Assigned',
+          type: "job_assigned",
+          title: "New Job Assigned",
           message: `${jobs[jobIndex].title} - ${jobs[jobIndex].workOrderNumber || jobId} has been assigned to you`,
-          priority: 'high'
+          priority: "high",
         });
       } catch (error) {
-        console.warn('Error creating job assignment notification:', error);
+        console.warn("Error creating job assignment notification:", error);
       }
     };
 
@@ -444,11 +450,80 @@ router.put("/jobs/:jobId/start", (req, res) => {
   }
 });
 
+// Update UDF data (Technician action)
+router.put("/jobs/:jobId/udf", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { technicianId, ...udfData } = req.body;
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    const job = jobs[jobIndex];
+    if (
+      job.assignedTechnician !== technicianId &&
+      job.assistantTechnician !== technicianId
+    ) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to update UDF for this job",
+      });
+    }
+
+    // Update UDF data
+    jobs[jobIndex].udfData = {
+      ...jobs[jobIndex].udfData,
+      ...udfData,
+      lastUpdated: new Date().toISOString(),
+      updatedBy: technicianId,
+    };
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    // Create notification for managers/coordinators about UDF completion
+    try {
+      createNotification({
+        technicianId: "manager001", // In real app, would notify all relevant managers
+        type: "info",
+        title: "UDF Updated",
+        message: `User Defined Fields updated for ${job.title} by technician`,
+        priority: "low",
+      });
+    } catch (error) {
+      console.warn("Error creating UDF update notification:", error);
+    }
+
+    res.json({
+      success: true,
+      data: {
+        jobId: job.id,
+        udfData: jobs[jobIndex].udfData,
+      },
+      message: "UDF data updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to update UDF data",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Complete job (Technician action)
 router.put("/jobs/:jobId/complete", (req, res) => {
   try {
     const { jobId } = req.params;
-    const { technicianId, timeSpent, notes, photos, stockUsed, udfData, signOffData } = req.body;
+    const {
+      technicianId,
+      timeSpent,
+      notes,
+      photos,
+      stockUsed,
+      udfData,
+      signOffData,
+    } = req.body;
 
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
     if (jobIndex === -1) {
@@ -468,7 +543,8 @@ router.put("/jobs/:jobId/complete", (req, res) => {
 
     // Calculate actual time spent if start time exists
     const actualTimeSpent = job.startedDate
-      ? (new Date().getTime() - new Date(job.startedDate).getTime()) / (1000 * 60 * 60) // hours
+      ? (new Date().getTime() - new Date(job.startedDate).getTime()) /
+        (1000 * 60 * 60) // hours
       : timeSpent;
 
     jobs[jobIndex].status = "Completed";
@@ -488,8 +564,11 @@ router.put("/jobs/:jobId/complete", (req, res) => {
     // Store stock usage data for tracking
     if (stockUsed && stockUsed.length > 0) {
       jobs[jobIndex].stockUsed = stockUsed;
-      jobs[jobIndex].stockUsageValue = stockUsed.reduce((total: number, item: any) =>
-        total + (item.quantity * item.unitPrice || 0), 0);
+      jobs[jobIndex].stockUsageValue = stockUsed.reduce(
+        (total: number, item: any) =>
+          total + (item.quantity * item.unitPrice || 0),
+        0,
+      );
     }
 
     // Store UDF (User Defined Fields) data
@@ -502,21 +581,21 @@ router.put("/jobs/:jobId/complete", (req, res) => {
       jobs[jobIndex].signOffData = {
         ...signOffData,
         timestamp: new Date().toISOString(),
-        technicianId
+        technicianId,
       };
     }
 
     // Create notification for managers/coordinators about job completion
     try {
       createNotification({
-        technicianId: 'manager001', // In real app, would notify all relevant managers
-        type: 'alert',
-        title: 'Job Completed',
+        technicianId: "manager001", // In real app, would notify all relevant managers
+        type: "alert",
+        title: "Job Completed",
         message: `${job.title} completed by technician. Stock used: ${stockUsed?.length || 0} items`,
-        priority: 'medium'
+        priority: "medium",
       });
     } catch (error) {
-      console.warn('Error creating job completion notification:', error);
+      console.warn("Error creating job completion notification:", error);
     }
 
     res.json({
@@ -570,25 +649,25 @@ router.get("/jobs/stats/:technicianId", (req, res) => {
 // Get job assignment audit trail (Manager only)
 router.get("/audit/assignments", (req, res) => {
   try {
-    const auditData = jobs.map(job => ({
+    const auditData = jobs.map((job) => ({
       jobId: job.id,
       title: job.title,
       currentAssignee: job.assignedTechnician,
       assignmentHistory: job.assignmentHistory || [],
       status: job.status,
       createdDate: job.createdDate,
-      lastModified: job.lastModified
+      lastModified: job.lastModified,
     }));
 
     res.json({
       success: true,
-      data: auditData
+      data: auditData,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: "Failed to fetch audit trail",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
@@ -597,18 +676,29 @@ router.get("/audit/assignments", (req, res) => {
 router.get("/reports/technician-time/:technicianId", (req, res) => {
   try {
     const { technicianId } = req.params;
-    const technicianJobs = jobs.filter(job =>
-      job.assignedTechnician === technicianId || job.assistantTechnician === technicianId
+    const technicianJobs = jobs.filter(
+      (job) =>
+        job.assignedTechnician === technicianId ||
+        job.assistantTechnician === technicianId,
     );
 
     const timeReport = {
       technicianId,
-      totalJobsCompleted: technicianJobs.filter(job => job.status === 'Completed').length,
-      totalHoursWorked: technicianJobs.reduce((total, job) => total + (job.actualHours || 0), 0),
-      averageJobTime: technicianJobs.length > 0
-        ? technicianJobs.reduce((total, job) => total + (job.actualHours || 0), 0) / technicianJobs.length
-        : 0,
-      jobDetails: technicianJobs.map(job => ({
+      totalJobsCompleted: technicianJobs.filter(
+        (job) => job.status === "Completed",
+      ).length,
+      totalHoursWorked: technicianJobs.reduce(
+        (total, job) => total + (job.actualHours || 0),
+        0,
+      ),
+      averageJobTime:
+        technicianJobs.length > 0
+          ? technicianJobs.reduce(
+              (total, job) => total + (job.actualHours || 0),
+              0,
+            ) / technicianJobs.length
+          : 0,
+      jobDetails: technicianJobs.map((job) => ({
         jobId: job.id,
         title: job.title,
         status: job.status,
@@ -617,19 +707,19 @@ router.get("/reports/technician-time/:technicianId", (req, res) => {
         startedDate: job.startedDate,
         completedDate: job.completedDate,
         stockUsed: job.stockUsed || [],
-        stockValue: job.stockUsageValue || 0
-      }))
+        stockValue: job.stockUsageValue || 0,
+      })),
     };
 
     res.json({
       success: true,
-      data: timeReport
+      data: timeReport,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: "Failed to fetch time report",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
@@ -638,8 +728,8 @@ router.get("/reports/technician-time/:technicianId", (req, res) => {
 router.get("/completed-jobs-stock", (req, res) => {
   try {
     const completedJobs = jobs
-      .filter(job => job.status === 'Completed')
-      .map(job => ({
+      .filter((job) => job.status === "Completed")
+      .map((job) => ({
         jobId: job.id,
         title: job.title,
         completedBy: job.completedBy,
@@ -648,18 +738,18 @@ router.get("/completed-jobs-stock", (req, res) => {
         stockUsed: job.stockUsed || [],
         stockValue: job.stockUsageValue || 0,
         udfData: job.udfData || {},
-        client: job.client
+        client: job.client,
       }));
 
     res.json({
       success: true,
-      data: completedJobs
+      data: completedJobs,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: "Failed to fetch completed jobs",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });

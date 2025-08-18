@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { LocationPermissionHandler } from "@/components/LocationPermissionHandler";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X, Edit3, MapPin } from "lucide-react";
+import { X, Edit3, MapPin, Navigation } from "lucide-react";
+import {
+  locationService,
+  LocationPermissionState,
+} from "@/services/locationService";
+import { showNotification } from "@/hooks/useNotification";
 
 interface ClockInScreenProps {
   userRole?: string;
@@ -37,6 +41,12 @@ export default function ClockInScreen({
   const [showFeedbackOverlay, setShowFeedbackOverlay] = useState(false);
   const [dailyFeedback, setDailyFeedback] = useState("");
   const [feedbackRating, setFeedbackRating] = useState<number | null>(null);
+  const [locationState, setLocationState] = useState<LocationPermissionState>({
+    status: "unknown",
+    isTracking: false,
+    lastKnownLocation: null,
+    clockedIn: false,
+  });
   const navigate = useNavigate();
 
   // Get user initials
@@ -49,7 +59,7 @@ export default function ClockInScreen({
       .toUpperCase();
   };
 
-  // Initialize clock state from localStorage
+  // Initialize clock state from localStorage and subscribe to location service
   useEffect(() => {
     const clockedIn = localStorage.getItem("isClockedIn") === "true";
     const storedWorkingHours = localStorage.getItem("workingHours") || "0:00";
@@ -63,6 +73,21 @@ export default function ClockInScreen({
     if (storedClockIns) {
       setDailyClockIns(JSON.parse(storedClockIns));
     }
+
+    // Subscribe to location service updates
+    const unsubscribe = locationService.subscribe((state) => {
+      setLocationState(state);
+
+      // Update last location when location service provides new location
+      if (state.lastKnownLocation) {
+        setLastLocation({
+          lat: state.lastKnownLocation.latitude,
+          lng: state.lastKnownLocation.longitude,
+        });
+      }
+    });
+
+    return unsubscribe;
   }, []);
 
   // Update time every second and calculate working hours
@@ -100,7 +125,7 @@ export default function ClockInScreen({
             console.error("Geolocation error:", {
               code: error.code,
               message: error.message,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             });
           },
           { enableHighAccuracy: true },
@@ -204,6 +229,8 @@ export default function ClockInScreen({
   };
 
   const handleClockToggle = async () => {
+    const wasClockingIn = !isClockedIn; // Track if we're clocking in before state changes
+
     if (isClockedIn) {
       // Clock Out
       setIsClockingIn(true);
@@ -223,6 +250,9 @@ export default function ClockInScreen({
 
       setIsClockedIn(false);
       setDailyClockIns(currentClockIns);
+
+      // Stop location tracking
+      locationService.handleClockOut();
 
       // Save clock record to database
       await saveClockRecordToDatabase(currentClockIns);
@@ -253,6 +283,15 @@ export default function ClockInScreen({
       setIsClockedIn(true);
       setDailyClockIns(updatedClockIns);
 
+      // Request location permission and start tracking
+      const locationGranted = await locationService.handleClockIn();
+
+      if (locationGranted) {
+        showNotification.locationGranted();
+      } else {
+        showNotification.locationDenied();
+      }
+
       // Save clock record to database
       await saveClockRecordToDatabase(updatedClockIns);
     }
@@ -262,9 +301,12 @@ export default function ClockInScreen({
     setIsClockingIn(false);
     setSliderPosition(0);
 
-    // Navigate to appropriate dashboard if clocking in
-    if (!isClockedIn) {
-      if (userRole === "Assistant Technician") {
+    // Navigate to appropriate dashboard if we just clocked in
+    if (wasClockingIn) {
+      if (
+        userRole === "Assistant Technician" ||
+        userRole === "AssistantTechnician"
+      ) {
         navigate("/assistant-technician");
       } else {
         navigate("/technician");
@@ -436,15 +478,24 @@ export default function ClockInScreen({
   // Make the entire slider clickable
   const handleSliderClick = (e: React.MouseEvent) => {
     if (!isClockingIn && !isDragging) {
-      handleClockIn();
+      e.preventDefault();
+      e.stopPropagation();
+      handleClockToggle();
     }
   };
 
   const handleClose = () => {
     // Navigate to appropriate dashboard based on user role
-    if (userRole === "Assistant Technician") {
+    console.log("Closing clock-in screen, userRole:", userRole);
+    if (
+      userRole === "Assistant Technician" ||
+      userRole === "AssistantTechnician"
+    ) {
       navigate("/assistant-technician");
+    } else if (userRole === "Technician") {
+      navigate("/technician");
     } else {
+      // Fallback to technician dashboard for any technician-like role
       navigate("/technician");
     }
   };

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { NotificationOverlay } from "@/components/NotificationOverlay";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -195,6 +196,7 @@ export default function App() {
         <NotificationProvider>
           <Toaster />
           <Sonner />
+          <NotificationOverlay />
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
@@ -306,14 +308,8 @@ export default function App() {
                 path="/technician-settings"
                 element={<TechnicianSettingsScreen />}
               />
-              <Route
-                path="/location-test"
-                element={<LocationTestScreen />}
-              />
-              <Route
-                path="/stock-requests"
-                element={<StockRequestScreen />}
-              />
+              <Route path="/location-test" element={<LocationTestScreen />} />
+              <Route path="/stock-requests" element={<StockRequestScreen />} />
               <Route
                 path="/stock-manager"
                 element={<StockManagerDashboard />}

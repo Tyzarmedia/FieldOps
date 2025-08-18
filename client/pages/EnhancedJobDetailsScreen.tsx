@@ -1,6 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { showNotification } from "@/hooks/useNotification";
+import { useConfirmationDialog } from "@/components/ConfirmationDialog";
+import {
+  JobStatus,
+  JOB_STATUS_CONFIG,
+  canTransitionTo,
+  getAvailableTransitions,
+  getStatusConfig,
+} from "@/types/jobStatus";
+import {
+  JobStatusManager,
+  JobStatusBadge,
+} from "@/components/JobStatusManager";
 import { geolocationUtils } from "@/utils/geolocationUtils";
 import { useNotification } from "@/components/ui/notification";
 import { JobTimer } from "@/components/JobTimer";
@@ -61,7 +74,7 @@ interface JobDetails {
     address: string;
     phone: string;
   };
-  status: "assigned" | "accepted" | "in-progress" | "completed";
+  status: JobStatus;
   priority: "low" | "medium" | "high" | "urgent";
   estimatedDuration: string;
   description: string;
@@ -71,6 +84,7 @@ export default function EnhancedJobDetailsScreen() {
   const navigate = useNavigate();
   const { jobId } = useParams();
   const { toast } = useToast();
+  const { showConfirmation, ConfirmationDialog } = useConfirmationDialog();
   const { success, error: notifyError, warning } = useNotification();
   const [activeTab, setActiveTab] = useState("details");
   const [showTimerOverlay, setShowTimerOverlay] = useState(false);
@@ -278,6 +292,21 @@ export default function EnhancedJobDetailsScreen() {
     quantity: "",
   });
 
+  // Job data for status tracking
+  const [jobStatusData, setJobStatusData] = useState({
+    isNearJobLocation: isNearJobLocation,
+    udfCompleted: false,
+    stockUsageRecorded: false,
+    customerSignOff: false,
+    qualityCheckPassed: false,
+    requiresInstallation: false,
+    issuesResolved: false,
+    sageIntegrationError: false,
+    installationJobCreated: false,
+    assignedTechnician: technician.id,
+    assistantTechnician: null,
+  });
+
   // Available stocks for search
   const [availableStocks] = useState([
     {
@@ -468,8 +497,37 @@ export default function EnhancedJobDetailsScreen() {
     );
   };
 
-  // Update job status
-  const updateJobStatus = async (newStatus: string) => {
+  // Update job status with comprehensive validation
+  const updateJobStatus = async (newStatus: JobStatus) => {
+    const userRole = localStorage.getItem("userRole") || "Technician";
+
+    // Update job status data before checking transitions
+    const updatedJobStatusData = {
+      ...jobStatusData,
+      isNearJobLocation: isNearJobLocation,
+      udfCompleted: signOffData.udfCompleted,
+      stockUsageRecorded: allocatedStock.some(
+        (stock) => stock.quantityUsed > 0,
+      ),
+    };
+
+    // Check if transition is allowed
+    if (
+      !canTransitionTo(
+        jobDetails.status,
+        newStatus,
+        updatedJobStatusData,
+        userRole,
+      )
+    ) {
+      const statusConfig = getStatusConfig(newStatus);
+      showNotification.error(
+        "Status Change Not Allowed",
+        `Cannot change to ${statusConfig.label}. Check requirements and permissions.`,
+      );
+      return;
+    }
+
     try {
       const response = await fetch(
         `/api/job-mgmt/jobs/${jobDetails.id}/status`,
@@ -478,7 +536,11 @@ export default function EnhancedJobDetailsScreen() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             status: newStatus,
-            technicianId: localStorage.getItem("employeeId") || "tech001",
+            technicianId: technician.id,
+            timestamp: new Date().toISOString(),
+            location: currentLocation,
+            statusData: updatedJobStatusData,
+            jobTimer: jobTimer,
           }),
         },
       );
@@ -486,16 +548,37 @@ export default function EnhancedJobDetailsScreen() {
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
-          setJobDetails((prev) => ({ ...prev, status: newStatus as any }));
+          setJobDetails((prev) => ({ ...prev, status: newStatus }));
+          setJobStatusData(updatedJobStatusData);
           setShowStatusModal(false);
-          success("Status Updated", `Job status updated to ${newStatus}`);
+
+          const statusConfig = getStatusConfig(newStatus);
+          showNotification.success(
+            "Status Updated",
+            `Job status changed to ${statusConfig.label}`,
+          );
+
+          // Update internal job status tracking
+          if (newStatus === "in-progress") {
+            setJobStatus("in-progress");
+            setIsTimerRunning(true);
+          } else if (newStatus === "stopped" || newStatus === "job-completed") {
+            setJobStatus("completed");
+            setIsTimerRunning(false);
+          }
+
+          // Notify relevant parties
+          await notifyStatusChange(newStatus);
         }
       } else {
         throw new Error("Failed to update status");
       }
     } catch (error) {
       console.error("Error updating job status:", error);
-      error("Update Failed", "Failed to update job status. Please try again.");
+      showNotification.error(
+        "Update Failed",
+        "Failed to update job status. Please try again.",
+      );
     }
   };
 
@@ -607,11 +690,11 @@ export default function EnhancedJobDetailsScreen() {
       if (response.ok) {
         setJobDetails((prev) => ({ ...prev, status: "accepted" }));
 
-        // Show success toast
-        toast({
-          title: "Job Accepted",
-          description: "Job has been accepted successfully.",
-        });
+        // Show custom sliding notification
+        showNotification.jobAccepted(
+          jobDetails.title,
+          jobDetails.workOrderNumber,
+        );
 
         // Notify manager and coordinator
         await notifyStatusChange("accepted");
@@ -671,113 +754,152 @@ export default function EnhancedJobDetailsScreen() {
   };
 
   // Manual job start
-  const startJob = async () => {
-    try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/start`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          startTime: new Date().toISOString(),
-          location: currentLocation,
-          manualStart: true,
-        }),
-      });
+  const startJob = () => {
+    showConfirmation({
+      title: "Start Job",
+      message: `Are you sure you want to start working on "${jobDetails.title}"? This will begin time tracking for this job.`,
+      confirmText: "Start Job",
+      variant: "default",
+      icon: <Play className="h-6 w-6 text-green-600" />,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/jobs/${jobDetails.id}/start`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              technicianId: technician.id,
+              startTime: new Date().toISOString(),
+              location: currentLocation,
+              manualStart: true,
+            }),
+          });
 
-      if (response.ok) {
-        setJobStatus("in-progress");
-        setIsTimerRunning(true);
-        setProximityTimer(0);
+          if (response.ok) {
+            setJobStatus("in-progress");
+            setIsTimerRunning(true);
+            setProximityTimer(0);
 
-        // Show success toast
-        toast({
-          title: "Job Started",
-          description: "Job has been successfully started.",
-        });
+            // Show success notification
+            showNotification.success(
+              "Job Started",
+              "Job has been successfully started.",
+            );
 
-        // Notify manager and coordinator
-        await notifyStatusChange("started");
-      } else {
-        toast({
-          title: "Failed to Start Job",
-          description: "Unable to start the job. Please try again.",
-        });
-      }
-    } catch (error) {
-      console.error("Failed to start job:", error);
-    }
+            // Notify manager and coordinator
+            await notifyStatusChange("started");
+          } else {
+            showNotification.error(
+              "Failed to Start Job",
+              "Unable to start the job. Please try again.",
+            );
+          }
+        } catch (error) {
+          console.error("Failed to start job:", error);
+          showNotification.error(
+            "Error",
+            "An error occurred while starting the job.",
+          );
+        }
+      },
+    });
   };
 
-  const pauseJob = async () => {
-    try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/pause`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          pauseTime: new Date().toISOString(),
-          timeSpent: jobTimer,
-          location: currentLocation,
-        }),
-      });
+  const pauseJob = () => {
+    showConfirmation({
+      title: "Pause Job",
+      message: `Are you sure you want to pause work on "${jobDetails.title}"? You can resume it later.`,
+      confirmText: "Pause Job",
+      variant: "warning",
+      icon: <Pause className="h-6 w-6 text-yellow-600" />,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/jobs/${jobDetails.id}/pause`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              technicianId: technician.id,
+              pauseTime: new Date().toISOString(),
+              timeSpent: jobTimer,
+              location: currentLocation,
+            }),
+          });
 
-      if (response.ok) {
-        setJobStatus("paused");
-        setIsTimerRunning(false);
+          if (response.ok) {
+            setJobStatus("paused");
+            setIsTimerRunning(false);
 
-        // Show success toast
-        toast({
-          title: "Job Paused",
-          description: "Job has been paused successfully.",
-        });
+            // Show success notification
+            showNotification.warning(
+              "Job Paused",
+              "Job has been paused successfully.",
+            );
 
-        // Notify manager and coordinator
-        await notifyStatusChange("paused");
-      } else {
-        toast({
-          title: "Failed to Pause Job",
-          description: "Unable to pause the job. Please try again.",
-        });
-      }
-    } catch (error) {
-      console.error("Failed to pause job:", error);
-    }
+            // Notify manager and coordinator
+            await notifyStatusChange("paused");
+          } else {
+            showNotification.error(
+              "Failed to Pause Job",
+              "Unable to pause the job. Please try again.",
+            );
+          }
+        } catch (error) {
+          console.error("Failed to pause job:", error);
+          showNotification.error(
+            "Error",
+            "An error occurred while pausing the job.",
+          );
+        }
+      },
+    });
   };
 
-  const stopJob = async () => {
-    try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/stop`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          endTime: new Date().toISOString(),
-          totalTime: jobTimer,
-          location: currentLocation,
-        }),
-      });
+  const stopJob = () => {
+    showConfirmation({
+      title: "Stop Job",
+      message: `Are you sure you want to stop work on "${jobDetails.title}"? This will mark the job as completed and end time tracking.`,
+      confirmText: "Stop Job",
+      variant: "destructive",
+      icon: <Square className="h-6 w-6 text-red-600" />,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/jobs/${jobDetails.id}/stop`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              technicianId: technician.id,
+              endTime: new Date().toISOString(),
+              totalTime: jobTimer,
+              location: currentLocation,
+            }),
+          });
 
-      if (response.ok) {
-        setJobStatus("completed");
-        setIsTimerRunning(false);
+          if (response.ok) {
+            setJobStatus("completed");
+            setIsTimerRunning(false);
 
-        // Show success toast
-        toast({
-          title: "Job Stopped",
-          description: "Job has been stopped successfully.",
-        });
+            // Show success notification
+            showNotification.success(
+              "Job Stopped",
+              "Job has been stopped successfully.",
+            );
 
-        // Notify manager and coordinator
-        await notifyStatusChange("completed");
-      } else {
-        toast({
-          title: "Failed to Stop Job",
-          description: "Unable to stop the job. Please try again.",
-        });
-      }
-    } catch (error) {
-      console.error("Failed to stop job:", error);
-    }
+            // Notify manager and coordinator
+            await notifyStatusChange("completed");
+          } else {
+            showNotification.error(
+              "Failed to Stop Job",
+              "Unable to stop the job. Please try again.",
+            );
+          }
+        } catch (error) {
+          console.error("Failed to stop job:", error);
+          showNotification.error(
+            "Error",
+            "An error occurred while stopping the job.",
+          );
+        }
+      },
+    });
   };
 
   // Resume job from paused state
@@ -1247,7 +1369,10 @@ export default function EnhancedJobDetailsScreen() {
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3">
         {/* Header Title Row */}
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-lg font-bold">Job Details</h1>
+          <div className="flex items-center space-x-3">
+            <h1 className="text-lg font-bold">Job Details</h1>
+            <JobStatusBadge status={jobDetails.status} size="default" />
+          </div>
           <div className="flex items-center space-x-2">
             {/* Job Control Buttons */}
             {jobDetails.status === "accepted" && (
@@ -1342,93 +1467,61 @@ export default function EnhancedJobDetailsScreen() {
             </div>
           )}
 
-        {/* Job Actions */}
-        <div className="flex justify-center space-x-4 mb-6">
-          {jobDetails.status === "accepted" && (
-            <Button
-              className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
-              onClick={startJob}
-            >
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Start
-            </Button>
-          )}
-
+        {/* Top Control Buttons */}
+        <div className="flex justify-center space-x-8 mb-6">
           {jobStatus === "in-progress" && (
             <>
               <Button
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-2"
+                variant="ghost"
+                size="lg"
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
                 onClick={pauseJob}
               >
-                <Pause className="h-4 w-4 mr-2" />
-                Pause
+                <Pause className="h-5 w-5 mb-1" />
+                <span className="text-xs">Pause</span>
               </Button>
               <Button
-                className="bg-red-500 hover:bg-red-600 text-white px-8 py-2"
+                variant="ghost"
+                size="lg"
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
                 onClick={stopJob}
               >
-                <X className="h-4 w-4 mr-2" />
-                Stop
+                <X className="h-5 w-5 mb-1" />
+                <span className="text-xs">Stop</span>
               </Button>
             </>
           )}
 
+          {jobDetails.status === "accepted" && (
+            <Button
+              variant="ghost"
+              size="lg"
+              className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
+              onClick={startJob}
+            >
+              <Play className="h-5 w-5 mb-1" />
+              <span className="text-xs">Start</span>
+            </Button>
+          )}
+
           {jobStatus === "paused" && (
-            <>
-              <Button
-                className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
-                onClick={resumeJob}
-              >
-                <Play className="h-4 w-4 mr-2" />
-                Resume
-              </Button>
-              <Button
-                className="bg-red-500 hover:bg-red-600 text-white px-8 py-2"
-                onClick={stopJob}
-              >
-                <X className="h-4 w-4 mr-2" />
-                Stop
-              </Button>
-            </>
+            <Button
+              variant="ghost"
+              size="lg"
+              className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
+              onClick={resumeJob}
+            >
+              <Play className="h-5 w-5 mb-1" />
+              <span className="text-xs">Resume</span>
+            </Button>
           )}
         </div>
 
         {/* Company and Job Info */}
         <div className="text-center mb-4">
-          <h2 className="text-lg font-bold mb-1">
-            Vumatel (Pty) Ltd - Central
-          </h2>
-          <h3 className="text-md font-semibold mb-2">#{jobDetails.id}215784</h3>
-          <Badge
-            className={`px-4 py-1 text-sm ${
-              jobDetails.status === "assigned"
-                ? "bg-orange-500/80 text-white"
-                : jobDetails.status === "accepted"
-                  ? "bg-blue-500/80 text-white"
-                  : jobDetails.status === "in-progress" ||
-                      jobDetails.status === "In Progress"
-                    ? "bg-green-500/80 text-white"
-                    : jobDetails.status === "paused"
-                      ? "bg-yellow-500/80 text-white"
-                      : jobDetails.status === "completed"
-                        ? "bg-purple-500/80 text-white"
-                        : "bg-gray-500/80 text-white"
-            }`}
-          >
-            {jobDetails.status === "assigned"
-              ? "Assigned"
-              : jobDetails.status === "accepted"
-                ? "Accepted"
-                : jobDetails.status === "in-progress" ||
-                    jobDetails.status === "In Progress"
-                  ? "In Progress"
-                  : jobDetails.status === "paused"
-                    ? "Paused"
-                    : jobDetails.status === "completed"
-                      ? "Completed"
-                      : jobDetails.status.charAt(0).toUpperCase() +
-                        jobDetails.status.slice(1)}
-          </Badge>
+          <h2 className="text-lg font-bold mb-1">BRITELINKMCT</h2>
+          <h3 className="text-md font-semibold mb-2">#{jobDetails.id}</h3>
+          <JobStatusBadge status={jobDetails.status} size="lg" />
         </div>
 
         {/* Info Cards */}
@@ -1455,26 +1548,24 @@ export default function EnhancedJobDetailsScreen() {
               </p>
             </div>
           </div>
-          <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center space-x-2">
-            <CircleDot className="h-6 w-6 text-blue-400" />
-            <div>
-              <p className="text-xs text-white/80">Status</p>
-              <p className="font-semibold">
-                {jobDetails.status === "assigned"
-                  ? "Assigned"
-                  : jobDetails.status === "accepted"
-                    ? "Accepted"
-                    : jobDetails.status === "in-progress" ||
-                        jobDetails.status === "In Progress"
-                      ? "In Progress"
-                      : jobDetails.status === "paused"
-                        ? "Paused"
-                        : jobDetails.status === "completed"
-                          ? "Completed"
-                          : jobDetails.status.charAt(0).toUpperCase() +
-                            jobDetails.status.slice(1)}
-              </p>
+          <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+              <div>
+                <p className="text-xs text-white/80">Status</p>
+                <p className="font-semibold">
+                  {getStatusConfig(jobDetails.status).label}
+                </p>
+              </div>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 rounded-full h-8 w-8"
+              onClick={() => setShowStatusModal(true)}
+            >
+              <ChevronUp className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>
@@ -3361,83 +3452,31 @@ export default function EnhancedJobDetailsScreen() {
                 </Button>
               </div>
 
-              <div className="space-y-3">
-                <div className="text-sm text-gray-600 mb-4">
-                  Current Status:{" "}
-                  <span className="font-medium">
-                    {jobDetails.status.toUpperCase()}
-                  </span>
-                </div>
-
-                {/* Status Options */}
-                <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    onClick={() => updateJobStatus("assigned")}
-                    className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg"
-                  >
-                    Assigned
-                  </Button>
-                  <Button
-                    onClick={() => updateJobStatus("accepted")}
-                    className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-lg"
-                  >
-                    Accepted
-                  </Button>
-                  <Button
-                    onClick={() => updateJobStatus("in-progress")}
-                    className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg"
-                  >
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    In Progress
-                  </Button>
-                  <Button
-                    onClick={() => updateJobStatus("tech-finished")}
-                    className="bg-lime-500 hover:bg-lime-600 text-white p-3 rounded-lg"
-                  >
-                    Tech Finished
-                  </Button>
-                  <Button
-                    onClick={() => updateJobStatus("sent-back-to-tech")}
-                    className="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg"
-                  >
-                    Sent Back To Tech
-                  </Button>
-                  <Button
-                    onClick={() => updateJobStatus("completed")}
-                    className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg"
-                  >
-                    Job Completed
-                  </Button>
-                  <Button
-                    onClick={() => updateJobStatus("stopped")}
-                    className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-lg"
-                  >
-                    Stopped
-                  </Button>
-                  <Button
-                    onClick={() => updateJobStatus("convert-to-installation")}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white p-3 rounded-lg"
-                  >
-                    Convert To Installation
-                  </Button>
-                  <Button
-                    onClick={() => updateJobStatus("sage-error-resubmit")}
-                    className="bg-red-700 hover:bg-red-800 text-white p-3 rounded-lg"
-                  >
-                    Sage Error - Resubmit
-                  </Button>
-                  <Button
-                    onClick={() => updateJobStatus("total-jobs")}
-                    className="bg-black hover:bg-gray-800 text-white p-3 rounded-lg"
-                  >
-                    Total Jobs
-                  </Button>
-                </div>
-              </div>
+              <JobStatusManager
+                currentStatus={jobDetails.status}
+                jobData={{
+                  ...jobStatusData,
+                  isNearJobLocation: isNearJobLocation,
+                  udfCompleted: signOffData.udfCompleted,
+                  stockUsageRecorded: allocatedStock.some(
+                    (stock) => stock.quantityUsed > 0,
+                  ),
+                  customerSignOff: signOffData.customerSignatureData
+                    ? true
+                    : false,
+                }}
+                userRole={localStorage.getItem("userRole") || "Technician"}
+                onStatusChange={updateJobStatus}
+                showButtons={true}
+                compact={false}
+              />
             </div>
           </div>
         </div>
       )}
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog />
     </div>
   );
 }

@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NotificationSystem } from "@/components/NotificationSystem";
+import {
+  locationService,
+  LocationPermissionState,
+} from "@/services/locationService";
 import { LocationPermissionHandler } from "@/components/LocationPermissionHandler";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -76,23 +80,55 @@ export default function TechnicianJobsScreen() {
   const [isJobPaused, setIsJobPaused] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [jobStats, setJobStats] = useState({
+    assigned: 0,
+    accepted: 0,
+    inProgress: 0,
+    completed: 0,
+    total: 0,
+  });
   const [showStockUsageDialog, setShowStockUsageDialog] = useState(false);
   const [stockUsage, setStockUsage] = useState([]);
   const [availableStock, setAvailableStock] = useState([]);
-  const [showLocationPermission, setShowLocationPermission] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
+  const [locationState, setLocationState] = useState<LocationPermissionState>({
+    status: "unknown",
+    isTracking: false,
+    lastKnownLocation: null,
+    clockedIn: false,
+  });
+  const [showLocationPermission, setShowLocationPermission] = useState(false);
   const navigate = useNavigate();
 
   const currentTechnicianId = "tech001"; // In real app, this would come from auth
 
+  // Calculate job statistics
+  const calculateJobStats = (jobList: Job[]) => {
+    const stats = {
+      assigned: jobList.filter((job) => job.status === "assigned").length,
+      accepted: jobList.filter((job) => job.status === "accepted").length,
+      inProgress: jobList.filter((job) => job.status === "in-progress").length,
+      completed: jobList.filter((job) => job.status === "completed").length,
+      total: jobList.length,
+    };
+    setJobStats(stats);
+  };
+
   // Handle location permission on component mount
   useEffect(() => {
-    // Request location permission when the technician screen loads
-    setShowLocationPermission(true);
-  }, []);
+    // Check if user is clocked in and location service is available
+    const isClockedIn = localStorage.getItem("isClockedIn") === "true";
+    if (isClockedIn && locationState.status === "unknown") {
+      // Location service will handle permission if user is clocked in
+      // Only show location permission modal if not clocked in and no location
+      if (!isClockedIn && !currentLocation) {
+        setShowLocationPermission(true);
+      }
+    }
+  }, [locationState.status, currentLocation]);
 
   // Handle location received from permission handler
   const handleLocationReceived = (location: {
@@ -177,6 +213,7 @@ export default function TechnicianJobsScreen() {
                 : undefined,
             }));
             setJobs(formattedJobs);
+            calculateJobStats(formattedJobs);
           }
         } else {
           console.error("Failed to fetch jobs");
@@ -717,7 +754,8 @@ export default function TechnicianJobsScreen() {
                 Location Access Required
               </h3>
               <p className="text-sm text-gray-600 mb-4 text-center">
-                Location access is required for job tracking and proximity detection.
+                Location access is required for job tracking and proximity
+                detection.
               </p>
               <LocationPermissionHandler
                 onLocationReceived={handleLocationReceived}
@@ -793,6 +831,26 @@ export default function TechnicianJobsScreen() {
             >
               <X className="h-6 w-6" />
             </Button>
+          </div>
+        </div>
+
+        {/* Job Status Summary */}
+        <div className="grid grid-cols-4 gap-3 mb-4">
+          <div className="bg-white/20 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold">{jobStats.assigned}</div>
+            <div className="text-xs text-white/80">Assigned</div>
+          </div>
+          <div className="bg-white/20 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold">{jobStats.accepted}</div>
+            <div className="text-xs text-white/80">Accepted</div>
+          </div>
+          <div className="bg-white/20 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold">{jobStats.inProgress}</div>
+            <div className="text-xs text-white/80">In Progress</div>
+          </div>
+          <div className="bg-white/20 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold">{jobStats.completed}</div>
+            <div className="text-xs text-white/80">Completed</div>
           </div>
         </div>
 
