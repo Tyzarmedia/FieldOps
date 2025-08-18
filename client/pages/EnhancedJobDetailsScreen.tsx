@@ -424,42 +424,85 @@ export default function EnhancedJobDetailsScreen() {
   useEffect(() => {
     const pollJobStatus = async () => {
       try {
+        // Only poll if we have a valid jobId and network is online
+        if (!jobDetails.id || networkStatus === "offline") {
+          return;
+        }
+
         const response = await fetch(
           `/api/job-mgmt/jobs/${jobDetails.id}/status`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            // Add timeout to prevent hanging requests
+            signal: AbortSignal.timeout(5000)
+          }
         );
+
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {
             const serverStatus = result.data.status;
 
+            // Map server status to local status
+            const statusMapping = {
+              "Assigned": "assigned",
+              "Accepted": "accepted",
+              "In Progress": "in-progress",
+              "Paused": "paused",
+              "Completed": "completed",
+              "Closed": "completed"
+            };
+
+            const mappedStatus = statusMapping[serverStatus as keyof typeof statusMapping] || serverStatus.toLowerCase();
+
             // Sync local status with server status
-            if (serverStatus !== jobDetails.status) {
-              setJobDetails((prev) => ({ ...prev, status: serverStatus }));
+            if (mappedStatus !== jobDetails.status) {
+              setJobDetails((prev) => ({ ...prev, status: mappedStatus as JobStatus }));
             }
 
             // Update job status state
-            if (serverStatus === "in-progress") {
+            if (mappedStatus === "in-progress") {
               setJobStatus("in-progress");
               setIsTimerRunning(true);
-            } else if (serverStatus === "paused") {
+            } else if (mappedStatus === "paused") {
               setJobStatus("paused");
               setIsTimerRunning(false);
-            } else if (serverStatus === "completed") {
+            } else if (mappedStatus === "completed") {
               setJobStatus("completed");
               setIsTimerRunning(false);
             }
           }
+        } else {
+          // Log non-200 responses but don't show error to user for polling
+          console.warn(`Job status polling returned ${response.status}: ${response.statusText}`);
         }
       } catch (error) {
-        console.error("Error polling job status:", error);
+        // Handle different types of errors
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            console.warn("Job status polling timed out");
+          } else if (error.message.includes('Failed to fetch')) {
+            console.warn("Network error during job status polling - will retry");
+          } else {
+            console.error("Error polling job status:", error.message);
+          }
+        } else {
+          console.error("Unknown error polling job status:", error);
+        }
       }
     };
 
-    // Poll every 5 seconds for real-time updates
-    const interval = setInterval(pollJobStatus, 5000);
+    // Initial poll
+    pollJobStatus();
+
+    // Poll every 10 seconds (reduced frequency to reduce server load)
+    const interval = setInterval(pollJobStatus, 10000);
 
     return () => clearInterval(interval);
-  }, [jobDetails.id, jobDetails.status]);
+  }, [jobDetails.id, jobDetails.status, networkStatus]);
 
   // Handle location received from permission handler
   const handleLocationReceived = (location: {
