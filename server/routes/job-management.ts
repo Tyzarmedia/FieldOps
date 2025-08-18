@@ -106,6 +106,40 @@ router.get("/jobs/technician/:technicianId/active", (req, res) => {
   }
 });
 
+// Get job locations for technician (for location tracking)
+router.get("/jobs/technician/:technicianId/locations", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const technicianJobs = jobs.filter(
+      (job) =>
+        (job.assignedTechnician === technicianId ||
+         job.assistantTechnician === technicianId) &&
+        (job.status === "Assigned" || job.status === "Accepted" || job.status === "In Progress")
+    );
+
+    // Extract location data from jobs
+    const jobLocations = technicianJobs.map((job) => ({
+      id: `loc-${job.id}`,
+      jobId: job.id,
+      title: job.title,
+      workOrderNumber: job.workOrderNumber,
+      latitude: job.client?.coordinates?.lat || -26.2041,
+      longitude: job.client?.coordinates?.lng || 28.0473,
+      address: job.client?.address || "Unknown address",
+      proximityRadius: 100, // Default 100 meters
+      coordinates: job.client?.coordinates,
+    }));
+
+    res.json({ success: true, data: jobLocations });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch job locations",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Get jobs by status
 router.get("/jobs/status/:status", (req, res) => {
   try {
