@@ -788,7 +788,7 @@ export default function EnhancedJobDetailsScreen() {
       // Include 2.5 minutes (150 seconds) prior to actual start
       const adjustedStartTime = new Date(Date.now() - 150000).toISOString();
 
-      const response = await fetch(`/api/jobs/${jobDetails.id}/auto-start`, {
+      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -832,7 +832,7 @@ export default function EnhancedJobDetailsScreen() {
       icon: <Play className="h-6 w-6 text-green-600" />,
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/jobs/${jobDetails.id}/start`, {
+          const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/start`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -882,7 +882,7 @@ export default function EnhancedJobDetailsScreen() {
       icon: <Pause className="h-6 w-6 text-yellow-600" />,
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/jobs/${jobDetails.id}/pause`, {
+          const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/pause`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -931,7 +931,7 @@ export default function EnhancedJobDetailsScreen() {
       icon: <Square className="h-6 w-6 text-red-600" />,
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/jobs/${jobDetails.id}/stop`, {
+          const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/complete`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -974,7 +974,7 @@ export default function EnhancedJobDetailsScreen() {
   // Resume job from paused state
   const resumeJob = async () => {
     try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/resume`, {
+      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
