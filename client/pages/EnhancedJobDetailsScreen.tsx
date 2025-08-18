@@ -110,7 +110,7 @@ export default function EnhancedJobDetailsScreen() {
   });
 
   // User's available warehouses - in real app this would come from user profile/API
-  const [userWarehouses] = useState([
+  const [userWarehouses, setUserWarehouses] = useState([
     {
       id: "VAN462",
       name: "VAN462",
@@ -119,6 +119,56 @@ export default function EnhancedJobDetailsScreen() {
     },
     // Add more warehouses if user has access to multiple
   ]);
+
+  // Initialize user warehouse data
+  useEffect(() => {
+    const initializeUserWarehouses = async () => {
+      try {
+        const employeeId = localStorage.getItem("employeeId") || "tech001";
+
+        // Try to fetch user's warehouse assignments from API
+        const response = await fetch(`/api/db/employees/${employeeId}/warehouses`);
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data && result.data.length > 0) {
+            setUserWarehouses(result.data);
+            // Set the default warehouse in localStorage for quick access
+            const defaultWarehouse = result.data.find(wh => wh.isDefault) || result.data[0];
+            localStorage.setItem("userWarehouse", defaultWarehouse.id);
+            localStorage.setItem("userWarehouseId", defaultWarehouse.warehouseId || defaultWarehouse.id);
+          }
+        } else {
+          // Fallback: determine warehouse based on employee ID or location
+          const userWarehouse = determineUserWarehouse(employeeId);
+          localStorage.setItem("userWarehouse", userWarehouse.id);
+          localStorage.setItem("userWarehouseId", userWarehouse.warehouseId);
+          setUserWarehouses([userWarehouse]);
+        }
+      } catch (error) {
+        console.warn("Could not fetch user warehouses, using default:", error);
+        // Use default warehouse
+        const defaultWarehouse = userWarehouses[0];
+        localStorage.setItem("userWarehouse", defaultWarehouse.id);
+        localStorage.setItem("userWarehouseId", defaultWarehouse.id);
+      }
+    };
+
+    initializeUserWarehouses();
+  }, []);
+
+  // Determine user warehouse based on their profile (fallback method)
+  const determineUserWarehouse = (employeeId: string) => {
+    // In a real app, this would be based on employee data
+    // For now, assign based on employee ID pattern
+    const warehouseMap = {
+      "tech001": { id: "VAN462", name: "VAN462", description: "East London Service Van", isDefault: true, warehouseId: "WH-EL-001" },
+      "tech002": { id: "VAN123", name: "VAN123", description: "Port Elizabeth Service Van", isDefault: true, warehouseId: "WH-PE-002" },
+      "tech003": { id: "VAN789", name: "VAN789", description: "Cape Town Service Van", isDefault: true, warehouseId: "WH-CT-003" },
+    };
+
+    return warehouseMap[employeeId] || warehouseMap["tech001"];
+  };
   const [technician] = useState({
     id: "tech001",
     name: "Dyondzani Clement Masinge",
