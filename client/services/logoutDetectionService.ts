@@ -275,18 +275,43 @@ class LogoutDetectionService {
         location: logoutEvent.location,
       };
 
-      const response = await fetch("/api/db/clock-records", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(clockRecord),
-      });
+      // Set a timeout for the fetch request to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-      if (response.ok) {
-        console.log("Auto clock-out recorded successfully in database");
-      } else {
-        console.warn(
-          "Failed to record auto clock-out in database, proceeding with local storage update",
-        );
+      try {
+        const response = await fetch("/api/db/clock-records", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(clockRecord),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          console.log("Auto clock-out recorded successfully in database");
+        } else {
+          const errorText = await response.text().catch(() => "Unknown error");
+          console.warn(
+            `Failed to record auto clock-out in database (${response.status}): ${errorText}`,
+          );
+        }
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+
+        if (fetchError instanceof Error) {
+          if (fetchError.name === 'AbortError') {
+            console.warn("Clock-out API request timed out after 5 seconds");
+          } else if (fetchError.message.includes('Failed to fetch')) {
+            console.warn("Network error during clock-out API call - server may be unreachable");
+          } else {
+            console.warn("Fetch error during clock-out:", fetchError.message);
+          }
+        } else {
+          console.warn("Unknown fetch error during clock-out:", fetchError);
+        }
+        // Don't re-throw - allow the logout process to continue
       }
     } catch (error) {
       console.warn(
