@@ -106,7 +106,7 @@ export default function EnhancedJobDetailsScreen() {
     container: "",
     qtyUsed: "",
     description: "",
-    comments: ""
+    comments: "",
   });
 
   // User's available warehouses - in real app this would come from user profile/API
@@ -115,7 +115,7 @@ export default function EnhancedJobDetailsScreen() {
       id: "VAN462",
       name: "VAN462",
       description: "Main Service Van",
-      isDefault: true
+      isDefault: true,
     },
     // Add more warehouses if user has access to multiple
   ]);
@@ -127,16 +127,22 @@ export default function EnhancedJobDetailsScreen() {
         const employeeId = localStorage.getItem("employeeId") || "tech001";
 
         // Try to fetch user's warehouse assignments from API
-        const response = await fetch(`/api/warehouse-stock/user/${employeeId}/warehouses`);
+        const response = await fetch(
+          `/api/warehouse-stock/user/${employeeId}/warehouses`,
+        );
 
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data && result.data.length > 0) {
             setUserWarehouses(result.data);
             // Set the default warehouse in localStorage for quick access
-            const defaultWarehouse = result.data.find(wh => wh.isDefault) || result.data[0];
+            const defaultWarehouse =
+              result.data.find((wh) => wh.isDefault) || result.data[0];
             localStorage.setItem("userWarehouse", defaultWarehouse.id);
-            localStorage.setItem("userWarehouseId", defaultWarehouse.warehouseId || defaultWarehouse.id);
+            localStorage.setItem(
+              "userWarehouseId",
+              defaultWarehouse.warehouseId || defaultWarehouse.id,
+            );
           }
         } else {
           // Fallback: determine warehouse based on employee ID or location
@@ -162,9 +168,27 @@ export default function EnhancedJobDetailsScreen() {
     // In a real app, this would be based on employee data
     // For now, assign based on employee ID pattern
     const warehouseMap = {
-      "tech001": { id: "VAN462", name: "VAN462", description: "East London Service Van", isDefault: true, warehouseId: "WH-EL-001" },
-      "tech002": { id: "VAN123", name: "VAN123", description: "Port Elizabeth Service Van", isDefault: true, warehouseId: "WH-PE-002" },
-      "tech003": { id: "VAN789", name: "VAN789", description: "Cape Town Service Van", isDefault: true, warehouseId: "WH-CT-003" },
+      tech001: {
+        id: "VAN462",
+        name: "VAN462",
+        description: "East London Service Van",
+        isDefault: true,
+        warehouseId: "WH-EL-001",
+      },
+      tech002: {
+        id: "VAN123",
+        name: "VAN123",
+        description: "Port Elizabeth Service Van",
+        isDefault: true,
+        warehouseId: "WH-PE-002",
+      },
+      tech003: {
+        id: "VAN789",
+        name: "VAN789",
+        description: "Cape Town Service Van",
+        isDefault: true,
+        warehouseId: "WH-CT-003",
+      },
     };
 
     return warehouseMap[employeeId] || warehouseMap["tech001"];
@@ -183,10 +207,10 @@ export default function EnhancedJobDetailsScreen() {
     const warehouse = localStorage.getItem("userWarehouse");
     const warehouseId = localStorage.getItem("userWarehouseId");
     if (warehouse && warehouseId) {
-      setTechnician(prev => ({
+      setTechnician((prev) => ({
         ...prev,
         warehouse,
-        warehouseId
+        warehouseId,
       }));
     }
   }, [userWarehouses]);
@@ -352,11 +376,16 @@ export default function EnhancedJobDetailsScreen() {
   // Check if location is needed for job operations
   useEffect(() => {
     // Check if location permission was already granted this session
-    const locationGrantedThisSession = sessionStorage.getItem("locationPermissionGranted");
+    const locationGrantedThisSession = sessionStorage.getItem(
+      "locationPermissionGranted",
+    );
 
     // Show location permission handler when job requires location tracking
     // but only if not already granted this session
-    if ((jobDetails.status === "accepted" || jobStatus === "in-progress") && !locationGrantedThisSession) {
+    if (
+      (jobDetails.status === "accepted" || jobStatus === "in-progress") &&
+      !locationGrantedThisSession
+    ) {
       setLocationRequired(true);
       setShowLocationPermission(true);
     }
@@ -366,7 +395,9 @@ export default function EnhancedJobDetailsScreen() {
   useEffect(() => {
     const pollJobStatus = async () => {
       try {
-        const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/status`);
+        const response = await fetch(
+          `/api/job-mgmt/jobs/${jobDetails.id}/status`,
+        );
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {
@@ -374,7 +405,7 @@ export default function EnhancedJobDetailsScreen() {
 
             // Sync local status with server status
             if (serverStatus !== jobDetails.status) {
-              setJobDetails(prev => ({ ...prev, status: serverStatus }));
+              setJobDetails((prev) => ({ ...prev, status: serverStatus }));
             }
 
             // Update job status state
@@ -431,30 +462,36 @@ export default function EnhancedJobDetailsScreen() {
       longitude: 27.9117,
     });
     setShowLocationPermission(false);
-    warning("Location Required", "Using default location for job tracking. Some features may be limited.");
+    warning(
+      "Location Required",
+      "Using default location for job tracking. Some features may be limited.",
+    );
   };
 
   // Update job status
   const updateJobStatus = async (newStatus: string) => {
     try {
-      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          status: newStatus,
-          technicianId: localStorage.getItem("employeeId") || "tech001"
-        }),
-      });
+      const response = await fetch(
+        `/api/job-mgmt/jobs/${jobDetails.id}/status`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: newStatus,
+            technicianId: localStorage.getItem("employeeId") || "tech001",
+          }),
+        },
+      );
 
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
-          setJobDetails(prev => ({ ...prev, status: newStatus as any }));
+          setJobDetails((prev) => ({ ...prev, status: newStatus as any }));
           setShowStatusModal(false);
           success("Status Updated", `Job status updated to ${newStatus}`);
         }
       } else {
-        throw new Error('Failed to update status');
+        throw new Error("Failed to update status");
       }
     } catch (error) {
       console.error("Error updating job status:", error);
@@ -823,8 +860,14 @@ export default function EnhancedJobDetailsScreen() {
   const handleUpdateUdf = async () => {
     try {
       // Validate required UDF fields
-      const requiredFields = ["faultResolved", "faultSolutionType", "maintenanceIssueClass"];
-      const missingFields = requiredFields.filter(field => !udfData[field as keyof typeof udfData]);
+      const requiredFields = [
+        "faultResolved",
+        "faultSolutionType",
+        "maintenanceIssueClass",
+      ];
+      const missingFields = requiredFields.filter(
+        (field) => !udfData[field as keyof typeof udfData],
+      );
 
       if (missingFields.length > 0) {
         toast({
@@ -852,9 +895,9 @@ export default function EnhancedJobDetailsScreen() {
 
         if (result.success) {
           // Mark UDF as completed for sign-off
-          setSignOffData(prev => ({
+          setSignOffData((prev) => ({
             ...prev,
-            udfCompleted: true
+            udfCompleted: true,
           }));
 
           toast({
@@ -873,19 +916,23 @@ export default function EnhancedJobDetailsScreen() {
               timestamp: new Date().toISOString(),
             }),
           }).catch((err) => console.error("Failed to send notification:", err));
-
         } else {
           throw new Error(result.message || "UDF update failed");
         }
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Update failed with status ${response.status}`);
+        throw new Error(
+          errorData.message || `Update failed with status ${response.status}`,
+        );
       }
     } catch (error) {
       console.error("Failed to update UDF:", error);
       toast({
         title: "Update Failed",
-        description: error instanceof Error ? error.message : "Failed to update UDF. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to update UDF. Please try again.",
       });
     }
   };
@@ -966,10 +1013,13 @@ export default function EnhancedJobDetailsScreen() {
     }
 
     try {
-      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/images`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `/api/job-mgmt/jobs/${jobDetails.id}/images`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       if (response.ok) {
         const result = await response.json();
@@ -985,7 +1035,7 @@ export default function EnhancedJobDetailsScreen() {
             uploadedDate: new Date().toISOString(),
           }));
 
-          setJobPhotos(prev => [...prev, ...newPhotos]);
+          setJobPhotos((prev) => [...prev, ...newPhotos]);
           setShowImageForm(false);
           setImageFormData({
             beforeLightLevels: null,
@@ -995,9 +1045,9 @@ export default function EnhancedJobDetailsScreen() {
           });
 
           // Mark images as completed for sign-off
-          setSignOffData(prev => ({
+          setSignOffData((prev) => ({
             ...prev,
-            imagesUploaded: true
+            imagesUploaded: true,
           }));
 
           // Show success toast
@@ -1017,19 +1067,23 @@ export default function EnhancedJobDetailsScreen() {
               timestamp: new Date().toISOString(),
             }),
           }).catch((err) => console.error("Failed to send notification:", err));
-
         } else {
           throw new Error(result.message || "Upload failed");
         }
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Upload failed with status ${response.status}`);
+        throw new Error(
+          errorData.message || `Upload failed with status ${response.status}`,
+        );
       }
     } catch (error) {
       console.error("Failed to upload images:", error);
       toast({
         title: "Upload Failed",
-        description: error instanceof Error ? error.message : "Failed to upload images. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to upload images. Please try again.",
       });
     }
   };
@@ -1151,16 +1205,16 @@ export default function EnhancedJobDetailsScreen() {
         });
 
         // Mark stock as completed for sign-off
-        setSignOffData(prev => ({
+        setSignOffData((prev) => ({
           ...prev,
-          stockChecked: true
+          stockChecked: true,
         }));
-
       } else {
         const errorData = await response.json();
         toast({
           title: "Allocation Failed",
-          description: errorData.message || "Failed to allocate stock. Please try again.",
+          description:
+            errorData.message || "Failed to allocate stock. Please try again.",
         });
       }
     } catch (error) {
@@ -1710,7 +1764,7 @@ export default function EnhancedJobDetailsScreen() {
                     container: technician.warehouse, // Reset to user's warehouse
                     qtyUsed: "",
                     description: "",
-                    comments: ""
+                    comments: "",
                   });
                 }}
               >
@@ -1725,8 +1779,12 @@ export default function EnhancedJobDetailsScreen() {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-blue-900">Your Assigned Warehouse</p>
-                  <p className="text-xs text-blue-700">{technician.warehouse} - {technician.warehouseId}</p>
+                  <p className="text-sm font-medium text-blue-900">
+                    Your Assigned Warehouse
+                  </p>
+                  <p className="text-xs text-blue-700">
+                    {technician.warehouse} - {technician.warehouseId}
+                  </p>
                 </div>
                 <div className="text-blue-600">
                   <Package className="h-5 w-5" />
@@ -1743,7 +1801,12 @@ export default function EnhancedJobDetailsScreen() {
                 <Input
                   placeholder="Search..."
                   value={stockFormData.code}
-                  onChange={(e) => setStockFormData(prev => ({ ...prev, code: e.target.value }))}
+                  onChange={(e) =>
+                    setStockFormData((prev) => ({
+                      ...prev,
+                      code: e.target.value,
+                    }))
+                  }
                   className="pl-10"
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -1766,7 +1829,9 @@ export default function EnhancedJobDetailsScreen() {
               </label>
               <Select
                 value={stockFormData.container || technician.warehouse}
-                onValueChange={(value) => setStockFormData(prev => ({ ...prev, container: value }))}
+                onValueChange={(value) =>
+                  setStockFormData((prev) => ({ ...prev, container: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder={technician.warehouse} />
@@ -1792,7 +1857,12 @@ export default function EnhancedJobDetailsScreen() {
               <Input
                 type="number"
                 value={stockFormData.qtyUsed}
-                onChange={(e) => setStockFormData(prev => ({ ...prev, qtyUsed: e.target.value }))}
+                onChange={(e) =>
+                  setStockFormData((prev) => ({
+                    ...prev,
+                    qtyUsed: e.target.value,
+                  }))
+                }
                 className="w-full"
                 min="1"
               />
@@ -1805,7 +1875,12 @@ export default function EnhancedJobDetailsScreen() {
               </label>
               <Input
                 value={stockFormData.description}
-                onChange={(e) => setStockFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setStockFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 className="w-full"
               />
             </div>
@@ -1818,7 +1893,12 @@ export default function EnhancedJobDetailsScreen() {
               <div className="relative">
                 <Textarea
                   value={stockFormData.comments}
-                  onChange={(e) => setStockFormData(prev => ({ ...prev, comments: e.target.value }))}
+                  onChange={(e) =>
+                    setStockFormData((prev) => ({
+                      ...prev,
+                      comments: e.target.value,
+                    }))
+                  }
                   className="w-full min-h-[100px] pr-10"
                 />
                 <div className="absolute right-3 bottom-3">
@@ -1835,11 +1915,19 @@ export default function EnhancedJobDetailsScreen() {
             <Button
               onClick={() => {
                 // Handle stock addition
-                if (stockFormData.code && stockFormData.container && stockFormData.qtyUsed) {
+                if (
+                  stockFormData.code &&
+                  stockFormData.container &&
+                  stockFormData.qtyUsed
+                ) {
                   // Validate that the selected container belongs to the user
-                  const userHasAccess = userWarehouses.some(wh => wh.id === stockFormData.container);
+                  const userHasAccess = userWarehouses.some(
+                    (wh) => wh.id === stockFormData.container,
+                  );
                   if (!userHasAccess) {
-                    alert("You don't have access to allocate stock from this warehouse");
+                    alert(
+                      "You don't have access to allocate stock from this warehouse",
+                    );
                     return;
                   }
                   const newStock = {
@@ -1850,22 +1938,26 @@ export default function EnhancedJobDetailsScreen() {
                     warehouse: stockFormData.container,
                     notes: stockFormData.comments,
                     allocatedAt: new Date().toISOString(),
-                    allocatedBy: technician.name
+                    allocatedBy: technician.name,
                   };
 
-                  setAllocatedStock(prev => [...prev, newStock]);
+                  setAllocatedStock((prev) => [...prev, newStock]);
                   setShowStockForm(false);
                   setStockFormData({
                     code: "",
                     container: technician.warehouse, // Reset to user's warehouse
                     qtyUsed: "",
                     description: "",
-                    comments: ""
+                    comments: "",
                   });
                 }
               }}
               className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg flex items-center justify-center space-x-2"
-              disabled={!stockFormData.code || !stockFormData.container || !stockFormData.qtyUsed}
+              disabled={
+                !stockFormData.code ||
+                !stockFormData.container ||
+                !stockFormData.qtyUsed
+              }
             >
               <Plus className="h-5 w-5" />
               <span className="text-lg font-medium">Add</span>
@@ -1876,7 +1968,11 @@ export default function EnhancedJobDetailsScreen() {
 
       {/* Content Area */}
       <div className="flex-1 flex flex-col p-4 pb-24">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full flex-1 flex flex-col"
+        >
           {/* Details Tab */}
           <TabsContent value="details" className="space-y-4">
             {/* Client Contacts */}
@@ -2482,7 +2578,10 @@ export default function EnhancedJobDetailsScreen() {
 
           {/* Gallery Tab */}
           <TabsContent value="gallery" className="flex-1 flex flex-col">
-            <div className="relative flex-1 flex flex-col bg-gray-50 rounded-lg border-2 border-dashed border-gray-300" style={{minHeight: 'calc(100vh - 280px)'}}>
+            <div
+              className="relative flex-1 flex flex-col bg-gray-50 rounded-lg border-2 border-dashed border-gray-300"
+              style={{ minHeight: "calc(100vh - 280px)" }}
+            >
               <div className="flex-1 flex flex-col">
                 {jobPhotos.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center">
@@ -2525,15 +2624,15 @@ export default function EnhancedJobDetailsScreen() {
                     <Button
                       onClick={() => {
                         // Handle gallery access
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = "image/*";
                         input.multiple = true;
                         input.onchange = (e) => {
                           const files = (e.target as HTMLInputElement).files;
                           if (files) {
                             // Handle selected files from gallery
-                            console.log('Selected files from gallery:', files);
+                            console.log("Selected files from gallery:", files);
                             // Add your gallery handling logic here
                           }
                         };
@@ -2549,16 +2648,19 @@ export default function EnhancedJobDetailsScreen() {
                     <Button
                       onClick={() => {
                         // Handle camera access
-                        navigator.mediaDevices?.getUserMedia({ video: true })
-                          .then(stream => {
+                        navigator.mediaDevices
+                          ?.getUserMedia({ video: true })
+                          .then((stream) => {
                             // Create video element or handle camera
-                            console.log('Camera stream:', stream);
+                            console.log("Camera stream:", stream);
                             // Add your camera handling logic here
-                            stream.getTracks().forEach(track => track.stop()); // Stop for now
+                            stream.getTracks().forEach((track) => track.stop()); // Stop for now
                           })
-                          .catch(err => {
-                            console.error('Camera access denied:', err);
-                            alert('Camera access denied. Please allow camera permissions.');
+                          .catch((err) => {
+                            console.error("Camera access denied:", err);
+                            alert(
+                              "Camera access denied. Please allow camera permissions.",
+                            );
                           });
                         setShowGalleryOptions(false);
                       }}
@@ -2587,7 +2689,10 @@ export default function EnhancedJobDetailsScreen() {
 
           {/* Stocks Tab */}
           <TabsContent value="stocks" className="flex-1 flex flex-col">
-            <div className="relative flex-1 flex flex-col bg-gray-50 rounded-lg border-2 border-dashed border-gray-300" style={{minHeight: 'calc(100vh - 280px)'}}>
+            <div
+              className="relative flex-1 flex flex-col bg-gray-50 rounded-lg border-2 border-dashed border-gray-300"
+              style={{ minHeight: "calc(100vh - 280px)" }}
+            >
               <div className="flex-1 flex flex-col">
                 {allocatedStock.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center">
@@ -2613,107 +2718,148 @@ export default function EnhancedJobDetailsScreen() {
                     <div className="px-4 py-3 bg-gray-100 border-b">
                       <div className="flex items-center space-x-4">
                         <div className="w-8"></div>
-                        <div className="flex-1 text-sm font-medium text-gray-600">Code</div>
-                        <div className="flex-1 text-sm font-medium text-gray-600">Description</div>
+                        <div className="flex-1 text-sm font-medium text-gray-600">
+                          Code
+                        </div>
+                        <div className="flex-1 text-sm font-medium text-gray-600">
+                          Description
+                        </div>
                       </div>
                     </div>
 
                     {/* Stock Items */}
                     <div className="flex-1 overflow-y-auto">
                       {allocatedStock
-                        .filter(stock =>
-                          stock.code.toLowerCase().includes(stockSearchQuery.toLowerCase()) ||
-                          stock.name.toLowerCase().includes(stockSearchQuery.toLowerCase())
+                        .filter(
+                          (stock) =>
+                            stock.code
+                              .toLowerCase()
+                              .includes(stockSearchQuery.toLowerCase()) ||
+                            stock.name
+                              .toLowerCase()
+                              .includes(stockSearchQuery.toLowerCase()),
                         )
                         .map((stock, index) => (
-                        <div key={stock.id} className="border-b border-gray-200">
-                          {/* Stock Row */}
                           <div
-                            className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
-                            onClick={() => setExpandedStockId(expandedStockId === stock.id ? null : stock.id)}
+                            key={stock.id}
+                            className="border-b border-gray-200"
                           >
-                            <div className="flex items-center space-x-4">
-                              <div className="w-8 flex justify-center">
-                                {expandedStockId === stock.id ? (
-                                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                                ) : (
-                                  <ChevronUp className="h-4 w-4 text-gray-400" />
-                                )}
-                              </div>
-                              <div className="flex-1 text-sm font-medium text-gray-900">
-                                {stock.code}
-                              </div>
-                              <div className="flex-1 text-sm text-gray-600 truncate">
-                                {stock.name}
+                            {/* Stock Row */}
+                            <div
+                              className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                              onClick={() =>
+                                setExpandedStockId(
+                                  expandedStockId === stock.id
+                                    ? null
+                                    : stock.id,
+                                )
+                              }
+                            >
+                              <div className="flex items-center space-x-4">
+                                <div className="w-8 flex justify-center">
+                                  {expandedStockId === stock.id ? (
+                                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                                  ) : (
+                                    <ChevronUp className="h-4 w-4 text-gray-400" />
+                                  )}
+                                </div>
+                                <div className="flex-1 text-sm font-medium text-gray-900">
+                                  {stock.code}
+                                </div>
+                                <div className="flex-1 text-sm text-gray-600 truncate">
+                                  {stock.name}
+                                </div>
                               </div>
                             </div>
+
+                            {/* Expanded Details */}
+                            {expandedStockId === stock.id && (
+                              <div className="px-4 pb-4 bg-gray-50">
+                                <div className="space-y-3 pt-3">
+                                  <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                      <span className="font-medium text-gray-900">
+                                        Code
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.code}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="font-medium text-gray-900">
+                                        Container
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.warehouse || "VAN462"}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="font-medium text-gray-900">
+                                        Description
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.name}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="font-medium text-gray-900">
+                                        Qty Used
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.quantity}
+                                      </p>
+                                    </div>
+                                    <div className="col-span-2">
+                                      <span className="font-medium text-gray-900">
+                                        Comments
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.notes || "-"}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {/* Action Buttons */}
+                                  <div className="flex justify-center space-x-8 pt-4">
+                                    <Button
+                                      variant="ghost"
+                                      className="flex flex-col items-center space-y-1 text-blue-500"
+                                      onClick={() => {
+                                        // Handle edit
+                                        setStockFormData({
+                                          code: stock.code,
+                                          container:
+                                            stock.warehouse || "VAN462",
+                                          qtyUsed: stock.quantity.toString(),
+                                          description: stock.name,
+                                          comments: stock.notes || "",
+                                        });
+                                        setShowStockForm(true);
+                                      }}
+                                    >
+                                      <PenTool className="h-5 w-5" />
+                                      <span className="text-xs">Edit</span>
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      className="flex flex-col items-center space-y-1 text-red-500"
+                                      onClick={() => {
+                                        // Handle delete
+                                        const newStock = allocatedStock.filter(
+                                          (s) => s.id !== stock.id,
+                                        );
+                                        setAllocatedStock(newStock);
+                                      }}
+                                    >
+                                      <Trash2 className="h-5 w-5" />
+                                      <span className="text-xs">Delete</span>
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
-
-                          {/* Expanded Details */}
-                          {expandedStockId === stock.id && (
-                            <div className="px-4 pb-4 bg-gray-50">
-                              <div className="space-y-3 pt-3">
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                  <div>
-                                    <span className="font-medium text-gray-900">Code</span>
-                                    <p className="text-gray-600">{stock.code}</p>
-                                  </div>
-                                  <div>
-                                    <span className="font-medium text-gray-900">Container</span>
-                                    <p className="text-gray-600">{stock.warehouse || 'VAN462'}</p>
-                                  </div>
-                                  <div>
-                                    <span className="font-medium text-gray-900">Description</span>
-                                    <p className="text-gray-600">{stock.name}</p>
-                                  </div>
-                                  <div>
-                                    <span className="font-medium text-gray-900">Qty Used</span>
-                                    <p className="text-gray-600">{stock.quantity}</p>
-                                  </div>
-                                  <div className="col-span-2">
-                                    <span className="font-medium text-gray-900">Comments</span>
-                                    <p className="text-gray-600">{stock.notes || '-'}</p>
-                                  </div>
-                                </div>
-
-                                {/* Action Buttons */}
-                                <div className="flex justify-center space-x-8 pt-4">
-                                  <Button
-                                    variant="ghost"
-                                    className="flex flex-col items-center space-y-1 text-blue-500"
-                                    onClick={() => {
-                                      // Handle edit
-                                      setStockFormData({
-                                        code: stock.code,
-                                        container: stock.warehouse || 'VAN462',
-                                        qtyUsed: stock.quantity.toString(),
-                                        description: stock.name,
-                                        comments: stock.notes || ''
-                                      });
-                                      setShowStockForm(true);
-                                    }}
-                                  >
-                                    <PenTool className="h-5 w-5" />
-                                    <span className="text-xs">Edit</span>
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    className="flex flex-col items-center space-y-1 text-red-500"
-                                    onClick={() => {
-                                      // Handle delete
-                                      const newStock = allocatedStock.filter(s => s.id !== stock.id);
-                                      setAllocatedStock(newStock);
-                                    }}
-                                  >
-                                    <Trash2 className="h-5 w-5" />
-                                    <span className="text-xs">Delete</span>
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   </div>
                 )}
@@ -2733,7 +2879,7 @@ export default function EnhancedJobDetailsScreen() {
                           container: technician.warehouse,
                           qtyUsed: "",
                           description: "",
-                          comments: ""
+                          comments: "",
                         });
                         setShowStockForm(true);
                       }}
@@ -2965,16 +3111,22 @@ export default function EnhancedJobDetailsScreen() {
                   <div className="space-y-3">
                     {/* UDF Status */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">UDF Fields Completed</span>
+                      <span className="text-sm text-gray-700">
+                        UDF Fields Completed
+                      </span>
                       <div className="flex items-center">
                         {signOffData.udfCompleted ? (
                           <CheckCircle className="h-5 w-5 text-green-600" />
                         ) : (
                           <AlertCircle className="h-5 w-5 text-orange-500" />
                         )}
-                        <span className={`ml-2 text-sm font-medium ${
-                          signOffData.udfCompleted ? "text-green-600" : "text-orange-600"
-                        }`}>
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.udfCompleted
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
                           {signOffData.udfCompleted ? "Complete" : "Pending"}
                         </span>
                       </div>
@@ -2982,50 +3134,72 @@ export default function EnhancedJobDetailsScreen() {
 
                     {/* Images Status */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">Images Uploaded</span>
+                      <span className="text-sm text-gray-700">
+                        Images Uploaded
+                      </span>
                       <div className="flex items-center">
                         {signOffData.imagesUploaded ? (
                           <CheckCircle className="h-5 w-5 text-green-600" />
                         ) : (
                           <AlertCircle className="h-5 w-5 text-orange-500" />
                         )}
-                        <span className={`ml-2 text-sm font-medium ${
-                          signOffData.imagesUploaded ? "text-green-600" : "text-orange-600"
-                        }`}>
-                          {signOffData.imagesUploaded ? `${jobPhotos.length} Images` : "No Images"}
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.imagesUploaded
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
+                          {signOffData.imagesUploaded
+                            ? `${jobPhotos.length} Images`
+                            : "No Images"}
                         </span>
                       </div>
                     </div>
 
                     {/* Stock Status */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">Stock Allocation</span>
+                      <span className="text-sm text-gray-700">
+                        Stock Allocation
+                      </span>
                       <div className="flex items-center">
                         {signOffData.stockChecked ? (
                           <CheckCircle className="h-5 w-5 text-green-600" />
                         ) : (
                           <AlertCircle className="h-5 w-5 text-orange-500" />
                         )}
-                        <span className={`ml-2 text-sm font-medium ${
-                          signOffData.stockChecked ? "text-green-600" : "text-orange-600"
-                        }`}>
-                          {signOffData.stockChecked ? `${allocatedStock.length} Items` : "None Allocated"}
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.stockChecked
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
+                          {signOffData.stockChecked
+                            ? `${allocatedStock.length} Items`
+                            : "None Allocated"}
                         </span>
                       </div>
                     </div>
 
                     {/* Signature Status */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">Digital Signature</span>
+                      <span className="text-sm text-gray-700">
+                        Digital Signature
+                      </span>
                       <div className="flex items-center">
                         {signOffData.signature ? (
                           <CheckCircle className="h-5 w-5 text-green-600" />
                         ) : (
                           <AlertCircle className="h-5 w-5 text-orange-500" />
                         )}
-                        <span className={`ml-2 text-sm font-medium ${
-                          signOffData.signature ? "text-green-600" : "text-orange-600"
-                        }`}>
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.signature
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
                           {signOffData.signature ? "Signed" : "Not Signed"}
                         </span>
                       </div>
@@ -3033,17 +3207,25 @@ export default function EnhancedJobDetailsScreen() {
 
                     {/* Terms Status */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">Terms Accepted</span>
+                      <span className="text-sm text-gray-700">
+                        Terms Accepted
+                      </span>
                       <div className="flex items-center">
                         {signOffData.acceptTerms ? (
                           <CheckCircle className="h-5 w-5 text-green-600" />
                         ) : (
                           <AlertCircle className="h-5 w-5 text-orange-500" />
                         )}
-                        <span className={`ml-2 text-sm font-medium ${
-                          signOffData.acceptTerms ? "text-green-600" : "text-orange-600"
-                        }`}>
-                          {signOffData.acceptTerms ? "Accepted" : "Not Accepted"}
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.acceptTerms
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
+                          {signOffData.acceptTerms
+                            ? "Accepted"
+                            : "Not Accepted"}
                         </span>
                       </div>
                     </div>
@@ -3051,28 +3233,37 @@ export default function EnhancedJobDetailsScreen() {
                     {/* Overall Progress */}
                     <div className="border-t pt-3 mt-3">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">Overall Progress</span>
+                        <span className="text-sm font-medium text-gray-700">
+                          Overall Progress
+                        </span>
                         <span className="text-sm font-medium text-blue-600">
-                          {[
-                            signOffData.udfCompleted,
-                            signOffData.imagesUploaded,
-                            signOffData.stockChecked,
-                            signOffData.signature,
-                            signOffData.acceptTerms
-                          ].filter(Boolean).length}/5 Complete
+                          {
+                            [
+                              signOffData.udfCompleted,
+                              signOffData.imagesUploaded,
+                              signOffData.stockChecked,
+                              signOffData.signature,
+                              signOffData.acceptTerms,
+                            ].filter(Boolean).length
+                          }
+                          /5 Complete
                         </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                           className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                           style={{
-                            width: `${([
-                              signOffData.udfCompleted,
-                              signOffData.imagesUploaded,
-                              signOffData.stockChecked,
-                              signOffData.signature,
-                              signOffData.acceptTerms
-                            ].filter(Boolean).length / 5) * 100}%`
+                            width: `${
+                              ([
+                                signOffData.udfCompleted,
+                                signOffData.imagesUploaded,
+                                signOffData.stockChecked,
+                                signOffData.signature,
+                                signOffData.acceptTerms,
+                              ].filter(Boolean).length /
+                                5) *
+                              100
+                            }%`,
                           }}
                         ></div>
                       </div>
@@ -3172,7 +3363,10 @@ export default function EnhancedJobDetailsScreen() {
 
               <div className="space-y-3">
                 <div className="text-sm text-gray-600 mb-4">
-                  Current Status: <span className="font-medium">{jobDetails.status.toUpperCase()}</span>
+                  Current Status:{" "}
+                  <span className="font-medium">
+                    {jobDetails.status.toUpperCase()}
+                  </span>
                 </div>
 
                 {/* Status Options */}

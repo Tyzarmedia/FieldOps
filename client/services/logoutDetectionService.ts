@@ -2,7 +2,12 @@ interface LogoutEvent {
   technicianId: string;
   logoutTime: string;
   clockOutTime: string;
-  reason: 'manual_logout' | 'session_timeout' | 'tab_close' | 'browser_close' | 'network_disconnect';
+  reason:
+    | "manual_logout"
+    | "session_timeout"
+    | "tab_close"
+    | "browser_close"
+    | "network_disconnect";
   workingHours: number;
   distanceTraveled: number;
   overtimeHours?: number;
@@ -22,7 +27,8 @@ class LogoutDetectionService {
   private lastActivity = Date.now();
   private readonly INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
   private readonly HEARTBEAT_INTERVAL = 60 * 1000; // 1 minute
-  private beforeUnloadListener: ((event: BeforeUnloadEvent) => void) | null = null;
+  private beforeUnloadListener: ((event: BeforeUnloadEvent) => void) | null =
+    null;
   private visibilityChangeListener: (() => void) | null = null;
 
   static getInstance(): LogoutDetectionService {
@@ -35,7 +41,7 @@ class LogoutDetectionService {
   // Start logout detection
   startDetection(technicianId: string): void {
     if (this.isActive) {
-      console.log('Logout detection already active');
+      console.log("Logout detection already active");
       return;
     }
 
@@ -43,7 +49,7 @@ class LogoutDetectionService {
     this.isActive = true;
     this.lastActivity = Date.now();
 
-    console.log('Logout detection started for technician:', technicianId);
+    console.log("Logout detection started for technician:", technicianId);
 
     // Set up various detection mechanisms
     this.setupBeforeUnloadListener();
@@ -64,7 +70,7 @@ class LogoutDetectionService {
     this.isActive = false;
     this.technicianId = null;
 
-    console.log('Logout detection stopped');
+    console.log("Logout detection stopped");
   }
 
   // Setup before unload listener (browser close/tab close)
@@ -74,16 +80,17 @@ class LogoutDetectionService {
       const isClockedIn = localStorage.getItem("isClockedIn") === "true";
       if (isClockedIn && this.technicianId) {
         // Trigger immediate clock out
-        this.handleLogout('browser_close');
+        this.handleLogout("browser_close");
 
         // Show confirmation dialog
-        const message = "You are currently clocked in. Closing this tab will automatically clock you out. Are you sure?";
+        const message =
+          "You are currently clocked in. Closing this tab will automatically clock you out. Are you sure?";
         event.returnValue = message;
         return message;
       }
     };
 
-    window.addEventListener('beforeunload', this.beforeUnloadListener);
+    window.addEventListener("beforeunload", this.beforeUnloadListener);
   }
 
   // Setup visibility change listener (tab switch/minimize)
@@ -98,7 +105,10 @@ class LogoutDetectionService {
       }
     };
 
-    document.addEventListener('visibilitychange', this.visibilityChangeListener);
+    document.addEventListener(
+      "visibilitychange",
+      this.visibilityChangeListener,
+    );
   }
 
   // Setup activity tracking (mouse, keyboard, touch)
@@ -106,11 +116,11 @@ class LogoutDetectionService {
     const updateActivity = () => this.updateActivity();
 
     // Track various user activities
-    document.addEventListener('mousedown', updateActivity);
-    document.addEventListener('mousemove', updateActivity);
-    document.addEventListener('keypress', updateActivity);
-    document.addEventListener('scroll', updateActivity);
-    document.addEventListener('touchstart', updateActivity);
+    document.addEventListener("mousedown", updateActivity);
+    document.addEventListener("mousemove", updateActivity);
+    document.addEventListener("keypress", updateActivity);
+    document.addEventListener("scroll", updateActivity);
+    document.addEventListener("touchstart", updateActivity);
   }
 
   // Setup session checking
@@ -132,8 +142,8 @@ class LogoutDetectionService {
     setTimeout(() => {
       // If tab is still hidden after timeout and user is clocked in
       if (document.hidden && localStorage.getItem("isClockedIn") === "true") {
-        console.log('Extended absence detected, auto-clocking out...');
-        this.handleLogout('session_timeout');
+        console.log("Extended absence detected, auto-clocking out...");
+        this.handleLogout("session_timeout");
       }
     }, this.INACTIVITY_TIMEOUT);
   }
@@ -152,8 +162,8 @@ class LogoutDetectionService {
     if (timeSinceActivity > this.INACTIVITY_TIMEOUT) {
       const isClockedIn = localStorage.getItem("isClockedIn") === "true";
       if (isClockedIn) {
-        console.log('Inactivity timeout detected, auto-clocking out...');
-        this.handleLogout('session_timeout');
+        console.log("Inactivity timeout detected, auto-clocking out...");
+        this.handleLogout("session_timeout");
       }
     }
   }
@@ -163,9 +173,9 @@ class LogoutDetectionService {
     if (!this.technicianId) return;
 
     try {
-      const response = await fetch('/api/session/heartbeat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/session/heartbeat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: this.technicianId,
           timestamp: new Date().toISOString(),
@@ -175,16 +185,16 @@ class LogoutDetectionService {
       });
 
       if (!response.ok) {
-        console.warn('Heartbeat failed, session may be invalid');
+        console.warn("Heartbeat failed, session may be invalid");
         // Could trigger logout if server indicates session is invalid
       }
     } catch (error) {
-      console.error('Heartbeat error:', error);
+      console.error("Heartbeat error:", error);
     }
   }
 
   // Handle logout event
-  private async handleLogout(reason: LogoutEvent['reason']): Promise<void> {
+  private async handleLogout(reason: LogoutEvent["reason"]): Promise<void> {
     if (!this.technicianId) return;
 
     try {
@@ -193,13 +203,14 @@ class LogoutDetectionService {
       const isClockedIn = localStorage.getItem("isClockedIn") === "true";
 
       if (!isClockedIn || !clockInTime) {
-        console.log('User not clocked in, skipping auto clock-out');
+        console.log("User not clocked in, skipping auto clock-out");
         return;
       }
 
       const now = new Date();
       const clockIn = new Date(clockInTime);
-      const workingHours = (now.getTime() - clockIn.getTime()) / (1000 * 60 * 60);
+      const workingHours =
+        (now.getTime() - clockIn.getTime()) / (1000 * 60 * 60);
 
       // Get current location if available
       let currentLocation;
@@ -208,7 +219,7 @@ class LogoutDetectionService {
           currentLocation = await this.getCurrentLocation();
         }
       } catch (error) {
-        console.warn('Could not get location for logout event:', error);
+        console.warn("Could not get location for logout event:", error);
       }
 
       // Create logout event
@@ -243,10 +254,9 @@ class LogoutDetectionService {
       // Send logout event to server
       await this.sendLogoutEvent(logoutEvent);
 
-      console.log('Auto clock-out completed:', logoutEvent);
-
+      console.log("Auto clock-out completed:", logoutEvent);
     } catch (error) {
-      console.error('Error handling logout:', error);
+      console.error("Error handling logout:", error);
     }
   }
 
@@ -256,28 +266,33 @@ class LogoutDetectionService {
       // Try to use the database clock records endpoint
       const clockRecord = {
         technicianId: logoutEvent.technicianId,
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString().split("T")[0],
         clockOutTime: logoutEvent.clockOutTime,
         totalWorkingHours: logoutEvent.workingHours,
         totalDistance: logoutEvent.distanceTraveled || 0,
         reason: logoutEvent.reason,
         autoClockOut: true,
-        location: logoutEvent.location
+        location: logoutEvent.location,
       };
 
-      const response = await fetch('/api/db/clock-records', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/db/clock-records", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(clockRecord),
       });
 
       if (response.ok) {
-        console.log('Auto clock-out recorded successfully in database');
+        console.log("Auto clock-out recorded successfully in database");
       } else {
-        console.warn('Failed to record auto clock-out in database, proceeding with local storage update');
+        console.warn(
+          "Failed to record auto clock-out in database, proceeding with local storage update",
+        );
       }
     } catch (error) {
-      console.warn('Error performing clock out API call, proceeding with local storage update:', error);
+      console.warn(
+        "Error performing clock out API call, proceeding with local storage update:",
+        error,
+      );
       // Don't throw error - allow the logout process to continue even if API fails
     }
   }
@@ -286,40 +301,41 @@ class LogoutDetectionService {
   private async sendLogoutEvent(logoutEvent: LogoutEvent): Promise<void> {
     try {
       // Try to send logout event
-      const eventResponse = await fetch('/api/events/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const eventResponse = await fetch("/api/events/logout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(logoutEvent),
       });
 
       if (eventResponse.ok) {
-        console.log('Logout event sent successfully');
+        console.log("Logout event sent successfully");
       } else {
-        console.warn('Failed to send logout event, but continuing');
+        console.warn("Failed to send logout event, but continuing");
       }
 
       // Try to send notification using existing notifications endpoint
-      const notificationResponse = await fetch('/api/notifications/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const notificationResponse = await fetch("/api/notifications/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: logoutEvent.technicianId,
-          type: 'auto_clockout',
-          title: 'Auto Clock-Out Detected',
+          type: "auto_clockout",
+          title: "Auto Clock-Out Detected",
           message: `Technician automatically clocked out. Reason: ${logoutEvent.reason}. Hours worked: ${logoutEvent.workingHours.toFixed(1)}h`,
-          priority: 'medium',
+          priority: "medium",
           timestamp: logoutEvent.logoutTime,
         }),
       });
 
       if (notificationResponse.ok) {
-        console.log('Auto clock-out notification sent successfully');
+        console.log("Auto clock-out notification sent successfully");
       } else {
-        console.warn('Failed to send auto clock-out notification, but continuing');
+        console.warn(
+          "Failed to send auto clock-out notification, but continuing",
+        );
       }
-
     } catch (error) {
-      console.warn('Error sending logout event (non-critical):', error);
+      console.warn("Error sending logout event (non-critical):", error);
       // Don't throw error - this is not critical for the logout process
     }
   }
@@ -329,9 +345,9 @@ class LogoutDetectionService {
     if (!this.technicianId) return;
 
     try {
-      await fetch('/api/session/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/session/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           technicianId: this.technicianId,
           sessionStart: new Date().toISOString(),
@@ -340,12 +356,14 @@ class LogoutDetectionService {
         }),
       });
     } catch (error) {
-      console.error('Error registering session start:', error);
+      console.error("Error registering session start:", error);
     }
   }
 
   // Get current location
-  private getCurrentLocation(): Promise<{latitude: number; longitude: number} | undefined> {
+  private getCurrentLocation(): Promise<
+    { latitude: number; longitude: number } | undefined
+  > {
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
         resolve(undefined);
@@ -360,13 +378,13 @@ class LogoutDetectionService {
           });
         },
         (error) => {
-          console.warn('Could not get location:', error);
+          console.warn("Could not get location:", error);
           resolve(undefined);
         },
         {
           timeout: 10000,
           maximumAge: 60000,
-        }
+        },
       );
     });
   }
@@ -403,22 +421,25 @@ class LogoutDetectionService {
     }
 
     if (this.beforeUnloadListener) {
-      window.removeEventListener('beforeunload', this.beforeUnloadListener);
+      window.removeEventListener("beforeunload", this.beforeUnloadListener);
       this.beforeUnloadListener = null;
     }
 
     if (this.visibilityChangeListener) {
-      document.removeEventListener('visibilitychange', this.visibilityChangeListener);
+      document.removeEventListener(
+        "visibilitychange",
+        this.visibilityChangeListener,
+      );
       this.visibilityChangeListener = null;
     }
 
     // Remove activity listeners
     const updateActivity = () => this.updateActivity();
-    document.removeEventListener('mousedown', updateActivity);
-    document.removeEventListener('mousemove', updateActivity);
-    document.removeEventListener('keypress', updateActivity);
-    document.removeEventListener('scroll', updateActivity);
-    document.removeEventListener('touchstart', updateActivity);
+    document.removeEventListener("mousedown", updateActivity);
+    document.removeEventListener("mousemove", updateActivity);
+    document.removeEventListener("keypress", updateActivity);
+    document.removeEventListener("scroll", updateActivity);
+    document.removeEventListener("touchstart", updateActivity);
   }
 
   // Public methods
@@ -428,7 +449,7 @@ class LogoutDetectionService {
 
   forceLogout(): void {
     if (this.isActive && this.technicianId) {
-      this.handleLogout('manual_logout');
+      this.handleLogout("manual_logout");
     }
   }
 
