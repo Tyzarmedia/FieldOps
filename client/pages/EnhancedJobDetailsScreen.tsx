@@ -1371,56 +1371,29 @@ export default function EnhancedJobDetailsScreen() {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center space-x-3">
             <h1 className="text-lg font-bold">Job Details</h1>
-            <JobStatusBadge status={jobDetails.status} size="default" />
           </div>
           <div className="flex items-center space-x-2">
             {/* Job Control Buttons */}
-            {jobDetails.status === "accepted" && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
-                onClick={startJob}
-              >
-                <Play className="h-4 w-4 mr-1" />
-                Start
-              </Button>
-            )}
-
-            {jobStatus === "in-progress" && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
-                  onClick={pauseJob}
-                >
-                  <Pause className="h-4 w-4 mr-1" />
-                  Pause
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
-                  onClick={stopJob}
-                >
-                  <Square className="h-4 w-4 mr-1" />
-                  Stop
-                </Button>
-              </>
-            )}
-
-            {jobStatus === "paused" && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
-                onClick={resumeJob}
-              >
-                <Play className="h-4 w-4 mr-1" />
-                Resume
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+              onClick={startJob}
+              disabled={jobStatus === "in-progress" || jobStatus === "completed"}
+            >
+              <Play className="h-4 w-4 mr-1" />
+              Start
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 px-3 py-1 rounded-lg"
+              onClick={stopJob}
+              disabled={jobStatus !== "in-progress"}
+            >
+              <Square className="h-4 w-4 mr-1" />
+              Stop
+            </Button>
 
             <Button
               variant="ghost"
@@ -1521,7 +1494,28 @@ export default function EnhancedJobDetailsScreen() {
         <div className="text-center mb-4">
           <h2 className="text-lg font-bold mb-1">BRITELINKMCT</h2>
           <h3 className="text-md font-semibold mb-2">#{jobDetails.id}</h3>
-          <JobStatusBadge status={jobDetails.status} size="lg" />
+          <div className="flex justify-center space-x-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg"
+              onClick={startJob}
+              disabled={jobStatus === "in-progress" || jobStatus === "completed"}
+            >
+              <Play className="h-4 w-4 mr-1" />
+              Start
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg"
+              onClick={stopJob}
+              disabled={jobStatus !== "in-progress"}
+            >
+              <Square className="h-4 w-4 mr-1" />
+              Stop
+            </Button>
+          </div>
         </div>
 
         {/* Info Cards */}
