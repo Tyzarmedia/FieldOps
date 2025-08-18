@@ -1535,28 +1535,6 @@ export default function EnhancedJobDetailsScreen() {
 
         {/* Top Control Buttons */}
         <div className="flex justify-center space-x-8 mb-6">
-          {jobStatus === "in-progress" && (
-            <>
-              <Button
-                variant="ghost"
-                size="lg"
-                className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
-                onClick={pauseJob}
-              >
-                <Pause className="h-5 w-5 mb-1" />
-                <span className="text-xs">Pause</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="lg"
-                className="bg-white/20 hover:bg-white/30 text-white rounded-full h-12 w-20 flex flex-col items-center justify-center"
-                onClick={stopJob}
-              >
-                <X className="h-5 w-5 mb-1" />
-                <span className="text-xs">Stop</span>
-              </Button>
-            </>
-          )}
 
           {jobDetails.status === "accepted" && (
             <Button
