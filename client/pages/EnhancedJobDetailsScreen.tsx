@@ -290,6 +290,21 @@ export default function EnhancedJobDetailsScreen() {
     quantity: "",
   });
 
+  // Job data for status tracking
+  const [jobStatusData, setJobStatusData] = useState({
+    isNearJobLocation: isNearJobLocation,
+    udfCompleted: false,
+    stockUsageRecorded: false,
+    customerSignOff: false,
+    qualityCheckPassed: false,
+    requiresInstallation: false,
+    issuesResolved: false,
+    sageIntegrationError: false,
+    installationJobCreated: false,
+    assignedTechnician: technician.id,
+    assistantTechnician: null,
+  });
+
   // Available stocks for search
   const [availableStocks] = useState([
     {
