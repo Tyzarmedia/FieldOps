@@ -638,6 +638,20 @@
       "totalAmount": 43430.10877777777,
       "createdAt": "2025-08-18T15:53:55.397Z",
       "updatedAt": "2025-08-18T16:09:54.704Z"
+    },
+    {
+      "id": "OT-1755533420064",
+      "technicianId": "tech001",
+      "startTime": "2025-08-09T15:00:49.273Z",
+      "totalHours": 0,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Extended hours - worked beyond 8 hours",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 0,
+      "createdAt": "2025-08-18T16:10:23.419Z",
+      "updatedAt": "2025-08-18T16:10:23.419Z"
     }
   ]
 }
