@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { LocationPermissionHandler } from "@/components/LocationPermissionHandler";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X, Edit3, MapPin } from "lucide-react";
+import { X, Edit3, MapPin, Navigation } from "lucide-react";
+import { locationService, LocationPermissionState } from "@/services/locationService";
+import { showNotification } from "@/hooks/useNotification";
 
 interface ClockInScreenProps {
   userRole?: string;
