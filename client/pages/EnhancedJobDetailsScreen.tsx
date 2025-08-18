@@ -672,41 +672,45 @@ export default function EnhancedJobDetailsScreen() {
   };
 
   // Manual job start
-  const startJob = async () => {
-    try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/start`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          startTime: new Date().toISOString(),
-          location: currentLocation,
-          manualStart: true,
-        }),
-      });
+  const startJob = () => {
+    showConfirmation({
+      title: 'Start Job',
+      message: `Are you sure you want to start working on "${jobDetails.title}"? This will begin time tracking for this job.`,
+      confirmText: 'Start Job',
+      variant: 'default',
+      icon: <Play className="h-6 w-6 text-green-600" />,
+      onConfirm: async () => {
+        try {
+          const response = await fetch(`/api/jobs/${jobDetails.id}/start`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              technicianId: technician.id,
+              startTime: new Date().toISOString(),
+              location: currentLocation,
+              manualStart: true,
+            }),
+          });
 
-      if (response.ok) {
-        setJobStatus("in-progress");
-        setIsTimerRunning(true);
-        setProximityTimer(0);
+          if (response.ok) {
+            setJobStatus("in-progress");
+            setIsTimerRunning(true);
+            setProximityTimer(0);
 
-        // Show success toast
-        toast({
-          title: "Job Started",
-          description: "Job has been successfully started.",
-        });
+            // Show success notification
+            showNotification.success("Job Started", "Job has been successfully started.");
 
-        // Notify manager and coordinator
-        await notifyStatusChange("started");
-      } else {
-        toast({
-          title: "Failed to Start Job",
-          description: "Unable to start the job. Please try again.",
-        });
+            // Notify manager and coordinator
+            await notifyStatusChange("started");
+          } else {
+            showNotification.error("Failed to Start Job", "Unable to start the job. Please try again.");
+          }
+        } catch (error) {
+          console.error("Failed to start job:", error);
+          showNotification.error("Error", "An error occurred while starting the job.");
+        }
       }
-    } catch (error) {
-      console.error("Failed to start job:", error);
-    }
+    });
   };
 
   const pauseJob = async () => {
