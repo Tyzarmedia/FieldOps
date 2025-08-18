@@ -64,6 +64,7 @@ import {
   Play,
   Pause,
   Square,
+  ImageIcon,
 } from "lucide-react";
 
 interface JobDetails {
