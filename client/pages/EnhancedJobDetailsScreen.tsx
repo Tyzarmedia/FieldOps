@@ -2379,35 +2379,39 @@ export default function EnhancedJobDetailsScreen() {
           {/* Gallery Tab */}
           <TabsContent value="gallery" className="flex-1 flex flex-col">
             <div className="relative flex-1 flex flex-col bg-gray-50 rounded-lg border-2 border-dashed border-gray-300" style={{minHeight: 'calc(100vh - 280px)'}}>
-              {jobPhotos.length === 0 ? (
-                <div className="text-center">
-                  <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 text-lg">No Images</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-4 p-4 w-full">
-                  {jobPhotos.map((photo, index) => (
-                    <div
-                      key={photo.id || index}
-                      className="aspect-square bg-white rounded-lg border shadow-sm overflow-hidden"
-                    >
-                      <div className="h-full flex flex-col">
-                        <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                          <Camera className="h-8 w-8 text-blue-400" />
+              <div className="flex-1 flex flex-col">
+                {jobPhotos.length === 0 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center">
+                    <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg">No Images</p>
+                  </div>
+                ) : (
+                  <div className="flex-1 p-4">
+                    <div className="grid grid-cols-2 gap-4 h-full">
+                      {jobPhotos.map((photo, index) => (
+                        <div
+                          key={photo.id || index}
+                          className="aspect-square bg-white rounded-lg border shadow-sm overflow-hidden"
+                        >
+                          <div className="h-full flex flex-col">
+                            <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                              <Camera className="h-8 w-8 text-blue-400" />
+                            </div>
+                            <div className="p-2 bg-white">
+                              <p className="text-xs font-medium text-gray-800 truncate">
+                                {photo.name || `Photo ${index + 1}`}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {photo.type || "image"}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="p-2 bg-white">
-                          <p className="text-xs font-medium text-gray-800 truncate">
-                            {photo.name || `Photo ${index + 1}`}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {photo.type || "image"}
-                          </p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
 
               {/* Gallery Action Buttons */}
               <div className="absolute bottom-4 right-4 flex flex-col-reverse items-end space-y-reverse space-y-3">
