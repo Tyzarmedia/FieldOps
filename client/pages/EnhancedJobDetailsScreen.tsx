@@ -98,6 +98,16 @@ export default function EnhancedJobDetailsScreen() {
   const [locationRequired, setLocationRequired] = useState(false);
   const [showGalleryOptions, setShowGalleryOptions] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showStockOptions, setShowStockOptions] = useState(false);
+  const [stockSearchQuery, setStockSearchQuery] = useState("");
+  const [expandedStockId, setExpandedStockId] = useState<string | null>(null);
+  const [stockFormData, setStockFormData] = useState({
+    code: "",
+    container: "",
+    qtyUsed: "",
+    description: "",
+    comments: ""
+  });
   const [technician] = useState({
     id: "tech001",
     name: "Dyondzani Clement Masinge",
