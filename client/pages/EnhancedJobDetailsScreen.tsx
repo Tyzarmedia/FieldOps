@@ -1324,7 +1324,10 @@ export default function EnhancedJobDetailsScreen() {
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3">
         {/* Header Title Row */}
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-lg font-bold">Job Details</h1>
+          <div className="flex items-center space-x-3">
+            <h1 className="text-lg font-bold">Job Details</h1>
+            <JobStatusBadge status={jobDetails.status} size="default" />
+          </div>
           <div className="flex items-center space-x-2">
             {/* Job Control Buttons */}
             {jobDetails.status === "accepted" && (
