@@ -432,13 +432,13 @@ export default function EnhancedJobDetailsScreen() {
         const response = await fetch(
           `/api/job-mgmt/jobs/${jobDetails.id}/status`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             // Add timeout to prevent hanging requests
-            signal: AbortSignal.timeout(5000)
-          }
+            signal: AbortSignal.timeout(5000),
+          },
         );
 
         if (response.ok) {
@@ -448,19 +448,24 @@ export default function EnhancedJobDetailsScreen() {
 
             // Map server status to local status
             const statusMapping = {
-              "Assigned": "assigned",
-              "Accepted": "accepted",
+              Assigned: "assigned",
+              Accepted: "accepted",
               "In Progress": "in-progress",
-              "Paused": "paused",
-              "Completed": "completed",
-              "Closed": "completed"
+              Paused: "paused",
+              Completed: "completed",
+              Closed: "completed",
             };
 
-            const mappedStatus = statusMapping[serverStatus as keyof typeof statusMapping] || serverStatus.toLowerCase();
+            const mappedStatus =
+              statusMapping[serverStatus as keyof typeof statusMapping] ||
+              serverStatus.toLowerCase();
 
             // Sync local status with server status
             if (mappedStatus !== jobDetails.status) {
-              setJobDetails((prev) => ({ ...prev, status: mappedStatus as JobStatus }));
+              setJobDetails((prev) => ({
+                ...prev,
+                status: mappedStatus as JobStatus,
+              }));
             }
 
             // Update job status state
@@ -477,15 +482,19 @@ export default function EnhancedJobDetailsScreen() {
           }
         } else {
           // Log non-200 responses but don't show error to user for polling
-          console.warn(`Job status polling returned ${response.status}: ${response.statusText}`);
+          console.warn(
+            `Job status polling returned ${response.status}: ${response.statusText}`,
+          );
         }
       } catch (error) {
         // Handle different types of errors
         if (error instanceof Error) {
-          if (error.name === 'AbortError') {
+          if (error.name === "AbortError") {
             console.warn("Job status polling timed out");
-          } else if (error.message.includes('Failed to fetch')) {
-            console.warn("Network error during job status polling - will retry");
+          } else if (error.message.includes("Failed to fetch")) {
+            console.warn(
+              "Network error during job status polling - will retry",
+            );
           } else {
             console.error("Error polling job status:", error.message);
           }
@@ -574,16 +583,18 @@ export default function EnhancedJobDetailsScreen() {
     try {
       // Map local status to server status
       const serverStatusMapping = {
-        "assigned": "Assigned",
-        "accepted": "Accepted",
+        assigned: "Assigned",
+        accepted: "Accepted",
         "in-progress": "In Progress",
-        "paused": "Paused",
-        "completed": "Completed",
-        "stopped": "Completed",
-        "job-completed": "Completed"
+        paused: "Paused",
+        completed: "Completed",
+        stopped: "Completed",
+        "job-completed": "Completed",
       };
 
-      const serverStatus = serverStatusMapping[newStatus as keyof typeof serverStatusMapping] || newStatus;
+      const serverStatus =
+        serverStatusMapping[newStatus as keyof typeof serverStatusMapping] ||
+        newStatus;
 
       const response = await fetch(
         `/api/job-mgmt/jobs/${jobDetails.id}/status`,
@@ -619,7 +630,11 @@ export default function EnhancedJobDetailsScreen() {
           if (newStatus === "in-progress") {
             setJobStatus("in-progress");
             setIsTimerRunning(true);
-          } else if (newStatus === "stopped" || newStatus === "job-completed" || newStatus === "completed") {
+          } else if (
+            newStatus === "stopped" ||
+            newStatus === "job-completed" ||
+            newStatus === "completed"
+          ) {
             setJobStatus("completed");
             setIsTimerRunning(false);
           }
@@ -631,18 +646,21 @@ export default function EnhancedJobDetailsScreen() {
         }
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(
+          errorData.message ||
+            `HTTP ${response.status}: ${response.statusText}`,
+        );
       }
     } catch (error) {
       console.error("Error updating job status:", error);
 
       let errorMessage = "Failed to update job status. Please try again.";
       if (error instanceof Error) {
-        if (error.message.includes('Failed to fetch')) {
+        if (error.message.includes("Failed to fetch")) {
           errorMessage = "Network error. Check your connection and try again.";
-        } else if (error.message.includes('HTTP 403')) {
+        } else if (error.message.includes("HTTP 403")) {
           errorMessage = "You don't have permission to update this job status.";
-        } else if (error.message.includes('HTTP 404')) {
+        } else if (error.message.includes("HTTP 404")) {
           errorMessage = "Job not found. Please refresh and try again.";
         }
       }
@@ -788,18 +806,21 @@ export default function EnhancedJobDetailsScreen() {
       // Include 2.5 minutes (150 seconds) prior to actual start
       const adjustedStartTime = new Date(Date.now() - 150000).toISOString();
 
-      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/start`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          startTime: adjustedStartTime,
-          actualStartTime: new Date().toISOString(),
-          location: currentLocation,
-          proximityDuration: proximityTimer,
-          autoStarted: true,
-        }),
-      });
+      const response = await fetch(
+        `/api/job-mgmt/jobs/${jobDetails.id}/start`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            technicianId: technician.id,
+            startTime: adjustedStartTime,
+            actualStartTime: new Date().toISOString(),
+            location: currentLocation,
+            proximityDuration: proximityTimer,
+            autoStarted: true,
+          }),
+        },
+      );
 
       if (response.ok) {
         setJobStatus("in-progress");
@@ -832,16 +853,19 @@ export default function EnhancedJobDetailsScreen() {
       icon: <Play className="h-6 w-6 text-green-600" />,
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/start`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              technicianId: technician.id,
-              startTime: new Date().toISOString(),
-              location: currentLocation,
-              manualStart: true,
-            }),
-          });
+          const response = await fetch(
+            `/api/job-mgmt/jobs/${jobDetails.id}/start`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                technicianId: technician.id,
+                startTime: new Date().toISOString(),
+                location: currentLocation,
+                manualStart: true,
+              }),
+            },
+          );
 
           if (response.ok) {
             setJobStatus("in-progress");
@@ -882,16 +906,19 @@ export default function EnhancedJobDetailsScreen() {
       icon: <Pause className="h-6 w-6 text-yellow-600" />,
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/pause`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              technicianId: technician.id,
-              pauseTime: new Date().toISOString(),
-              timeSpent: jobTimer,
-              location: currentLocation,
-            }),
-          });
+          const response = await fetch(
+            `/api/job-mgmt/jobs/${jobDetails.id}/pause`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                technicianId: technician.id,
+                pauseTime: new Date().toISOString(),
+                timeSpent: jobTimer,
+                location: currentLocation,
+              }),
+            },
+          );
 
           if (response.ok) {
             setJobStatus("paused");
@@ -931,16 +958,19 @@ export default function EnhancedJobDetailsScreen() {
       icon: <Square className="h-6 w-6 text-red-600" />,
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/complete`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              technicianId: technician.id,
-              endTime: new Date().toISOString(),
-              totalTime: jobTimer,
-              location: currentLocation,
-            }),
-          });
+          const response = await fetch(
+            `/api/job-mgmt/jobs/${jobDetails.id}/complete`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                technicianId: technician.id,
+                endTime: new Date().toISOString(),
+                totalTime: jobTimer,
+                location: currentLocation,
+              }),
+            },
+          );
 
           if (response.ok) {
             setJobStatus("completed");
@@ -974,15 +1004,18 @@ export default function EnhancedJobDetailsScreen() {
   // Resume job from paused state
   const resumeJob = async () => {
     try {
-      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/resume`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          technicianId: technician.id,
-          resumeTime: new Date().toISOString(),
-          location: currentLocation,
-        }),
-      });
+      const response = await fetch(
+        `/api/job-mgmt/jobs/${jobDetails.id}/resume`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            technicianId: technician.id,
+            resumeTime: new Date().toISOString(),
+            location: currentLocation,
+          }),
+        },
+      );
 
       if (response.ok) {
         setJobStatus("in-progress");
@@ -1051,14 +1084,16 @@ export default function EnhancedJobDetailsScreen() {
   const handleUpdateUdf = async () => {
     try {
       // Close any open Select dropdowns before showing popup
-      const openSelectTriggers = document.querySelectorAll('[data-state="open"]');
+      const openSelectTriggers = document.querySelectorAll(
+        '[data-state="open"]',
+      );
       openSelectTriggers.forEach((trigger) => {
-        const closeEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+        const closeEvent = new KeyboardEvent("keydown", { key: "Escape" });
         trigger.dispatchEvent(closeEvent);
       });
 
       // Brief delay to allow dropdowns to close
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Validate required UDF fields
       const requiredFields = [
@@ -1554,9 +1589,12 @@ export default function EnhancedJobDetailsScreen() {
           <h3 className="text-md font-semibold mb-2">#{jobDetails.id}</h3>
           <div className="flex justify-center space-x-4">
             {/* Professional Job Control Buttons */}
-            {(jobStatus === "assigned" || jobStatus === "completed" || jobDetails.status === "accepted") && (
-              <div className="bg-green-500 hover:bg-green-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
-                   onClick={startJob}
+            {(jobStatus === "assigned" ||
+              jobStatus === "completed" ||
+              jobDetails.status === "accepted") && (
+              <div
+                className="bg-green-500 hover:bg-green-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                onClick={startJob}
               >
                 <div className="bg-white/20 rounded-full p-1">
                   <Play className="h-5 w-5" />
@@ -1567,16 +1605,18 @@ export default function EnhancedJobDetailsScreen() {
 
             {jobStatus === "in-progress" && (
               <>
-                <div className="bg-yellow-500 hover:bg-yellow-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
-                     onClick={pauseJob}
+                <div
+                  className="bg-yellow-500 hover:bg-yellow-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                  onClick={pauseJob}
                 >
                   <div className="bg-white/20 rounded-full p-1">
                     <Pause className="h-5 w-5" />
                   </div>
                   <span className="font-semibold">Pause</span>
                 </div>
-                <div className="bg-red-500 hover:bg-red-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
-                     onClick={stopJob}
+                <div
+                  className="bg-red-500 hover:bg-red-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                  onClick={stopJob}
                 >
                   <div className="bg-white/20 rounded-full p-1">
                     <Square className="h-5 w-5" />
@@ -1588,16 +1628,18 @@ export default function EnhancedJobDetailsScreen() {
 
             {jobStatus === "paused" && (
               <>
-                <div className="bg-green-500 hover:bg-green-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
-                     onClick={resumeJob}
+                <div
+                  className="bg-green-500 hover:bg-green-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                  onClick={resumeJob}
                 >
                   <div className="bg-white/20 rounded-full p-1">
                     <Play className="h-5 w-5" />
                   </div>
                   <span className="font-semibold">Resume</span>
                 </div>
-                <div className="bg-red-500 hover:bg-red-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
-                     onClick={stopJob}
+                <div
+                  className="bg-red-500 hover:bg-red-600 transition-all duration-200 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2 cursor-pointer transform hover:scale-105"
+                  onClick={stopJob}
                 >
                   <div className="bg-white/20 rounded-full p-1">
                     <Square className="h-5 w-5" />
