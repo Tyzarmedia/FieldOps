@@ -1503,26 +1503,24 @@ export default function EnhancedJobDetailsScreen() {
               </p>
             </div>
           </div>
-          <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center space-x-2">
-            <CircleDot className="h-6 w-6 text-blue-400" />
-            <div>
-              <p className="text-xs text-white/80">Status</p>
-              <p className="font-semibold">
-                {jobDetails.status === "assigned"
-                  ? "Assigned"
-                  : jobDetails.status === "accepted"
-                    ? "Accepted"
-                    : jobDetails.status === "in-progress" ||
-                        jobDetails.status === "In Progress"
-                      ? "In Progress"
-                      : jobDetails.status === "paused"
-                        ? "Paused"
-                        : jobDetails.status === "completed"
-                          ? "Completed"
-                          : jobDetails.status.charAt(0).toUpperCase() +
-                            jobDetails.status.slice(1)}
-              </p>
+          <div className="bg-white/20 rounded-xl p-3 flex-1 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+              <div>
+                <p className="text-xs text-white/80">Status</p>
+                <p className="font-semibold">
+                  {getStatusConfig(jobDetails.status).label}
+                </p>
+              </div>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 rounded-full h-8 w-8"
+              onClick={() => setShowStatusModal(true)}
+            >
+              <ChevronUp className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>
