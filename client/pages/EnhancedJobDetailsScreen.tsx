@@ -572,18 +572,32 @@ export default function EnhancedJobDetailsScreen() {
     }
 
     try {
+      // Map local status to server status
+      const serverStatusMapping = {
+        "assigned": "Assigned",
+        "accepted": "Accepted",
+        "in-progress": "In Progress",
+        "paused": "Paused",
+        "completed": "Completed",
+        "stopped": "Completed",
+        "job-completed": "Completed"
+      };
+
+      const serverStatus = serverStatusMapping[newStatus as keyof typeof serverStatusMapping] || newStatus;
+
       const response = await fetch(
         `/api/job-mgmt/jobs/${jobDetails.id}/status`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            status: newStatus,
+            status: serverStatus,
             technicianId: technician.id,
             timestamp: new Date().toISOString(),
             location: currentLocation,
             statusData: updatedJobStatusData,
             jobTimer: jobTimer,
+            notes: `Status changed to ${serverStatus}`,
           }),
         },
       );
@@ -605,23 +619,35 @@ export default function EnhancedJobDetailsScreen() {
           if (newStatus === "in-progress") {
             setJobStatus("in-progress");
             setIsTimerRunning(true);
-          } else if (newStatus === "stopped" || newStatus === "job-completed") {
+          } else if (newStatus === "stopped" || newStatus === "job-completed" || newStatus === "completed") {
             setJobStatus("completed");
             setIsTimerRunning(false);
           }
 
           // Notify relevant parties
           await notifyStatusChange(newStatus);
+        } else {
+          throw new Error(result.message || "Failed to update status");
         }
       } else {
-        throw new Error("Failed to update status");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error updating job status:", error);
-      showNotification.error(
-        "Update Failed",
-        "Failed to update job status. Please try again.",
-      );
+
+      let errorMessage = "Failed to update job status. Please try again.";
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          errorMessage = "Network error. Check your connection and try again.";
+        } else if (error.message.includes('HTTP 403')) {
+          errorMessage = "You don't have permission to update this job status.";
+        } else if (error.message.includes('HTTP 404')) {
+          errorMessage = "Job not found. Please refresh and try again.";
+        }
+      }
+
+      showNotification.error("Update Failed", errorMessage);
     }
   };
 
