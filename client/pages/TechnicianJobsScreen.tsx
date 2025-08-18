@@ -210,6 +210,7 @@ export default function TechnicianJobsScreen() {
                 : undefined,
             }));
             setJobs(formattedJobs);
+            calculateJobStats(formattedJobs);
           }
         } else {
           console.error("Failed to fetch jobs");
