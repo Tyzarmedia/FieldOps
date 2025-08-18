@@ -1008,9 +1008,9 @@ export default function EnhancedJobDetailsScreen() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            stockId: stockFormData.selectedStock.id,
-            stockCode: stockFormData.selectedStock.code,
-            stockName: stockFormData.selectedStock.name,
+            stockId: legacyStockForm.selectedStock.id,
+            stockCode: legacyStockForm.selectedStock.code,
+            stockName: legacyStockForm.selectedStock.name,
             warehouseNumber: technician.warehouse || "WH-EL-001", // Auto-detect from logged-in user
             quantity: quantityRequested,
             technicianId: technician.id,
@@ -1034,8 +1034,8 @@ export default function EnhancedJobDetailsScreen() {
           ...prev,
           {
             id: allocationResult.allocationId || `stock-${Date.now()}`,
-            code: stockFormData.selectedStock.code,
-            name: stockFormData.selectedStock.name,
+            code: legacyStockForm.selectedStock.code,
+            name: legacyStockForm.selectedStock.name,
             quantity: quantityRequested,
             allocatedAt: new Date().toISOString(),
             warehouseBalance: allocationResult.newWarehouseBalance,
@@ -1052,7 +1052,7 @@ export default function EnhancedJobDetailsScreen() {
             body: JSON.stringify({
               technicianId: technician.id,
               jobId: jobDetails.id,
-              stockCode: stockFormData.selectedStock.code,
+              stockCode: legacyStockForm.selectedStock.code,
               quantity: quantityRequested,
               newBalance: allocationResult.newWarehouseBalance,
               timestamp: new Date().toISOString(),
@@ -1061,7 +1061,7 @@ export default function EnhancedJobDetailsScreen() {
         }
 
         setShowStockForm(false);
-        setStockFormData({
+        setLegacyStockForm({
           searchQuery: "",
           selectedStock: null,
           warehouseNumber: "",
@@ -1071,7 +1071,7 @@ export default function EnhancedJobDetailsScreen() {
         // Show success toast
         toast({
           title: "Stock Allocated Successfully",
-          description: `${stockFormData.selectedStock.code} - Quantity: ${quantityRequested} allocated. Warehouse updated in real-time.`,
+          description: `${legacyStockForm.selectedStock.code} - Quantity: ${quantityRequested} allocated. Warehouse updated in real-time.`,
         });
 
         // Mark stock as completed for sign-off
