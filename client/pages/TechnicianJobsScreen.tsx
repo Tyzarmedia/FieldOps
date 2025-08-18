@@ -89,6 +89,7 @@ export default function TechnicianJobsScreen() {
     lastKnownLocation: null,
     clockedIn: false
   });
+  const [showLocationPermission, setShowLocationPermission] = useState(false);
   const navigate = useNavigate();
 
   const currentTechnicianId = "tech001"; // In real app, this would come from auth
