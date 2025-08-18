@@ -328,15 +328,17 @@ export default function EnhancedJobDetailsScreen() {
       case "assigned":
       case "accepted":
         return "bg-blue-400"; // Blue for assigned/accepted
-      case "in-progress":
-        return "bg-green-400"; // Green for in progress
-      case "paused":
-        return "bg-yellow-400"; // Yellow for paused
       case "completed":
       case "job-completed":
-        return "bg-red-400"; // Red for completed
+        return "bg-green-400"; // Green for completed
+      case "in-progress":
+        return "bg-yellow-400"; // Yellow for in-progress
+      case "stopped":
+      case "job-incomplete":
+        return "bg-red-400"; // Red for stopped/incomplete
+      case "paused":
       default:
-        return "bg-gray-400"; // Default gray
+        return "bg-gray-400"; // Gray for paused (fallback)
     }
   };
 
