@@ -84,37 +84,33 @@ class LocationService {
       return false;
     }
 
-    return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.state.status = "granted";
-          this.updateLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            timestamp: Date.now(),
-            accuracy: position.coords.accuracy,
-            address: `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`,
-          });
-          this.notifyListeners();
-          resolve(true);
-        },
-        (error) => {
-          console.error("Location permission error:", {
-            code: error.code,
-            message: error.message,
-            timestamp: new Date().toISOString(),
-          });
-          this.state.status = error.code === 1 ? "denied" : "unknown";
-          this.notifyListeners();
-          resolve(false);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 5000,
-        },
-      );
-    });
+    try {
+      // Use the improved geolocationUtils with progressive timeout strategy
+      const { geolocationUtils } = await import("@/utils/geolocationUtils");
+      const result = await geolocationUtils.getCurrentPosition();
+
+      this.state.status = "granted";
+      this.updateLocation({
+        latitude: result.latitude,
+        longitude: result.longitude,
+        timestamp: Date.now(),
+        accuracy: result.accuracy,
+        address: result.address || `${result.latitude.toFixed(6)}, ${result.longitude.toFixed(6)}`,
+      });
+      this.notifyListeners();
+      return true;
+    } catch (error: any) {
+      console.error("Location permission error:", {
+        code: error.code || 'unknown',
+        message: error.message || 'Unknown error',
+        userMessage: error.userMessage || 'Location access failed',
+        timestamp: new Date().toISOString(),
+      });
+
+      this.state.status = error.code === 1 ? "denied" : "unknown";
+      this.notifyListeners();
+      return false;
+    }
   }
 
   async handleClockIn(): Promise<boolean> {
