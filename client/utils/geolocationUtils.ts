@@ -317,14 +317,21 @@ class GeolocationUtils {
    */
   logGeolocationError(error: GeolocationPositionError, context?: string): void {
     const contextStr = context ? ` - ${context}` : '';
-    logError(error, `Geolocation${contextStr}`);
 
-    // Additional geolocation-specific details
-    const geolocationDetails = {
-      errorName: this.getErrorCodeName(error.code),
-      userMessage: this.parseGeolocationError(error).userMessage
+    // Create properly formatted error info for logging
+    const errorInfo = {
+      code: error.code,
+      codeName: this.getErrorCodeName(error.code),
+      message: error.message,
+      userMessage: this.parseGeolocationError(error).userMessage,
+      timestamp: new Date().toISOString(),
+      context: contextStr
     };
-    console.error('Geolocation error details:', geolocationDetails);
+
+    console.error(`Geolocation Error${contextStr}:`, errorInfo);
+
+    // Also log to standard error util for consistency
+    logError(errorInfo, `Geolocation${contextStr}`);
   }
 
   /**
