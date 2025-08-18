@@ -1616,156 +1616,161 @@ export default function EnhancedJobDetailsScreen() {
         </div>
       )}
 
-      {/* Stock Allocation Form Overlay */}
+      {/* Add Stock Form Modal */}
       {showStockForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold">Allocate Stock</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowStockForm(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+        <div className="fixed inset-0 bg-white z-50">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
+            <div className="flex items-center justify-between">
+              <h1 className="text-lg font-bold">Add Stock</h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20 rounded-full h-8 w-8"
+                onClick={() => {
+                  setShowStockForm(false);
+                  setStockFormData({
+                    code: "",
+                    container: "",
+                    qtyUsed: "",
+                    description: "",
+                    comments: ""
+                  });
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
 
-              <div className="space-y-4">
-                {/* Search Bar */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Search Stock (Code or Name)
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="Search by code or name..."
-                    value={stockFormData.searchQuery}
-                    onChange={(e) =>
-                      setStockFormData((prev) => ({
-                        ...prev,
-                        searchQuery: e.target.value,
-                      }))
-                    }
-                    className="w-full"
-                  />
-                </div>
-
-                {/* Stock Results */}
-                {stockFormData.searchQuery && (
-                  <div className="max-h-40 overflow-y-auto border rounded-lg">
-                    {filteredStocks.map((stock) => (
-                      <div
-                        key={stock.id}
-                        className={`p-3 cursor-pointer hover:bg-gray-50 border-b ${
-                          stockFormData.selectedStock?.id === stock.id
-                            ? "bg-blue-50"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          setStockFormData((prev) => ({
-                            ...prev,
-                            selectedStock: stock,
-                          }))
-                        }
-                      >
-                        <div className="font-medium">{stock.code}</div>
-                        <div className="text-sm text-gray-600">
-                          {stock.name}
-                        </div>
-                        <div className="text-sm text-green-600">
-                          Available: {stock.warehouseQty}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Selected Stock */}
-                {stockFormData.selectedStock && (
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="font-medium">
-                      {stockFormData.selectedStock.code}
+          {/* Form Content */}
+          <div className="flex-1 p-4 space-y-6">
+            {/* Code */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Code
+              </label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search..."
+                  value={stockFormData.code}
+                  onChange={(e) => setStockFormData(prev => ({ ...prev, code: e.target.value }))}
+                  className="pl-10"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-6 h-6 bg-gray-900 rounded flex items-center justify-center">
+                    <div className="grid grid-cols-2 gap-0.5">
+                      <div className="w-1 h-1 bg-white"></div>
+                      <div className="w-1 h-1 bg-white"></div>
+                      <div className="w-1 h-1 bg-white"></div>
+                      <div className="w-1 h-1 bg-white"></div>
                     </div>
-                    <div className="text-sm text-gray-600">
-                      {stockFormData.selectedStock.name}
-                    </div>
-                  </div>
-                )}
-
-                {/* Auto-Linked Information */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-3">
-                    Auto-Linked Information
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">Work Order:</span>
-                      <span className="font-medium text-blue-900">
-                        {jobDetails.workOrderNumber || `WO-${jobDetails.id}`}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">
-                        Technician Warehouse:
-                      </span>
-                      <span className="font-medium text-blue-900">
-                        {technician.warehouse || "WH-EL-001"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">Ticket Number:</span>
-                      <span className="font-medium text-blue-900">
-                        {jobDetails.id}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">Allocated By:</span>
-                      <span className="font-medium text-blue-900">
-                        {technician.name}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mt-3 text-xs text-blue-600">
-                    ℹ️ Work order and warehouse information will be
-                    automatically linked to this stock allocation.
                   </div>
                 </div>
-
-                {/* Quantity */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Quantity to Allocate
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder="Enter quantity"
-                    value={stockFormData.quantity}
-                    onChange={(e) =>
-                      setStockFormData((prev) => ({
-                        ...prev,
-                        quantity: e.target.value,
-                      }))
-                    }
-                    className="w-full"
-                    min="1"
-                    max={stockFormData.selectedStock?.warehouseQty || 999}
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <Button
-                  onClick={submitStockForm}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3"
-                  disabled={
-                    !stockFormData.selectedStock || !stockFormData.quantity
-                  }
-                >
-                  Allocate Stock
-                </Button>
               </div>
             </div>
+
+            {/* Container */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Container
+              </label>
+              <Select
+                value={stockFormData.container}
+                onValueChange={(value) => setStockFormData(prev => ({ ...prev, container: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Container" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="VAN462">VAN462</SelectItem>
+                  <SelectItem value="VAN123">VAN123</SelectItem>
+                  <SelectItem value="VAN789">VAN789</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Qty Used */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Qty Used
+              </label>
+              <Input
+                type="number"
+                value={stockFormData.qtyUsed}
+                onChange={(e) => setStockFormData(prev => ({ ...prev, qtyUsed: e.target.value }))}
+                className="w-full"
+                min="1"
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description
+              </label>
+              <Input
+                value={stockFormData.description}
+                onChange={(e) => setStockFormData(prev => ({ ...prev, description: e.target.value }))}
+                className="w-full"
+              />
+            </div>
+
+            {/* Comments */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Comments
+              </label>
+              <div className="relative">
+                <Textarea
+                  value={stockFormData.comments}
+                  onChange={(e) => setStockFormData(prev => ({ ...prev, comments: e.target.value }))}
+                  className="w-full min-h-[100px] pr-10"
+                />
+                <div className="absolute right-3 bottom-3">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="w-3 h-3 bg-white rounded-full"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Add Button */}
+          <div className="p-4">
+            <Button
+              onClick={() => {
+                // Handle stock addition
+                if (stockFormData.code && stockFormData.container && stockFormData.qtyUsed) {
+                  const newStock = {
+                    id: `stock-${Date.now()}`,
+                    code: stockFormData.code,
+                    name: stockFormData.description || stockFormData.code,
+                    quantity: parseInt(stockFormData.qtyUsed),
+                    warehouse: stockFormData.container,
+                    notes: stockFormData.comments,
+                    allocatedAt: new Date().toISOString(),
+                    allocatedBy: technician.name
+                  };
+
+                  setAllocatedStock(prev => [...prev, newStock]);
+                  setShowStockForm(false);
+                  setStockFormData({
+                    code: "",
+                    container: "",
+                    qtyUsed: "",
+                    description: "",
+                    comments: ""
+                  });
+                }
+              }}
+              className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg flex items-center justify-center space-x-2"
+              disabled={!stockFormData.code || !stockFormData.container || !stockFormData.qtyUsed}
+            >
+              <Plus className="h-5 w-5" />
+              <span className="text-lg font-medium">Add</span>
+            </Button>
           </div>
         </div>
       )}
