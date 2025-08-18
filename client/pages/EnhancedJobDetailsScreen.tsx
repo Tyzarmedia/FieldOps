@@ -1690,18 +1690,23 @@ export default function EnhancedJobDetailsScreen() {
                 Container
               </label>
               <Select
-                value={stockFormData.container}
+                value={stockFormData.container || technician.warehouse}
                 onValueChange={(value) => setStockFormData(prev => ({ ...prev, container: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Container" />
+                  <SelectValue placeholder={technician.warehouse} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="VAN462">VAN462</SelectItem>
-                  <SelectItem value="VAN123">VAN123</SelectItem>
-                  <SelectItem value="VAN789">VAN789</SelectItem>
+                  {userWarehouses.map((warehouse) => (
+                    <SelectItem key={warehouse.id} value={warehouse.id}>
+                      {warehouse.name} - {warehouse.description}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
+              <p className="text-xs text-gray-500 mt-1">
+                Only warehouses assigned to you are available
+              </p>
             </div>
 
             {/* Qty Used */}
