@@ -56,7 +56,7 @@ export default function ClockInScreen({
       .toUpperCase();
   };
 
-  // Initialize clock state from localStorage
+  // Initialize clock state from localStorage and subscribe to location service
   useEffect(() => {
     const clockedIn = localStorage.getItem("isClockedIn") === "true";
     const storedWorkingHours = localStorage.getItem("workingHours") || "0:00";
@@ -70,6 +70,21 @@ export default function ClockInScreen({
     if (storedClockIns) {
       setDailyClockIns(JSON.parse(storedClockIns));
     }
+
+    // Subscribe to location service updates
+    const unsubscribe = locationService.subscribe((state) => {
+      setLocationState(state);
+
+      // Update last location when location service provides new location
+      if (state.lastKnownLocation) {
+        setLastLocation({
+          lat: state.lastKnownLocation.latitude,
+          lng: state.lastKnownLocation.longitude
+        });
+      }
+    });
+
+    return unsubscribe;
   }, []);
 
   // Update time every second and calculate working hours
