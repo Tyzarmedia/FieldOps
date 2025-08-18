@@ -86,6 +86,26 @@ router.get("/jobs/technician/:technicianId", (req, res) => {
   }
 });
 
+// Get active jobs by technician (in-progress and accepted)
+router.get("/jobs/technician/:technicianId/active", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const activeJobs = jobs.filter(
+      (job) =>
+        (job.assignedTechnician === technicianId ||
+         job.assistantTechnician === technicianId) &&
+        (job.status === "In Progress" || job.status === "Accepted")
+    );
+    res.json({ success: true, data: activeJobs });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch active jobs",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Get jobs by status
 router.get("/jobs/status/:status", (req, res) => {
   try {
