@@ -1644,7 +1644,7 @@ export default function EnhancedJobDetailsScreen() {
                   setShowStockForm(false);
                   setStockFormData({
                     code: "",
-                    container: "",
+                    container: technician.warehouse, // Reset to user's warehouse
                     qtyUsed: "",
                     description: "",
                     comments: ""
@@ -1776,7 +1776,7 @@ export default function EnhancedJobDetailsScreen() {
                   setShowStockForm(false);
                   setStockFormData({
                     code: "",
-                    container: "",
+                    container: technician.warehouse, // Reset to user's warehouse
                     qtyUsed: "",
                     description: "",
                     comments: ""
