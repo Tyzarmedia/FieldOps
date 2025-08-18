@@ -54,6 +54,11 @@ export default function NetworkAssessmentScreen() {
     priority: "medium",
     coordinates: "",
     equipmentLabel: "",
+    coreOptions: "",
+    reachOptions: "",
+    networkType: "fiber",
+    connectedDevices: 5,
+    notes: "",
   });
 
   const networkAreaTypes = [
@@ -77,6 +82,24 @@ export default function NetworkAssessmentScreen() {
     Edge: ["Ethernet", "MPLS", "SD-WAN"],
     Core: ["DWDM", "SONET/SDH", "IP/MPLS"],
   };
+
+  const reachOptionsData = [
+    "GPON - Gigabit Passive Optical Network",
+    "EPON - Ethernet Passive Optical Network",
+    "XGS-PON - 10G Symmetrical PON",
+    "NG-PON2 - Next Generation PON 2",
+    "Point-to-Point Fiber",
+    "Active Ethernet",
+  ];
+
+  const coreOptionsData = [
+    "DWDM - Dense Wavelength Division Multiplexing",
+    "SONET/SDH - Synchronous Digital Hierarchy",
+    "IP/MPLS - Internet Protocol/Multiprotocol Label Switching",
+    "OTN - Optical Transport Network",
+    "Carrier Ethernet",
+    "Metro Ethernet",
+  ];
 
   const runAssessment = async () => {
     setIsAssessing(true);
@@ -154,14 +177,24 @@ export default function NetworkAssessmentScreen() {
         alert("Network assessment saved successfully!");
         // Reset form
         setAssessmentData({
+          networkAreaType: "",
+          networkTechnologyType: "",
+          location: "",
+          testType: "",
+          signalStrength: -65,
+          downloadSpeed: 45.2,
+          uploadSpeed: 12.8,
+          latency: 28,
+          packetLoss: 0.1,
+          issuesFound: "",
+          recommendedActions: "",
+          priority: "medium",
+          coordinates: "",
+          equipmentLabel: "",
           coreOptions: "",
           reachOptions: "",
-          signalStrength: -50,
-          downloadSpeed: 100,
-          uploadSpeed: 50,
           networkType: "fiber",
           connectedDevices: 5,
-          issuesFound: false,
           notes: "",
         });
         setCapturedImages([]);
@@ -250,6 +283,97 @@ export default function NetworkAssessmentScreen() {
                 }
               />
             </div>
+
+            <div className="space-y-2">
+              <Label>Network Area Type</Label>
+              <Select
+                value={assessmentData.networkAreaType}
+                onValueChange={(value) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    networkAreaType: value,
+                    networkTechnologyType: "" // Reset technology when area changes
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select network area type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {networkAreaTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {assessmentData.networkAreaType && (
+              <div className="space-y-2">
+                <Label>Network Technology Type</Label>
+                <Select
+                  value={assessmentData.networkTechnologyType}
+                  onValueChange={(value) =>
+                    setAssessmentData({ ...assessmentData, networkTechnologyType: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select technology type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {networkTechnologyTypes[assessmentData.networkAreaType as keyof typeof networkTechnologyTypes]?.map((tech) => (
+                      <SelectItem key={tech} value={tech}>
+                        {tech}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label>Reach Options</Label>
+              <Select
+                value={assessmentData.reachOptions}
+                onValueChange={(value) =>
+                  setAssessmentData({ ...assessmentData, reachOptions: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select reach option" />
+                </SelectTrigger>
+                <SelectContent>
+                  {reachOptionsData.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Core Options</Label>
+              <Select
+                value={assessmentData.coreOptions}
+                onValueChange={(value) =>
+                  setAssessmentData({ ...assessmentData, coreOptions: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select core option" />
+                </SelectTrigger>
+                <SelectContent>
+                  {coreOptionsData.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label>Test Type</Label>
               <Select
@@ -269,12 +393,74 @@ export default function NetworkAssessmentScreen() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-2">
+              <Label>Equipment Label</Label>
+              <Input
+                placeholder="Enter equipment label/ID"
+                value={assessmentData.equipmentLabel}
+                onChange={(e) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    equipmentLabel: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Connected Devices</Label>
+              <Input
+                type="number"
+                placeholder="Number of connected devices"
+                value={assessmentData.connectedDevices}
+                onChange={(e) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    connectedDevices: parseInt(e.target.value) || 0,
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Issues Found</Label>
+              <Textarea
+                placeholder="Describe any issues found during assessment"
+                value={assessmentData.issuesFound}
+                onChange={(e) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    issuesFound: e.target.value,
+                  })
+                }
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Notes</Label>
+              <Textarea
+                placeholder="Additional notes and observations"
+                value={assessmentData.notes}
+                onChange={(e) =>
+                  setAssessmentData({
+                    ...assessmentData,
+                    notes: e.target.value,
+                  })
+                }
+                rows={3}
+              />
+            </div>
+
             <Button
               onClick={runAssessment}
               disabled={
                 isAssessing ||
                 !assessmentData.location ||
-                !assessmentData.testType
+                !assessmentData.testType ||
+                !assessmentData.networkAreaType ||
+                !assessmentData.reachOptions ||
+                !assessmentData.coreOptions
               }
               className="w-full bg-blue-500 hover:bg-blue-600 text-white"
             >

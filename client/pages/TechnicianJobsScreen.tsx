@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NotificationSystem } from "@/components/NotificationSystem";
+import { LocationPermissionHandler } from "@/components/LocationPermissionHandler";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -78,9 +79,44 @@ export default function TechnicianJobsScreen() {
   const [showStockUsageDialog, setShowStockUsageDialog] = useState(false);
   const [stockUsage, setStockUsage] = useState([]);
   const [availableStock, setAvailableStock] = useState([]);
+  const [showLocationPermission, setShowLocationPermission] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const navigate = useNavigate();
 
   const currentTechnicianId = "tech001"; // In real app, this would come from auth
+
+  // Handle location permission on component mount
+  useEffect(() => {
+    // Request location permission when the technician screen loads
+    setShowLocationPermission(true);
+  }, []);
+
+  // Handle location received from permission handler
+  const handleLocationReceived = (location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
+    setCurrentLocation({
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+    setShowLocationPermission(false);
+  };
+
+  // Handle location permission error
+  const handleLocationError = (error: string) => {
+    console.error("Location error:", error);
+    // Use default location as fallback
+    setCurrentLocation({
+      latitude: -33.0197, // East London coordinates
+      longitude: 27.9117,
+    });
+    setShowLocationPermission(false);
+  };
 
   // Load jobs from backend API
   useEffect(() => {
@@ -274,6 +310,10 @@ export default function TechnicianJobsScreen() {
         updateJobStatus(job.id, "accepted");
         break;
       case "start":
+        if (!currentLocation) {
+          setShowLocationPermission(true);
+          return;
+        }
         updateJobStatus(job.id, "in-progress");
         break;
       case "pause":
@@ -668,6 +708,35 @@ export default function TechnicianJobsScreen() {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Location Permission Handler */}
+      {showLocationPermission && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-4">
+              <h3 className="text-lg font-semibold mb-4 text-center">
+                Location Access Required
+              </h3>
+              <p className="text-sm text-gray-600 mb-4 text-center">
+                Location access is required for job tracking and proximity detection.
+              </p>
+              <LocationPermissionHandler
+                onLocationReceived={handleLocationReceived}
+                onError={handleLocationError}
+                required={false}
+                className="mb-4"
+              />
+              <Button
+                onClick={() => setShowLocationPermission(false)}
+                variant="outline"
+                className="w-full mt-4"
+              >
+                Skip for Now
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
         <div className="flex items-center justify-between mb-6">
@@ -683,6 +752,24 @@ export default function TechnicianJobsScreen() {
             <h1 className="text-xl font-semibold">Jobs</h1>
           </div>
           <div className="flex space-x-2 items-center">
+            {/* Location Status Indicator */}
+            {currentLocation ? (
+              <div className="flex items-center space-x-1 bg-green-500/20 px-2 py-1 rounded-lg">
+                <Navigation className="h-4 w-4 text-green-200" />
+                <span className="text-xs text-green-200">GPS</span>
+              </div>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20 px-2 py-1"
+                onClick={() => setShowLocationPermission(true)}
+                title="Enable Location Access"
+              >
+                <MapPin className="h-4 w-4" />
+              </Button>
+            )}
+
             <NotificationSystem technicianId="tech001" />
             <Button
               variant="ghost"

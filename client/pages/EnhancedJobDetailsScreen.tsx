@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { geolocationUtils } from "@/utils/geolocationUtils";
 import { useNotification } from "@/components/ui/notification";
 import { JobTimer } from "@/components/JobTimer";
+import { LocationPermissionHandler } from "@/components/LocationPermissionHandler";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +40,7 @@ import {
   Save,
   Calendar,
   AlertTriangle,
+  AlertCircle,
   Wifi,
   Activity,
   Phone,
@@ -92,12 +94,126 @@ export default function EnhancedJobDetailsScreen() {
   const [proximityTimer, setProximityTimer] = useState(0);
   const [isNearJobLocation, setIsNearJobLocation] = useState(false);
   const [autoStartCountdown, setAutoStartCountdown] = useState(0);
-  const [technician] = useState({
-    id: "tech001",
-    name: "Dyondzani Clement Masinge",
+  const [showLocationPermission, setShowLocationPermission] = useState(false);
+  const [locationRequired, setLocationRequired] = useState(false);
+  const [showGalleryOptions, setShowGalleryOptions] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showStockOptions, setShowStockOptions] = useState(false);
+  const [stockSearchQuery, setStockSearchQuery] = useState("");
+  const [expandedStockId, setExpandedStockId] = useState<string | null>(null);
+  const [stockFormData, setStockFormData] = useState({
+    code: "",
+    container: "",
+    qtyUsed: "",
+    description: "",
+    comments: "",
+  });
+
+  // User's available warehouses - in real app this would come from user profile/API
+  const [userWarehouses, setUserWarehouses] = useState([
+    {
+      id: "VAN462",
+      name: "VAN462",
+      description: "Main Service Van",
+      isDefault: true,
+    },
+    // Add more warehouses if user has access to multiple
+  ]);
+
+  // Initialize user warehouse data
+  useEffect(() => {
+    const initializeUserWarehouses = async () => {
+      try {
+        const employeeId = localStorage.getItem("employeeId") || "tech001";
+
+        // Try to fetch user's warehouse assignments from API
+        const response = await fetch(
+          `/api/warehouse-stock/user/${employeeId}/warehouses`,
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data && result.data.length > 0) {
+            setUserWarehouses(result.data);
+            // Set the default warehouse in localStorage for quick access
+            const defaultWarehouse =
+              result.data.find((wh) => wh.isDefault) || result.data[0];
+            localStorage.setItem("userWarehouse", defaultWarehouse.id);
+            localStorage.setItem(
+              "userWarehouseId",
+              defaultWarehouse.warehouseId || defaultWarehouse.id,
+            );
+          }
+        } else {
+          // Fallback: determine warehouse based on employee ID or location
+          const userWarehouse = determineUserWarehouse(employeeId);
+          localStorage.setItem("userWarehouse", userWarehouse.id);
+          localStorage.setItem("userWarehouseId", userWarehouse.warehouseId);
+          setUserWarehouses([userWarehouse]);
+        }
+      } catch (error) {
+        console.warn("Could not fetch user warehouses, using default:", error);
+        // Use default warehouse
+        const defaultWarehouse = userWarehouses[0];
+        localStorage.setItem("userWarehouse", defaultWarehouse.id);
+        localStorage.setItem("userWarehouseId", defaultWarehouse.id);
+      }
+    };
+
+    initializeUserWarehouses();
+  }, []);
+
+  // Determine user warehouse based on their profile (fallback method)
+  const determineUserWarehouse = (employeeId: string) => {
+    // In a real app, this would be based on employee data
+    // For now, assign based on employee ID pattern
+    const warehouseMap = {
+      tech001: {
+        id: "VAN462",
+        name: "VAN462",
+        description: "East London Service Van",
+        isDefault: true,
+        warehouseId: "WH-EL-001",
+      },
+      tech002: {
+        id: "VAN123",
+        name: "VAN123",
+        description: "Port Elizabeth Service Van",
+        isDefault: true,
+        warehouseId: "WH-PE-002",
+      },
+      tech003: {
+        id: "VAN789",
+        name: "VAN789",
+        description: "Cape Town Service Van",
+        isDefault: true,
+        warehouseId: "WH-CT-003",
+      },
+    };
+
+    return warehouseMap[employeeId] || warehouseMap["tech001"];
+  };
+  const [technician, setTechnician] = useState({
+    id: localStorage.getItem("employeeId") || "tech001",
+    name: localStorage.getItem("userName") || "Dyondzani Clement Masinge",
     phone: "+27123456789",
     location: "East London",
+    warehouse: localStorage.getItem("userWarehouse") || "VAN462", // Get from logged-in user
+    warehouseId: localStorage.getItem("userWarehouseId") || "WH-EL-001",
   });
+
+  // Update technician warehouse when it changes
+  useEffect(() => {
+    const warehouse = localStorage.getItem("userWarehouse");
+    const warehouseId = localStorage.getItem("userWarehouseId");
+    if (warehouse && warehouseId) {
+      setTechnician((prev) => ({
+        ...prev,
+        warehouse,
+        warehouseId,
+      }));
+    }
+  }, [userWarehouses]);
 
   // Job timing details
   const assignedTime = new Date("2025-07-18T16:02:00");
@@ -154,8 +270,8 @@ export default function EnhancedJobDetailsScreen() {
     lightLevelsAfterFix: null as File | null,
   });
 
-  // Stock form data
-  const [stockFormData, setStockFormData] = useState({
+  // Legacy stock form data - keeping for compatibility
+  const [legacyStockForm, setLegacyStockForm] = useState({
     searchQuery: "",
     selectedStock: null as any,
     warehouseNumber: "",
@@ -257,119 +373,131 @@ export default function EnhancedJobDetailsScreen() {
     }
   };
 
-  // Geolocation tracking
+  // Check if location is needed for job operations
   useEffect(() => {
-    if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by this browser");
-      return;
-    }
-
-    const handleLocationSuccess = (position: GeolocationPosition) => {
-      const newLocation = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      };
-      setCurrentLocation(newLocation);
-      checkProximity(newLocation);
-    };
-
-    const handleLocationError = (error: GeolocationPositionError) => {
-      let userMessage = "";
-      let shouldShowWarning = false;
-
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          userMessage =
-            "Location access denied. Using default location for job tracking.";
-          shouldShowWarning = true;
-          setCurrentLocation({
-            latitude: -33.0197, // East London coordinates
-            longitude: 27.9117,
-          });
-          break;
-        case error.POSITION_UNAVAILABLE:
-          userMessage =
-            "Location unavailable. Using default location for job tracking.";
-          shouldShowWarning = true;
-          setCurrentLocation({
-            latitude: -33.0197,
-            longitude: 27.9117,
-          });
-          break;
-        case error.TIMEOUT:
-          userMessage =
-            "Location request timed out. Retrying with lower accuracy...";
-          warning("Location Timeout", userMessage);
-          // Try fallback for timeout
-          setTimeout(() => {
-            getCurrentLocationFallback();
-          }, 5000);
-          break;
-        default:
-          userMessage =
-            "Unable to get location. Using default location for job tracking.";
-          shouldShowWarning = true;
-          setCurrentLocation({
-            latitude: -33.0197,
-            longitude: 27.9117,
-          });
-          break;
-      }
-
-      // Log detailed error information for debugging
-      geolocationUtils.logGeolocationError(error, "EnhancedJobDetailsScreen");
-
-      // Show user-friendly notification
-      if (shouldShowWarning) {
-        warning("Location Access", userMessage);
-      }
-    };
-
-    const getCurrentLocationFallback = () => {
-      navigator.geolocation.getCurrentPosition(
-        handleLocationSuccess,
-        (error) => {
-          // Log fallback error using improved utility
-          geolocationUtils.logGeolocationError(
-            error,
-            "EnhancedJobDetailsScreen - Fallback",
-          );
-
-          // Use default location if all else fails
-          setCurrentLocation({
-            latitude: -33.0197, // East London coordinates as fallback
-            longitude: 27.9117,
-          });
-
-          notifyError(
-            "Location Failed",
-            "Using default location due to location service failure.",
-          );
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 15000,
-          maximumAge: 60000,
-        },
-      );
-    };
-
-    const watchId = navigator.geolocation.watchPosition(
-      handleLocationSuccess,
-      handleLocationError,
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 5000,
-      },
+    // Check if location permission was already granted this session
+    const locationGrantedThisSession = sessionStorage.getItem(
+      "locationPermissionGranted",
     );
 
-    return () => {
-      if (watchId) {
-        navigator.geolocation.clearWatch(watchId);
+    // Show location permission handler when job requires location tracking
+    // but only if not already granted this session
+    if (
+      (jobDetails.status === "accepted" || jobStatus === "in-progress") &&
+      !locationGrantedThisSession
+    ) {
+      setLocationRequired(true);
+      setShowLocationPermission(true);
+    }
+  }, [jobDetails.status, jobStatus]);
+
+  // Real-time job status polling
+  useEffect(() => {
+    const pollJobStatus = async () => {
+      try {
+        const response = await fetch(
+          `/api/job-mgmt/jobs/${jobDetails.id}/status`,
+        );
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            const serverStatus = result.data.status;
+
+            // Sync local status with server status
+            if (serverStatus !== jobDetails.status) {
+              setJobDetails((prev) => ({ ...prev, status: serverStatus }));
+            }
+
+            // Update job status state
+            if (serverStatus === "in-progress") {
+              setJobStatus("in-progress");
+              setIsTimerRunning(true);
+            } else if (serverStatus === "paused") {
+              setJobStatus("paused");
+              setIsTimerRunning(false);
+            } else if (serverStatus === "completed") {
+              setJobStatus("completed");
+              setIsTimerRunning(false);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error polling job status:", error);
       }
     };
-  }, []);
+
+    // Poll every 5 seconds for real-time updates
+    const interval = setInterval(pollJobStatus, 5000);
+
+    return () => clearInterval(interval);
+  }, [jobDetails.id, jobDetails.status]);
+
+  // Handle location received from permission handler
+  const handleLocationReceived = (location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
+    setCurrentLocation({
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+
+    // Remember that location permission was granted this session
+    sessionStorage.setItem("locationPermissionGranted", "true");
+
+    setShowLocationPermission(false);
+    checkProximity({
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+  };
+
+  // Handle location permission error
+  const handleLocationError = (error: string) => {
+    console.error("Location error:", error);
+    // Use default location as fallback
+    setCurrentLocation({
+      latitude: -33.0197, // East London coordinates
+      longitude: 27.9117,
+    });
+    setShowLocationPermission(false);
+    warning(
+      "Location Required",
+      "Using default location for job tracking. Some features may be limited.",
+    );
+  };
+
+  // Update job status
+  const updateJobStatus = async (newStatus: string) => {
+    try {
+      const response = await fetch(
+        `/api/job-mgmt/jobs/${jobDetails.id}/status`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: newStatus,
+            technicianId: localStorage.getItem("employeeId") || "tech001",
+          }),
+        },
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setJobDetails((prev) => ({ ...prev, status: newStatus as any }));
+          setShowStatusModal(false);
+          success("Status Updated", `Job status updated to ${newStatus}`);
+        }
+      } else {
+        throw new Error("Failed to update status");
+      }
+    } catch (error) {
+      console.error("Error updating job status:", error);
+      error("Update Failed", "Failed to update job status. Please try again.");
+    }
+  };
 
   // Check proximity to job location
   const checkProximity = (currentPos: {
@@ -731,28 +859,80 @@ export default function EnhancedJobDetailsScreen() {
 
   const handleUpdateUdf = async () => {
     try {
-      const response = await fetch(`/api/jobs/${jobId}/udf`, {
+      // Validate required UDF fields
+      const requiredFields = [
+        "faultResolved",
+        "faultSolutionType",
+        "maintenanceIssueClass",
+      ];
+      const missingFields = requiredFields.filter(
+        (field) => !udfData[field as keyof typeof udfData],
+      );
+
+      if (missingFields.length > 0) {
+        toast({
+          title: "Missing Required Fields",
+          description: `Please complete: ${missingFields.join(", ")}`,
+        });
+        return;
+      }
+
+      const response = await fetch(`/api/job-mgmt/jobs/${jobDetails.id}/udf`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(udfData),
+        body: JSON.stringify({
+          ...udfData,
+          jobId: jobDetails.id,
+          technicianId: technician.id,
+          updatedBy: technician.name,
+          updatedDate: new Date().toISOString(),
+          workOrderNumber: `WO-${jobDetails.id}`,
+        }),
       });
 
       if (response.ok) {
-        toast({
-          title: "UDF Updated",
-          description: "User defined fields have been saved successfully.",
-        });
+        const result = await response.json();
+
+        if (result.success) {
+          // Mark UDF as completed for sign-off
+          setSignOffData((prev) => ({
+            ...prev,
+            udfCompleted: true,
+          }));
+
+          toast({
+            title: "UDF Updated Successfully",
+            description: "User defined fields have been saved successfully.",
+          });
+
+          // Send notification to manager/coordinator
+          fetch("/api/notifications/udf-completed", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jobId: jobDetails.id,
+              technicianId: technician.id,
+              technicianName: technician.name,
+              timestamp: new Date().toISOString(),
+            }),
+          }).catch((err) => console.error("Failed to send notification:", err));
+        } else {
+          throw new Error(result.message || "UDF update failed");
+        }
       } else {
-        toast({
-          title: "Update Failed",
-          description: "Failed to update UDF. Please try again.",
-        });
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `Update failed with status ${response.status}`,
+        );
       }
     } catch (error) {
       console.error("Failed to update UDF:", error);
       toast({
         title: "Update Failed",
-        description: "Failed to update UDF. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to update UDF. Please try again.",
       });
     }
   };
@@ -810,68 +990,101 @@ export default function EnhancedJobDetailsScreen() {
 
   const submitImageForm = async () => {
     const formData = new FormData();
+    const uploadedFiles: string[] = [];
+
+    // Add job metadata
+    formData.append("jobId", jobDetails.id);
+    formData.append("technicianId", technician.id);
+    formData.append("uploadDate", new Date().toISOString());
+
     Object.entries(imageFormData).forEach(([key, file]) => {
       if (file) {
         formData.append(key, file);
+        uploadedFiles.push(key);
       }
     });
 
-    try {
-      const response = await fetch(`/api/jobs/${jobDetails.id}/images`, {
-        method: "POST",
-        body: formData,
+    if (uploadedFiles.length === 0) {
+      toast({
+        title: "No Images Selected",
+        description: "Please select at least one image to upload.",
       });
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/job-mgmt/jobs/${jobDetails.id}/images`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       if (response.ok) {
-        // Mock response for uploaded images
-        const newPhotos = [
-          {
-            id: "before-light-levels",
-            name: "Before Light Levels",
-            url: "/placeholder.svg",
-            type: "Before Light Levels",
-          },
-          {
-            id: "fault-finding",
-            name: "Fault Finding",
-            url: "/placeholder.svg",
-            type: "Fault Finding",
-          },
-          {
-            id: "fault-after-fixing",
-            name: "Fault After Fixing",
-            url: "/placeholder.svg",
-            type: "Fault After Fixing",
-          },
-          {
-            id: "light-levels-after-fix",
-            name: "Light Levels After Fix",
-            url: "/placeholder.svg",
-            type: "Light Levels After Fix",
-          },
-        ];
-        setJobPhotos(newPhotos);
-        setShowImageForm(false);
-        setImageFormData({
-          beforeLightLevels: null,
-          faultFinding: null,
-          faultAfterFixing: null,
-          lightLevelsAfterFix: null,
-        });
+        const result = await response.json();
 
-        // Show success toast
-        toast({
-          title: "Images Uploaded",
-          description: "All job images have been uploaded successfully.",
-        });
+        if (result.success) {
+          // Use actual uploaded image data from server
+          const newPhotos = result.uploadedImages.map((img: any) => ({
+            id: img.id,
+            name: img.originalName,
+            url: img.url,
+            type: img.category,
+            uploadedBy: technician.name,
+            uploadedDate: new Date().toISOString(),
+          }));
+
+          setJobPhotos((prev) => [...prev, ...newPhotos]);
+          setShowImageForm(false);
+          setImageFormData({
+            beforeLightLevels: null,
+            faultFinding: null,
+            faultAfterFixing: null,
+            lightLevelsAfterFix: null,
+          });
+
+          // Mark images as completed for sign-off
+          setSignOffData((prev) => ({
+            ...prev,
+            imagesUploaded: true,
+          }));
+
+          // Show success toast
+          toast({
+            title: "Images Uploaded Successfully",
+            description: `${uploadedFiles.length} images uploaded successfully.`,
+          });
+
+          // Send notification to coordinator/manager
+          fetch("/api/notifications/images-uploaded", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jobId: jobDetails.id,
+              technicianId: technician.id,
+              imageCount: uploadedFiles.length,
+              timestamp: new Date().toISOString(),
+            }),
+          }).catch((err) => console.error("Failed to send notification:", err));
+        } else {
+          throw new Error(result.message || "Upload failed");
+        }
       } else {
-        toast({
-          title: "Upload Failed",
-          description: "Failed to upload images. Please try again.",
-        });
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `Upload failed with status ${response.status}`,
+        );
       }
     } catch (error) {
       console.error("Failed to upload images:", error);
+      toast({
+        title: "Upload Failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to upload images. Please try again.",
+      });
     }
   };
 
@@ -880,38 +1093,65 @@ export default function EnhancedJobDetailsScreen() {
     (stock) =>
       stock.code
         .toLowerCase()
-        .includes(stockFormData.searchQuery.toLowerCase()) ||
+        .includes(legacyStockForm.searchQuery.toLowerCase()) ||
       stock.name
         .toLowerCase()
-        .includes(stockFormData.searchQuery.toLowerCase()),
+        .includes(legacyStockForm.searchQuery.toLowerCase()),
   );
 
   const submitStockForm = async () => {
-    if (!stockFormData.selectedStock || !stockFormData.quantity) {
+    if (!legacyStockForm.selectedStock || !legacyStockForm.quantity) {
       alert("Please select stock and enter quantity");
       return;
     }
 
+    const quantityRequested = parseInt(legacyStockForm.quantity);
+
     try {
+      // Check warehouse availability first
+      const availabilityResponse = await fetch(
+        `/api/stock/check-availability/${legacyStockForm.selectedStock.id}/${quantityRequested}`,
+      );
+
+      if (!availabilityResponse.ok) {
+        toast({
+          title: "Stock Check Failed",
+          description: "Unable to verify stock availability.",
+        });
+        return;
+      }
+
+      const availability = await availabilityResponse.json();
+
+      if (!availability.available) {
+        toast({
+          title: "Insufficient Stock",
+          description: `Only ${availability.availableQuantity} units available. Requested: ${quantityRequested}`,
+        });
+        return;
+      }
+
       // Auto-link work order number and recognize technician warehouse
       const response = await fetch(
-        `/api/jobs/${jobDetails.id}/allocate-stock`,
+        `/api/job-mgmt/jobs/${jobDetails.id}/allocate-stock`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            stockId: stockFormData.selectedStock.id,
+            stockId: legacyStockForm.selectedStock.id,
+            stockCode: legacyStockForm.selectedStock.code,
+            stockName: legacyStockForm.selectedStock.name,
             warehouseNumber: technician.warehouse || "WH-EL-001", // Auto-detect from logged-in user
-            quantity: parseInt(stockFormData.quantity),
+            quantity: quantityRequested,
             technicianId: technician.id,
-            workOrderNumber:
-              jobDetails.workOrderNumber || `WO-${jobDetails.id}`, // Auto-link work order
+            workOrderNumber: `WO-${jobDetails.id}`, // Auto-link work order
             jobId: jobDetails.id,
             ticketNumber: jobDetails.id,
             allocatedDate: new Date().toISOString(),
             allocatedBy: technician.name,
-            stockLocation: technician.warehouse,
+            stockLocation: technician.warehouse || "WH-EL-001",
             autoLinked: true, // Flag to indicate automatic linking
+            realTimeUpdate: true, // Flag for real-time warehouse deduction
           }),
         },
       );
@@ -919,20 +1159,39 @@ export default function EnhancedJobDetailsScreen() {
       if (response.ok) {
         const allocationResult = await response.json();
 
-        // Update local stock tracking
+        // Update local stock tracking with server response
         setAllocatedStock((prev) => [
           ...prev,
           {
-            id: `stock-${Date.now()}`,
-            code: stockFormData.selectedStock.code,
-            name: stockFormData.selectedStock.name,
-            quantity: parseInt(stockFormData.quantity),
+            id: allocationResult.allocationId || `stock-${Date.now()}`,
+            code: legacyStockForm.selectedStock.code,
+            name: legacyStockForm.selectedStock.name,
+            quantity: quantityRequested,
             allocatedAt: new Date().toISOString(),
+            warehouseBalance: allocationResult.newWarehouseBalance,
+            allocationStatus: "allocated",
           },
         ]);
 
+        // Real-time warehouse update notification
+        if (allocationResult.warehouseUpdated) {
+          // Send real-time notification to stock manager
+          fetch("/api/notifications/stock-allocated", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              technicianId: technician.id,
+              jobId: jobDetails.id,
+              stockCode: legacyStockForm.selectedStock.code,
+              quantity: quantityRequested,
+              newBalance: allocationResult.newWarehouseBalance,
+              timestamp: new Date().toISOString(),
+            }),
+          }).catch((err) => console.error("Failed to send notification:", err));
+        }
+
         setShowStockForm(false);
-        setStockFormData({
+        setLegacyStockForm({
           searchQuery: "",
           selectedStock: null,
           warehouseNumber: "",
@@ -941,13 +1200,21 @@ export default function EnhancedJobDetailsScreen() {
 
         // Show success toast
         toast({
-          title: "Stock Allocated",
-          description: `${stockFormData.selectedStock.code} - Quantity: ${stockFormData.quantity} allocated successfully.`,
+          title: "Stock Allocated Successfully",
+          description: `${legacyStockForm.selectedStock.code} - Quantity: ${quantityRequested} allocated. Warehouse updated in real-time.`,
         });
+
+        // Mark stock as completed for sign-off
+        setSignOffData((prev) => ({
+          ...prev,
+          stockChecked: true,
+        }));
       } else {
+        const errorData = await response.json();
         toast({
           title: "Allocation Failed",
-          description: "Failed to allocate stock. Please try again.",
+          description:
+            errorData.message || "Failed to allocate stock. Please try again.",
         });
       }
     } catch (error) {
@@ -1038,6 +1305,15 @@ export default function EnhancedJobDetailsScreen() {
               title="View Timer"
             >
               <Clock className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 rounded-full h-8 w-8"
+              onClick={() => setShowStatusModal(true)}
+              title="Update Status"
+            >
+              <Settings className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
@@ -1202,6 +1478,34 @@ export default function EnhancedJobDetailsScreen() {
           </div>
         </div>
       </div>
+
+      {/* Location Permission Handler */}
+      {showLocationPermission && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-4">
+              <h3 className="text-lg font-semibold mb-4 text-center">
+                Location Required for Job Tracking
+              </h3>
+              <LocationPermissionHandler
+                onLocationReceived={handleLocationReceived}
+                onError={handleLocationError}
+                required={locationRequired}
+                className="mb-4"
+              />
+              {!locationRequired && (
+                <Button
+                  onClick={() => setShowLocationPermission(false)}
+                  variant="outline"
+                  className="w-full mt-4"
+                >
+                  Skip Location Access
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Timer Overlay */}
       {showTimerOverlay && (
@@ -1442,163 +1746,233 @@ export default function EnhancedJobDetailsScreen() {
         </div>
       )}
 
-      {/* Stock Allocation Form Overlay */}
+      {/* Add Stock Form Modal */}
       {showStockForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold">Allocate Stock</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowStockForm(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+        <div className="fixed inset-0 bg-white z-50">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
+            <div className="flex items-center justify-between">
+              <h1 className="text-lg font-bold">Add Stock</h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20 rounded-full h-8 w-8"
+                onClick={() => {
+                  setShowStockForm(false);
+                  setStockFormData({
+                    code: "",
+                    container: technician.warehouse, // Reset to user's warehouse
+                    qtyUsed: "",
+                    description: "",
+                    comments: "",
+                  });
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
 
-              <div className="space-y-4">
-                {/* Search Bar */}
+          {/* Form Content */}
+          <div className="flex-1 p-4 space-y-6">
+            {/* User Warehouse Info */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="flex items-center justify-between">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Search Stock (Code or Name)
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="Search by code or name..."
-                    value={stockFormData.searchQuery}
-                    onChange={(e) =>
-                      setStockFormData((prev) => ({
-                        ...prev,
-                        searchQuery: e.target.value,
-                      }))
-                    }
-                    className="w-full"
-                  />
+                  <p className="text-sm font-medium text-blue-900">
+                    Your Assigned Warehouse
+                  </p>
+                  <p className="text-xs text-blue-700">
+                    {technician.warehouse} - {technician.warehouseId}
+                  </p>
                 </div>
-
-                {/* Stock Results */}
-                {stockFormData.searchQuery && (
-                  <div className="max-h-40 overflow-y-auto border rounded-lg">
-                    {filteredStocks.map((stock) => (
-                      <div
-                        key={stock.id}
-                        className={`p-3 cursor-pointer hover:bg-gray-50 border-b ${
-                          stockFormData.selectedStock?.id === stock.id
-                            ? "bg-blue-50"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          setStockFormData((prev) => ({
-                            ...prev,
-                            selectedStock: stock,
-                          }))
-                        }
-                      >
-                        <div className="font-medium">{stock.code}</div>
-                        <div className="text-sm text-gray-600">
-                          {stock.name}
-                        </div>
-                        <div className="text-sm text-green-600">
-                          Available: {stock.warehouseQty}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Selected Stock */}
-                {stockFormData.selectedStock && (
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="font-medium">
-                      {stockFormData.selectedStock.code}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {stockFormData.selectedStock.name}
-                    </div>
-                  </div>
-                )}
-
-                {/* Auto-Linked Information */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-3">
-                    Auto-Linked Information
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">Work Order:</span>
-                      <span className="font-medium text-blue-900">
-                        {jobDetails.workOrderNumber || `WO-${jobDetails.id}`}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">
-                        Technician Warehouse:
-                      </span>
-                      <span className="font-medium text-blue-900">
-                        {technician.warehouse || "WH-EL-001"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">Ticket Number:</span>
-                      <span className="font-medium text-blue-900">
-                        {jobDetails.id}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">Allocated By:</span>
-                      <span className="font-medium text-blue-900">
-                        {technician.name}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mt-3 text-xs text-blue-600">
-                    ℹ️ Work order and warehouse information will be
-                    automatically linked to this stock allocation.
-                  </div>
+                <div className="text-blue-600">
+                  <Package className="h-5 w-5" />
                 </div>
-
-                {/* Quantity */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Quantity to Allocate
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder="Enter quantity"
-                    value={stockFormData.quantity}
-                    onChange={(e) =>
-                      setStockFormData((prev) => ({
-                        ...prev,
-                        quantity: e.target.value,
-                      }))
-                    }
-                    className="w-full"
-                    min="1"
-                    max={stockFormData.selectedStock?.warehouseQty || 999}
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <Button
-                  onClick={submitStockForm}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3"
-                  disabled={
-                    !stockFormData.selectedStock || !stockFormData.quantity
-                  }
-                >
-                  Allocate Stock
-                </Button>
               </div>
             </div>
+            {/* Code */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Code
+              </label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search..."
+                  value={stockFormData.code}
+                  onChange={(e) =>
+                    setStockFormData((prev) => ({
+                      ...prev,
+                      code: e.target.value,
+                    }))
+                  }
+                  className="pl-10"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-6 h-6 bg-gray-900 rounded flex items-center justify-center">
+                    <div className="grid grid-cols-2 gap-0.5">
+                      <div className="w-1 h-1 bg-white"></div>
+                      <div className="w-1 h-1 bg-white"></div>
+                      <div className="w-1 h-1 bg-white"></div>
+                      <div className="w-1 h-1 bg-white"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Container */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Container
+              </label>
+              <Select
+                value={stockFormData.container || technician.warehouse}
+                onValueChange={(value) =>
+                  setStockFormData((prev) => ({ ...prev, container: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={technician.warehouse} />
+                </SelectTrigger>
+                <SelectContent>
+                  {userWarehouses.map((warehouse) => (
+                    <SelectItem key={warehouse.id} value={warehouse.id}>
+                      {warehouse.name} - {warehouse.description}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500 mt-1">
+                Only warehouses assigned to you are available
+              </p>
+            </div>
+
+            {/* Qty Used */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Qty Used
+              </label>
+              <Input
+                type="number"
+                value={stockFormData.qtyUsed}
+                onChange={(e) =>
+                  setStockFormData((prev) => ({
+                    ...prev,
+                    qtyUsed: e.target.value,
+                  }))
+                }
+                className="w-full"
+                min="1"
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description
+              </label>
+              <Input
+                value={stockFormData.description}
+                onChange={(e) =>
+                  setStockFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+                className="w-full"
+              />
+            </div>
+
+            {/* Comments */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Comments
+              </label>
+              <div className="relative">
+                <Textarea
+                  value={stockFormData.comments}
+                  onChange={(e) =>
+                    setStockFormData((prev) => ({
+                      ...prev,
+                      comments: e.target.value,
+                    }))
+                  }
+                  className="w-full min-h-[100px] pr-10"
+                />
+                <div className="absolute right-3 bottom-3">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="w-3 h-3 bg-white rounded-full"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Add Button */}
+          <div className="p-4">
+            <Button
+              onClick={() => {
+                // Handle stock addition
+                if (
+                  stockFormData.code &&
+                  stockFormData.container &&
+                  stockFormData.qtyUsed
+                ) {
+                  // Validate that the selected container belongs to the user
+                  const userHasAccess = userWarehouses.some(
+                    (wh) => wh.id === stockFormData.container,
+                  );
+                  if (!userHasAccess) {
+                    alert(
+                      "You don't have access to allocate stock from this warehouse",
+                    );
+                    return;
+                  }
+                  const newStock = {
+                    id: `stock-${Date.now()}`,
+                    code: stockFormData.code,
+                    name: stockFormData.description || stockFormData.code,
+                    quantity: parseInt(stockFormData.qtyUsed),
+                    warehouse: stockFormData.container,
+                    notes: stockFormData.comments,
+                    allocatedAt: new Date().toISOString(),
+                    allocatedBy: technician.name,
+                  };
+
+                  setAllocatedStock((prev) => [...prev, newStock]);
+                  setShowStockForm(false);
+                  setStockFormData({
+                    code: "",
+                    container: technician.warehouse, // Reset to user's warehouse
+                    qtyUsed: "",
+                    description: "",
+                    comments: "",
+                  });
+                }
+              }}
+              className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-lg flex items-center justify-center space-x-2"
+              disabled={
+                !stockFormData.code ||
+                !stockFormData.container ||
+                !stockFormData.qtyUsed
+              }
+            >
+              <Plus className="h-5 w-5" />
+              <span className="text-lg font-medium">Add</span>
+            </Button>
           </div>
         </div>
       )}
 
       {/* Content Area */}
-      <div className="p-4 pb-24">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <div className="flex-1 flex flex-col p-4 pb-24">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full flex-1 flex flex-col"
+        >
           {/* Details Tab */}
           <TabsContent value="details" className="space-y-4">
             {/* Client Contacts */}
@@ -2203,107 +2577,332 @@ export default function EnhancedJobDetailsScreen() {
           </TabsContent>
 
           {/* Gallery Tab */}
-          <TabsContent value="gallery" className="space-y-4">
-            <div className="relative min-h-[400px] flex flex-col items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-              {jobPhotos.length === 0 ? (
-                <div className="text-center">
-                  <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 text-lg">No Images</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-4 p-4 w-full">
-                  {jobPhotos.map((photo, index) => (
-                    <div
-                      key={photo.id || index}
-                      className="aspect-square bg-white rounded-lg border shadow-sm overflow-hidden"
-                    >
-                      <div className="h-full flex flex-col">
-                        <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                          <Camera className="h-8 w-8 text-blue-400" />
+          <TabsContent value="gallery" className="flex-1 flex flex-col">
+            <div
+              className="relative flex-1 flex flex-col bg-gray-50 rounded-lg border-2 border-dashed border-gray-300"
+              style={{ minHeight: "calc(100vh - 280px)" }}
+            >
+              <div className="flex-1 flex flex-col">
+                {jobPhotos.length === 0 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center">
+                    <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg">No Images</p>
+                  </div>
+                ) : (
+                  <div className="flex-1 p-4">
+                    <div className="grid grid-cols-2 gap-4 h-full">
+                      {jobPhotos.map((photo, index) => (
+                        <div
+                          key={photo.id || index}
+                          className="aspect-square bg-white rounded-lg border shadow-sm overflow-hidden"
+                        >
+                          <div className="h-full flex flex-col">
+                            <div className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                              <Camera className="h-8 w-8 text-blue-400" />
+                            </div>
+                            <div className="p-2 bg-white">
+                              <p className="text-xs font-medium text-gray-800 truncate">
+                                {photo.name || `Photo ${index + 1}`}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {photo.type || "image"}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="p-2 bg-white">
-                          <p className="text-xs font-medium text-gray-800 truncate">
-                            {photo.name || `Photo ${index + 1}`}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {photo.type || "image"}
-                          </p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
 
-              <Button
-                onClick={() => setShowImageForm(true)}
-                className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
-              >
-                <Plus className="h-6 w-6" />
-              </Button>
+              {/* Gallery Action Buttons */}
+              <div className="absolute bottom-4 right-4 flex flex-col-reverse items-end space-y-reverse space-y-3">
+                {/* Gallery and Camera buttons - show when expanded */}
+                {showGalleryOptions && (
+                  <>
+                    <Button
+                      onClick={() => {
+                        // Handle gallery access
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = "image/*";
+                        input.multiple = true;
+                        input.onchange = (e) => {
+                          const files = (e.target as HTMLInputElement).files;
+                          if (files) {
+                            // Handle selected files from gallery
+                            console.log("Selected files from gallery:", files);
+                            // Add your gallery handling logic here
+                          }
+                        };
+                        input.click();
+                        setShowGalleryOptions(false);
+                      }}
+                      className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+                    >
+                      <Camera className="h-6 w-6" />
+                    </Button>
+                    <div className="text-xs text-gray-600 mr-2">Gallery</div>
+
+                    <Button
+                      onClick={() => {
+                        // Handle camera access
+                        navigator.mediaDevices
+                          ?.getUserMedia({ video: true })
+                          .then((stream) => {
+                            // Create video element or handle camera
+                            console.log("Camera stream:", stream);
+                            // Add your camera handling logic here
+                            stream.getTracks().forEach((track) => track.stop()); // Stop for now
+                          })
+                          .catch((err) => {
+                            console.error("Camera access denied:", err);
+                            alert(
+                              "Camera access denied. Please allow camera permissions.",
+                            );
+                          });
+                        setShowGalleryOptions(false);
+                      }}
+                      className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+                    >
+                      <Camera className="h-6 w-6" />
+                    </Button>
+                    <div className="text-xs text-gray-600 mr-2">Camera</div>
+                  </>
+                )}
+
+                {/* Main plus/close button */}
+                <Button
+                  onClick={() => setShowGalleryOptions(!showGalleryOptions)}
+                  className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+                >
+                  {showGalleryOptions ? (
+                    <X className="h-6 w-6" />
+                  ) : (
+                    <Plus className="h-6 w-6" />
+                  )}
+                </Button>
+              </div>
             </div>
           </TabsContent>
 
           {/* Stocks Tab */}
-          <TabsContent value="stocks" className="space-y-4">
-            <div className="relative min-h-[400px] bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-              {allocatedStock.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full">
-                  <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 text-lg">No Stock Allocated</p>
-                </div>
-              ) : (
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-900">
-                    Allocated Stock
-                  </h3>
-                  <div className="space-y-3">
-                    {allocatedStock.map((stock) => (
-                      <div
-                        key={stock.id}
-                        className="bg-white rounded-lg border p-4 shadow-sm"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <Package className="h-6 w-6 text-blue-600" />
-                              </div>
-                              <div>
-                                <p className="font-medium text-gray-900">
-                                  {stock.code}
-                                </p>
-                                <p className="text-sm text-gray-600">
-                                  {stock.name}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  Allocated:{" "}
-                                  {new Date(
-                                    stock.allocatedAt,
-                                  ).toLocaleDateString()}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-lg font-semibold text-gray-900">
-                              {stock.quantity}
-                            </span>
-                            <p className="text-xs text-gray-500">Units</p>
-                          </div>
+          <TabsContent value="stocks" className="flex-1 flex flex-col">
+            <div
+              className="relative flex-1 flex flex-col bg-gray-50 rounded-lg border-2 border-dashed border-gray-300"
+              style={{ minHeight: "calc(100vh - 280px)" }}
+            >
+              <div className="flex-1 flex flex-col">
+                {allocatedStock.length === 0 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center">
+                    <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg">No Stocks</p>
+                  </div>
+                ) : (
+                  <div className="flex-1 flex flex-col">
+                    {/* Search Bar */}
+                    <div className="p-4 border-b bg-white">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input
+                          placeholder="Search anything..."
+                          value={stockSearchQuery}
+                          onChange={(e) => setStockSearchQuery(e.target.value)}
+                          className="pl-10 bg-gray-50 border-0"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Stock List Headers */}
+                    <div className="px-4 py-3 bg-gray-100 border-b">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-8"></div>
+                        <div className="flex-1 text-sm font-medium text-gray-600">
+                          Code
+                        </div>
+                        <div className="flex-1 text-sm font-medium text-gray-600">
+                          Description
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                    </div>
 
-              <Button
-                onClick={() => setShowStockForm(true)}
-                className="absolute bottom-4 right-4 h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
-              >
-                <Plus className="h-6 w-6" />
-              </Button>
+                    {/* Stock Items */}
+                    <div className="flex-1 overflow-y-auto">
+                      {allocatedStock
+                        .filter(
+                          (stock) =>
+                            stock.code
+                              .toLowerCase()
+                              .includes(stockSearchQuery.toLowerCase()) ||
+                            stock.name
+                              .toLowerCase()
+                              .includes(stockSearchQuery.toLowerCase()),
+                        )
+                        .map((stock, index) => (
+                          <div
+                            key={stock.id}
+                            className="border-b border-gray-200"
+                          >
+                            {/* Stock Row */}
+                            <div
+                              className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                              onClick={() =>
+                                setExpandedStockId(
+                                  expandedStockId === stock.id
+                                    ? null
+                                    : stock.id,
+                                )
+                              }
+                            >
+                              <div className="flex items-center space-x-4">
+                                <div className="w-8 flex justify-center">
+                                  {expandedStockId === stock.id ? (
+                                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                                  ) : (
+                                    <ChevronUp className="h-4 w-4 text-gray-400" />
+                                  )}
+                                </div>
+                                <div className="flex-1 text-sm font-medium text-gray-900">
+                                  {stock.code}
+                                </div>
+                                <div className="flex-1 text-sm text-gray-600 truncate">
+                                  {stock.name}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Expanded Details */}
+                            {expandedStockId === stock.id && (
+                              <div className="px-4 pb-4 bg-gray-50">
+                                <div className="space-y-3 pt-3">
+                                  <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                      <span className="font-medium text-gray-900">
+                                        Code
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.code}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="font-medium text-gray-900">
+                                        Container
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.warehouse || "VAN462"}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="font-medium text-gray-900">
+                                        Description
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.name}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="font-medium text-gray-900">
+                                        Qty Used
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.quantity}
+                                      </p>
+                                    </div>
+                                    <div className="col-span-2">
+                                      <span className="font-medium text-gray-900">
+                                        Comments
+                                      </span>
+                                      <p className="text-gray-600">
+                                        {stock.notes || "-"}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {/* Action Buttons */}
+                                  <div className="flex justify-center space-x-8 pt-4">
+                                    <Button
+                                      variant="ghost"
+                                      className="flex flex-col items-center space-y-1 text-blue-500"
+                                      onClick={() => {
+                                        // Handle edit
+                                        setStockFormData({
+                                          code: stock.code,
+                                          container:
+                                            stock.warehouse || "VAN462",
+                                          qtyUsed: stock.quantity.toString(),
+                                          description: stock.name,
+                                          comments: stock.notes || "",
+                                        });
+                                        setShowStockForm(true);
+                                      }}
+                                    >
+                                      <PenTool className="h-5 w-5" />
+                                      <span className="text-xs">Edit</span>
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      className="flex flex-col items-center space-y-1 text-red-500"
+                                      onClick={() => {
+                                        // Handle delete
+                                        const newStock = allocatedStock.filter(
+                                          (s) => s.id !== stock.id,
+                                        );
+                                        setAllocatedStock(newStock);
+                                      }}
+                                    >
+                                      <Trash2 className="h-5 w-5" />
+                                      <span className="text-xs">Delete</span>
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Stock Action Buttons */}
+              <div className="absolute bottom-4 right-4 flex flex-col-reverse items-end space-y-reverse space-y-3">
+                {/* Add Stock button - show when expanded */}
+                {showStockOptions && (
+                  <>
+                    <Button
+                      onClick={() => {
+                        setShowStockOptions(false);
+                        // Pre-populate with user's warehouse
+                        setStockFormData({
+                          code: "",
+                          container: technician.warehouse,
+                          qtyUsed: "",
+                          description: "",
+                          comments: "",
+                        });
+                        setShowStockForm(true);
+                      }}
+                      className="h-14 w-auto px-4 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg flex items-center space-x-2"
+                    >
+                      <Package className="h-5 w-5" />
+                      <span className="text-sm font-medium">Add Stock</span>
+                    </Button>
+                  </>
+                )}
+
+                {/* Main plus/close button */}
+                <Button
+                  onClick={() => setShowStockOptions(!showStockOptions)}
+                  className="h-14 w-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+                >
+                  {showStockOptions ? (
+                    <X className="h-6 w-6" />
+                  ) : (
+                    <Plus className="h-6 w-6" />
+                  )}
+                </Button>
+              </div>
             </div>
           </TabsContent>
 
@@ -2503,21 +3102,174 @@ export default function EnhancedJobDetailsScreen() {
                   </Button>
                 </div>
 
-                {/* Completion Status */}
-                {(!signOffData.acceptTerms ||
-                  !signOffData.udfCompleted ||
-                  !signOffData.imagesUploaded ||
-                  !signOffData.stockChecked ||
-                  !signOffData.signature) && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <div className="flex items-center">
-                      <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2" />
-                      <span className="text-sm text-yellow-800 font-medium">
-                        Complete all checklist items and sign to finish the job
+                {/* Detailed Completion Status */}
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+                    <CheckCircle className="h-5 w-5 text-blue-600 mr-2" />
+                    Job Completion Status
+                  </h4>
+                  <div className="space-y-3">
+                    {/* UDF Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">
+                        UDF Fields Completed
                       </span>
+                      <div className="flex items-center">
+                        {signOffData.udfCompleted ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.udfCompleted
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
+                          {signOffData.udfCompleted ? "Complete" : "Pending"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Images Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">
+                        Images Uploaded
+                      </span>
+                      <div className="flex items-center">
+                        {signOffData.imagesUploaded ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.imagesUploaded
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
+                          {signOffData.imagesUploaded
+                            ? `${jobPhotos.length} Images`
+                            : "No Images"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Stock Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">
+                        Stock Allocation
+                      </span>
+                      <div className="flex items-center">
+                        {signOffData.stockChecked ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.stockChecked
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
+                          {signOffData.stockChecked
+                            ? `${allocatedStock.length} Items`
+                            : "None Allocated"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Signature Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">
+                        Digital Signature
+                      </span>
+                      <div className="flex items-center">
+                        {signOffData.signature ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.signature
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
+                          {signOffData.signature ? "Signed" : "Not Signed"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Terms Status */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">
+                        Terms Accepted
+                      </span>
+                      <div className="flex items-center">
+                        {signOffData.acceptTerms ? (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-orange-500" />
+                        )}
+                        <span
+                          className={`ml-2 text-sm font-medium ${
+                            signOffData.acceptTerms
+                              ? "text-green-600"
+                              : "text-orange-600"
+                          }`}
+                        >
+                          {signOffData.acceptTerms
+                            ? "Accepted"
+                            : "Not Accepted"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Overall Progress */}
+                    <div className="border-t pt-3 mt-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">
+                          Overall Progress
+                        </span>
+                        <span className="text-sm font-medium text-blue-600">
+                          {
+                            [
+                              signOffData.udfCompleted,
+                              signOffData.imagesUploaded,
+                              signOffData.stockChecked,
+                              signOffData.signature,
+                              signOffData.acceptTerms,
+                            ].filter(Boolean).length
+                          }
+                          /5 Complete
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${
+                              ([
+                                signOffData.udfCompleted,
+                                signOffData.imagesUploaded,
+                                signOffData.stockChecked,
+                                signOffData.signature,
+                                signOffData.acceptTerms,
+                              ].filter(Boolean).length /
+                                5) *
+                              100
+                            }%`,
+                          }}
+                        ></div>
+                      </div>
                     </div>
                   </div>
-                )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -2592,6 +3344,100 @@ export default function EnhancedJobDetailsScreen() {
           </Button>
         </div>
       </div>
+
+      {/* Status Update Modal */}
+      {showStatusModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold">Update Job Status</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowStatusModal(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="text-sm text-gray-600 mb-4">
+                  Current Status:{" "}
+                  <span className="font-medium">
+                    {jobDetails.status.toUpperCase()}
+                  </span>
+                </div>
+
+                {/* Status Options */}
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => updateJobStatus("assigned")}
+                    className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg"
+                  >
+                    Assigned
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("accepted")}
+                    className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-lg"
+                  >
+                    Accepted
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("in-progress")}
+                    className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg"
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    In Progress
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("tech-finished")}
+                    className="bg-lime-500 hover:bg-lime-600 text-white p-3 rounded-lg"
+                  >
+                    Tech Finished
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("sent-back-to-tech")}
+                    className="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg"
+                  >
+                    Sent Back To Tech
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("completed")}
+                    className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg"
+                  >
+                    Job Completed
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("stopped")}
+                    className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-lg"
+                  >
+                    Stopped
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("convert-to-installation")}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white p-3 rounded-lg"
+                  >
+                    Convert To Installation
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("sage-error-resubmit")}
+                    className="bg-red-700 hover:bg-red-800 text-white p-3 rounded-lg"
+                  >
+                    Sage Error - Resubmit
+                  </Button>
+                  <Button
+                    onClick={() => updateJobStatus("total-jobs")}
+                    className="bg-black hover:bg-gray-800 text-white p-3 rounded-lg"
+                  >
+                    Total Jobs
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

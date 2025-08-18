@@ -86,6 +86,60 @@ router.get("/jobs/technician/:technicianId", (req, res) => {
   }
 });
 
+// Get active jobs by technician (in-progress and accepted)
+router.get("/jobs/technician/:technicianId/active", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const activeJobs = jobs.filter(
+      (job) =>
+        (job.assignedTechnician === technicianId ||
+         job.assistantTechnician === technicianId) &&
+        (job.status === "In Progress" || job.status === "Accepted")
+    );
+    res.json({ success: true, data: activeJobs });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch active jobs",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get job locations for technician (for location tracking)
+router.get("/jobs/technician/:technicianId/locations", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const technicianJobs = jobs.filter(
+      (job) =>
+        (job.assignedTechnician === technicianId ||
+         job.assistantTechnician === technicianId) &&
+        (job.status === "Assigned" || job.status === "Accepted" || job.status === "In Progress")
+    );
+
+    // Extract location data from jobs
+    const jobLocations = technicianJobs.map((job) => ({
+      id: `loc-${job.id}`,
+      jobId: job.id,
+      title: job.title,
+      workOrderNumber: job.workOrderNumber,
+      latitude: job.client?.coordinates?.lat || -26.2041,
+      longitude: job.client?.coordinates?.lng || 28.0473,
+      address: job.client?.address || "Unknown address",
+      proximityRadius: 100, // Default 100 meters
+      coordinates: job.client?.coordinates,
+    }));
+
+    res.json({ success: true, data: jobLocations });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch job locations",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Get jobs by status
 router.get("/jobs/status/:status", (req, res) => {
   try {
@@ -118,6 +172,33 @@ router.get("/jobs/:jobId", (req, res) => {
     res.status(500).json({
       success: false,
       error: "Failed to fetch job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get job status for polling
+router.get("/jobs/:jobId/status", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const job = jobs.find((j) => j.id === jobId);
+
+    if (!job) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        status: job.status,
+        lastModified: job.lastModified,
+        id: job.id
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch job status",
       details: error instanceof Error ? error.message : "Unknown error",
     });
   }

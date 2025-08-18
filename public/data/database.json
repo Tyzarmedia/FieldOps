@@ -438,7 +438,10 @@
       "address": "123 Business Ave, Downtown",
       "manager": "Sarah Wilson",
       "employees": 25,
-      "departments": ["Field Operations", "IT Support"],
+      "departments": [
+        "Field Operations",
+        "IT Support"
+      ],
       "performance": {
         "efficiency": 92.1,
         "revenue": 450000,
@@ -451,7 +454,11 @@
       "address": "456 Corporate Blvd, Midtown",
       "manager": "David Brown",
       "employees": 30,
-      "departments": ["Fleet Management", "Network Operations", "HR"],
+      "departments": [
+        "Fleet Management",
+        "Network Operations",
+        "HR"
+      ],
       "performance": {
         "efficiency": 89.3,
         "revenue": 520000,
@@ -464,7 +471,10 @@
       "address": "789 Service St, Uptown",
       "manager": "Lisa Garcia",
       "employees": 20,
-      "departments": ["Customer Service", "Sales"],
+      "departments": [
+        "Customer Service",
+        "Sales"
+      ],
       "performance": {
         "efficiency": 91.8,
         "revenue": 380000,
@@ -613,5 +623,50 @@
         "expiryDate": "2024-02-28"
       }
     ]
-  }
+  },
+  "overtimeSessions": [
+    {
+      "id": "OT-1754814844162",
+      "technicianId": "tech001",
+      "startTime": "2025-08-09T15:00:49.273Z",
+      "totalHours": 217.15054388888888,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Weekend work on 8/10/2025",
+      "status": "pending",
+      "rate": 200,
+      "totalAmount": 43430.10877777777,
+      "createdAt": "2025-08-18T15:53:55.397Z",
+      "updatedAt": "2025-08-18T16:09:54.704Z"
+    },
+    {
+      "id": "OT-1755533420064",
+      "technicianId": "tech001",
+      "startTime": "2025-08-09T15:00:49.273Z",
+      "totalHours": 217.3798588888889,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Extended hours - worked beyond 8 hours",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 32606.978833333334,
+      "createdAt": "2025-08-18T16:10:23.419Z",
+      "updatedAt": "2025-08-18T16:23:39.351Z",
+      "endTime": "2025-08-18T16:23:36.765Z"
+    },
+    {
+      "id": "OT-1755534600134",
+      "technicianId": "tech001",
+      "startTime": "2025-08-09T15:00:49.273Z",
+      "totalHours": 0,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Extended hours - worked beyond 8 hours",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 0,
+      "createdAt": "2025-08-18T16:30:02.879Z",
+      "updatedAt": "2025-08-18T16:30:02.879Z"
+    }
+  ]
 }

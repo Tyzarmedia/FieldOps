@@ -21,6 +21,9 @@ import stockManagementRouter from "./routes/stock-management";
 import notificationsRouter from "./routes/notifications";
 import technicianStatusRouter from "./routes/technician-status";
 import networkAssessmentsRouter from "./routes/network-assessments";
+import overtimeRouter from "./routes/overtime";
+import { getOvertimeRate } from "./routes/payroll";
+import warehouseStockRouter from "./routes/warehouse-stock";
 
 export function createServer() {
   const app = express();
@@ -51,6 +54,15 @@ export function createServer() {
 
   // Network Assessments API
   app.use("/api/network-assessments", networkAssessmentsRouter);
+
+  // Overtime API
+  app.use("/api/overtime", overtimeRouter);
+
+  // Payroll API
+  app.get("/api/payroll/overtime-rate/:technicianId", getOvertimeRate);
+
+  // Warehouse Stock API
+  app.use("/api/warehouse-stock", warehouseStockRouter);
 
   // Job Management API
   app.get("/api/jobs", getJobs);

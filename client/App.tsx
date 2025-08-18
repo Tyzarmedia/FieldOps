@@ -56,6 +56,11 @@ import ApplyLeaveScreen from "./pages/ApplyLeaveScreen";
 import NetworkAssessmentScreen from "./pages/NetworkAssessmentScreen";
 import ManagerNetworkAssessmentsScreen from "./pages/ManagerNetworkAssessmentsScreen";
 import TechnicianSettingsScreen from "./pages/TechnicianSettingsScreen";
+import LocationTestScreen from "./pages/LocationTestScreen";
+import StockRequestScreen from "./pages/StockRequestScreen";
+import StockManagerDashboard from "./pages/StockManagerDashboard";
+import EnhancedCoordinatorDashboard from "./pages/EnhancedCoordinatorDashboard";
+import EnhancedManagerDashboard from "./pages/EnhancedManagerDashboard";
 
 const queryClient = new QueryClient();
 
@@ -152,9 +157,9 @@ function DashboardRouter() {
     case "CEO":
       return <CeoDashboard />;
     case "Manager":
-      return <ManagerDashboard />;
+      return <EnhancedManagerDashboard />;
     case "Coordinator":
-      return <CoordinatorDashboard />;
+      return <EnhancedCoordinatorDashboard />;
     case "Technician":
       // Redirect to mobile-first route
       return <Navigate to="/technician" replace />;
@@ -300,6 +305,26 @@ export default function App() {
               <Route
                 path="/technician-settings"
                 element={<TechnicianSettingsScreen />}
+              />
+              <Route
+                path="/location-test"
+                element={<LocationTestScreen />}
+              />
+              <Route
+                path="/stock-requests"
+                element={<StockRequestScreen />}
+              />
+              <Route
+                path="/stock-manager"
+                element={<StockManagerDashboard />}
+              />
+              <Route
+                path="/enhanced-coordinator"
+                element={<EnhancedCoordinatorDashboard />}
+              />
+              <Route
+                path="/enhanced-manager"
+                element={<EnhancedManagerDashboard />}
               />
               <Route
                 path="/fleet"

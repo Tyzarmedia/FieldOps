@@ -100,4 +100,51 @@ router.post("/", (req, res) => {
   }
 });
 
+// Create overtime notification
+router.post("/overtime", (req, res) => {
+  try {
+    const { sessionId, technicianId, action, totalHours, workOrderNumbers, reason, timestamp } = req.body;
+
+    let title, message;
+    if (action === 'started') {
+      title = 'Overtime Session Started';
+      message = `Overtime tracking started. Reason: ${reason}`;
+    } else if (action === 'ended') {
+      title = 'Overtime Session Completed';
+      message = `Overtime session completed. Total hours: ${totalHours?.toFixed(1) || 0}h`;
+    } else {
+      title = 'Overtime Update';
+      message = `Overtime session ${action}`;
+    }
+
+    const notification = createNotification({
+      technicianId,
+      type: 'overtime',
+      title,
+      message,
+      priority: 'medium',
+      metadata: {
+        sessionId,
+        action,
+        totalHours,
+        workOrderNumbers,
+        reason,
+        timestamp
+      }
+    });
+
+    res.json({
+      success: true,
+      data: notification,
+      message: "Overtime notification created successfully",
+    });
+  } catch (error) {
+    console.error("Error creating overtime notification:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create overtime notification",
+    });
+  }
+});
+
 export default router;

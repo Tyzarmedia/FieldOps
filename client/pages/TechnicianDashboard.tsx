@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NotificationSystem } from "@/components/NotificationSystem";
+import { locationTrackingService } from "@/services/locationTrackingService";
+import { overtimeTrackingService, OvertimeSession } from "@/services/overtimeTrackingService";
+import { logoutDetectionService } from "@/services/logoutDetectionService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +24,8 @@ import {
   LogOut,
   UserCheck,
   AlertCircle,
+  MapPin,
+  Navigation,
 } from "lucide-react";
 
 interface JobStats {
@@ -55,6 +60,11 @@ export default function TechnicianDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [networkErrors, setNetworkErrors] = useState(0);
   const [lastSuccessfulFetch, setLastSuccessfulFetch] = useState(Date.now());
+  const [isLocationTracking, setIsLocationTracking] = useState(false);
+  const [nearbyJob, setNearbyJob] = useState<{jobId: string; distance: number} | null>(null);
+  const [totalDistance, setTotalDistance] = useState(0);
+  const [overtimeSession, setOvertimeSession] = useState<OvertimeSession | null>(null);
+  const [isOvertimeActive, setIsOvertimeActive] = useState(false);
   const navigate = useNavigate();
 
   // Fetch user data from database
@@ -321,11 +331,85 @@ export default function TechnicianDashboard() {
       const minutes = diffInMinutes % 60;
       setWorkingHours(`${hours}:${minutes.toString().padStart(2, "0")}`);
 
-      // Simulate distance based on time (0.5 km per hour)
-      const distanceKm = (diffInMinutes / 60) * 0.5;
-      setDistanceTraveled(distanceKm.toFixed(1));
+      // Use real distance tracking if available, otherwise simulate
+      const realDistance = locationTrackingService.getTotalDistanceTraveled();
+      if (realDistance > 0) {
+        setDistanceTraveled(realDistance.toFixed(1));
+      } else {
+        // Fallback to simulation if no real tracking data
+        const distanceKm = (diffInMinutes / 60) * 0.5;
+        setDistanceTraveled(distanceKm.toFixed(1));
+      }
     }
   };
+
+  // Initialize location and overtime tracking
+  useEffect(() => {
+    const initializeTracking = async () => {
+      const employeeId = localStorage.getItem("employeeId") || "tech001";
+
+      // Start comprehensive location tracking
+      const trackingStarted = await locationTrackingService.startTracking(employeeId);
+      setIsLocationTracking(trackingStarted);
+
+      if (trackingStarted) {
+        // Add location update callback
+        locationTrackingService.addLocationCallback((location) => {
+          console.log('Location update received:', location);
+
+          // Check if near any job
+          const proximityCheck = locationTrackingService.isNearAnyJob();
+          if (proximityCheck.isNear && proximityCheck.jobId) {
+            setNearbyJob({
+              jobId: proximityCheck.jobId,
+              distance: proximityCheck.distance || 0
+            });
+          } else {
+            setNearbyJob(null);
+          }
+
+          // Update total distance
+          setTotalDistance(locationTrackingService.getTotalDistanceTraveled());
+        });
+
+        console.log('Location tracking initialized successfully');
+      } else {
+        console.error('Failed to initialize location tracking');
+      }
+
+      // Start overtime tracking
+      overtimeTrackingService.startTracking(employeeId);
+      console.log('Overtime tracking initialized successfully');
+
+      // Start logout detection
+      logoutDetectionService.startDetection(employeeId);
+      console.log('Logout detection initialized successfully');
+
+      // Check current overtime session
+      const currentSession = overtimeTrackingService.getCurrentSession();
+      if (currentSession) {
+        setOvertimeSession(currentSession);
+        setIsOvertimeActive(true);
+      }
+    };
+
+    initializeTracking();
+
+    // Set up overtime check interval
+    const overtimeCheckInterval = setInterval(() => {
+      const currentSession = overtimeTrackingService.getCurrentSession();
+      setOvertimeSession(currentSession);
+      setIsOvertimeActive(!!currentSession);
+    }, 30000); // Check every 30 seconds
+
+    // Cleanup on unmount
+    return () => {
+      locationTrackingService.stopTracking();
+      overtimeTrackingService.stopTracking();
+      logoutDetectionService.stopDetection();
+      clearInterval(overtimeCheckInterval);
+    };
+  }, []);
 
   // Initial data loading
   useEffect(() => {
@@ -456,12 +540,22 @@ export default function TechnicianDashboard() {
   };
 
   const handleLogout = () => {
+    // Trigger logout detection for auto clock-out
+    logoutDetectionService.forceLogout();
+
+    // Clear user session data
     localStorage.removeItem("userRole");
     localStorage.removeItem("userEmail");
+
     navigate("/login");
   };
 
   const handleClockOut = () => {
+    // Stop all tracking services before clocking out
+    logoutDetectionService.stopDetection();
+    locationTrackingService.stopTracking();
+    overtimeTrackingService.stopTracking();
+
     navigate("/clock-in");
   };
 
@@ -565,6 +659,35 @@ export default function TechnicianDashboard() {
           </Button>
 
           <div className="flex items-center space-x-2">
+            {/* Location Tracking Status */}
+            {isLocationTracking ? (
+              <div className="flex items-center space-x-1 bg-green-500/20 px-2 py-1 rounded-lg">
+                <Navigation className="h-4 w-4 text-green-200" />
+                <span className="text-xs text-green-200">GPS Active</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-1 bg-yellow-500/20 px-2 py-1 rounded-lg">
+                <MapPin className="h-4 w-4 text-yellow-200" />
+                <span className="text-xs text-yellow-200">GPS Off</span>
+              </div>
+            )}
+
+            {/* Nearby Job Indicator */}
+            {nearbyJob && (
+              <div className="flex items-center space-x-1 bg-blue-500/20 px-2 py-1 rounded-lg">
+                <Briefcase className="h-4 w-4 text-blue-200" />
+                <span className="text-xs text-blue-200">Near Job</span>
+              </div>
+            )}
+
+            {/* Overtime Indicator */}
+            {isOvertimeActive && (
+              <div className="flex items-center space-x-1 bg-purple-500/20 px-2 py-1 rounded-lg">
+                <Timer className="h-4 w-4 text-purple-200" />
+                <span className="text-xs text-purple-200">Overtime</span>
+              </div>
+            )}
+
             {/* Network Status Indicator */}
             {networkErrors > 0 && (
               <div className="flex items-center space-x-1 bg-red-500/20 px-2 py-1 rounded-lg">
@@ -585,6 +708,34 @@ export default function TechnicianDashboard() {
             </Button>
           </div>
         </div>
+
+        {/* Nearby Job Alert */}
+        {nearbyJob && (
+          <div className="text-center mb-4">
+            <div className="bg-blue-500/20 rounded-lg px-4 py-2 inline-block">
+              <div className="text-sm font-medium">
+                📍 You're near a job location
+              </div>
+              <div className="text-xs text-white/80">
+                Job will auto-start in proximity
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Overtime Alert */}
+        {isOvertimeActive && overtimeSession && (
+          <div className="text-center mb-4">
+            <div className="bg-purple-500/20 rounded-lg px-4 py-2 inline-block">
+              <div className="text-sm font-medium">
+                ⏰ Overtime automatically detected
+              </div>
+              <div className="text-xs text-white/80">
+                {overtimeSession.totalHours.toFixed(1)}h | WO: {overtimeSession.workOrderNumbers.join(', ') || 'General'}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Stats Display */}
         <div className="flex justify-between items-center">
