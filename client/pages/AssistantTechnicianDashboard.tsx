@@ -348,32 +348,47 @@ export default function AssistantTechnicianDashboard() {
           <h3 className="font-semibold text-gray-800 mb-4">
             Today's Job Status
           </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {stats.assignedJobs}
-              </div>
-              <div className="text-sm text-gray-600">Assigned</div>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+              <span className="ml-2 text-gray-600">Loading jobs...</span>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">
-                {stats.acceptedJobs}
+          ) : assignedTechnician ? (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">
+                  {stats.assignedJobs}
+                </div>
+                <div className="text-sm text-gray-600">Assigned</div>
               </div>
-              <div className="text-sm text-gray-600">Accepted</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {stats.inProgressJobs}
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {stats.inProgressJobs}
+                </div>
+                <div className="text-sm text-gray-600">In Progress</div>
               </div>
-              <div className="text-sm text-gray-600">In Progress</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">
-                {stats.completedJobs}
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">
+                  {stats.completedJobs}
+                </div>
+                <div className="text-sm text-gray-600">Completed</div>
               </div>
-              <div className="text-sm text-gray-600">Completed</div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">
+                  {stats.pendingReview}
+                </div>
+                <div className="text-sm text-gray-600">Pending Review</div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="text-center py-8">
+              <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-600 mb-2">No technician assigned</p>
+              <p className="text-sm text-gray-500">
+                Clock in with a technician to see assigned jobs
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Dashboard Cards Grid - Only 4 cards */}
