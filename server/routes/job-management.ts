@@ -6,6 +6,51 @@ import path from "path";
 
 const router = Router();
 
+// Helper function to check if assistant is working with technician
+const isAssistantWorkingWithTechnician = (assistantId: string, technicianId: string): boolean => {
+  try {
+    const assignmentsPath = path.join(process.cwd(), "public/data/technician-assistant-assignments.json");
+
+    if (!fs.existsSync(assignmentsPath)) {
+      return false;
+    }
+
+    const assignments = JSON.parse(fs.readFileSync(assignmentsPath, "utf-8"));
+    const activeAssignment = assignments.find((a: any) =>
+      a.technicianId === technicianId &&
+      a.assistantId === assistantId &&
+      a.status === "active"
+    );
+
+    return !!activeAssignment;
+  } catch (error) {
+    console.error("Error checking assistant assignment:", error);
+    return false;
+  }
+};
+
+// Helper function to get technician for assistant
+const getTechnicianForAssistant = (assistantId: string): string | null => {
+  try {
+    const assignmentsPath = path.join(process.cwd(), "public/data/technician-assistant-assignments.json");
+
+    if (!fs.existsSync(assignmentsPath)) {
+      return null;
+    }
+
+    const assignments = JSON.parse(fs.readFileSync(assignmentsPath, "utf-8"));
+    const activeAssignment = assignments.find((a: any) =>
+      a.assistantId === assistantId &&
+      a.status === "active"
+    );
+
+    return activeAssignment ? activeAssignment.technicianId : null;
+  } catch (error) {
+    console.error("Error getting technician for assistant:", error);
+    return null;
+  }
+};
+
 // Mock data for demonstration - in real app this would connect to database
 let jobs: any[] = [
   {
