@@ -327,12 +327,16 @@ export default function ClockInScreen({
       setDailyClockIns(updatedClockIns);
 
       // Request location permission and start tracking
-      const locationGranted = await locationService.handleClockIn();
+      const clockInResult = await locationService.handleClockIn();
 
-      if (locationGranted) {
+      if (clockInResult.hasLocation) {
         showNotification.locationGranted();
       } else {
-        showNotification.locationDenied();
+        // Show notification that app continues without location
+        showNotification.info(
+          'Clock-in successful! App is using office location since location access was denied.'
+        );
+        console.log('Clock-in completed without location permissions - using fallback location');
       }
 
       // Create technician-assistant assignment if assistant selected
