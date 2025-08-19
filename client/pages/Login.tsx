@@ -44,6 +44,17 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
+      // Check if the response is ok before trying to parse JSON
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Check if the response has a body and is valid JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid response format - expected JSON");
+      }
+
       const data: LoginResponse = await response.json();
 
       if (data.success && data.token && data.user) {
@@ -66,7 +77,17 @@ export default function Login() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("Network error. Please check your connection and try again.");
+
+      // More specific error handling
+      if (error instanceof TypeError && error.message.includes("body stream already read")) {
+        setError("Authentication request failed. Please try again.");
+      } else if (error instanceof Error) {
+        setError(error.message.includes("HTTP error") ?
+          "Server error. Please try again later." :
+          "Network error. Please check your connection and try again.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
       setIsLoading(false);
     }
   };
