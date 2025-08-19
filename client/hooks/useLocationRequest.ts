@@ -106,12 +106,20 @@ export function useLocationRequest(options: UseLocationRequestOptions = {}) {
         if (cancelled) return null;
 
         // Use proper error logging to avoid [object Object] display
-        if (error && typeof error === 'object' && 'code' in error && typeof error.code === 'number') {
+        if (
+          error &&
+          typeof error === "object" &&
+          "code" in error &&
+          typeof error.code === "number"
+        ) {
           // This is a GeolocationPositionError
-          geolocationUtils.logGeolocationError(error as GeolocationPositionError, 'useLocationRequest');
+          geolocationUtils.logGeolocationError(
+            error as GeolocationPositionError,
+            "useLocationRequest",
+          );
         } else {
           // This is some other error
-          logError(error, 'useLocationRequest');
+          logError(error, "useLocationRequest");
         }
 
         const geoError = error as GeolocationError;

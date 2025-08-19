@@ -122,7 +122,9 @@ router.get("/jobs/technician/:technicianId", (req, res) => {
         job.assistantTechnician === technicianId,
     );
 
-    console.log(`Found ${technicianJobs.length} jobs for technician ${technicianId}`);
+    console.log(
+      `Found ${technicianJobs.length} jobs for technician ${technicianId}`,
+    );
     res.json({ success: true, data: technicianJobs });
   } catch (error) {
     res.status(500).json({
@@ -396,8 +398,8 @@ router.put("/jobs/:jobId/assign", (req, res) => {
           metadata: {
             jobId,
             workOrderNumber: jobs[jobIndex].workOrderNumber,
-            navigateTo: `/technician/jobs/${jobId}`
-          }
+            navigateTo: `/technician/jobs/${jobId}`,
+          },
         });
       } catch (error) {
         console.warn("Error creating job assignment notification:", error);
@@ -522,10 +524,10 @@ router.put("/jobs/:jobId/status", (req, res) => {
     }
 
     // Save back to database\n    db.jobs = jobs;\n    if (!writeDatabase(db)) {\n      return res.status(500).json({\n        success: false,\n        error: \"Failed to save job status update\",\n      });\n    }\n\n    console.log(`Job ${jobId} status updated to ${status}`);\n\n    const responseMessage =
-      actorRole === "assistant" &&
-      jobs[jobIndex].status === "Pending Technician Review"
-        ? "Job completion submitted for technician review"
-        : "Job status updated successfully";
+    actorRole === "assistant" &&
+    jobs[jobIndex].status === "Pending Technician Review"
+      ? "Job completion submitted for technician review"
+      : "Job status updated successfully";
 
     res.json({
       success: true,

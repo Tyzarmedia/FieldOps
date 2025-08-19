@@ -331,11 +331,11 @@ export default function ClockInScreen({
       const clockInResult = await locationService.handleClockIn();
 
       if (clockInResult.hasLocation) {
-        console.log('Clock-in with GPS successful');
+        console.log("Clock-in with GPS successful");
       } else {
         // Clock-in continues without blocking
         // No blocking notification
-        console.log('Clock-in completed - GPS will retry in background');
+        console.log("Clock-in completed - GPS will retry in background");
       }
 
       // Create technician-assistant assignment if assistant selected
@@ -411,10 +411,7 @@ export default function ClockInScreen({
     setIsProcessingClockIn(true);
 
     const clockInTime = new Date().toISOString();
-    const updatedClockIns = [
-      ...dailyClockIns,
-      { clockIn: clockInTime },
-    ];
+    const updatedClockIns = [...dailyClockIns, { clockIn: clockInTime }];
 
     // Reset distance for new session
     setTotalDistance(0);
@@ -429,9 +426,9 @@ export default function ClockInScreen({
 
     if (result.success) {
       showNotification.success(
-        'Clock-in successful! Using office location since GPS is unavailable.'
+        "Clock-in successful! Using office location since GPS is unavailable.",
       );
-      console.log('Force clock-in completed:', result.location);
+      console.log("Force clock-in completed:", result.location);
     }
 
     // Create technician-assistant assignment if assistant selected

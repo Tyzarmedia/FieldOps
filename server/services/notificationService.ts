@@ -53,29 +53,36 @@ export let notifications: Notification[] = [
   },
 ];
 
-export const createNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+export const createNotification = (
+  notification: Omit<Notification, "id" | "timestamp" | "read">,
+) => {
   const newNotification: Notification = {
     id: (Date.now() + Math.random()).toString(),
     timestamp: new Date().toISOString(),
     read: false,
     deleted: false,
-    ...notification
+    ...notification,
   };
-  
+
   notifications.push(newNotification);
-  console.log('Notification created:', newNotification);
+  console.log("Notification created:", newNotification);
   return newNotification;
 };
 
 export const getNotifications = (technicianId: string) => {
-  return notifications.filter(n => n.technicianId === technicianId && !n.deleted);
+  return notifications.filter(
+    (n) => n.technicianId === technicianId && !n.deleted,
+  );
 };
 
-export const deleteNotification = (notificationId: string, technicianId: string) => {
+export const deleteNotification = (
+  notificationId: string,
+  technicianId: string,
+) => {
   const notificationIndex = notifications.findIndex(
-    n => n.id === notificationId && n.technicianId === technicianId
+    (n) => n.id === notificationId && n.technicianId === technicianId,
   );
-  
+
   if (notificationIndex !== -1) {
     notifications[notificationIndex].deleted = true;
     return true;
