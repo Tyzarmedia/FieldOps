@@ -133,6 +133,51 @@ router.get("/jobs/technician/:technicianId", (req, res) => {
   }
 });
 
+// Get jobs for assistant (based on current technician assignment)
+router.get("/jobs/assistant/:assistantId", (req, res) => {
+  try {
+    const { assistantId } = req.params;
+
+    // Find which technician this assistant is currently working with
+    const technicianId = getTechnicianForAssistant(assistantId);
+
+    if (!technicianId) {
+      return res.json({
+        success: true,
+        data: [],
+        message: "No active technician assignment found"
+      });
+    }
+
+    // Get jobs assigned to the technician
+    const technicianJobs = jobs.filter(
+      (job) => job.assignedTechnician === technicianId
+    );
+
+    // Add assistant relationship info to jobs
+    const jobsWithAssistantInfo = technicianJobs.map(job => ({
+      ...job,
+      assistantAccess: true,
+      workingWithTechnician: technicianId,
+      canModifyStatus: true, // Assistant can modify job status
+      requiresTechnicianReview: job.status === "Completed" // Completed jobs need technician review
+    }));
+
+    res.json({
+      success: true,
+      data: jobsWithAssistantInfo,
+      technicianId,
+      message: `Found ${jobsWithAssistantInfo.length} jobs from assigned technician`
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch assistant jobs",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Get active jobs by technician (in-progress and accepted)
 router.get("/jobs/technician/:technicianId/active", (req, res) => {
   try {
