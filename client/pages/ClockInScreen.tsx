@@ -333,11 +333,9 @@ export default function ClockInScreen({
       if (clockInResult.hasLocation) {
         console.log('Clock-in with GPS successful');
       } else {
-        // Show notification that app continues without location
-        showNotification.info(
-          'Clock-in successful! App is using office location since location access was denied.'
-        );
-        console.log('Clock-in completed without location permissions - using fallback location');
+        // Clock-in continues without blocking
+        // No blocking notification
+        console.log('Clock-in completed - GPS will retry in background');
       }
 
       // Create technician-assistant assignment if assistant selected

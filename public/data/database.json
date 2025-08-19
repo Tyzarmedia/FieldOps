@@ -1331,15 +1331,15 @@
       "id": "OT-1755634027360",
       "technicianId": "EMP001",
       "startTime": "2025-08-19T15:00:36.833Z",
-      "totalHours": 5.259726944444444,
+      "totalHours": 5.276388611111111,
       "isAutoDetected": true,
       "workOrderNumbers": [],
       "reason": "Late work after 17:00",
       "status": "pending",
       "rate": 195,
-      "totalAmount": 1025.6467541666666,
+      "totalAmount": 1028.8957791666667,
       "createdAt": "2025-08-19T20:07:08.470Z",
-      "updatedAt": "2025-08-19T20:16:12.973Z"
+      "updatedAt": "2025-08-19T20:17:13.179Z"
     },
     {
       "id": "OT-1755634153551",
