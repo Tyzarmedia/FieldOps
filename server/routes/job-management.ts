@@ -402,30 +402,55 @@ router.put("/jobs/:jobId/assign", (req, res) => {
   }
 });
 
-// Update job status (Technician actions)
+// Update job status (Technician and Assistant actions)
 router.put("/jobs/:jobId/status", (req, res) => {
   try {
     const { jobId } = req.params;
-    const { status, notes, technicianId } = req.body;
+    const { status, notes, technicianId, isAssistant, assistantId } = req.body;
 
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
     if (jobIndex === -1) {
       return res.status(404).json({ success: false, error: "Job not found" });
     }
 
-    // Verify technician is assigned to this job
     const job = jobs[jobIndex];
-    if (
-      job.assignedTechnician !== technicianId &&
-      job.assistantTechnician !== technicianId
-    ) {
+    let isAuthorized = false;
+    let actorId = technicianId;
+    let actorRole = "technician";
+
+    // Check authorization - technician or assistant
+    if (technicianId && (job.assignedTechnician === technicianId || job.assistantTechnician === technicianId)) {
+      isAuthorized = true;
+      actorId = technicianId;
+      actorRole = "technician";
+    } else if (isAssistant && assistantId) {
+      // Check if assistant is working with the assigned technician
+      const isWorkingWithTechnician = isAssistantWorkingWithTechnician(assistantId, job.assignedTechnician);
+      if (isWorkingWithTechnician) {
+        isAuthorized = true;
+        actorId = assistantId;
+        actorRole = "assistant";
+      }
+    }
+
+    if (!isAuthorized) {
       return res.status(403).json({
         success: false,
         error: "Not authorized to update this job",
       });
     }
 
-    jobs[jobIndex].status = status;
+    // Handle assistant closing job - needs technician review
+    if (actorRole === "assistant" && (status === "Completed" || status === "Closed")) {
+      jobs[jobIndex].status = "Pending Technician Review";
+      jobs[jobIndex].pendingReviewBy = job.assignedTechnician;
+      jobs[jobIndex].requestedStatus = status;
+      jobs[jobIndex].reviewRequestedBy = assistantId;
+      jobs[jobIndex].reviewRequestedAt = new Date().toISOString();
+    } else {
+      jobs[jobIndex].status = status;
+    }
+
     jobs[jobIndex].lastModified = new Date().toISOString();
 
     if (notes) {
@@ -434,20 +459,36 @@ router.put("/jobs/:jobId/status", (req, res) => {
       }
       jobs[jobIndex].notes.push({
         timestamp: new Date().toISOString(),
-        technician: technicianId,
+        technician: actorId,
+        role: actorRole,
         note: notes,
       });
     }
 
-    // Set completed date if job is being closed
-    if (status === "Completed" || status === "Closed") {
+    // Set completed date if job is being closed by technician
+    if (actorRole === "technician" && (status === "Completed" || status === "Closed")) {
       jobs[jobIndex].completedDate = new Date().toISOString();
     }
+
+    // Create notification for technician if assistant requested review
+    if (actorRole === "assistant" && jobs[jobIndex].status === "Pending Technician Review") {
+      createNotification({
+        recipientId: job.assignedTechnician,
+        type: "job_review_required",
+        title: "Job Review Required",
+        message: `Assistant has completed job ${job.workOrderNumber} and requires your review`,
+        data: { jobId, assistantId },
+      });
+    }
+
+    const responseMessage = actorRole === "assistant" && jobs[jobIndex].status === "Pending Technician Review"
+      ? "Job completion submitted for technician review"
+      : "Job status updated successfully";
 
     res.json({
       success: true,
       data: jobs[jobIndex],
-      message: "Job status updated successfully",
+      message: responseMessage,
     });
   } catch (error) {
     res.status(500).json({
