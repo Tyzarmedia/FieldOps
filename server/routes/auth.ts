@@ -42,6 +42,14 @@ export const authenticateToken = async (
 // POST /api/auth/login
 authRouter.post("/login", async (req: Request, res: Response) => {
   try {
+    // Ensure we have a valid request body
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid request body",
+      });
+    }
+
     const { email, password }: LoginRequest = req.body;
 
     if (!email || !password) {
@@ -53,17 +61,25 @@ authRouter.post("/login", async (req: Request, res: Response) => {
 
     const result = await authService.login({ email, password });
 
+    // Ensure we set proper headers
+    res.setHeader('Content-Type', 'application/json');
+
     if (result.success) {
-      res.status(200).json(result);
+      return res.status(200).json(result);
     } else {
-      res.status(401).json(result);
+      return res.status(401).json(result);
     }
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+
+    // Ensure we haven't already sent a response
+    if (!res.headersSent) {
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
   }
 });
 
