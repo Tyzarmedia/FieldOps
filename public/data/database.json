@@ -1112,15 +1112,16 @@
       "id": "OT-1755632380035",
       "technicianId": "EMP001",
       "startTime": "2025-08-19T15:00:12.690Z",
-      "totalHours": 4.674169444444445,
+      "totalHours": 4.6947222222222225,
       "isAutoDetected": true,
       "workOrderNumbers": [],
       "reason": "Late work after 17:00",
       "status": "pending",
       "rate": 150,
-      "totalAmount": 701.1254166666668,
+      "totalAmount": 704.2083333333334,
       "createdAt": "2025-08-19T19:39:40.966Z",
-      "updatedAt": "2025-08-19T19:40:40.638Z"
+      "updatedAt": "2025-08-19T19:41:54.346Z",
+      "endTime": "2025-08-19T19:41:53.690Z"
     }
   ]
 }
