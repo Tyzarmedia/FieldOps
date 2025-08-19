@@ -58,6 +58,7 @@ interface AIInsight {
 }
 
 export default function FleetOverviewDashboard() {
+  const navigate = useNavigate();
   const [selectedTimeframe, setSelectedTimeframe] = useState("week");
   const [aiQuestion, setAiQuestion] = useState("");
   const [aiResponse, setAiResponse] = useState("");
