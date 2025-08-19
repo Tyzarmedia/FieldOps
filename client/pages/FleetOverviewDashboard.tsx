@@ -92,25 +92,27 @@ export default function FleetOverviewDashboard() {
     };
   }, []);
 
-  // Calculate fleet KPIs from AVIS data
-  const fleetKPIs = {
-    totalVehicles: vehicles.length,
-    activeVehicles: vehicles.filter((v) => v.status === "Active").length,
-    inactiveVehicles: vehicles.filter((v) => v.status === "In Maintenance")
-      .length,
-    inspectionsDue: 6,
-    maintenanceQueue: vehicles.filter((v) => v.status === "In Maintenance")
-      .length,
-    complianceRate: 92,
-    avgFuelEfficiency:
-      vehicles.length > 0
-        ? vehicles.reduce((sum, v) => sum + v.fuel_efficiency, 0) /
-          vehicles.length
-        : 0,
-    totalMileage: vehicles.reduce((sum, v) => sum + v.mileage, 0),
-    activeAlerts: 8,
-    criticalAlerts: 2,
-  };
+  // Calculate fleet KPIs from AVIS data with memoization
+  const fleetKPIs = useMemo(() => {
+    const activeVehicles = vehicles.filter((v) => v.status === "Active");
+    const inMaintenanceVehicles = vehicles.filter((v) => v.status === "In Maintenance");
+
+    return {
+      totalVehicles: vehicles.length,
+      activeVehicles: activeVehicles.length,
+      inactiveVehicles: inMaintenanceVehicles.length,
+      inspectionsDue: 6,
+      maintenanceQueue: inMaintenanceVehicles.length,
+      complianceRate: 92,
+      avgFuelEfficiency:
+        vehicles.length > 0
+          ? vehicles.reduce((sum, v) => sum + (v.fuel_efficiency || 0), 0) / vehicles.length
+          : 0,
+      totalMileage: vehicles.reduce((sum, v) => sum + (v.mileage || 0), 0),
+      activeAlerts: 8,
+      criticalAlerts: 2,
+    };
+  }, [vehicles]);
 
   // AI Insights
   const aiInsights: AIInsight[] = [
