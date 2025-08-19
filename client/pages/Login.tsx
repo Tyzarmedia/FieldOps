@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { UserCheck, AlertCircle, Eye, EyeOff } from "lucide-react";
-import { makeSafeRequest } from "@/utils/auth";
+import { api, ApiError } from "@/utils/api";
 
 interface LoginResponse {
   success: boolean;
