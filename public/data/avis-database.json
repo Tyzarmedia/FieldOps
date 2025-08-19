@@ -1,0 +1,434 @@
+{
+  "vehicles": [
+    {
+      "vehicle_id": 1,
+      "plate_number": "CA12345",
+      "make": "Toyota",
+      "model": "Hilux",
+      "year": 2021,
+      "status": "Active",
+      "mileage": 15230,
+      "fuel_efficiency": 29.5,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-12-15",
+        "insurance_expiry": "2024-11-30",
+        "roadworthy_expiry": "2024-10-20",
+        "registration_expiry": "2024-09-15"
+      },
+      "last_service": "2024-01-10",
+      "next_service_due": "2024-04-10"
+    },
+    {
+      "vehicle_id": 2,
+      "plate_number": "CA54321",
+      "make": "Ford",
+      "model": "Ranger",
+      "year": 2020,
+      "status": "Active",
+      "mileage": 19800,
+      "fuel_efficiency": 27.0,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-08-25",
+        "insurance_expiry": "2024-12-05",
+        "roadworthy_expiry": "2024-11-15",
+        "registration_expiry": "2024-07-30"
+      },
+      "last_service": "2024-01-05",
+      "next_service_due": "2024-04-05"
+    },
+    {
+      "vehicle_id": 3,
+      "plate_number": "GP67890",
+      "make": "Isuzu",
+      "model": "D-Max",
+      "year": 2019,
+      "status": "Active",
+      "mileage": 25400,
+      "fuel_efficiency": 26.2,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-06-10",
+        "insurance_expiry": "2024-10-18",
+        "roadworthy_expiry": "2024-09-05",
+        "registration_expiry": "2024-08-12"
+      },
+      "last_service": "2023-12-20",
+      "next_service_due": "2024-03-20"
+    },
+    {
+      "vehicle_id": 4,
+      "plate_number": "GP09876",
+      "make": "Nissan",
+      "model": "Navara",
+      "year": 2022,
+      "status": "Active",
+      "mileage": 9400,
+      "fuel_efficiency": 30.1,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2025-01-20",
+        "insurance_expiry": "2024-12-30",
+        "roadworthy_expiry": "2024-11-25",
+        "registration_expiry": "2024-10-08"
+      },
+      "last_service": "2024-01-15",
+      "next_service_due": "2024-04-15"
+    },
+    {
+      "vehicle_id": 5,
+      "plate_number": "KZN11223",
+      "make": "VW",
+      "model": "Amarok",
+      "year": 2018,
+      "status": "In Maintenance",
+      "mileage": 40120,
+      "fuel_efficiency": 25.0,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-05-15",
+        "insurance_expiry": "2024-09-22",
+        "roadworthy_expiry": "2024-08-08",
+        "registration_expiry": "2024-07-18"
+      },
+      "last_service": "2024-01-18",
+      "next_service_due": "2024-04-18"
+    },
+    {
+      "vehicle_id": 6,
+      "plate_number": "KZN44556",
+      "make": "Mercedes-Benz",
+      "model": "Sprinter",
+      "year": 2021,
+      "status": "Active",
+      "mileage": 17800,
+      "fuel_efficiency": 22.5,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-11-08",
+        "insurance_expiry": "2024-12-12",
+        "roadworthy_expiry": "2024-10-30",
+        "registration_expiry": "2024-09-25"
+      },
+      "last_service": "2024-01-08",
+      "next_service_due": "2024-04-08"
+    },
+    {
+      "vehicle_id": 7,
+      "plate_number": "EC77889",
+      "make": "Hyundai",
+      "model": "H100",
+      "year": 2020,
+      "status": "Active",
+      "mileage": 22100,
+      "fuel_efficiency": 28.4,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-10-15",
+        "insurance_expiry": "2024-11-20",
+        "roadworthy_expiry": "2024-09-18",
+        "registration_expiry": "2024-08-28"
+      },
+      "last_service": "2024-01-12",
+      "next_service_due": "2024-04-12"
+    },
+    {
+      "vehicle_id": 8,
+      "plate_number": "EC99887",
+      "make": "Kia",
+      "model": "K2700",
+      "year": 2019,
+      "status": "Active",
+      "mileage": 34500,
+      "fuel_efficiency": 27.2,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-09-12",
+        "insurance_expiry": "2024-10-25",
+        "roadworthy_expiry": "2024-08-15",
+        "registration_expiry": "2024-07-22"
+      },
+      "last_service": "2023-12-28",
+      "next_service_due": "2024-03-28"
+    },
+    {
+      "vehicle_id": 9,
+      "plate_number": "NC12378",
+      "make": "Mazda",
+      "model": "BT-50",
+      "year": 2022,
+      "status": "Active",
+      "mileage": 6700,
+      "fuel_efficiency": 29.9,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2025-02-10",
+        "insurance_expiry": "2024-12-18",
+        "roadworthy_expiry": "2024-11-28",
+        "registration_expiry": "2024-10-05"
+      },
+      "last_service": "2024-01-20",
+      "next_service_due": "2024-04-20"
+    },
+    {
+      "vehicle_id": 10,
+      "plate_number": "NC87654",
+      "make": "Chevrolet",
+      "model": "Utility",
+      "year": 2018,
+      "status": "Active",
+      "mileage": 48900,
+      "fuel_efficiency": 24.8,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-07-08",
+        "insurance_expiry": "2024-09-15",
+        "roadworthy_expiry": "2024-08-20",
+        "registration_expiry": "2024-06-30"
+      },
+      "last_service": "2024-01-03",
+      "next_service_due": "2024-04-03"
+    },
+    {
+      "vehicle_id": 11,
+      "plate_number": "FS11234",
+      "make": "Toyota",
+      "model": "Quantum",
+      "year": 2019,
+      "status": "In Maintenance",
+      "mileage": 53000,
+      "fuel_efficiency": 23.0,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-08-18",
+        "insurance_expiry": "2024-10-12",
+        "roadworthy_expiry": "2024-09-08",
+        "registration_expiry": "2024-07-25"
+      },
+      "last_service": "2024-01-25",
+      "next_service_due": "2024-04-25"
+    },
+    {
+      "vehicle_id": 12,
+      "plate_number": "FS55667",
+      "make": "Ford",
+      "model": "Transit",
+      "year": 2021,
+      "status": "Active",
+      "mileage": 13400,
+      "fuel_efficiency": 27.8,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-12-05",
+        "insurance_expiry": "2024-11-18",
+        "roadworthy_expiry": "2024-10-22",
+        "registration_expiry": "2024-09-12"
+      },
+      "last_service": "2024-01-22",
+      "next_service_due": "2024-04-22"
+    },
+    {
+      "vehicle_id": 13,
+      "plate_number": "LIM90876",
+      "make": "Isuzu",
+      "model": "KB250",
+      "year": 2020,
+      "status": "Active",
+      "mileage": 21300,
+      "fuel_efficiency": 26.9,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-10-28",
+        "insurance_expiry": "2024-12-08",
+        "roadworthy_expiry": "2024-11-12",
+        "registration_expiry": "2024-08-30"
+      },
+      "last_service": "2024-01-14",
+      "next_service_due": "2024-04-14"
+    },
+    {
+      "vehicle_id": 14,
+      "plate_number": "LIM90877",
+      "make": "Toyota",
+      "model": "Corolla Quest",
+      "year": 2022,
+      "status": "Active",
+      "mileage": 8900,
+      "fuel_efficiency": 32.0,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2025-01-15",
+        "insurance_expiry": "2024-12-22",
+        "roadworthy_expiry": "2024-11-08",
+        "registration_expiry": "2024-10-18"
+      },
+      "last_service": "2024-01-28",
+      "next_service_due": "2024-04-28"
+    },
+    {
+      "vehicle_id": 15,
+      "plate_number": "NW77812",
+      "make": "Renault",
+      "model": "Kangoo",
+      "year": 2019,
+      "status": "Active",
+      "mileage": 27400,
+      "fuel_efficiency": 29.0,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-09-20",
+        "insurance_expiry": "2024-11-05",
+        "roadworthy_expiry": "2024-10-15",
+        "registration_expiry": "2024-08-08"
+      },
+      "last_service": "2024-01-16",
+      "next_service_due": "2024-04-16"
+    },
+    {
+      "vehicle_id": 16,
+      "plate_number": "NW33445",
+      "make": "Peugeot",
+      "model": "Partner",
+      "year": 2018,
+      "status": "Active",
+      "mileage": 31200,
+      "fuel_efficiency": 28.7,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-07-12",
+        "insurance_expiry": "2024-09-28",
+        "roadworthy_expiry": "2024-08-25",
+        "registration_expiry": "2024-06-18"
+      },
+      "last_service": "2024-01-06",
+      "next_service_due": "2024-04-06"
+    },
+    {
+      "vehicle_id": 17,
+      "plate_number": "MP44556",
+      "make": "Nissan",
+      "model": "NP200",
+      "year": 2021,
+      "status": "Active",
+      "mileage": 14500,
+      "fuel_efficiency": 31.5,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-11-22",
+        "insurance_expiry": "2024-12-15",
+        "roadworthy_expiry": "2024-10-08",
+        "registration_expiry": "2024-09-20"
+      },
+      "last_service": "2024-01-30",
+      "next_service_due": "2024-04-30"
+    },
+    {
+      "vehicle_id": 18,
+      "plate_number": "MP66778",
+      "make": "Mahindra",
+      "model": "Bolero",
+      "year": 2019,
+      "status": "Active",
+      "mileage": 36200,
+      "fuel_efficiency": 26.1,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-08-05",
+        "insurance_expiry": "2024-10-20",
+        "roadworthy_expiry": "2024-09-12",
+        "registration_expiry": "2024-07-15"
+      },
+      "last_service": "2024-01-04",
+      "next_service_due": "2024-04-04"
+    },
+    {
+      "vehicle_id": 19,
+      "plate_number": "WC55678",
+      "make": "Toyota",
+      "model": "Fortuner",
+      "year": 2020,
+      "status": "Active",
+      "mileage": 22800,
+      "fuel_efficiency": 24.5,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-10-30",
+        "insurance_expiry": "2024-12-02",
+        "roadworthy_expiry": "2024-11-15",
+        "registration_expiry": "2024-09-08"
+      },
+      "last_service": "2024-01-26",
+      "next_service_due": "2024-04-26"
+    },
+    {
+      "vehicle_id": 20,
+      "plate_number": "WC99881",
+      "make": "Mitsubishi",
+      "model": "Triton",
+      "year": 2021,
+      "status": "Active",
+      "mileage": 16400,
+      "fuel_efficiency": 28.9,
+      "assigned_driver": "Not Assigned",
+      "compliance": {
+        "license_expiry": "2024-12-28",
+        "insurance_expiry": "2024-11-30",
+        "roadworthy_expiry": "2024-10-25",
+        "registration_expiry": "2024-09-18"
+      },
+      "last_service": "2024-01-24",
+      "next_service_due": "2024-04-24"
+    }
+  ],
+  "drivers": [
+    {
+      "driver_id": 1,
+      "name": "Dyondzani Clement Masinge",
+      "employee_id": "EMP001",
+      "license_number": "14001234567890",
+      "license_expiry": "2025-03-15",
+      "status": "Available"
+    },
+    {
+      "driver_id": 2,
+      "name": "Thabo Matlou",
+      "employee_id": "EMP002",
+      "license_number": "14001234567891",
+      "license_expiry": "2024-11-20",
+      "status": "Available"
+    },
+    {
+      "driver_id": 3,
+      "name": "Thabitha Ndlovu",
+      "employee_id": "EMP003",
+      "license_number": "14001234567892",
+      "license_expiry": "2024-08-10",
+      "status": "Available"
+    },
+    {
+      "driver_id": 4,
+      "name": "Mike Johnson",
+      "employee_id": "EMP011",
+      "license_number": "14001234567893",
+      "license_expiry": "2024-12-05",
+      "status": "Available"
+    },
+    {
+      "driver_id": 5,
+      "name": "Sarah Williams",
+      "employee_id": "EMP012",
+      "license_number": "14001234567894",
+      "license_expiry": "2025-01-18",
+      "status": "Available"
+    },
+    {
+      "driver_id": 6,
+      "name": "David Brown",
+      "employee_id": "EMP013",
+      "license_number": "14001234567895",
+      "license_expiry": "2024-09-30",
+      "status": "Available"
+    }
+  ]
+}
