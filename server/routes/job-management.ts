@@ -183,6 +183,7 @@ router.get("/jobs/assistant/:assistantId", (req, res) => {
 router.get("/jobs/technician/:technicianId/active", (req, res) => {
   try {
     const { technicianId } = req.params;
+    const jobs = getJobsFromDatabase();
     const activeJobs = jobs.filter(
       (job) =>
         (job.assignedTechnician === technicianId ||
