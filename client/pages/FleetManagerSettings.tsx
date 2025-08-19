@@ -44,7 +44,7 @@ import {
 export default function FleetManagerSettings() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profile, setProfile] = useState({
     firstName: "Nancy",
@@ -58,7 +58,11 @@ export default function FleetManagerSettings() {
     dateJoined: "2019-03-15",
     employeeId: "FM-001",
     licenseNumber: "FL-123456",
-    certifications: ["Fleet Management Certified", "Safety Inspector", "Logistics Professional"],
+    certifications: [
+      "Fleet Management Certified",
+      "Safety Inspector",
+      "Logistics Professional",
+    ],
   });
 
   const [notifications, setNotifications] = useState({
@@ -133,16 +137,21 @@ export default function FleetManagerSettings() {
       systemPreferences,
       profileImage,
     };
-    
+
     localStorage.setItem("fleetManagerSettings", JSON.stringify(settingsData));
-    
+
     // Show success message
     alert("Settings saved successfully!");
     navigate("/fleet");
   };
 
   const handleExportSettings = () => {
-    const settingsData = { profile, notifications, fleetPreferences, systemPreferences };
+    const settingsData = {
+      profile,
+      notifications,
+      fleetPreferences,
+      systemPreferences,
+    };
     const blob = new Blob([JSON.stringify(settingsData, null, 2)], {
       type: "application/json",
     });
@@ -155,7 +164,9 @@ export default function FleetManagerSettings() {
   };
 
   const handleResetToDefaults = () => {
-    if (window.confirm("Are you sure you want to reset all settings to defaults?")) {
+    if (
+      window.confirm("Are you sure you want to reset all settings to defaults?")
+    ) {
       // Reset to default values
       setNotifications({
         emailNotifications: true,
@@ -169,7 +180,7 @@ export default function FleetManagerSettings() {
         weeklyReports: false,
         inspectionReminders: true,
       });
-      
+
       setFleetPreferences({
         defaultDashboard: "overview",
         autoRefreshInterval: "30",
@@ -183,7 +194,7 @@ export default function FleetManagerSettings() {
         maintenanceReminderDays: "7",
         inspectionReminderDays: "14",
       });
-      
+
       alert("Settings reset to defaults!");
     }
   };
@@ -203,7 +214,9 @@ export default function FleetManagerSettings() {
               Back to Fleet
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Fleet Manager Settings</h1>
+              <h1 className="text-3xl font-bold text-foreground">
+                Fleet Manager Settings
+              </h1>
               <p className="text-muted-foreground mt-1">
                 Manage your profile and fleet management preferences
               </p>
@@ -288,8 +301,12 @@ export default function FleetManagerSettings() {
                     <p className="font-medium text-lg">
                       {profile.firstName} {profile.lastName}
                     </p>
-                    <p className="text-sm text-muted-foreground">{profile.position}</p>
-                    <p className="text-sm text-muted-foreground">{profile.department}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {profile.position}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {profile.department}
+                    </p>
                     <Badge variant="secondary" className="mt-2">
                       {profile.employeeId}
                     </Badge>
@@ -378,7 +395,10 @@ export default function FleetManagerSettings() {
                         id="licenseNumber"
                         value={profile.licenseNumber}
                         onChange={(e) =>
-                          setProfile({ ...profile, licenseNumber: e.target.value })
+                          setProfile({
+                            ...profile,
+                            licenseNumber: e.target.value,
+                          })
                         }
                       />
                     </div>
@@ -584,7 +604,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.defaultDashboard}
                       onValueChange={(value) =>
-                        setFleetPreferences({ ...fleetPreferences, defaultDashboard: value })
+                        setFleetPreferences({
+                          ...fleetPreferences,
+                          defaultDashboard: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -592,9 +615,15 @@ export default function FleetManagerSettings() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="overview">Fleet Overview</SelectItem>
-                        <SelectItem value="vehicles">Vehicle Management</SelectItem>
-                        <SelectItem value="maintenance">Maintenance Dashboard</SelectItem>
-                        <SelectItem value="compliance">Compliance Dashboard</SelectItem>
+                        <SelectItem value="vehicles">
+                          Vehicle Management
+                        </SelectItem>
+                        <SelectItem value="maintenance">
+                          Maintenance Dashboard
+                        </SelectItem>
+                        <SelectItem value="compliance">
+                          Compliance Dashboard
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -604,7 +633,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.autoRefreshInterval}
                       onValueChange={(value) =>
-                        setFleetPreferences({ ...fleetPreferences, autoRefreshInterval: value })
+                        setFleetPreferences({
+                          ...fleetPreferences,
+                          autoRefreshInterval: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -624,7 +656,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.mapProvider}
                       onValueChange={(value) =>
-                        setFleetPreferences({ ...fleetPreferences, mapProvider: value })
+                        setFleetPreferences({
+                          ...fleetPreferences,
+                          mapProvider: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -632,7 +667,9 @@ export default function FleetManagerSettings() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="google">Google Maps</SelectItem>
-                        <SelectItem value="openstreet">OpenStreetMap</SelectItem>
+                        <SelectItem value="openstreet">
+                          OpenStreetMap
+                        </SelectItem>
                         <SelectItem value="mapbox">MapBox</SelectItem>
                       </SelectContent>
                     </Select>
@@ -650,7 +687,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.distanceUnit}
                       onValueChange={(value) =>
-                        setFleetPreferences({ ...fleetPreferences, distanceUnit: value })
+                        setFleetPreferences({
+                          ...fleetPreferences,
+                          distanceUnit: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -668,7 +708,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.fuelUnit}
                       onValueChange={(value) =>
-                        setFleetPreferences({ ...fleetPreferences, fuelUnit: value })
+                        setFleetPreferences({
+                          ...fleetPreferences,
+                          fuelUnit: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -734,7 +777,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.theme}
                       onValueChange={(value) =>
-                        setSystemPreferences({ ...systemPreferences, theme: value })
+                        setSystemPreferences({
+                          ...systemPreferences,
+                          theme: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -753,7 +799,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.language}
                       onValueChange={(value) =>
-                        setSystemPreferences({ ...systemPreferences, language: value })
+                        setSystemPreferences({
+                          ...systemPreferences,
+                          language: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -773,7 +822,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.currency}
                       onValueChange={(value) =>
-                        setSystemPreferences({ ...systemPreferences, currency: value })
+                        setSystemPreferences({
+                          ...systemPreferences,
+                          currency: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -801,7 +853,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.timezone}
                       onValueChange={(value) =>
-                        setSystemPreferences({ ...systemPreferences, timezone: value })
+                        setSystemPreferences({
+                          ...systemPreferences,
+                          timezone: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -824,7 +879,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.dateFormat}
                       onValueChange={(value) =>
-                        setSystemPreferences({ ...systemPreferences, dateFormat: value })
+                        setSystemPreferences({
+                          ...systemPreferences,
+                          dateFormat: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -843,7 +901,10 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.timeFormat}
                       onValueChange={(value) =>
-                        setSystemPreferences({ ...systemPreferences, timeFormat: value })
+                        setSystemPreferences({
+                          ...systemPreferences,
+                          timeFormat: value,
+                        })
                       }
                     >
                       <SelectTrigger>
@@ -878,7 +939,10 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={systemPreferences.twoFactorAuth}
                       onCheckedChange={(checked) =>
-                        setSystemPreferences({ ...systemPreferences, twoFactorAuth: checked })
+                        setSystemPreferences({
+                          ...systemPreferences,
+                          twoFactorAuth: checked,
+                        })
                       }
                     />
                   </div>
@@ -893,7 +957,10 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={systemPreferences.biometricLogin}
                       onCheckedChange={(checked) =>
-                        setSystemPreferences({ ...systemPreferences, biometricLogin: checked })
+                        setSystemPreferences({
+                          ...systemPreferences,
+                          biometricLogin: checked,
+                        })
                       }
                     />
                   </div>
@@ -917,7 +984,10 @@ export default function FleetManagerSettings() {
                       type="number"
                       value={systemPreferences.autoLogout}
                       onChange={(e) =>
-                        setSystemPreferences({ ...systemPreferences, autoLogout: e.target.value })
+                        setSystemPreferences({
+                          ...systemPreferences,
+                          autoLogout: e.target.value,
+                        })
                       }
                     />
                   </div>
@@ -962,7 +1032,9 @@ export default function FleetManagerSettings() {
               <div className="text-center p-4 bg-muted rounded-lg">
                 <Truck className="h-8 w-8 mx-auto mb-2 text-blue-600" />
                 <p className="text-2xl font-bold">24</p>
-                <p className="text-sm text-muted-foreground">Vehicles Managed</p>
+                <p className="text-sm text-muted-foreground">
+                  Vehicles Managed
+                </p>
               </div>
               <div className="text-center p-4 bg-muted rounded-lg">
                 <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-600" />

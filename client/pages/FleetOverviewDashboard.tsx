@@ -95,7 +95,9 @@ export default function FleetOverviewDashboard() {
   // Calculate fleet KPIs from AVIS data with memoization
   const fleetKPIs = useMemo(() => {
     const activeVehicles = vehicles.filter((v) => v.status === "Active");
-    const inMaintenanceVehicles = vehicles.filter((v) => v.status === "In Maintenance");
+    const inMaintenanceVehicles = vehicles.filter(
+      (v) => v.status === "In Maintenance",
+    );
 
     return {
       totalVehicles: vehicles.length,
@@ -106,7 +108,8 @@ export default function FleetOverviewDashboard() {
       complianceRate: 92,
       avgFuelEfficiency:
         vehicles.length > 0
-          ? vehicles.reduce((sum, v) => sum + (v.fuel_efficiency || 0), 0) / vehicles.length
+          ? vehicles.reduce((sum, v) => sum + (v.fuel_efficiency || 0), 0) /
+            vehicles.length
           : 0,
       totalMileage: vehicles.reduce((sum, v) => sum + (v.mileage || 0), 0),
       activeAlerts: 8,
@@ -234,7 +237,9 @@ export default function FleetOverviewDashboard() {
       setAiResponse(response);
     } catch (error) {
       console.error("AI processing error:", error);
-      setAiResponse("Sorry, I encountered an error processing your question. Please try again.");
+      setAiResponse(
+        "Sorry, I encountered an error processing your question. Please try again.",
+      );
     } finally {
       clearTimeout(timeoutId);
       setIsAskingAI(false);
