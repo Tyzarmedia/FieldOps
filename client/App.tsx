@@ -175,7 +175,7 @@ function DashboardRouter() {
       // Redirect to mobile-first route
       return <Navigate to="/assistant-technician" replace />;
     case "FleetManager":
-      return <EnhancedFleetManagerDashboard />;
+      return <FleetOverviewDashboard />;
     case "StockManager":
       return <EnhancedStockManagementScreen />;
     case "HSManager":
