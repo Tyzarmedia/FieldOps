@@ -85,6 +85,7 @@ class AuthService {
     const roleMapping: Record<string, string> = {
       "Maintenance Technician": "Technician",
       "Installation Technician": "Technician",
+      "Assistant Technician": "AssistantTechnician",
       "HR Officer": "HR",
       "Payroll Officer": "Payroll",
       Manager: "Manager",
