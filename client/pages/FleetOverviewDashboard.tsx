@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -65,39 +65,57 @@ export default function FleetOverviewDashboard() {
   const [isAskingAI, setIsAskingAI] = useState(false);
   const [vehicles, setVehicles] = useState<any[]>([]);
 
-  // Load AVIS database
+  // Load AVIS database with cleanup
   useEffect(() => {
+    let cancelled = false;
+
     const loadAvisData = async () => {
       try {
         const response = await fetch("/data/avis-database.json");
+        if (cancelled) return;
+
         const data = await response.json();
+        if (cancelled) return;
+
         setVehicles(data.vehicles);
       } catch (error) {
-        console.error("Failed to load AVIS database:", error);
+        if (!cancelled) {
+          console.error("Failed to load AVIS database:", error);
+        }
       }
     };
+
     loadAvisData();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Calculate fleet KPIs from AVIS data
-  const fleetKPIs = {
-    totalVehicles: vehicles.length,
-    activeVehicles: vehicles.filter((v) => v.status === "Active").length,
-    inactiveVehicles: vehicles.filter((v) => v.status === "In Maintenance")
-      .length,
-    inspectionsDue: 6,
-    maintenanceQueue: vehicles.filter((v) => v.status === "In Maintenance")
-      .length,
-    complianceRate: 92,
-    avgFuelEfficiency:
-      vehicles.length > 0
-        ? vehicles.reduce((sum, v) => sum + v.fuel_efficiency, 0) /
-          vehicles.length
-        : 0,
-    totalMileage: vehicles.reduce((sum, v) => sum + v.mileage, 0),
-    activeAlerts: 8,
-    criticalAlerts: 2,
-  };
+  // Calculate fleet KPIs from AVIS data with memoization
+  const fleetKPIs = useMemo(() => {
+    const activeVehicles = vehicles.filter((v) => v.status === "Active");
+    const inMaintenanceVehicles = vehicles.filter(
+      (v) => v.status === "In Maintenance",
+    );
+
+    return {
+      totalVehicles: vehicles.length,
+      activeVehicles: activeVehicles.length,
+      inactiveVehicles: inMaintenanceVehicles.length,
+      inspectionsDue: 6,
+      maintenanceQueue: inMaintenanceVehicles.length,
+      complianceRate: 92,
+      avgFuelEfficiency:
+        vehicles.length > 0
+          ? vehicles.reduce((sum, v) => sum + (v.fuel_efficiency || 0), 0) /
+            vehicles.length
+          : 0,
+      totalMileage: vehicles.reduce((sum, v) => sum + (v.mileage || 0), 0),
+      activeAlerts: 8,
+      criticalAlerts: 2,
+    };
+  }, [vehicles]);
 
   // AI Insights
   const aiInsights: AIInsight[] = [
@@ -175,45 +193,58 @@ export default function FleetOverviewDashboard() {
     { vehicle: "FL-005", uptime: 94.8 },
   ];
 
-  const handleAIQuestion = async () => {
+  const handleAIQuestion = useCallback(async () => {
     if (!aiQuestion.trim()) return;
 
     setIsAskingAI(true);
 
-    // Simulate AI processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Simulate AI processing with timeout protection
+    const timeoutId = setTimeout(() => {
+      setIsAskingAI(false);
+    }, 10000); // 10 second timeout
 
-    // Mock AI responses based on common fleet questions
-    const responses: { [key: string]: string } = {
-      "worst mpg":
-        "Vehicle FL-003 has the worst fuel efficiency at 24.2 MPG. This is 15% below fleet average. Consider route optimization or maintenance check.",
-      "maintenance due":
-        "Currently 6 vehicles have maintenance due: FL-003, FL-007, FL-012, FL-015, FL-018, FL-021. FL-003 and FL-007 are highest priority.",
-      "fuel cost":
-        "Current weekly fuel cost is $1,247. This is 8% higher than last week due to increased mileage on Route C. Consider route optimization.",
-      "compliance issues":
-        "3 vehicles have compliance issues: FL-005 (license expires in 12 days), FL-009 (inspection overdue), FL-016 (insurance renewal needed).",
-      "best driver":
-        "Driver Sarah Johnson has the highest efficiency score of 96.2 with lowest fuel consumption and best route adherence.",
-    };
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    const lowerQuestion = aiQuestion.toLowerCase();
-    let response = "I'm analyzing your fleet data...";
+      // Mock AI responses based on common fleet questions
+      const responses: { [key: string]: string } = {
+        "worst mpg":
+          "Vehicle FL-003 has the worst fuel efficiency at 24.2 MPG. This is 15% below fleet average. Consider route optimization or maintenance check.",
+        "maintenance due":
+          "Currently 6 vehicles have maintenance due: FL-003, FL-007, FL-012, FL-015, FL-018, FL-021. FL-003 and FL-007 are highest priority.",
+        "fuel cost":
+          "Current weekly fuel cost is $1,247. This is 8% higher than last week due to increased mileage on Route C. Consider route optimization.",
+        "compliance issues":
+          "3 vehicles have compliance issues: FL-005 (license expires in 12 days), FL-009 (inspection overdue), FL-016 (insurance renewal needed).",
+        "best driver":
+          "Driver Sarah Johnson has the highest efficiency score of 96.2 with lowest fuel consumption and best route adherence.",
+      };
 
-    for (const [key, value] of Object.entries(responses)) {
-      if (lowerQuestion.includes(key)) {
-        response = value;
-        break;
+      const lowerQuestion = aiQuestion.toLowerCase();
+      let response = "I'm analyzing your fleet data...";
+
+      for (const [key, value] of Object.entries(responses)) {
+        if (lowerQuestion.includes(key)) {
+          response = value;
+          break;
+        }
       }
-    }
 
-    if (response === "I'm analyzing your fleet data...") {
-      response = `Based on current fleet data: ${fleetKPIs.totalVehicles} vehicles, ${fleetKPIs.complianceRate}% compliance rate, ${fleetKPIs.avgFuelEfficiency} MPG average. ${fleetKPIs.criticalAlerts} critical alerts need immediate attention.`;
-    }
+      if (response === "I'm analyzing your fleet data...") {
+        response = `Based on current fleet data: ${fleetKPIs.totalVehicles} vehicles, ${fleetKPIs.complianceRate}% compliance rate, ${fleetKPIs.avgFuelEfficiency.toFixed(1)} MPG average. ${fleetKPIs.criticalAlerts} critical alerts need immediate attention.`;
+      }
 
-    setAiResponse(response);
-    setIsAskingAI(false);
-  };
+      setAiResponse(response);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      setAiResponse(
+        "Sorry, I encountered an error processing your question. Please try again.",
+      );
+    } finally {
+      clearTimeout(timeoutId);
+      setIsAskingAI(false);
+    }
+  }, [aiQuestion, fleetKPIs]);
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
@@ -254,7 +285,11 @@ export default function FleetOverviewDashboard() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/fleet/settings")}
+          >
             <Settings className="h-4 w-4 mr-2" />
             Settings
           </Button>

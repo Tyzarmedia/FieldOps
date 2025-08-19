@@ -69,6 +69,7 @@ import FleetVehicleManagement from "./pages/FleetVehicleManagement";
 import VehicleDetailScreen from "./pages/VehicleDetailScreen";
 import InspectionsScreen from "./pages/InspectionsScreen";
 import ComplianceScreen from "./pages/ComplianceScreen";
+import FleetManagerSettings from "./pages/FleetManagerSettings";
 
 const queryClient = new QueryClient();
 
@@ -374,6 +375,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <ComplianceScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fleet/settings"
+                element={
+                  <ProtectedRoute>
+                    <FleetManagerSettings />
                   </ProtectedRoute>
                 }
               />
