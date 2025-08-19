@@ -99,12 +99,20 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-sidebar-foreground truncate">
                   {userRole === "StockManager"
-                    ? "John Smith"
+                    ? "Siyanda Dlamini"
                     : userRole === "Coordinator"
-                      ? "Sarah Wilson"
+                      ? "Nancy Dube"
                       : userRole === "Technician"
                         ? "Clement Masinge"
-                        : "John Doe"}
+                        : userRole === "FleetManager"
+                          ? "Nancy Dube"
+                          : userRole === "Manager"
+                            ? "Glassman Nkosi"
+                            : userRole === "HR"
+                              ? "Thembi Khumalo"
+                              : userRole === "IT"
+                                ? "Shawn Petersen"
+                                : localStorage.getItem("userFullName") || "User"}
                 </p>
                 <p className="text-xs text-sidebar-foreground/60">{userRole}</p>
                 <div className="flex items-center mt-1">
