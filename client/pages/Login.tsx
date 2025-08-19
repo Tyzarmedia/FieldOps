@@ -53,33 +53,28 @@ export default function Login() {
         statusText: response.statusText
       });
 
-      // Clone the response to prevent "body stream already read" errors
-      const responseClone = response.clone();
-
       let data: LoginResponse;
 
-      try {
-        // Always try to parse as JSON first
-        data = await response.json();
-        console.log('Parsed response data:', data);
-
-        // Check if it's an error response
-        if (!response.ok) {
-          console.error('Error response:', data);
-          throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
-        }
-      } catch (parseError) {
-        console.warn('JSON parsing failed, trying with cloned response:', parseError);
-
-        // If JSON parsing failed, try with the cloned response as text
+      // Check if it's an error response first (before reading body)
+      if (!response.ok) {
+        // For error responses, try to get the error message
         try {
-          const errorText = await responseClone.text();
-          console.error('Error response text:', errorText);
-          throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
-        } catch (cloneError) {
-          console.error('Failed to read cloned response:', cloneError);
+          const errorData = await response.json();
+          console.error('Error response JSON:', errorData);
+          throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        } catch (parseError) {
+          console.warn('Could not parse error response as JSON:', parseError);
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+      }
+
+      // For successful responses, parse as JSON
+      try {
+        data = await response.json();
+        console.log('Login response data:', data);
+      } catch (parseError) {
+        console.error('Failed to parse successful response as JSON:', parseError);
+        throw new Error('Invalid response format from server');
       }
 
       if (data.success && data.token && data.user) {
