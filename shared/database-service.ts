@@ -319,13 +319,24 @@ export class DatabaseService {
       "syncStatus" | "syncAttempts" | "lastSyncAttempt"
     >,
   ): Promise<void> {
-    const safetyCheck: InternalSafetyCheck = {
-      ...check,
-      syncStatus: "pending",
-      syncAttempts: 0,
-    };
+    if (this.isServerEnvironment) {
+      console.log("Safety check received on server:", {
+        technicianId: check.technicianId,
+        checkType: check.checkType,
+        timestamp: check.timestamp
+      });
+      return;
+    }
 
-    await this.internalDb.saveSafetyCheck(safetyCheck);
+    if (this.internalDb) {
+      const safetyCheck: InternalSafetyCheck = {
+        ...check,
+        syncStatus: "pending",
+        syncAttempts: 0,
+      };
+
+      await this.internalDb.saveSafetyCheck(safetyCheck);
+    }
   }
 
   // Incident Report Management
