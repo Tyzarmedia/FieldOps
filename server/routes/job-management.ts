@@ -499,6 +499,128 @@ router.put("/jobs/:jobId/status", (req, res) => {
   }
 });
 
+// Technician review of assistant job completion
+router.put("/jobs/:jobId/review", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { action, notes, technicianId } = req.body; // action: 'approve' or 'reject'
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    const job = jobs[jobIndex];
+
+    // Verify this is the assigned technician
+    if (job.assignedTechnician !== technicianId) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to review this job",
+      });
+    }
+
+    // Verify job is in review status
+    if (job.status !== "Pending Technician Review") {
+      return res.status(400).json({
+        success: false,
+        error: "Job is not pending review",
+      });
+    }
+
+    if (action === "approve") {
+      // Approve the assistant's completion
+      jobs[jobIndex].status = job.requestedStatus || "Completed";
+      jobs[jobIndex].completedDate = new Date().toISOString();
+      jobs[jobIndex].reviewedBy = technicianId;
+      jobs[jobIndex].reviewedAt = new Date().toISOString();
+      jobs[jobIndex].reviewResult = "approved";
+    } else if (action === "reject") {
+      // Reject and return to previous status (usually In Progress)
+      jobs[jobIndex].status = "In Progress";
+      jobs[jobIndex].reviewedBy = technicianId;
+      jobs[jobIndex].reviewedAt = new Date().toISOString();
+      jobs[jobIndex].reviewResult = "rejected";
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid action. Must be 'approve' or 'reject'",
+      });
+    }
+
+    // Add review note
+    if (!jobs[jobIndex].notes) {
+      jobs[jobIndex].notes = [];
+    }
+    jobs[jobIndex].notes.push({
+      timestamp: new Date().toISOString(),
+      technician: technicianId,
+      role: "technician",
+      note: `Review ${action}: ${notes || `Assistant completion ${action}d`}`,
+      isReview: true,
+    });
+
+    // Clear review-related fields
+    delete jobs[jobIndex].pendingReviewBy;
+    delete jobs[jobIndex].requestedStatus;
+
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    // Create notification for assistant
+    if (job.reviewRequestedBy) {
+      createNotification({
+        recipientId: job.reviewRequestedBy,
+        type: action === "approve" ? "job_approved" : "job_rejected",
+        title: action === "approve" ? "Job Approved" : "Job Needs Revision",
+        message: action === "approve"
+          ? `Your completion of job ${job.workOrderNumber} has been approved`
+          : `Job ${job.workOrderNumber} needs revision. Please check technician notes.`,
+        data: { jobId, technicianId },
+      });
+    }
+
+    delete jobs[jobIndex].reviewRequestedBy;
+    delete jobs[jobIndex].reviewRequestedAt;
+
+    res.json({
+      success: true,
+      data: jobs[jobIndex],
+      message: `Job completion ${action}d successfully`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to review job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get jobs pending technician review
+router.get("/jobs/technician/:technicianId/pending-review", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+
+    const pendingReviewJobs = jobs.filter(
+      (job) =>
+        job.assignedTechnician === technicianId &&
+        job.status === "Pending Technician Review"
+    );
+
+    res.json({
+      success: true,
+      data: pendingReviewJobs,
+      count: pendingReviewJobs.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch pending review jobs",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 // Accept job (Technician action)
 router.put("/jobs/:jobId/accept", (req, res) => {
   try {
