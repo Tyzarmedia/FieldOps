@@ -36,12 +36,12 @@ export default function Login() {
     setError("");
 
     try {
-      console.log('Starting login attempt for:', email);
-      console.log('Password length:', password.length);
-      console.log('Password value (first 5 chars):', password.substring(0, 5));
+      console.log("Starting login attempt for:", email);
+      console.log("Password length:", password.length);
+      console.log("Password value (first 5 chars):", password.substring(0, 5));
 
       const requestBody = { email, password };
-      console.log('Request body being sent:', requestBody);
+      console.log("Request body being sent:", requestBody);
 
       // Temporarily use direct fetch to debug
       const response = await fetch("/api/auth/login", {
@@ -52,10 +52,10 @@ export default function Login() {
         body: JSON.stringify(requestBody),
       });
 
-      console.log('Direct fetch response:', {
+      console.log("Direct fetch response:", {
         status: response.status,
         ok: response.ok,
-        statusText: response.statusText
+        statusText: response.statusText,
       });
 
       let data: LoginResponse;
@@ -65,10 +65,13 @@ export default function Login() {
         // For error responses, try to get the error message
         try {
           const errorData = await response.json();
-          console.error('Error response JSON:', errorData);
-          throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+          console.error("Error response JSON:", errorData);
+          throw new Error(
+            errorData.message ||
+              `HTTP ${response.status}: ${response.statusText}`,
+          );
         } catch (parseError) {
-          console.warn('Could not parse error response as JSON:', parseError);
+          console.warn("Could not parse error response as JSON:", parseError);
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
       }
@@ -76,10 +79,13 @@ export default function Login() {
       // For successful responses, parse as JSON
       try {
         data = await response.json();
-        console.log('Login response data:', data);
+        console.log("Login response data:", data);
       } catch (parseError) {
-        console.error('Failed to parse successful response as JSON:', parseError);
-        throw new Error('Invalid response format from server');
+        console.error(
+          "Failed to parse successful response as JSON:",
+          parseError,
+        );
+        throw new Error("Invalid response format from server");
       }
 
       if (data.success && data.token && data.user) {
@@ -103,7 +109,9 @@ export default function Login() {
 
       if (error instanceof Error) {
         if (error.message.includes("401")) {
-          setError("Invalid email or password. Please use the test credentials shown below.");
+          setError(
+            "Invalid email or password. Please use the test credentials shown below.",
+          );
         } else if (error.message.includes("500")) {
           setError("Server error. Please try again later.");
         } else {
@@ -263,7 +271,9 @@ export default function Login() {
           <CardContent className="text-xs text-muted-foreground space-y-1">
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <span><strong>HR Manager:</strong> thembi@company.com</span>
+                <span>
+                  <strong>HR Manager:</strong> thembi@company.com
+                </span>
                 <Button
                   type="button"
                   variant="outline"
@@ -276,7 +286,9 @@ export default function Login() {
                 </Button>
               </div>
               <div className="flex items-center justify-between">
-                <span><strong>Technician:</strong> clement@company.com</span>
+                <span>
+                  <strong>Technician:</strong> clement@company.com
+                </span>
                 <Button
                   type="button"
                   variant="outline"
@@ -289,7 +301,9 @@ export default function Login() {
                 </Button>
               </div>
               <div className="flex items-center justify-between">
-                <span><strong>Manager:</strong> glassman@company.com</span>
+                <span>
+                  <strong>Manager:</strong> glassman@company.com
+                </span>
                 <Button
                   type="button"
                   variant="outline"
@@ -302,7 +316,9 @@ export default function Login() {
                 </Button>
               </div>
               <div className="flex items-center justify-between">
-                <span><strong>IT Admin:</strong> shawn@company.com</span>
+                <span>
+                  <strong>IT Admin:</strong> shawn@company.com
+                </span>
                 <Button
                   type="button"
                   variant="outline"

@@ -21,8 +21,12 @@ export interface LoginAttempt {
 export interface SecurityAlert {
   id: string;
   timestamp: string;
-  type: 'BRUTE_FORCE' | 'SUSPICIOUS_ACTIVITY' | 'CREDENTIAL_STUFFING' | 'RATE_LIMIT_EXCEEDED';
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  type:
+    | "BRUTE_FORCE"
+    | "SUSPICIOUS_ACTIVITY"
+    | "CREDENTIAL_STUFFING"
+    | "RATE_LIMIT_EXCEEDED";
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   ipAddress: string;
   details: string;
   attempts: number;
@@ -33,14 +37,23 @@ class SecurityAuditService {
   private static instance: SecurityAuditService;
   private auditLogPath: string;
   private alertsPath: string;
-  private rateLimitMap = new Map<string, { attempts: number; firstAttempt: Date; lastAttempt: Date }>();
-  
+  private rateLimitMap = new Map<
+    string,
+    { attempts: number; firstAttempt: Date; lastAttempt: Date }
+  >();
+
   // Security thresholds
   private readonly MAX_FAILED_ATTEMPTS = 5;
   private readonly RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
   private readonly BRUTE_FORCE_THRESHOLD = 10;
   private readonly SUSPICIOUS_PASSWORD_PATTERNS = [
-    'admin', 'password', '123456', 'qwerty', 'letmein', 'welcome', 'monkey'
+    "admin",
+    "password",
+    "123456",
+    "qwerty",
+    "letmein",
+    "welcome",
+    "monkey",
   ];
 
   static getInstance(): SecurityAuditService {
@@ -51,13 +64,13 @@ class SecurityAuditService {
   }
 
   constructor() {
-    this.auditLogPath = path.join(process.cwd(), 'logs', 'security-audit.json');
-    this.alertsPath = path.join(process.cwd(), 'logs', 'security-alerts.json');
+    this.auditLogPath = path.join(process.cwd(), "logs", "security-audit.json");
+    this.alertsPath = path.join(process.cwd(), "logs", "security-alerts.json");
     this.ensureLogDirectories();
   }
 
   private ensureLogDirectories(): void {
-    const logsDir = path.join(process.cwd(), 'logs');
+    const logsDir = path.join(process.cwd(), "logs");
     if (!fs.existsSync(logsDir)) {
       fs.mkdirSync(logsDir, { recursive: true });
     }
@@ -69,32 +82,33 @@ class SecurityAuditService {
 
   private getClientInfo(req: any): { ipAddress: string; userAgent: string } {
     // Get real IP address considering proxies
-    const ipAddress = req.headers['x-forwarded-for'] ||
-                     req.headers['x-real-ip'] ||
-                     req.connection.remoteAddress ||
-                     req.socket.remoteAddress ||
-                     (req.connection.socket ? req.connection.socket.remoteAddress : null) ||
-                     'unknown';
+    const ipAddress =
+      req.headers["x-forwarded-for"] ||
+      req.headers["x-real-ip"] ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      (req.connection.socket ? req.connection.socket.remoteAddress : null) ||
+      "unknown";
 
-    const userAgent = req.headers['user-agent'] || 'unknown';
+    const userAgent = req.headers["user-agent"] || "unknown";
 
     return {
       ipAddress: Array.isArray(ipAddress) ? ipAddress[0] : ipAddress,
-      userAgent
+      userAgent,
     };
   }
 
   private maskPassword(password: string): string {
     if (password.length <= 3) {
-      return '*'.repeat(password.length);
+      return "*".repeat(password.length);
     }
-    return password.substring(0, 2) + '*'.repeat(password.length - 2);
+    return password.substring(0, 2) + "*".repeat(password.length - 2);
   }
 
   private isSuspiciousPassword(password: string): boolean {
     const lowerPassword = password.toLowerCase();
-    return this.SUSPICIOUS_PASSWORD_PATTERNS.some(pattern => 
-      lowerPassword.includes(pattern) || lowerPassword === pattern
+    return this.SUSPICIOUS_PASSWORD_PATTERNS.some(
+      (pattern) => lowerPassword.includes(pattern) || lowerPassword === pattern,
     );
   }
 
@@ -103,11 +117,11 @@ class SecurityAuditService {
     email: string,
     password: string,
     success: boolean,
-    failureReason?: string
+    failureReason?: string,
   ): Promise<void> {
     try {
       const { ipAddress, userAgent } = this.getClientInfo(req);
-      
+
       const attempt: LoginAttempt = {
         id: this.generateId(),
         timestamp: new Date().toISOString(),
@@ -116,18 +130,18 @@ class SecurityAuditService {
         ipAddress,
         userAgent,
         success,
-        failureReason
+        failureReason,
       };
 
       // Load existing audit log
       let auditLog: LoginAttempt[] = [];
       try {
         if (fs.existsSync(this.auditLogPath)) {
-          const logContent = fs.readFileSync(this.auditLogPath, 'utf-8');
+          const logContent = fs.readFileSync(this.auditLogPath, "utf-8");
           auditLog = JSON.parse(logContent);
         }
       } catch (error) {
-        console.error('Error reading audit log:', error);
+        console.error("Error reading audit log:", error);
       }
 
       // Add new attempt
@@ -146,16 +160,18 @@ class SecurityAuditService {
         await this.checkForSuspiciousActivity(ipAddress, email, password);
       }
 
-      console.log(`🔐 Login attempt logged: ${email} from ${ipAddress} - ${success ? 'SUCCESS' : 'FAILED'}`);
+      console.log(
+        `🔐 Login attempt logged: ${email} from ${ipAddress} - ${success ? "SUCCESS" : "FAILED"}`,
+      );
     } catch (error) {
-      console.error('Error logging login attempt:', error);
+      console.error("Error logging login attempt:", error);
     }
   }
 
   private async checkForSuspiciousActivity(
     ipAddress: string,
     email: string,
-    password: string
+    password: string,
   ): Promise<void> {
     const now = new Date();
     const windowStart = new Date(now.getTime() - this.RATE_LIMIT_WINDOW);
@@ -163,7 +179,7 @@ class SecurityAuditService {
     // Update rate limiting map
     const key = `${ipAddress}:${email}`;
     const existing = this.rateLimitMap.get(key);
-    
+
     if (existing) {
       existing.attempts++;
       existing.lastAttempt = now;
@@ -171,7 +187,7 @@ class SecurityAuditService {
       this.rateLimitMap.set(key, {
         attempts: 1,
         firstAttempt: now,
-        lastAttempt: now
+        lastAttempt: now,
       });
     }
 
@@ -187,61 +203,63 @@ class SecurityAuditService {
     // Check for brute force
     if (currentAttempts >= this.BRUTE_FORCE_THRESHOLD) {
       await this.createSecurityAlert({
-        type: 'BRUTE_FORCE',
-        severity: 'HIGH',
+        type: "BRUTE_FORCE",
+        severity: "HIGH",
         ipAddress,
         details: `Brute force attack detected: ${currentAttempts} failed attempts for ${email} in 15 minutes`,
         attempts: currentAttempts,
-        timeWindow: '15 minutes'
+        timeWindow: "15 minutes",
       });
     }
 
     // Check for suspicious passwords
     if (this.isSuspiciousPassword(password)) {
       await this.createSecurityAlert({
-        type: 'SUSPICIOUS_ACTIVITY',
-        severity: 'MEDIUM',
+        type: "SUSPICIOUS_ACTIVITY",
+        severity: "MEDIUM",
         ipAddress,
         details: `Suspicious password pattern detected for ${email}: ${this.maskPassword(password)}`,
         attempts: 1,
-        timeWindow: 'single attempt'
+        timeWindow: "single attempt",
       });
     }
 
     // Check for credential stuffing (multiple different emails from same IP)
-    const ipAttempts = Array.from(this.rateLimitMap.entries())
-      .filter(([key]) => key.startsWith(ipAddress + ':'))
-      .length;
+    const ipAttempts = Array.from(this.rateLimitMap.entries()).filter(([key]) =>
+      key.startsWith(ipAddress + ":"),
+    ).length;
 
     if (ipAttempts >= 5) {
       await this.createSecurityAlert({
-        type: 'CREDENTIAL_STUFFING',
-        severity: 'HIGH',
+        type: "CREDENTIAL_STUFFING",
+        severity: "HIGH",
         ipAddress,
         details: `Credential stuffing detected: ${ipAttempts} different accounts targeted from same IP`,
         attempts: ipAttempts,
-        timeWindow: '15 minutes'
+        timeWindow: "15 minutes",
       });
     }
   }
 
-  private async createSecurityAlert(alertData: Omit<SecurityAlert, 'id' | 'timestamp'>): Promise<void> {
+  private async createSecurityAlert(
+    alertData: Omit<SecurityAlert, "id" | "timestamp">,
+  ): Promise<void> {
     try {
       const alert: SecurityAlert = {
         id: this.generateId(),
         timestamp: new Date().toISOString(),
-        ...alertData
+        ...alertData,
       };
 
       // Load existing alerts
       let alerts: SecurityAlert[] = [];
       try {
         if (fs.existsSync(this.alertsPath)) {
-          const alertsContent = fs.readFileSync(this.alertsPath, 'utf-8');
+          const alertsContent = fs.readFileSync(this.alertsPath, "utf-8");
           alerts = JSON.parse(alertsContent);
         }
       } catch (error) {
-        console.error('Error reading alerts:', error);
+        console.error("Error reading alerts:", error);
       }
 
       // Add new alert
@@ -257,7 +275,7 @@ class SecurityAuditService {
 
       console.warn(`🚨 SECURITY ALERT [${alert.severity}]: ${alert.details}`);
     } catch (error) {
-      console.error('Error creating security alert:', error);
+      console.error("Error creating security alert:", error);
     }
   }
 
@@ -267,12 +285,12 @@ class SecurityAuditService {
         return [];
       }
 
-      const logContent = fs.readFileSync(this.auditLogPath, 'utf-8');
+      const logContent = fs.readFileSync(this.auditLogPath, "utf-8");
       const auditLog: LoginAttempt[] = JSON.parse(logContent);
-      
+
       return auditLog.slice(-limit).reverse(); // Most recent first
     } catch (error) {
-      console.error('Error reading audit log:', error);
+      console.error("Error reading audit log:", error);
       return [];
     }
   }
@@ -283,28 +301,32 @@ class SecurityAuditService {
         return [];
       }
 
-      const alertsContent = fs.readFileSync(this.alertsPath, 'utf-8');
+      const alertsContent = fs.readFileSync(this.alertsPath, "utf-8");
       const alerts: SecurityAlert[] = JSON.parse(alertsContent);
-      
+
       return alerts.slice(-limit).reverse(); // Most recent first
     } catch (error) {
-      console.error('Error reading security alerts:', error);
+      console.error("Error reading security alerts:", error);
       return [];
     }
   }
 
-  async getFailedAttemptsByIP(ipAddress: string, hours: number = 24): Promise<LoginAttempt[]> {
+  async getFailedAttemptsByIP(
+    ipAddress: string,
+    hours: number = 24,
+  ): Promise<LoginAttempt[]> {
     try {
       const attempts = await this.getRecentAttempts(1000);
       const since = new Date(Date.now() - hours * 60 * 60 * 1000);
-      
-      return attempts.filter(attempt => 
-        attempt.ipAddress === ipAddress && 
-        !attempt.success &&
-        new Date(attempt.timestamp) > since
+
+      return attempts.filter(
+        (attempt) =>
+          attempt.ipAddress === ipAddress &&
+          !attempt.success &&
+          new Date(attempt.timestamp) > since,
       );
     } catch (error) {
-      console.error('Error getting failed attempts by IP:', error);
+      console.error("Error getting failed attempts by IP:", error);
       return [];
     }
   }
@@ -312,9 +334,9 @@ class SecurityAuditService {
   isRateLimited(ipAddress: string, email: string): boolean {
     const key = `${ipAddress}:${email}`;
     const attempts = this.rateLimitMap.get(key);
-    
+
     if (!attempts) return false;
-    
+
     return attempts.attempts >= this.MAX_FAILED_ATTEMPTS;
   }
 
@@ -328,40 +350,42 @@ class SecurityAuditService {
     try {
       const attempts = await this.getRecentAttempts(1000);
       const alerts = await this.getSecurityAlerts(100);
-      
+
       const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const recentAttempts = attempts.filter(a => new Date(a.timestamp) > last24h);
-      
-      const failedAttempts = recentAttempts.filter(a => !a.success);
-      const uniqueIPs = new Set(recentAttempts.map(a => a.ipAddress)).size;
-      
+      const recentAttempts = attempts.filter(
+        (a) => new Date(a.timestamp) > last24h,
+      );
+
+      const failedAttempts = recentAttempts.filter((a) => !a.success);
+      const uniqueIPs = new Set(recentAttempts.map((a) => a.ipAddress)).size;
+
       // Count failed attempts by IP
       const ipCounts = new Map<string, number>();
-      failedAttempts.forEach(attempt => {
+      failedAttempts.forEach((attempt) => {
         const count = ipCounts.get(attempt.ipAddress) || 0;
         ipCounts.set(attempt.ipAddress, count + 1);
       });
-      
+
       const topFailedIPs = Array.from(ipCounts.entries())
         .map(([ip, attempts]) => ({ ip, attempts }))
         .sort((a, b) => b.attempts - a.attempts)
         .slice(0, 10);
-      
+
       return {
         totalAttempts: recentAttempts.length,
         failedAttempts: failedAttempts.length,
         uniqueIPs,
         activeAlerts: alerts.length,
-        topFailedIPs
+        topFailedIPs,
       };
     } catch (error) {
-      console.error('Error getting security stats:', error);
+      console.error("Error getting security stats:", error);
       return {
         totalAttempts: 0,
         failedAttempts: 0,
         uniqueIPs: 0,
         activeAlerts: 0,
-        topFailedIPs: []
+        topFailedIPs: [],
       };
     }
   }

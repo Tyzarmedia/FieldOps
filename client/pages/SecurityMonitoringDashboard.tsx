@@ -3,16 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  Shield, 
-  AlertTriangle, 
-  Eye, 
-  Users, 
-  Activity, 
+import {
+  Shield,
+  AlertTriangle,
+  Eye,
+  Users,
+  Activity,
   MapPin,
   Clock,
   RefreshCw,
-  Ban
+  Ban,
 } from "lucide-react";
 import { makeAuthenticatedRequest } from "@/utils/auth";
 
@@ -30,8 +30,12 @@ interface LoginAttempt {
 interface SecurityAlert {
   id: string;
   timestamp: string;
-  type: 'BRUTE_FORCE' | 'SUSPICIOUS_ACTIVITY' | 'CREDENTIAL_STUFFING' | 'RATE_LIMIT_EXCEEDED';
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  type:
+    | "BRUTE_FORCE"
+    | "SUSPICIOUS_ACTIVITY"
+    | "CREDENTIAL_STUFFING"
+    | "RATE_LIMIT_EXCEEDED";
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   ipAddress: string;
   details: string;
   attempts: number;
@@ -59,7 +63,9 @@ export default function SecurityMonitoringDashboard() {
   const loadDashboardData = async () => {
     try {
       setIsLoading(true);
-      const response = await makeAuthenticatedRequest("/api/security/dashboard");
+      const response = await makeAuthenticatedRequest(
+        "/api/security/dashboard",
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -81,7 +87,9 @@ export default function SecurityMonitoringDashboard() {
 
   const loadIPDetails = async (ip: string) => {
     try {
-      const response = await makeAuthenticatedRequest(`/api/security/failed-attempts/${ip}?hours=24`);
+      const response = await makeAuthenticatedRequest(
+        `/api/security/failed-attempts/${ip}?hours=24`,
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -95,7 +103,7 @@ export default function SecurityMonitoringDashboard() {
 
   useEffect(() => {
     loadDashboardData();
-    
+
     // Auto-refresh every 30 seconds
     const interval = setInterval(loadDashboardData, 30000);
     return () => clearInterval(interval);
@@ -107,20 +115,29 @@ export default function SecurityMonitoringDashboard() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'CRITICAL': return 'bg-red-600';
-      case 'HIGH': return 'bg-red-500';
-      case 'MEDIUM': return 'bg-yellow-500';
-      case 'LOW': return 'bg-blue-500';
-      default: return 'bg-gray-500';
+      case "CRITICAL":
+        return "bg-red-600";
+      case "HIGH":
+        return "bg-red-500";
+      case "MEDIUM":
+        return "bg-yellow-500";
+      case "LOW":
+        return "bg-blue-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
-      case 'BRUTE_FORCE': return <Ban className="h-4 w-4" />;
-      case 'SUSPICIOUS_ACTIVITY': return <Eye className="h-4 w-4" />;
-      case 'CREDENTIAL_STUFFING': return <Users className="h-4 w-4" />;
-      default: return <AlertTriangle className="h-4 w-4" />;
+      case "BRUTE_FORCE":
+        return <Ban className="h-4 w-4" />;
+      case "SUSPICIOUS_ACTIVITY":
+        return <Eye className="h-4 w-4" />;
+      case "CREDENTIAL_STUFFING":
+        return <Users className="h-4 w-4" />;
+      default:
+        return <AlertTriangle className="h-4 w-4" />;
     }
   };
 
@@ -154,7 +171,9 @@ export default function SecurityMonitoringDashboard() {
               Last updated: {lastRefresh.toLocaleTimeString()}
             </div>
             <Button onClick={loadDashboardData} disabled={isLoading}>
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
+              />
               Refresh
             </Button>
           </div>
@@ -172,7 +191,9 @@ export default function SecurityMonitoringDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Attempts (24h)</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Attempts (24h)
+                </CardTitle>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -182,20 +203,31 @@ export default function SecurityMonitoringDashboard() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Failed Attempts</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Failed Attempts
+                </CardTitle>
                 <Ban className="h-4 w-4 text-destructive" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-destructive">{stats.failedAttempts}</div>
+                <div className="text-2xl font-bold text-destructive">
+                  {stats.failedAttempts}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  {stats.totalAttempts > 0 ? Math.round((stats.failedAttempts / stats.totalAttempts) * 100) : 0}% failure rate
+                  {stats.totalAttempts > 0
+                    ? Math.round(
+                        (stats.failedAttempts / stats.totalAttempts) * 100,
+                      )
+                    : 0}
+                  % failure rate
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Unique IPs</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Unique IPs
+                </CardTitle>
                 <MapPin className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -205,11 +237,15 @@ export default function SecurityMonitoringDashboard() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Active Alerts
+                </CardTitle>
                 <AlertTriangle className="h-4 w-4 text-warning" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-warning">{stats.activeAlerts}</div>
+                <div className="text-2xl font-bold text-warning">
+                  {stats.activeAlerts}
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -226,29 +262,37 @@ export default function SecurityMonitoringDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {alerts.length > 0 ? alerts.map((alert) => (
-                  <div key={alert.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        {getAlertIcon(alert.type)}
-                        <Badge className={getSeverityColor(alert.severity)}>
-                          {alert.severity}
-                        </Badge>
-                        <span className="font-medium">{alert.type.replace('_', ' ')}</span>
+                {alerts.length > 0 ? (
+                  alerts.map((alert) => (
+                    <div key={alert.id} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          {getAlertIcon(alert.type)}
+                          <Badge className={getSeverityColor(alert.severity)}>
+                            {alert.severity}
+                          </Badge>
+                          <span className="font-medium">
+                            {alert.type.replace("_", " ")}
+                          </span>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {formatTimestamp(alert.timestamp)}
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatTimestamp(alert.timestamp)}
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {alert.details}
+                      </p>
+                      <div className="flex gap-4 text-xs text-muted-foreground">
+                        <span>IP: {alert.ipAddress}</span>
+                        <span>Attempts: {alert.attempts}</span>
+                        <span>Window: {alert.timeWindow}</span>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">{alert.details}</p>
-                    <div className="flex gap-4 text-xs text-muted-foreground">
-                      <span>IP: {alert.ipAddress}</span>
-                      <span>Attempts: {alert.attempts}</span>
-                      <span>Window: {alert.timeWindow}</span>
-                    </div>
-                  </div>
-                )) : (
-                  <p className="text-muted-foreground text-center py-4">No recent alerts</p>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No recent alerts
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -264,28 +308,35 @@ export default function SecurityMonitoringDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {stats?.topFailedIPs.length ? stats.topFailedIPs.map((item, index) => (
-                  <div key={item.ip} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="text-sm font-mono">{index + 1}</div>
-                      <div>
-                        <div className="font-medium">{item.ip}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {item.attempts} failed attempts
+                {stats?.topFailedIPs.length ? (
+                  stats.topFailedIPs.map((item, index) => (
+                    <div
+                      key={item.ip}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="text-sm font-mono">{index + 1}</div>
+                        <div>
+                          <div className="font-medium">{item.ip}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {item.attempts} failed attempts
+                          </div>
                         </div>
                       </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => loadIPDetails(item.ip)}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        Details
+                      </Button>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => loadIPDetails(item.ip)}
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      Details
-                    </Button>
-                  </div>
-                )) : (
-                  <p className="text-muted-foreground text-center py-4">No failed attempts</p>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No failed attempts
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -322,7 +373,9 @@ export default function SecurityMonitoringDashboard() {
                       <td className="p-2">{attempt.email}</td>
                       <td className="p-2 font-mono">{attempt.ipAddress}</td>
                       <td className="p-2">
-                        <Badge variant={attempt.success ? "default" : "destructive"}>
+                        <Badge
+                          variant={attempt.success ? "default" : "destructive"}
+                        >
                           {attempt.success ? "SUCCESS" : "FAILED"}
                         </Badge>
                       </td>

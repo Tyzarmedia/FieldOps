@@ -32,16 +32,16 @@ export function createServer() {
 
   // Middleware
   app.use(cors());
-  app.use(express.json({ limit: '10mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  app.use(express.json({ limit: "10mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
   // Add error handling middleware for JSON parsing
   app.use((error: any, req: any, res: any, next: any) => {
-    if (error instanceof SyntaxError && 'body' in error) {
-      console.error('JSON parsing error:', error.message);
+    if (error instanceof SyntaxError && "body" in error) {
+      console.error("JSON parsing error:", error.message);
       return res.status(400).json({
         success: false,
-        message: 'Invalid JSON in request body'
+        message: "Invalid JSON in request body",
       });
     }
     next();

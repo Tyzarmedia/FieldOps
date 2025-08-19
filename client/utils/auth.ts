@@ -187,7 +187,11 @@ export class AuthManager {
       console.error("Request failed:", error);
 
       // If it's a stream error, rethrow with more context
-      if (error instanceof TypeError && (error.message.includes("body stream already read") || error.message.includes("already read"))) {
+      if (
+        error instanceof TypeError &&
+        (error.message.includes("body stream already read") ||
+          error.message.includes("already read"))
+      ) {
         throw new Error("Request body was already consumed. Please try again.");
       }
 

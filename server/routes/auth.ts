@@ -44,12 +44,12 @@ export const authenticateToken = async (
 // POST /api/auth/login
 authRouter.post("/login", async (req: Request, res: Response) => {
   try {
-    console.log('POST /api/auth/login - Request received');
-    console.log('Request body:', req.body);
+    console.log("POST /api/auth/login - Request received");
+    console.log("Request body:", req.body);
 
     // Ensure we have a valid request body
-    if (!req.body || typeof req.body !== 'object') {
-      console.log('Invalid request body received');
+    if (!req.body || typeof req.body !== "object") {
+      console.log("Invalid request body received");
       return res.status(400).json({
         success: false,
         message: "Invalid request body",
@@ -59,7 +59,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     const { email, password }: LoginRequest = req.body;
 
     if (!email || !password) {
-      console.log('Missing email or password');
+      console.log("Missing email or password");
       return res.status(400).json({
         success: false,
         message: "Email and password are required",
@@ -67,21 +67,30 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     }
 
     // Check if IP is rate limited
-    const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
-    console.log('Login attempt from IP:', clientIP);
+    const clientIP =
+      req.headers["x-forwarded-for"] ||
+      req.connection.remoteAddress ||
+      "unknown";
+    console.log("Login attempt from IP:", clientIP);
 
     if (securityAudit.isRateLimited(clientIP as string, email)) {
-      console.log('Rate limited login attempt from:', clientIP);
-      await securityAudit.logLoginAttempt(req, email, password, false, 'Rate limited');
+      console.log("Rate limited login attempt from:", clientIP);
+      await securityAudit.logLoginAttempt(
+        req,
+        email,
+        password,
+        false,
+        "Rate limited",
+      );
       return res.status(429).json({
         success: false,
         message: "Too many failed attempts. Please try again later.",
       });
     }
 
-    console.log('Attempting login for email:', email);
+    console.log("Attempting login for email:", email);
     const result = await authService.login({ email, password });
-    console.log('Auth service result:', result);
+    console.log("Auth service result:", result);
 
     // Log the login attempt for security monitoring
     await securityAudit.logLoginAttempt(
@@ -89,17 +98,17 @@ authRouter.post("/login", async (req: Request, res: Response) => {
       email,
       password,
       result.success,
-      result.success ? undefined : result.message
+      result.success ? undefined : result.message,
     );
 
     // Ensure we set proper headers
-    res.setHeader('Content-Type', 'application/json');
+    res.setHeader("Content-Type", "application/json");
 
     if (result.success) {
-      console.log('Login successful, returning 200');
+      console.log("Login successful, returning 200");
       return res.status(200).json(result);
     } else {
-      console.log('Login failed, returning 401');
+      console.log("Login failed, returning 401");
       return res.status(401).json(result);
     }
   } catch (error) {
@@ -107,7 +116,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
 
     // Ensure we haven't already sent a response
     if (!res.headersSent) {
-      res.setHeader('Content-Type', 'application/json');
+      res.setHeader("Content-Type", "application/json");
       return res.status(500).json({
         success: false,
         message: "Internal server error",
