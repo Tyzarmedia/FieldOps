@@ -1,4 +1,5 @@
 import { geolocationUtils, LocationResult } from "@/utils/geolocationUtils";
+import { logError, getUserFriendlyErrorMessage } from "@/utils/errorUtils";
 
 interface JobLocation {
   id: string;
