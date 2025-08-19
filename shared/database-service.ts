@@ -276,13 +276,29 @@ export class DatabaseService {
       "syncStatus" | "syncAttempts" | "lastSyncAttempt"
     >,
   ): Promise<void> {
-    const clockRecord: InternalClockRecord = {
-      ...record,
-      syncStatus: "pending",
-      syncAttempts: 0,
-    };
+    // In server environment, we don't have IndexedDB, so just log the action
+    if (this.isServerEnvironment) {
+      console.log("Clock record received on server:", {
+        technicianId: record.technicianId,
+        date: record.date,
+        clockOutTime: record.clockOutTime,
+        totalWorkingHours: record.totalWorkingHours,
+        reason: record.reason || 'Clock out',
+        autoClockOut: record.autoClockOut || false
+      });
+      return;
+    }
 
-    await this.internalDb.saveClockRecord(clockRecord);
+    // In browser environment, save to IndexedDB
+    if (this.internalDb) {
+      const clockRecord: InternalClockRecord = {
+        ...record,
+        syncStatus: "pending",
+        syncAttempts: 0,
+      };
+
+      await this.internalDb.saveClockRecord(clockRecord);
+    }
   }
 
   async getClockRecord(
