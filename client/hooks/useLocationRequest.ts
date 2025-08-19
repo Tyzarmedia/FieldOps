@@ -4,6 +4,7 @@ import {
   LocationResult,
   GeolocationError,
 } from "@/utils/geolocationUtils";
+import { logError, getUserFriendlyErrorMessage } from "@/utils/errorUtils";
 
 interface LocationRequestState {
   isLoading: boolean;
@@ -105,7 +106,15 @@ export function useLocationRequest(options: UseLocationRequestOptions = {}) {
         if (cancelled) return null;
 
         const geoError = error as GeolocationError;
-        console.error("Location request failed:", geoError);
+
+        // Use proper error logging to avoid [object Object] display
+        if (geoError.code !== undefined && typeof geoError.code === 'number') {
+          // This is a GeolocationPositionError
+          geolocationUtils.logGeolocationError(geoError, 'useLocationRequest');
+        } else {
+          // This is some other error
+          logError(geoError, 'useLocationRequest');
+        }
 
         // If fallback is enabled and it's a timeout/unavailable error, use default
         if (
