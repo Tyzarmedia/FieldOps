@@ -329,6 +329,23 @@ export default function ClockInScreen({
         showNotification.locationDenied();
       }
 
+      // Create technician-assistant assignment if assistant selected
+      if (selectedAssistant) {
+        try {
+          await authManager.makeAuthenticatedRequest("/api/assistants/assignments", {
+            method: "POST",
+            body: JSON.stringify({
+              technicianId: authUser?.employeeId,
+              assistantId: selectedAssistant.id,
+              startTime: clockInTime,
+            }),
+          });
+          console.log("Technician-assistant assignment created successfully");
+        } catch (error) {
+          console.error("Failed to create technician-assistant assignment:", error);
+        }
+      }
+
       // Save clock record to database
       await saveClockRecordToDatabase(updatedClockIns);
     }
