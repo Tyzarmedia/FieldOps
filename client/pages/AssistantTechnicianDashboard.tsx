@@ -101,10 +101,12 @@ export default function AssistantTechnicianDashboard() {
   }, []);
 
   const stats = {
-    assignedJobs: getJobsByStatus("assigned").length,
-    acceptedJobs: getJobsByStatus("accepted").length,
-    inProgressJobs: getJobsByStatus("in-progress").length,
-    completedJobs: getJobsByStatus("completed").length,
+    assignedJobs: assignedJobs.filter(job => job.status === "Assigned").length,
+    acceptedJobs: assignedJobs.filter(job => job.status === "Accepted").length,
+    inProgressJobs: assignedJobs.filter(job => job.status === "In Progress").length,
+    completedJobs: assignedJobs.filter(job => job.status === "Completed").length,
+    pendingReview: assignedJobs.filter(job => job.status === "Pending Technician Review").length,
+    totalJobs: assignedJobs.length,
   };
 
   const sideNavItems = [
