@@ -7,7 +7,7 @@ const loadSage300Data = (): any[] => {
   try {
     const filePath = path.join(
       process.cwd(),
-      "public/data/sage-300-database.json"
+      "public/data/sage-300-database.json",
     );
     const fileContent = fs.readFileSync(filePath, "utf-8");
     const data = JSON.parse(fileContent);
@@ -19,28 +19,34 @@ const loadSage300Data = (): any[] => {
 };
 
 // Helper to check if assistant is currently available
-const checkAssistantAvailability = async (employeeId: string): Promise<boolean> => {
+const checkAssistantAvailability = async (
+  employeeId: string,
+): Promise<boolean> => {
   try {
     // Check if assistant is currently clocked in somewhere else
     // This could be expanded to check current job assignments, location, etc.
-    
+
     // For now, check localStorage-style availability (would be replaced with proper DB queries)
     // Assume assistant is available if not currently assigned to active work
-    
+
     // Check current technician-assistant assignments
-    const assignmentsPath = path.join(process.cwd(), "public/data/technician-assistant-assignments.json");
-    
+    const assignmentsPath = path.join(
+      process.cwd(),
+      "public/data/technician-assistant-assignments.json",
+    );
+
     if (fs.existsSync(assignmentsPath)) {
       const assignments = JSON.parse(fs.readFileSync(assignmentsPath, "utf-8"));
-      const activeAssignment = assignments.find((a: any) => 
-        a.assistantId === employeeId && 
-        a.status === "active" &&
-        new Date(a.endTime || Date.now()) > new Date()
+      const activeAssignment = assignments.find(
+        (a: any) =>
+          a.assistantId === employeeId &&
+          a.status === "active" &&
+          new Date(a.endTime || Date.now()) > new Date(),
       );
-      
+
       return !activeAssignment; // Available if no active assignment
     }
-    
+
     return true; // Default to available
   } catch (error) {
     console.error("Error checking assistant availability:", error);
@@ -52,19 +58,21 @@ const checkAssistantAvailability = async (employeeId: string): Promise<boolean> 
 export const getAvailableAssistants: RequestHandler = async (req, res) => {
   try {
     const employees = loadSage300Data();
-    
+
     // Filter for assistant technicians
     const assistantTechnicians = employees.filter(
-      (emp) => 
-        emp.Role === "Assistant Technician" && 
-        emp.EmploymentStatus === "Active"
+      (emp) =>
+        emp.Role === "Assistant Technician" &&
+        emp.EmploymentStatus === "Active",
     );
 
     // Check availability for each assistant
     const assistantsWithAvailability = await Promise.all(
       assistantTechnicians.map(async (assistant) => {
-        const isAvailable = await checkAssistantAvailability(assistant.EmployeeID);
-        
+        const isAvailable = await checkAssistantAvailability(
+          assistant.EmployeeID,
+        );
+
         return {
           employeeId: assistant.EmployeeID,
           fullName: assistant.FullName,
@@ -76,7 +84,7 @@ export const getAvailableAssistants: RequestHandler = async (req, res) => {
           skills: ["Fiber Installation", "Network Testing"], // Default skills
           certifications: ["Safety Training"], // Default certifications
         };
-      })
+      }),
     );
 
     // Sort by availability (available first) and then by name
@@ -90,7 +98,7 @@ export const getAvailableAssistants: RequestHandler = async (req, res) => {
       success: true,
       assistants: assistantsWithAvailability,
       total: assistantsWithAvailability.length,
-      available: assistantsWithAvailability.filter(a => a.isAvailable).length,
+      available: assistantsWithAvailability.filter((a) => a.isAvailable).length,
     });
   } catch (error) {
     console.error("Error fetching available assistants:", error);
@@ -103,7 +111,10 @@ export const getAvailableAssistants: RequestHandler = async (req, res) => {
 };
 
 // Create technician-assistant assignment
-export const createTechnicianAssistantAssignment: RequestHandler = async (req, res) => {
+export const createTechnicianAssistantAssignment: RequestHandler = async (
+  req,
+  res,
+) => {
   try {
     const { technicianId, assistantId, startTime, expectedEndTime } = req.body;
 
@@ -128,9 +139,12 @@ export const createTechnicianAssistantAssignment: RequestHandler = async (req, r
     };
 
     // Save assignment to file (in production, this would be a database)
-    const assignmentsPath = path.join(process.cwd(), "public/data/technician-assistant-assignments.json");
+    const assignmentsPath = path.join(
+      process.cwd(),
+      "public/data/technician-assistant-assignments.json",
+    );
     let assignments = [];
-    
+
     if (fs.existsSync(assignmentsPath)) {
       assignments = JSON.parse(fs.readFileSync(assignmentsPath, "utf-8"));
     }
@@ -157,7 +171,7 @@ export const createTechnicianAssistantAssignment: RequestHandler = async (req, r
     res.json({
       success: true,
       assignment,
-      message: assistantId 
+      message: assistantId
         ? "Technician-assistant assignment created successfully"
         : "Technician marked as working alone",
     });
@@ -183,8 +197,11 @@ export const getCurrentAssignment: RequestHandler = async (req, res) => {
       });
     }
 
-    const assignmentsPath = path.join(process.cwd(), "public/data/technician-assistant-assignments.json");
-    
+    const assignmentsPath = path.join(
+      process.cwd(),
+      "public/data/technician-assistant-assignments.json",
+    );
+
     if (!fs.existsSync(assignmentsPath)) {
       return res.json({
         success: true,
@@ -194,16 +211,17 @@ export const getCurrentAssignment: RequestHandler = async (req, res) => {
     }
 
     const assignments = JSON.parse(fs.readFileSync(assignmentsPath, "utf-8"));
-    const currentAssignment = assignments.find((a: any) => 
-      a.technicianId === technicianId && 
-      a.status === "active"
+    const currentAssignment = assignments.find(
+      (a: any) => a.technicianId === technicianId && a.status === "active",
     );
 
     if (currentAssignment && currentAssignment.assistantId) {
       // Get assistant details from Sage300
       const employees = loadSage300Data();
-      const assistant = employees.find(emp => emp.EmployeeID === currentAssignment.assistantId);
-      
+      const assistant = employees.find(
+        (emp) => emp.EmployeeID === currentAssignment.assistantId,
+      );
+
       if (assistant) {
         currentAssignment.assistantDetails = {
           employeeId: assistant.EmployeeID,
@@ -240,8 +258,11 @@ export const endAssignment: RequestHandler = async (req, res) => {
       });
     }
 
-    const assignmentsPath = path.join(process.cwd(), "public/data/technician-assistant-assignments.json");
-    
+    const assignmentsPath = path.join(
+      process.cwd(),
+      "public/data/technician-assistant-assignments.json",
+    );
+
     if (!fs.existsSync(assignmentsPath)) {
       return res.json({
         success: true,
@@ -250,7 +271,7 @@ export const endAssignment: RequestHandler = async (req, res) => {
     }
 
     let assignments = JSON.parse(fs.readFileSync(assignmentsPath, "utf-8"));
-    
+
     // End active assignments for this technician
     let assignmentEnded = false;
     assignments = assignments.map((a: any) => {
@@ -267,7 +288,9 @@ export const endAssignment: RequestHandler = async (req, res) => {
 
     res.json({
       success: true,
-      message: assignmentEnded ? "Assignment ended successfully" : "No active assignment found",
+      message: assignmentEnded
+        ? "Assignment ended successfully"
+        : "No active assignment found",
     });
   } catch (error) {
     console.error("Error ending assignment:", error);

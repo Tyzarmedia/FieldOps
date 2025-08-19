@@ -30,7 +30,7 @@ import {
   getAvailableAssistants,
   createTechnicianAssistantAssignment,
   getCurrentAssignment,
-  endAssignment
+  endAssignment,
 } from "./routes/assistants";
 
 export function createServer() {

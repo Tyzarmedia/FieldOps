@@ -24,9 +24,7 @@
       "OvertimeHours": 12,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thabitha Ndlovu, 0812345678",
-      "AccessRoles": [
-        "Technician"
-      ],
+      "AccessRoles": ["Technician"],
       "IsActive": true,
       "LastLogin": "2025-08-19T19:11:46.515Z"
     },
@@ -54,9 +52,7 @@
       "OvertimeHours": 20,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Nancy Dube, 0812345679",
-      "AccessRoles": [
-        "Technician"
-      ],
+      "AccessRoles": ["Technician"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -84,9 +80,7 @@
       "OvertimeHours": 8,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Dyondzani Clement Masinge, 0810000001",
-      "AccessRoles": [
-        "Technician"
-      ],
+      "AccessRoles": ["Technician"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -114,9 +108,7 @@
       "OvertimeHours": 5,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thabo Matlou, 0810000002",
-      "AccessRoles": [
-        "HR"
-      ],
+      "AccessRoles": ["HR"],
       "IsActive": true,
       "LastLogin": "2025-08-19T18:37:50.592Z"
     },
@@ -144,9 +136,7 @@
       "OvertimeHours": 6,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Nancy Dube, 0810000010",
-      "AccessRoles": [
-        "HR"
-      ],
+      "AccessRoles": ["HR"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -174,9 +164,7 @@
       "OvertimeHours": 10,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thabitha Ndlovu, 0810000003",
-      "AccessRoles": [
-        "Payroll"
-      ],
+      "AccessRoles": ["Payroll"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -204,9 +192,7 @@
       "OvertimeHours": 7,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Glassman Nkosi, 0810000008",
-      "AccessRoles": [
-        "Payroll"
-      ],
+      "AccessRoles": ["Payroll"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -234,9 +220,7 @@
       "OvertimeHours": 0,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thembi Khumalo, 0810000004",
-      "AccessRoles": [
-        "Manager"
-      ],
+      "AccessRoles": ["Manager"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -264,9 +248,7 @@
       "OvertimeHours": 12,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thabo Matlou, 0810000002",
-      "AccessRoles": [
-        "IT"
-      ],
+      "AccessRoles": ["IT"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -294,9 +276,7 @@
       "OvertimeHours": 8,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Lerato Mokoena, 0810000005",
-      "AccessRoles": [
-        "FleetManager"
-      ],
+      "AccessRoles": ["FleetManager"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -324,9 +304,7 @@
       "OvertimeHours": 5,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Sarah Johnson, 0812345680",
-      "AccessRoles": [
-        "AssistantTechnician"
-      ],
+      "AccessRoles": ["AssistantTechnician"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -354,9 +332,7 @@
       "OvertimeHours": 8,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Mike Williams, 0812345681",
-      "AccessRoles": [
-        "AssistantTechnician"
-      ],
+      "AccessRoles": ["AssistantTechnician"],
       "IsActive": true,
       "LastLogin": null
     },
@@ -384,9 +360,7 @@
       "OvertimeHours": 3,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Lisa Brown, 0812345682",
-      "AccessRoles": [
-        "AssistantTechnician"
-      ],
+      "AccessRoles": ["AssistantTechnician"],
       "IsActive": true,
       "LastLogin": null
     }

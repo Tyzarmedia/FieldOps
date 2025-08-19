@@ -4,16 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Clock, 
-  User, 
+import {
+  ArrowLeft,
+  MapPin,
+  Clock,
+  User,
   Briefcase,
   CheckCircle,
   AlertCircle,
   RefreshCw,
-  Eye
+  Eye,
 } from "lucide-react";
 import { authManager } from "@/utils/auth";
 
@@ -43,7 +43,9 @@ interface Job {
 export default function AssistantJobsScreen() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
-  const [assignedTechnician, setAssignedTechnician] = useState<string | null>(null);
+  const [assignedTechnician, setAssignedTechnician] = useState<string | null>(
+    null,
+  );
   const [refreshing, setRefreshing] = useState(false);
   const navigate = useNavigate();
 
@@ -61,7 +63,7 @@ export default function AssistantJobsScreen() {
 
       setRefreshing(true);
       const response = await authManager.makeAuthenticatedRequest(
-        `/api/job-mgmt/jobs/assistant/${authUser.employeeId}`
+        `/api/job-mgmt/jobs/assistant/${authUser.employeeId}`,
       );
 
       if (response.ok) {
@@ -115,12 +117,12 @@ export default function AssistantJobsScreen() {
 
   const handleJobClick = (job: Job) => {
     // Navigate to job details with assistant context
-    navigate(`/assistant/jobs/${job.id}`, { 
-      state: { 
-        job, 
+    navigate(`/assistant/jobs/${job.id}`, {
+      state: {
+        job,
         isAssistant: true,
-        workingWithTechnician: assignedTechnician 
-      } 
+        workingWithTechnician: assignedTechnician,
+      },
     });
   };
 
@@ -177,7 +179,9 @@ export default function AssistantJobsScreen() {
               disabled={refreshing}
               className="flex items-center space-x-2"
             >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+              />
               <span>Refresh</span>
             </Button>
           </div>
@@ -190,8 +194,8 @@ export default function AssistantJobsScreen() {
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              You are not currently assigned to work with a technician. 
-              Clock in with a technician to see assigned jobs.
+              You are not currently assigned to work with a technician. Clock in
+              with a technician to see assigned jobs.
             </AlertDescription>
           </Alert>
         )}
@@ -204,7 +208,8 @@ export default function AssistantJobsScreen() {
                 No jobs assigned
               </h3>
               <p className="text-gray-600">
-                The technician you're working with has no active jobs at the moment.
+                The technician you're working with has no active jobs at the
+                moment.
               </p>
             </CardContent>
           </Card>
@@ -212,8 +217,8 @@ export default function AssistantJobsScreen() {
 
         {/* Jobs List */}
         {jobs.map((job) => (
-          <Card 
-            key={job.id} 
+          <Card
+            key={job.id}
             className="hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleJobClick(job)}
           >
@@ -244,30 +249,30 @@ export default function AssistantJobsScreen() {
                 </div>
               </div>
             </CardHeader>
-            
+
             <CardContent className="pt-0">
               <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                 {job.description}
               </p>
-              
+
               {/* Job Details */}
               <div className="space-y-2 text-sm">
                 <div className="flex items-center text-gray-600">
                   <User className="h-4 w-4 mr-2" />
                   <span>{job.client.name}</span>
                 </div>
-                
+
                 <div className="flex items-center text-gray-600">
                   <MapPin className="h-4 w-4 mr-2" />
                   <span className="truncate">{job.client.address}</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center text-gray-600">
                     <Clock className="h-4 w-4 mr-2" />
                     <span>{job.estimatedHours}h estimated</span>
                   </div>
-                  
+
                   <div className="flex items-center text-gray-500">
                     <span className="text-xs">
                       {formatDate(job.scheduledDate)}
@@ -290,7 +295,7 @@ export default function AssistantJobsScreen() {
                   <Eye className="h-4 w-4" />
                   <span>View Details</span>
                 </Button>
-                
+
                 {job.canModifyStatus && job.status === "In Progress" && (
                   <Button
                     variant="default"

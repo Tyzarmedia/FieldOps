@@ -28,7 +28,9 @@ export default function AssistantTechnicianDashboard() {
   const [distanceTraveled, setDistanceTraveled] = useState("0.0");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [assignedJobs, setAssignedJobs] = useState<any[]>([]);
-  const [assignedTechnician, setAssignedTechnician] = useState<string | null>(null);
+  const [assignedTechnician, setAssignedTechnician] = useState<string | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -45,7 +47,7 @@ export default function AssistantTechnicianDashboard() {
         }
 
         const response = await authManager.makeAuthenticatedRequest(
-          `/api/job-mgmt/jobs/assistant/${authUser.employeeId}`
+          `/api/job-mgmt/jobs/assistant/${authUser.employeeId}`,
         );
 
         if (response.ok) {
@@ -101,11 +103,17 @@ export default function AssistantTechnicianDashboard() {
   }, []);
 
   const stats = {
-    assignedJobs: assignedJobs.filter(job => job.status === "Assigned").length,
-    acceptedJobs: assignedJobs.filter(job => job.status === "Accepted").length,
-    inProgressJobs: assignedJobs.filter(job => job.status === "In Progress").length,
-    completedJobs: assignedJobs.filter(job => job.status === "Completed").length,
-    pendingReview: assignedJobs.filter(job => job.status === "Pending Technician Review").length,
+    assignedJobs: assignedJobs.filter((job) => job.status === "Assigned")
+      .length,
+    acceptedJobs: assignedJobs.filter((job) => job.status === "Accepted")
+      .length,
+    inProgressJobs: assignedJobs.filter((job) => job.status === "In Progress")
+      .length,
+    completedJobs: assignedJobs.filter((job) => job.status === "Completed")
+      .length,
+    pendingReview: assignedJobs.filter(
+      (job) => job.status === "Pending Technician Review",
+    ).length,
     totalJobs: assignedJobs.length,
   };
 
@@ -240,12 +248,17 @@ export default function AssistantTechnicianDashboard() {
             <div className="flex items-center space-x-3">
               <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
                 <span className="text-orange-600 text-sm font-bold">
-                  {authManager.getUser()?.fullName.split(' ').map(n => n[0]).join('').toUpperCase() || 'AS'}
+                  {authManager
+                    .getUser()
+                    ?.fullName.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase() || "AS"}
                 </span>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">
-                  {authManager.getUser()?.fullName || 'Assistant Technician'}
+                  {authManager.getUser()?.fullName || "Assistant Technician"}
                 </p>
                 <p className="text-xs text-gray-500">Assistant Technician</p>
                 {assignedTechnician && (

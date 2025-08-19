@@ -3,14 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  User, 
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  User,
   MessageSquare,
   AlertTriangle,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 import { authManager } from "@/utils/auth";
 
@@ -39,7 +39,9 @@ interface TechnicianReviewInterfaceProps {
   onReviewComplete?: () => void;
 }
 
-export default function TechnicianReviewInterface({ onReviewComplete }: TechnicianReviewInterfaceProps) {
+export default function TechnicianReviewInterface({
+  onReviewComplete,
+}: TechnicianReviewInterfaceProps) {
   const [pendingJobs, setPendingJobs] = useState<PendingJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [reviewing, setReviewing] = useState<string | null>(null);
@@ -53,14 +55,14 @@ export default function TechnicianReviewInterface({ onReviewComplete }: Technici
     try {
       setLoading(true);
       const authUser = authManager.getUser();
-      
+
       if (!authUser?.employeeId) {
         console.error("No employee ID found");
         return;
       }
 
       const response = await authManager.makeAuthenticatedRequest(
-        `/api/job-mgmt/jobs/technician/${authUser.employeeId}/pending-review`
+        `/api/job-mgmt/jobs/technician/${authUser.employeeId}/pending-review`,
       );
 
       if (response.ok) {
@@ -89,7 +91,7 @@ export default function TechnicianReviewInterface({ onReviewComplete }: Technici
     try {
       setReviewing(jobId);
       const authUser = authManager.getUser();
-      
+
       if (!authUser?.employeeId) {
         throw new Error("No employee ID found");
       }
@@ -100,19 +102,20 @@ export default function TechnicianReviewInterface({ onReviewComplete }: Technici
           method: "PUT",
           body: JSON.stringify({
             action,
-            notes: reviewNotes.trim() || `Job completion ${action}d by technician`,
+            notes:
+              reviewNotes.trim() || `Job completion ${action}d by technician`,
             technicianId: authUser.employeeId,
           }),
-        }
+        },
       );
 
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
           // Remove the reviewed job from the list
-          setPendingJobs(prev => prev.filter(job => job.id !== jobId));
+          setPendingJobs((prev) => prev.filter((job) => job.id !== jobId));
           setReviewNotes("");
-          
+
           if (onReviewComplete) {
             onReviewComplete();
           }
@@ -140,7 +143,7 @@ export default function TechnicianReviewInterface({ onReviewComplete }: Technici
   };
 
   const getAssistantNotes = (job: PendingJob) => {
-    return job.notes?.filter(note => note.role === "assistant") || [];
+    return job.notes?.filter((note) => note.role === "assistant") || [];
   };
 
   if (loading) {
@@ -221,7 +224,9 @@ export default function TechnicianReviewInterface({ onReviewComplete }: Technici
             <CardContent className="space-y-4">
               {/* Job Description */}
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-1">Description:</h4>
+                <h4 className="text-sm font-medium text-gray-700 mb-1">
+                  Description:
+                </h4>
                 <p className="text-sm text-gray-600">{job.description}</p>
               </div>
 
@@ -249,7 +254,8 @@ export default function TechnicianReviewInterface({ onReviewComplete }: Technici
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Requested Action:</strong> Mark job as "{job.requestedStatus}"
+                  <strong>Requested Action:</strong> Mark job as "
+                  {job.requestedStatus}"
                 </AlertDescription>
               </Alert>
 
@@ -276,9 +282,11 @@ export default function TechnicianReviewInterface({ onReviewComplete }: Technici
                   className="flex-1 bg-green-600 hover:bg-green-700 flex items-center justify-center space-x-2"
                 >
                   <CheckCircle className="h-4 w-4" />
-                  <span>{isCurrentlyReviewing ? "Approving..." : "Approve"}</span>
+                  <span>
+                    {isCurrentlyReviewing ? "Approving..." : "Approve"}
+                  </span>
                 </Button>
-                
+
                 <Button
                   onClick={() => handleReview(job.id, "reject")}
                   disabled={isCurrentlyReviewing || !reviewNotes.trim()}
@@ -286,7 +294,9 @@ export default function TechnicianReviewInterface({ onReviewComplete }: Technici
                   className="flex-1 flex items-center justify-center space-x-2"
                 >
                   <XCircle className="h-4 w-4" />
-                  <span>{isCurrentlyReviewing ? "Rejecting..." : "Reject"}</span>
+                  <span>
+                    {isCurrentlyReviewing ? "Rejecting..." : "Reject"}
+                  </span>
                 </Button>
               </div>
             </CardContent>

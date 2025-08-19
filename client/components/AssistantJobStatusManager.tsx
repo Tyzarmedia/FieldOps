@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  CheckCircle, 
-  Play, 
-  Pause, 
-  AlertCircle, 
+import {
+  CheckCircle,
+  Play,
+  Pause,
+  AlertCircle,
   Clock,
-  User
+  User,
 } from "lucide-react";
 import { authManager } from "@/utils/auth";
 
@@ -38,7 +38,10 @@ export default function AssistantJobStatusManager({
   const [showNotesInput, setShowNotesInput] = useState(false);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
 
-  const handleStatusUpdate = async (newStatus: string, requiresNotes = false) => {
+  const handleStatusUpdate = async (
+    newStatus: string,
+    requiresNotes = false,
+  ) => {
     if (requiresNotes && !notes.trim()) {
       setShowNotesInput(true);
       setPendingAction(newStatus);
@@ -48,7 +51,7 @@ export default function AssistantJobStatusManager({
     try {
       setIsUpdating(true);
       const authUser = authManager.getUser();
-      
+
       if (!authUser?.employeeId) {
         throw new Error("No employee ID found");
       }
@@ -63,7 +66,7 @@ export default function AssistantJobStatusManager({
             isAssistant: true,
             assistantId: authUser.employeeId,
           }),
-        }
+        },
       );
 
       if (response.ok) {
@@ -81,7 +84,9 @@ export default function AssistantJobStatusManager({
       }
     } catch (error) {
       console.error("Error updating job status:", error);
-      alert(error instanceof Error ? error.message : "Failed to update job status");
+      alert(
+        error instanceof Error ? error.message : "Failed to update job status",
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -167,11 +172,13 @@ export default function AssistantJobStatusManager({
           </p>
         )}
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Current Status */}
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">Current Status:</span>
+          <span className="text-sm font-medium text-gray-700">
+            Current Status:
+          </span>
           <Badge variant="outline" className="ml-2">
             {job.status}
           </Badge>
@@ -180,14 +187,18 @@ export default function AssistantJobStatusManager({
         {/* Status Update Actions */}
         {availableActions.length > 0 && (
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-gray-700">Available Actions:</h4>
-            
+            <h4 className="text-sm font-medium text-gray-700">
+              Available Actions:
+            </h4>
+
             {availableActions.map((action) => {
               const IconComponent = action.icon;
               return (
                 <Button
                   key={action.status}
-                  onClick={() => handleStatusUpdate(action.status, action.requiresNotes)}
+                  onClick={() =>
+                    handleStatusUpdate(action.status, action.requiresNotes)
+                  }
                   disabled={isUpdating}
                   className={`w-full flex items-center justify-center space-x-2 ${action.color}`}
                 >
@@ -241,8 +252,9 @@ export default function AssistantJobStatusManager({
           <Alert>
             <Clock className="h-4 w-4" />
             <AlertDescription>
-              <strong>Note:</strong> When you complete this job, it will be sent to the technician for review. 
-              The technician must approve your completion before the job is marked as finished.
+              <strong>Note:</strong> When you complete this job, it will be sent
+              to the technician for review. The technician must approve your
+              completion before the job is marked as finished.
             </AlertDescription>
           </Alert>
         )}
@@ -252,22 +264,23 @@ export default function AssistantJobStatusManager({
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Awaiting Review:</strong> You've completed this job and it's now waiting for 
-              technician approval. The technician will review your work and either approve or 
-              request changes.
+              <strong>Awaiting Review:</strong> You've completed this job and
+              it's now waiting for technician approval. The technician will
+              review your work and either approve or request changes.
             </AlertDescription>
           </Alert>
         )}
 
         {/* No Actions Available */}
-        {availableActions.length === 0 && job.status !== "Pending Technician Review" && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              No actions available for jobs with status "{job.status}".
-            </AlertDescription>
-          </Alert>
-        )}
+        {availableActions.length === 0 &&
+          job.status !== "Pending Technician Review" && (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                No actions available for jobs with status "{job.status}".
+              </AlertDescription>
+            </Alert>
+          )}
       </CardContent>
     </Card>
   );

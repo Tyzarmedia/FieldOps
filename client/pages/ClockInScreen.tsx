@@ -299,7 +299,7 @@ export default function ClockInScreen({
         try {
           await authManager.makeAuthenticatedRequest(
             `/api/assistants/assignments/${authUser.employeeId}/end`,
-            { method: "POST" }
+            { method: "POST" },
           );
         } catch (error) {
           console.warn("Failed to end assistant assignment:", error);
@@ -338,17 +338,23 @@ export default function ClockInScreen({
       // Create technician-assistant assignment if assistant selected
       if (selectedAssistant) {
         try {
-          await authManager.makeAuthenticatedRequest("/api/assistants/assignments", {
-            method: "POST",
-            body: JSON.stringify({
-              technicianId: authUser?.employeeId,
-              assistantId: selectedAssistant.id,
-              startTime: clockInTime,
-            }),
-          });
+          await authManager.makeAuthenticatedRequest(
+            "/api/assistants/assignments",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                technicianId: authUser?.employeeId,
+                assistantId: selectedAssistant.id,
+                startTime: clockInTime,
+              }),
+            },
+          );
           console.log("Technician-assistant assignment created successfully");
         } catch (error) {
-          console.error("Failed to create technician-assistant assignment:", error);
+          console.error(
+            "Failed to create technician-assistant assignment:",
+            error,
+          );
         }
       }
 
@@ -539,7 +545,10 @@ export default function ClockInScreen({
     setFeedbackRating(null);
   };
 
-  const handleAssistantSelection = async (assistantId: string | null, assistantName: string | null) => {
+  const handleAssistantSelection = async (
+    assistantId: string | null,
+    assistantName: string | null,
+  ) => {
     setSelectedAssistant({ id: assistantId, name: assistantName });
     setShowAssistantSelection(false);
     setIsProcessingClockIn(true);
@@ -560,7 +569,7 @@ export default function ClockInScreen({
   const fetchCurrentAssignment = async (technicianId: string) => {
     try {
       const response = await authManager.makeAuthenticatedRequest(
-        `/api/assistants/assignments/${technicianId}`
+        `/api/assistants/assignments/${technicianId}`,
       );
 
       if (response.ok) {
@@ -569,7 +578,7 @@ export default function ClockInScreen({
           const assignment = data.assignment;
           setSelectedAssistant({
             id: assignment.assistantId,
-            name: assignment.assistantDetails?.fullName || "Unknown Assistant"
+            name: assignment.assistantDetails?.fullName || "Unknown Assistant",
           });
         }
       }
@@ -638,7 +647,8 @@ export default function ClockInScreen({
           {selectedAssistant && selectedAssistant.id && (
             <div className="mt-2 bg-white/20 px-4 py-2 rounded-full text-center">
               <p className="text-white/90 text-sm">
-                Working with: <span className="font-medium">{selectedAssistant.name}</span>
+                Working with:{" "}
+                <span className="font-medium">{selectedAssistant.name}</span>
               </p>
             </div>
           )}
