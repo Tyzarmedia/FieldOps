@@ -105,16 +105,16 @@ export function useLocationRequest(options: UseLocationRequestOptions = {}) {
       } catch (error) {
         if (cancelled) return null;
 
-        const geoError = error as GeolocationError;
-
         // Use proper error logging to avoid [object Object] display
-        if (geoError.code !== undefined && typeof geoError.code === 'number') {
+        if (error && typeof error === 'object' && 'code' in error && typeof error.code === 'number') {
           // This is a GeolocationPositionError
-          geolocationUtils.logGeolocationError(geoError, 'useLocationRequest');
+          geolocationUtils.logGeolocationError(error as GeolocationPositionError, 'useLocationRequest');
         } else {
           // This is some other error
-          logError(geoError, 'useLocationRequest');
+          logError(error, 'useLocationRequest');
         }
+
+        const geoError = error as GeolocationError;
 
         // If fallback is enabled and it's a timeout/unavailable error, use default
         if (
