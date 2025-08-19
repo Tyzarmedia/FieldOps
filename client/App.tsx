@@ -222,6 +222,14 @@ export default function App() {
                   </MobileProtectedRoute>
                 }
               />
+              <Route
+                path="/assistant/jobs"
+                element={
+                  <MobileProtectedRoute>
+                    <AssistantJobsScreen />
+                  </MobileProtectedRoute>
+                }
+              />
 
               <Route
                 path="/"
