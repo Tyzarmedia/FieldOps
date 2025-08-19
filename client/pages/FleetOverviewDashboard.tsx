@@ -280,7 +280,11 @@ export default function FleetOverviewDashboard() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/fleet/settings")}
+          >
             <Settings className="h-4 w-4 mr-2" />
             Settings
           </Button>
