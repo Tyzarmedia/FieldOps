@@ -739,6 +739,13 @@ export default function ClockInScreen({
         </div>
       </div>
 
+      {/* Assistant Selection Overlay */}
+      <AssistantSelection
+        isVisible={showAssistantSelection}
+        onSelection={handleAssistantSelection}
+        onCancel={handleAssistantSelectionCancel}
+      />
+
       {/* Daily Feedback Overlay */}
       {showFeedbackOverlay && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
