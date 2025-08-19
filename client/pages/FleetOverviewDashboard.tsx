@@ -190,45 +190,56 @@ export default function FleetOverviewDashboard() {
     { vehicle: "FL-005", uptime: 94.8 },
   ];
 
-  const handleAIQuestion = async () => {
+  const handleAIQuestion = useCallback(async () => {
     if (!aiQuestion.trim()) return;
 
     setIsAskingAI(true);
 
-    // Simulate AI processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Simulate AI processing with timeout protection
+    const timeoutId = setTimeout(() => {
+      setIsAskingAI(false);
+    }, 10000); // 10 second timeout
 
-    // Mock AI responses based on common fleet questions
-    const responses: { [key: string]: string } = {
-      "worst mpg":
-        "Vehicle FL-003 has the worst fuel efficiency at 24.2 MPG. This is 15% below fleet average. Consider route optimization or maintenance check.",
-      "maintenance due":
-        "Currently 6 vehicles have maintenance due: FL-003, FL-007, FL-012, FL-015, FL-018, FL-021. FL-003 and FL-007 are highest priority.",
-      "fuel cost":
-        "Current weekly fuel cost is $1,247. This is 8% higher than last week due to increased mileage on Route C. Consider route optimization.",
-      "compliance issues":
-        "3 vehicles have compliance issues: FL-005 (license expires in 12 days), FL-009 (inspection overdue), FL-016 (insurance renewal needed).",
-      "best driver":
-        "Driver Sarah Johnson has the highest efficiency score of 96.2 with lowest fuel consumption and best route adherence.",
-    };
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    const lowerQuestion = aiQuestion.toLowerCase();
-    let response = "I'm analyzing your fleet data...";
+      // Mock AI responses based on common fleet questions
+      const responses: { [key: string]: string } = {
+        "worst mpg":
+          "Vehicle FL-003 has the worst fuel efficiency at 24.2 MPG. This is 15% below fleet average. Consider route optimization or maintenance check.",
+        "maintenance due":
+          "Currently 6 vehicles have maintenance due: FL-003, FL-007, FL-012, FL-015, FL-018, FL-021. FL-003 and FL-007 are highest priority.",
+        "fuel cost":
+          "Current weekly fuel cost is $1,247. This is 8% higher than last week due to increased mileage on Route C. Consider route optimization.",
+        "compliance issues":
+          "3 vehicles have compliance issues: FL-005 (license expires in 12 days), FL-009 (inspection overdue), FL-016 (insurance renewal needed).",
+        "best driver":
+          "Driver Sarah Johnson has the highest efficiency score of 96.2 with lowest fuel consumption and best route adherence.",
+      };
 
-    for (const [key, value] of Object.entries(responses)) {
-      if (lowerQuestion.includes(key)) {
-        response = value;
-        break;
+      const lowerQuestion = aiQuestion.toLowerCase();
+      let response = "I'm analyzing your fleet data...";
+
+      for (const [key, value] of Object.entries(responses)) {
+        if (lowerQuestion.includes(key)) {
+          response = value;
+          break;
+        }
       }
-    }
 
-    if (response === "I'm analyzing your fleet data...") {
-      response = `Based on current fleet data: ${fleetKPIs.totalVehicles} vehicles, ${fleetKPIs.complianceRate}% compliance rate, ${fleetKPIs.avgFuelEfficiency} MPG average. ${fleetKPIs.criticalAlerts} critical alerts need immediate attention.`;
-    }
+      if (response === "I'm analyzing your fleet data...") {
+        response = `Based on current fleet data: ${fleetKPIs.totalVehicles} vehicles, ${fleetKPIs.complianceRate}% compliance rate, ${fleetKPIs.avgFuelEfficiency.toFixed(1)} MPG average. ${fleetKPIs.criticalAlerts} critical alerts need immediate attention.`;
+      }
 
-    setAiResponse(response);
-    setIsAskingAI(false);
-  };
+      setAiResponse(response);
+    } catch (error) {
+      console.error("AI processing error:", error);
+      setAiResponse("Sorry, I encountered an error processing your question. Please try again.");
+    } finally {
+      clearTimeout(timeoutId);
+      setIsAskingAI(false);
+    }
+  }, [aiQuestion, fleetKPIs]);
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
