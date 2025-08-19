@@ -534,7 +534,10 @@
       "client": {
         "name": "Vumatel (Pty) Ltd",
         "address": "12 Willow Street, Beacon Bay, East London",
-        "coordinates": { "lat": -33.012345, "lng": 27.912345 },
+        "coordinates": {
+          "lat": -33.012345,
+          "lng": 27.912345
+        },
         "contactPerson": "John Makena",
         "phone": "+27431234567"
       },
@@ -559,7 +562,10 @@
       "client": {
         "name": "TelkomSA Ltd",
         "address": "45 Oxford Road, Southernwood, East London",
-        "coordinates": { "lat": -32.987654, "lng": 27.901234 },
+        "coordinates": {
+          "lat": -32.987654,
+          "lng": 27.901234
+        },
         "contactPerson": "Sarah Williams",
         "phone": "+27436547321"
       },
@@ -584,7 +590,10 @@
       "client": {
         "name": "Business Connect Ltd",
         "address": "89 Fleet Street, Quigney, East London",
-        "coordinates": { "lat": -32.990210, "lng": 27.902110 },
+        "coordinates": {
+          "lat": -32.99021,
+          "lng": 27.90211
+        },
         "contactPerson": "Michael Thompson",
         "phone": "+27439876543"
       },
@@ -609,7 +618,10 @@
       "client": {
         "name": "HomeNet Solutions",
         "address": "7 Muir Street, Vincent, East London",
-        "coordinates": { "lat": -32.995432, "lng": 27.907654 },
+        "coordinates": {
+          "lat": -32.995432,
+          "lng": 27.907654
+        },
         "contactPerson": "Lisa Chen",
         "phone": "+27431122334"
       },
@@ -634,7 +646,10 @@
       "client": {
         "name": "Cambridge Business Park",
         "address": "5 Keiskamma Street, Cambridge, East London",
-        "coordinates": { "lat": -32.979000, "lng": 27.882500 },
+        "coordinates": {
+          "lat": -32.979,
+          "lng": 27.8825
+        },
         "contactPerson": "David Anderson",
         "phone": "+27435556677"
       },
@@ -1311,6 +1326,20 @@
       "totalAmount": 0,
       "createdAt": "2025-08-19T20:04:25.118Z",
       "updatedAt": "2025-08-19T20:04:25.118Z"
+    },
+    {
+      "id": "OT-1755634027360",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-19T15:00:36.833Z",
+      "totalHours": 0,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 195,
+      "totalAmount": 0,
+      "createdAt": "2025-08-19T20:07:08.470Z",
+      "updatedAt": "2025-08-19T20:07:08.470Z"
     }
   ]
 }
