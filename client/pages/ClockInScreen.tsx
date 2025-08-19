@@ -405,7 +405,9 @@ export default function ClockInScreen({
 
       const clockRecord = {
         id: `${employeeId}-${today}`,
-        technician: employeeId,
+        employeeId: employeeId,
+        technicianName: authUser?.fullName || userName,
+        department: authUser?.department || "Unknown",
         date: today,
         clockIns: clockIns,
         totalWorkingHours,
