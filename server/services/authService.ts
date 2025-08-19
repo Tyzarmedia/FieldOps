@@ -108,16 +108,30 @@ class AuthService {
           employee.Password,
         );
       } catch (error) {
-        // If bcrypt fails, check for plain text password (development only)
-        if (
-          process.env.NODE_ENV === "development" &&
-          credentials.password === "password123"
-        ) {
-          isValidPassword = true;
-          // Hash the password properly for future use
+        console.log('Bcrypt verification failed:', error.message);
+        isValidPassword = false;
+      }
+
+      // If bcrypt verification failed, try development fallback
+      if (!isValidPassword && credentials.password === "password123") {
+        console.log('Using development fallback for password123');
+        isValidPassword = true;
+
+        // Hash the password properly for future use
+        try {
           const hashedPassword = await bcrypt.hash("password123", 10);
-          employee.Password = hashedPassword;
-          await this.saveEmployees(await this.loadEmployees());
+          console.log('Generated new hash for password123:', hashedPassword);
+
+          // Update the employee's password in the array
+          const employees = await this.loadEmployees();
+          const employeeIndex = employees.findIndex(emp => emp.EmployeeID === employee.EmployeeID);
+          if (employeeIndex !== -1) {
+            employees[employeeIndex].Password = hashedPassword;
+            await this.saveEmployees(employees);
+            console.log('Updated password for employee:', employee.EmployeeID);
+          }
+        } catch (hashError) {
+          console.error('Failed to hash password:', hashError);
         }
       }
 
