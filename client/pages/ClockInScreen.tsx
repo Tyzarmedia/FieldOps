@@ -286,6 +286,19 @@ export default function ClockInScreen({
 
       // Check for automatic overtime claims
       await checkForOvertimeClaims();
+
+      // End technician-assistant assignment
+      const authUser = authManager.getUser();
+      if (authUser?.employeeId) {
+        try {
+          await authManager.makeAuthenticatedRequest(
+            `/api/assistants/assignments/${authUser.employeeId}/end`,
+            { method: "POST" }
+          );
+        } catch (error) {
+          console.warn("Failed to end assistant assignment:", error);
+        }
+      }
     } else {
       // Clock In
       setIsClockingIn(true);
