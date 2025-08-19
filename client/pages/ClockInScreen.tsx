@@ -42,6 +42,12 @@ export default function ClockInScreen({
   const [showFeedbackOverlay, setShowFeedbackOverlay] = useState(false);
   const [dailyFeedback, setDailyFeedback] = useState("");
   const [feedbackRating, setFeedbackRating] = useState<number | null>(null);
+  const [showAssistantSelection, setShowAssistantSelection] = useState(false);
+  const [selectedAssistant, setSelectedAssistant] = useState<{
+    id: string | null;
+    name: string | null;
+  } | null>(null);
+  const [isProcessingClockIn, setIsProcessingClockIn] = useState(false);
   const [locationState, setLocationState] = useState<LocationPermissionState>({
     status: "unknown",
     isTracking: false,
