@@ -373,13 +373,24 @@ export class DatabaseService {
       "syncStatus" | "syncAttempts" | "lastSyncAttempt"
     >,
   ): Promise<void> {
-    const networkAssessment: InternalNetworkAssessment = {
-      ...assessment,
-      syncStatus: "pending",
-      syncAttempts: 0,
-    };
+    if (this.isServerEnvironment) {
+      console.log("Network assessment received on server:", {
+        technicianId: assessment.technician,
+        networkAreaType: assessment.networkAreaType,
+        timestamp: assessment.timestamp
+      });
+      return;
+    }
 
-    await this.internalDb.saveNetworkAssessment(networkAssessment);
+    if (this.internalDb) {
+      const networkAssessment: InternalNetworkAssessment = {
+        ...assessment,
+        syncStatus: "pending",
+        syncAttempts: 0,
+      };
+
+      await this.internalDb.saveNetworkAssessment(networkAssessment);
+    }
   }
 
   // Job Management for Internal Database
