@@ -87,7 +87,7 @@ class LocationTrackingService {
         return false;
       }
     } catch (error) {
-      console.error("Error starting location tracking:", error);
+      logError(error, "Error starting location tracking");
       return false;
     }
   }
