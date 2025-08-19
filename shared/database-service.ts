@@ -346,13 +346,24 @@ export class DatabaseService {
       "syncStatus" | "syncAttempts" | "lastSyncAttempt"
     >,
   ): Promise<void> {
-    const incidentReport: InternalIncidentReport = {
-      ...report,
-      syncStatus: "pending",
-      syncAttempts: 0,
-    };
+    if (this.isServerEnvironment) {
+      console.log("Incident report received on server:", {
+        technicianId: report.technicianId,
+        incidentType: report.incidentType,
+        timestamp: report.timestamp
+      });
+      return;
+    }
 
-    await this.internalDb.saveIncidentReport(incidentReport);
+    if (this.internalDb) {
+      const incidentReport: InternalIncidentReport = {
+        ...report,
+        syncStatus: "pending",
+        syncAttempts: 0,
+      };
+
+      await this.internalDb.saveIncidentReport(incidentReport);
+    }
   }
 
   // Network Assessment Management
