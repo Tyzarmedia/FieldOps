@@ -153,7 +153,7 @@ export class ExternalDatabaseService {
     try {
       // Load from local database file instead of external API
       const employees = await this.loadSage300Data();
-      return employees.map(emp => this.transformSage300Employee(emp));
+      return employees.map((emp) => this.transformSage300Employee(emp));
     } catch (error) {
       console.error("Error fetching employees from Sage 300:", error);
       // Return fallback employees if file loading fails
@@ -171,14 +171,19 @@ export class ExternalDatabaseService {
         // Server-side: read from file system
         const fs = await import("fs");
         const path = await import("path");
-        filePath = path.join(process.cwd(), "public/data/sage-300-database.json");
+        filePath = path.join(
+          process.cwd(),
+          "public/data/sage-300-database.json",
+        );
         const fileContent = fs.readFileSync(filePath, "utf-8");
         data = JSON.parse(fileContent);
       } else {
         // Client-side: fetch from public directory
         const response = await fetch("/data/sage-300-database.json");
         if (!response.ok) {
-          throw new Error(`Failed to fetch Sage 300 data: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch Sage 300 data: ${response.statusText}`,
+          );
         }
         data = await response.json();
       }
@@ -198,14 +203,15 @@ export class ExternalDatabaseService {
       "Installation Technician": "Technician",
       "HR Officer": "HR",
       "Payroll Officer": "Payroll",
-      "Manager": "Manager",
+      Manager: "Manager",
       "System Administrator": "IT",
-      "Fleet Manager": "FleetManager"
+      "Fleet Manager": "FleetManager",
     };
 
     return {
       employeeId: sage300Employee.EmployeeID,
-      employeeNumber: sage300Employee.PayrollNumber || sage300Employee.EmployeeID,
+      employeeNumber:
+        sage300Employee.PayrollNumber || sage300Employee.EmployeeID,
       firstName: sage300Employee.FullName.split(" ")[0],
       lastName: sage300Employee.FullName.split(" ").slice(1).join(" "),
       email: sage300Employee.Email,
@@ -227,7 +233,7 @@ export class ExternalDatabaseService {
   async getEmployee(employeeId: string): Promise<ExternalEmployee | null> {
     try {
       const employees = await this.loadSage300Data();
-      const employee = employees.find(emp => emp.EmployeeID === employeeId);
+      const employee = employees.find((emp) => emp.EmployeeID === employeeId);
 
       if (!employee) {
         return null;
@@ -261,7 +267,7 @@ export class ExternalDatabaseService {
         wageRate: 106.25, // 8500/22/8 * 2
         overtimeRate: 159.38,
         lastSync: new Date().toISOString(),
-      }
+      },
     ];
   }
 
@@ -285,14 +291,19 @@ export class ExternalDatabaseService {
         // Server-side: read from file system
         const fs = await import("fs");
         const path = await import("path");
-        const filePath = path.join(process.cwd(), "public/data/sp-vumatel-database.json");
+        const filePath = path.join(
+          process.cwd(),
+          "public/data/sp-vumatel-database.json",
+        );
         const fileContent = fs.readFileSync(filePath, "utf-8");
         data = JSON.parse(fileContent);
       } else {
         // Client-side: fetch from public directory
         const response = await fetch("/data/sp-vumatel-database.json");
         if (!response.ok) {
-          throw new Error(`Failed to fetch SP.Vumatel data: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch SP.Vumatel data: ${response.statusText}`,
+          );
         }
         data = await response.json();
       }

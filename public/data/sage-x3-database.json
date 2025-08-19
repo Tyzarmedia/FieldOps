@@ -14,8 +14,8 @@
       "warehouse": "WH-JHB",
       "quantityOnHand": 2200,
       "reorderLevel": 800,
-      "costPrice": 12.50,
-      "sellingPrice": 22.00
+      "costPrice": 12.5,
+      "sellingPrice": 22.0
     },
     {
       "itemCode": "CAB-DRP-25M",
@@ -25,8 +25,8 @@
       "warehouse": "WH-JHB",
       "quantityOnHand": 100,
       "reorderLevel": 40,
-      "costPrice": 320.00,
-      "sellingPrice": 500.00
+      "costPrice": 320.0,
+      "sellingPrice": 500.0
     },
     {
       "itemCode": "CAB-DRP-30M",
@@ -36,8 +36,8 @@
       "warehouse": "WH-DBN",
       "quantityOnHand": 80,
       "reorderLevel": 30,
-      "costPrice": 360.00,
-      "sellingPrice": 560.00
+      "costPrice": 360.0,
+      "sellingPrice": 560.0
     },
     {
       "itemCode": "CAB-DRP-50M",
@@ -47,8 +47,8 @@
       "warehouse": "WH-CPT",
       "quantityOnHand": 120,
       "reorderLevel": 50,
-      "costPrice": 600.00,
-      "sellingPrice": 850.00
+      "costPrice": 600.0,
+      "sellingPrice": 850.0
     },
     {
       "itemCode": "CAB-DRP-60M",
@@ -58,8 +58,8 @@
       "warehouse": "WH-CPT",
       "quantityOnHand": 75,
       "reorderLevel": 30,
-      "costPrice": 720.00,
-      "sellingPrice": 950.00
+      "costPrice": 720.0,
+      "sellingPrice": 950.0
     },
     {
       "itemCode": "CAB-DRP-75M",
@@ -69,8 +69,8 @@
       "warehouse": "WH-JHB",
       "quantityOnHand": 60,
       "reorderLevel": 20,
-      "costPrice": 880.00,
-      "sellingPrice": 1200.00
+      "costPrice": 880.0,
+      "sellingPrice": 1200.0
     },
     {
       "itemCode": "CAB-DRP-100M",
@@ -80,8 +80,8 @@
       "warehouse": "WH-DBN",
       "quantityOnHand": 50,
       "reorderLevel": 20,
-      "costPrice": 1100.00,
-      "sellingPrice": 1500.00
+      "costPrice": 1100.0,
+      "sellingPrice": 1500.0
     },
     {
       "itemCode": "ACC-SPL-PROT-40MM",
@@ -91,8 +91,8 @@
       "warehouse": "WH-JHB",
       "quantityOnHand": 5000,
       "reorderLevel": 2000,
-      "costPrice": 2.50,
-      "sellingPrice": 5.00
+      "costPrice": 2.5,
+      "sellingPrice": 5.0
     },
     {
       "itemCode": "ACC-SPL-PROT-60MM",
@@ -102,8 +102,8 @@
       "warehouse": "WH-DBN",
       "quantityOnHand": 4500,
       "reorderLevel": 2000,
-      "costPrice": 3.00,
-      "sellingPrice": 6.00
+      "costPrice": 3.0,
+      "sellingPrice": 6.0
     },
     {
       "itemCode": "ACC-CABLE-TIES",
@@ -113,8 +113,8 @@
       "warehouse": "WH-CPT",
       "quantityOnHand": 600,
       "reorderLevel": 200,
-      "costPrice": 18.00,
-      "sellingPrice": 35.00
+      "costPrice": 18.0,
+      "sellingPrice": 35.0
     },
     {
       "itemCode": "BOX-FTB",
@@ -124,8 +124,8 @@
       "warehouse": "WH-JHB",
       "quantityOnHand": 300,
       "reorderLevel": 100,
-      "costPrice": 120.00,
-      "sellingPrice": 200.00
+      "costPrice": 120.0,
+      "sellingPrice": 200.0
     },
     {
       "itemCode": "KIT-FRP",
@@ -135,8 +135,8 @@
       "warehouse": "WH-DBN",
       "quantityOnHand": 150,
       "reorderLevel": 50,
-      "costPrice": 450.00,
-      "sellingPrice": 800.00
+      "costPrice": 450.0,
+      "sellingPrice": 800.0
     },
     {
       "itemCode": "HWR-DEAD-END",
@@ -146,8 +146,8 @@
       "warehouse": "WH-JHB",
       "quantityOnHand": 1000,
       "reorderLevel": 300,
-      "costPrice": 15.00,
-      "sellingPrice": 30.00
+      "costPrice": 15.0,
+      "sellingPrice": 30.0
     },
     {
       "itemCode": "HWR-TANGENT",
@@ -157,8 +157,8 @@
       "warehouse": "WH-CPT",
       "quantityOnHand": 850,
       "reorderLevel": 250,
-      "costPrice": 20.00,
-      "sellingPrice": 38.00
+      "costPrice": 20.0,
+      "sellingPrice": 38.0
     },
     {
       "itemCode": "HWR-IRAWBOLT",
@@ -168,8 +168,8 @@
       "warehouse": "WH-DBN",
       "quantityOnHand": 1200,
       "reorderLevel": 400,
-      "costPrice": 12.00,
-      "sellingPrice": 25.00
+      "costPrice": 12.0,
+      "sellingPrice": 25.0
     },
     {
       "itemCode": "CAB-ADSS",
@@ -179,8 +179,8 @@
       "warehouse": "WH-CPT",
       "quantityOnHand": 4000,
       "reorderLevel": 1500,
-      "costPrice": 75.00,
-      "sellingPrice": 110.00
+      "costPrice": 75.0,
+      "sellingPrice": 110.0
     },
     {
       "itemCode": "CAB-144F",
@@ -190,8 +190,8 @@
       "warehouse": "WH-JHB",
       "quantityOnHand": 3500,
       "reorderLevel": 1200,
-      "costPrice": 120.00,
-      "sellingPrice": 180.00
+      "costPrice": 120.0,
+      "sellingPrice": 180.0
     },
     {
       "itemCode": "CAB-288F",
@@ -201,8 +201,8 @@
       "warehouse": "WH-DBN",
       "quantityOnHand": 3000,
       "reorderLevel": 1000,
-      "costPrice": 220.00,
-      "sellingPrice": 310.00
+      "costPrice": 220.0,
+      "sellingPrice": 310.0
     }
   ]
 }

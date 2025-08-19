@@ -283,8 +283,8 @@ export class DatabaseService {
         date: record.date,
         clockOutTime: record.clockOutTime,
         totalWorkingHours: record.totalWorkingHours,
-        reason: record.reason || 'Clock out',
-        autoClockOut: record.autoClockOut || false
+        reason: record.reason || "Clock out",
+        autoClockOut: record.autoClockOut || false,
       });
       return;
     }
@@ -306,7 +306,10 @@ export class DatabaseService {
     date: string,
   ): Promise<InternalClockRecord | null> {
     if (this.isServerEnvironment || !this.internalDb) {
-      console.log("Clock record requested in server environment:", { technician, date });
+      console.log("Clock record requested in server environment:", {
+        technician,
+        date,
+      });
       return null;
     }
     return await this.internalDb.getClockRecord(technician, date);
@@ -323,7 +326,7 @@ export class DatabaseService {
       console.log("Safety check received on server:", {
         technicianId: check.technicianId,
         checkType: check.checkType,
-        timestamp: check.timestamp
+        timestamp: check.timestamp,
       });
       return;
     }
@@ -350,7 +353,7 @@ export class DatabaseService {
       console.log("Incident report received on server:", {
         technicianId: report.technicianId,
         incidentType: report.incidentType,
-        timestamp: report.timestamp
+        timestamp: report.timestamp,
       });
       return;
     }
@@ -377,7 +380,7 @@ export class DatabaseService {
       console.log("Network assessment received on server:", {
         technicianId: assessment.technician,
         networkAreaType: assessment.networkAreaType,
-        timestamp: assessment.timestamp
+        timestamp: assessment.timestamp,
       });
       return;
     }
@@ -549,7 +552,7 @@ export class DatabaseService {
         pendingIncidentReports: 0,
         pendingNetworkAssessments: 0,
         isOnline: true,
-        lastSync: new Date().toISOString()
+        lastSync: new Date().toISOString(),
       };
     }
 

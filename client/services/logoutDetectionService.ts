@@ -226,13 +226,18 @@ class LogoutDetectionService {
         localStorage.removeItem("clockInTime");
         console.log("Emergency logout completed via fallback");
       } catch (fallbackError) {
-        console.error("Critical: Could not complete emergency logout:", fallbackError);
+        console.error(
+          "Critical: Could not complete emergency logout:",
+          fallbackError,
+        );
       }
     }
   }
 
   // Separate method for the actual logout sequence
-  private async performLogoutSequence(reason: LogoutEvent["reason"]): Promise<void> {
+  private async performLogoutSequence(
+    reason: LogoutEvent["reason"],
+  ): Promise<void> {
     try {
       // Get current session data
       const clockInTime = localStorage.getItem("clockInTime");
@@ -284,7 +289,10 @@ class LogoutDetectionService {
       try {
         await this.performClockOut(logoutEvent);
       } catch (clockOutError) {
-        console.warn("Clock-out API call failed (non-critical):", clockOutError);
+        console.warn(
+          "Clock-out API call failed (non-critical):",
+          clockOutError,
+        );
         // Continue with local storage updates even if API fails
       }
 
@@ -307,7 +315,7 @@ class LogoutDetectionService {
       console.log("Auto clock-out completed:", {
         technicianId: logoutEvent.technicianId,
         reason: logoutEvent.reason,
-        workingHours: logoutEvent.workingHours
+        workingHours: logoutEvent.workingHours,
       });
     } catch (error) {
       console.error("Critical error in logout handling:", error);
@@ -377,21 +385,33 @@ class LogoutDetectionService {
         // Enhanced error logging to help debug the issue
         console.warn("Clock-out API call failed (non-critical):", {
           error: fetchError,
-          message: fetchError instanceof Error ? fetchError.message : String(fetchError),
-          name: fetchError instanceof Error ? fetchError.name : 'Unknown',
-          stack: fetchError instanceof Error ? fetchError.stack : undefined
+          message:
+            fetchError instanceof Error
+              ? fetchError.message
+              : String(fetchError),
+          name: fetchError instanceof Error ? fetchError.name : "Unknown",
+          stack: fetchError instanceof Error ? fetchError.stack : undefined,
         });
 
         // Log specific error types but don't re-throw
         if (fetchError instanceof Error) {
           if (fetchError.name === "AbortError") {
-            console.warn("⏰ Clock-out API request timed out after 5 seconds (non-critical)");
+            console.warn(
+              "⏰ Clock-out API request timed out after 5 seconds (non-critical)",
+            );
           } else if (fetchError.message.includes("Failed to fetch")) {
-            console.warn("🌐 Network error during clock-out API call (non-critical - server may be unreachable)");
+            console.warn(
+              "🌐 Network error during clock-out API call (non-critical - server may be unreachable)",
+            );
           } else if (fetchError.message.includes("TypeError")) {
-            console.warn("🔧 Type error during clock-out API call (non-critical)");
+            console.warn(
+              "🔧 Type error during clock-out API call (non-critical)",
+            );
           } else {
-            console.warn("⚠️ Other error during clock-out:", fetchError.message);
+            console.warn(
+              "⚠️ Other error during clock-out:",
+              fetchError.message,
+            );
           }
         }
 
