@@ -996,15 +996,30 @@
       "id": "OT-1755621429112",
       "technicianId": "tech001",
       "startTime": "2025-08-18T15:00:06.538Z",
-      "totalHours": 25.66874111111111,
+      "totalHours": 25.689038055555557,
       "isAutoDetected": true,
       "workOrderNumbers": [],
       "reason": "Extended hours - worked beyond 8 hours",
       "status": "pending",
       "rate": 150,
-      "totalAmount": 3850.3111666666664,
+      "totalAmount": 3853.3557083333335,
       "createdAt": "2025-08-19T16:37:10.794Z",
-      "updatedAt": "2025-08-19T16:40:15.114Z"
+      "updatedAt": "2025-08-19T16:41:27.619Z",
+      "endTime": "2025-08-19T16:41:27.075Z"
+    },
+    {
+      "id": "OT-1755624470157",
+      "technicianId": "tech001",
+      "startTime": "2025-08-19T15:00:24.678Z",
+      "totalHours": 2.6902680555555554,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 403.5402083333333,
+      "createdAt": "2025-08-19T17:27:51.491Z",
+      "updatedAt": "2025-08-19T17:41:50.668Z"
     }
   ]
 }
