@@ -257,19 +257,46 @@ class LogoutDetectionService {
         logoutEvent.overtimeHours = workingHours - 8;
       }
 
-      // Perform clock out
-      await this.performClockOut(logoutEvent);
+      // Perform clock out (with individual error handling)
+      try {
+        await this.performClockOut(logoutEvent);
+      } catch (clockOutError) {
+        console.warn("Clock-out API call failed (non-critical):", clockOutError);
+        // Continue with local storage updates even if API fails
+      }
 
-      // Update local storage
-      localStorage.setItem("isClockedIn", "false");
-      localStorage.removeItem("clockInTime");
+      // Update local storage (always do this regardless of API success)
+      try {
+        localStorage.setItem("isClockedIn", "false");
+        localStorage.removeItem("clockInTime");
+        console.log("Local storage updated: clocked out");
+      } catch (storageError) {
+        console.warn("Failed to update local storage:", storageError);
+      }
 
-      // Send logout event to server
-      await this.sendLogoutEvent(logoutEvent);
+      // Send logout event to server (with individual error handling)
+      try {
+        await this.sendLogoutEvent(logoutEvent);
+      } catch (eventError) {
+        console.warn("Failed to send logout event (non-critical):", eventError);
+      }
 
-      console.log("Auto clock-out completed:", logoutEvent);
+      console.log("Auto clock-out completed:", {
+        technicianId: logoutEvent.technicianId,
+        reason: logoutEvent.reason,
+        workingHours: logoutEvent.workingHours
+      });
     } catch (error) {
-      console.error("Error handling logout:", error);
+      console.error("Critical error in logout handling:", error);
+
+      // Ensure local storage is updated even on critical errors
+      try {
+        localStorage.setItem("isClockedIn", "false");
+        localStorage.removeItem("clockInTime");
+        console.log("Emergency local storage update completed");
+      } catch (emergencyError) {
+        console.error("Failed emergency local storage update:", emergencyError);
+      }
     }
   }
 
