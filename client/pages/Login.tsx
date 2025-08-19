@@ -37,6 +37,11 @@ export default function Login() {
 
     try {
       console.log('Starting login attempt for:', email);
+      console.log('Password length:', password.length);
+      console.log('Password value (first 5 chars):', password.substring(0, 5));
+
+      const requestBody = { email, password };
+      console.log('Request body being sent:', requestBody);
 
       // Temporarily use direct fetch to debug
       const response = await fetch("/api/auth/login", {
@@ -44,7 +49,7 @@ export default function Login() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(requestBody),
       });
 
       console.log('Direct fetch response:', {
