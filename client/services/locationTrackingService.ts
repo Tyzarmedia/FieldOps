@@ -387,7 +387,7 @@ class LocationTrackingService {
         body: JSON.stringify(locationUpdate),
       });
     } catch (error) {
-      console.error("Error sending location update:", error);
+      logError(error, "Error sending location update");
     }
   }
 
