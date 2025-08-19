@@ -210,6 +210,34 @@ class LogoutDetectionService {
   private async handleLogout(reason: LogoutEvent["reason"]): Promise<void> {
     if (!this.technicianId) return;
 
+    // Wrap the entire logout process in a timeout to prevent hanging
+    const logoutPromise = this.performLogoutSequence(reason);
+    const timeoutPromise = new Promise<void>((_, reject) => {
+      setTimeout(() => reject(new Error("Logout process timed out")), 10000);
+    });
+
+    try {
+      await Promise.race([logoutPromise, timeoutPromise]);
+    } catch (error) {
+      console.warn("Logout process failed or timed out:", error);
+      // Ensure local storage is always updated
+      try {
+        localStorage.setItem("isClockedIn", "false");
+        localStorage.removeItem("clockInTime");
+        console.log("Emergency logout completed via fallback");
+      } catch (fallbackError) {
+        console.error(
+          "Critical: Could not complete emergency logout:",
+          fallbackError,
+        );
+      }
+    }
+  }
+
+  // Separate method for the actual logout sequence
+  private async performLogoutSequence(
+    reason: LogoutEvent["reason"],
+  ): Promise<void> {
     try {
       // Get current session data
       const clockInTime = localStorage.getItem("clockInTime");
@@ -257,19 +285,49 @@ class LogoutDetectionService {
         logoutEvent.overtimeHours = workingHours - 8;
       }
 
-      // Perform clock out
-      await this.performClockOut(logoutEvent);
+      // Perform clock out (with individual error handling)
+      try {
+        await this.performClockOut(logoutEvent);
+      } catch (clockOutError) {
+        console.warn(
+          "Clock-out API call failed (non-critical):",
+          clockOutError,
+        );
+        // Continue with local storage updates even if API fails
+      }
 
-      // Update local storage
-      localStorage.setItem("isClockedIn", "false");
-      localStorage.removeItem("clockInTime");
+      // Update local storage (always do this regardless of API success)
+      try {
+        localStorage.setItem("isClockedIn", "false");
+        localStorage.removeItem("clockInTime");
+        console.log("Local storage updated: clocked out");
+      } catch (storageError) {
+        console.warn("Failed to update local storage:", storageError);
+      }
 
-      // Send logout event to server
-      await this.sendLogoutEvent(logoutEvent);
+      // Send logout event to server (with individual error handling)
+      try {
+        await this.sendLogoutEvent(logoutEvent);
+      } catch (eventError) {
+        console.warn("Failed to send logout event (non-critical):", eventError);
+      }
 
-      console.log("Auto clock-out completed:", logoutEvent);
+      console.log("Auto clock-out completed:", {
+        technicianId: logoutEvent.technicianId,
+        reason: logoutEvent.reason,
+        workingHours: logoutEvent.workingHours,
+      });
     } catch (error) {
-      console.error("Error handling logout:", error);
+      console.error("Critical error in logout handling:", error);
+
+      // Ensure local storage is updated even on critical errors
+      try {
+        localStorage.setItem("isClockedIn", "false");
+        localStorage.removeItem("clockInTime");
+        console.log("Emergency local storage update completed");
+      } catch (emergencyError) {
+        console.error("Failed emergency local storage update:", emergencyError);
+      }
     }
   }
 
@@ -311,7 +369,12 @@ class LogoutDetectionService {
         if (response.ok) {
           console.log("Auto clock-out recorded successfully in database");
         } else {
-          const errorText = await response.text().catch(() => "Unknown error");
+          let errorText = "Unknown error";
+          try {
+            errorText = await response.text();
+          } catch (textError) {
+            console.warn("Could not read error response text:", textError);
+          }
           console.warn(
             `Failed to record auto clock-out in database (${response.status}): ${errorText}`,
           );
@@ -319,20 +382,40 @@ class LogoutDetectionService {
       } catch (fetchError) {
         clearTimeout(timeoutId);
 
+        // Enhanced error logging to help debug the issue
+        console.warn("Clock-out API call failed (non-critical):", {
+          error: fetchError,
+          message:
+            fetchError instanceof Error
+              ? fetchError.message
+              : String(fetchError),
+          name: fetchError instanceof Error ? fetchError.name : "Unknown",
+          stack: fetchError instanceof Error ? fetchError.stack : undefined,
+        });
+
+        // Log specific error types but don't re-throw
         if (fetchError instanceof Error) {
           if (fetchError.name === "AbortError") {
-            console.warn("Clock-out API request timed out after 5 seconds");
+            console.warn(
+              "⏰ Clock-out API request timed out after 5 seconds (non-critical)",
+            );
           } else if (fetchError.message.includes("Failed to fetch")) {
             console.warn(
-              "Network error during clock-out API call - server may be unreachable",
+              "🌐 Network error during clock-out API call (non-critical - server may be unreachable)",
+            );
+          } else if (fetchError.message.includes("TypeError")) {
+            console.warn(
+              "🔧 Type error during clock-out API call (non-critical)",
             );
           } else {
-            console.warn("Fetch error during clock-out:", fetchError.message);
+            console.warn(
+              "⚠️ Other error during clock-out:",
+              fetchError.message,
+            );
           }
-        } else {
-          console.warn("Unknown fetch error during clock-out:", fetchError);
         }
-        // Don't re-throw - allow the logout process to continue
+
+        // Ensure we don't propagate the error - this is non-critical functionality
       }
     } catch (error) {
       console.warn(

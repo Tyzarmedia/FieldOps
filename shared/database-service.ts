@@ -18,14 +18,19 @@ import InternalDatabaseService, {
 export class DatabaseService {
   private static instance: DatabaseService;
   private externalDb: ExternalDatabaseService;
-  private internalDb: InternalDatabaseService;
+  private internalDb: InternalDatabaseService | null = null;
   private isOnline: boolean =
     typeof navigator !== "undefined" ? navigator.onLine : true;
   private syncInterval: NodeJS.Timeout | null = null;
+  private isServerEnvironment: boolean = typeof window === "undefined";
 
   private constructor() {
     this.externalDb = ExternalDatabaseService.getInstance();
-    this.internalDb = InternalDatabaseService.getInstance();
+
+    // Only initialize internal DB in browser environment
+    if (!this.isServerEnvironment) {
+      this.internalDb = InternalDatabaseService.getInstance();
+    }
 
     // Only add event listeners in browser environment
     if (typeof window !== "undefined") {
@@ -271,19 +276,42 @@ export class DatabaseService {
       "syncStatus" | "syncAttempts" | "lastSyncAttempt"
     >,
   ): Promise<void> {
-    const clockRecord: InternalClockRecord = {
-      ...record,
-      syncStatus: "pending",
-      syncAttempts: 0,
-    };
+    // In server environment, we don't have IndexedDB, so just log the action
+    if (this.isServerEnvironment) {
+      console.log("Clock record received on server:", {
+        technicianId: record.technicianId,
+        date: record.date,
+        clockOutTime: record.clockOutTime,
+        totalWorkingHours: record.totalWorkingHours,
+        reason: record.reason || "Clock out",
+        autoClockOut: record.autoClockOut || false,
+      });
+      return;
+    }
 
-    await this.internalDb.saveClockRecord(clockRecord);
+    // In browser environment, save to IndexedDB
+    if (this.internalDb) {
+      const clockRecord: InternalClockRecord = {
+        ...record,
+        syncStatus: "pending",
+        syncAttempts: 0,
+      };
+
+      await this.internalDb.saveClockRecord(clockRecord);
+    }
   }
 
   async getClockRecord(
     technician: string,
     date: string,
   ): Promise<InternalClockRecord | null> {
+    if (this.isServerEnvironment || !this.internalDb) {
+      console.log("Clock record requested in server environment:", {
+        technician,
+        date,
+      });
+      return null;
+    }
     return await this.internalDb.getClockRecord(technician, date);
   }
 
@@ -294,13 +322,24 @@ export class DatabaseService {
       "syncStatus" | "syncAttempts" | "lastSyncAttempt"
     >,
   ): Promise<void> {
-    const safetyCheck: InternalSafetyCheck = {
-      ...check,
-      syncStatus: "pending",
-      syncAttempts: 0,
-    };
+    if (this.isServerEnvironment) {
+      console.log("Safety check received on server:", {
+        technicianId: check.technicianId,
+        checkType: check.checkType,
+        timestamp: check.timestamp,
+      });
+      return;
+    }
 
-    await this.internalDb.saveSafetyCheck(safetyCheck);
+    if (this.internalDb) {
+      const safetyCheck: InternalSafetyCheck = {
+        ...check,
+        syncStatus: "pending",
+        syncAttempts: 0,
+      };
+
+      await this.internalDb.saveSafetyCheck(safetyCheck);
+    }
   }
 
   // Incident Report Management
@@ -310,13 +349,24 @@ export class DatabaseService {
       "syncStatus" | "syncAttempts" | "lastSyncAttempt"
     >,
   ): Promise<void> {
-    const incidentReport: InternalIncidentReport = {
-      ...report,
-      syncStatus: "pending",
-      syncAttempts: 0,
-    };
+    if (this.isServerEnvironment) {
+      console.log("Incident report received on server:", {
+        technicianId: report.technicianId,
+        incidentType: report.incidentType,
+        timestamp: report.timestamp,
+      });
+      return;
+    }
 
-    await this.internalDb.saveIncidentReport(incidentReport);
+    if (this.internalDb) {
+      const incidentReport: InternalIncidentReport = {
+        ...report,
+        syncStatus: "pending",
+        syncAttempts: 0,
+      };
+
+      await this.internalDb.saveIncidentReport(incidentReport);
+    }
   }
 
   // Network Assessment Management
@@ -326,13 +376,24 @@ export class DatabaseService {
       "syncStatus" | "syncAttempts" | "lastSyncAttempt"
     >,
   ): Promise<void> {
-    const networkAssessment: InternalNetworkAssessment = {
-      ...assessment,
-      syncStatus: "pending",
-      syncAttempts: 0,
-    };
+    if (this.isServerEnvironment) {
+      console.log("Network assessment received on server:", {
+        technicianId: assessment.technician,
+        networkAreaType: assessment.networkAreaType,
+        timestamp: assessment.timestamp,
+      });
+      return;
+    }
 
-    await this.internalDb.saveNetworkAssessment(networkAssessment);
+    if (this.internalDb) {
+      const networkAssessment: InternalNetworkAssessment = {
+        ...assessment,
+        syncStatus: "pending",
+        syncAttempts: 0,
+      };
+
+      await this.internalDb.saveNetworkAssessment(networkAssessment);
+    }
   }
 
   // Job Management for Internal Database
@@ -482,6 +543,19 @@ export class DatabaseService {
     isOnline: boolean;
     lastSync?: string;
   }> {
+    if (this.isServerEnvironment || !this.internalDb) {
+      return {
+        pendingJobs: 0,
+        pendingStockUsage: 0,
+        pendingClockRecords: 0,
+        pendingSafetyChecks: 0,
+        pendingIncidentReports: 0,
+        pendingNetworkAssessments: 0,
+        isOnline: true,
+        lastSync: new Date().toISOString(),
+      };
+    }
+
     const pendingData = await this.internalDb.getAllPendingSync();
 
     return {

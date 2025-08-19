@@ -27,6 +27,10 @@ import {
   MapPin,
   Upload,
   Filter,
+  Router,
+  Server,
+  Cable,
+  Zap,
 } from "lucide-react";
 
 export default function NetworkAssessmentScreen() {
@@ -41,47 +45,49 @@ export default function NetworkAssessmentScreen() {
 
   const [assessmentData, setAssessmentData] = useState({
     networkAreaType: "",
-    networkTechnologyType: "",
+    reachOptions: "",
+    coreOptions: "",
     location: "",
-    testType: "",
+    equipmentLabel: "",
     signalStrength: -65,
     downloadSpeed: 45.2,
     uploadSpeed: 12.8,
     latency: 28,
     packetLoss: 0.1,
     issuesFound: "",
-    recommendedActions: "",
+    notes: "",
     priority: "medium",
     coordinates: "",
-    equipmentLabel: "",
-    coreOptions: "",
-    reachOptions: "",
     networkType: "fiber",
     connectedDevices: 5,
-    notes: "",
+    
+    // Conditional form fields for Reach + Active Ethernet
+    ethernetPortType: "",
+    switchConfiguration: "",
+    vlanConfig: "",
+    bandwidthAllocation: "",
+    redundancySetup: "",
+    
+    // Conditional form fields for Core + DWDM
+    wavelengthChannels: "",
+    fiberType: "",
+    amplifierConfig: "",
+    dispersionCompensation: "",
+    
+    // Conditional form fields for Reach + GPON
+    ontCount: "",
+    splitterRatio: "",
+    olcConfiguration: "",
+    powerBudget: "",
   });
 
   const networkAreaTypes = [
     "Reach",
-    "Feeder",
-    "Distribution",
-    "Access",
-    "Backbone",
-    "Metro",
-    "Edge",
     "Core",
+    "Access",
+    "Distribution",
+    "Backbone",
   ];
-
-  const networkTechnologyTypes = {
-    Reach: ["GPON", "EPON", "XGS-PON", "NG-PON2"],
-    Feeder: ["Fiber Optic", "Copper", "Coax", "Wireless"],
-    Distribution: ["GPON", "Ethernet", "DSL", "Cable"],
-    Access: ["FTTH", "FTTC", "DSL", "Cable", "Wireless"],
-    Backbone: ["Dark Fiber", "DWDM", "MPLS", "Ethernet"],
-    Metro: ["Metro Ethernet", "SONET/SDH", "MPLS"],
-    Edge: ["Ethernet", "MPLS", "SD-WAN"],
-    Core: ["DWDM", "SONET/SDH", "IP/MPLS"],
-  };
 
   const reachOptionsData = [
     "GPON - Gigabit Passive Optical Network",
@@ -100,6 +106,20 @@ export default function NetworkAssessmentScreen() {
     "Carrier Ethernet",
     "Metro Ethernet",
   ];
+
+  // Determine which conditional form to show
+  const getConditionalFormType = () => {
+    const isReach = assessmentData.networkAreaType === "Reach";
+    const isCore = assessmentData.networkAreaType === "Core";
+    const isActiveEthernet = assessmentData.reachOptions.includes("Active Ethernet");
+    const isGPON = assessmentData.reachOptions.includes("GPON");
+    const isDWDM = assessmentData.coreOptions.includes("DWDM");
+
+    if (isReach && isActiveEthernet) return "reach-active-ethernet";
+    if (isReach && isGPON) return "reach-gpon";
+    if (isCore && isDWDM) return "core-dwdm";
+    return null;
+  };
 
   const runAssessment = async () => {
     setIsAssessing(true);
@@ -134,78 +154,67 @@ export default function NetworkAssessmentScreen() {
     return speed >= threshold ? "Good" : "Needs Improvement";
   };
 
-  // Save assessment report with images
-  const saveAssessmentReport = async () => {
+  // Start camera for image capture
+  const startCamera = async () => {
     try {
-      const technicianId = localStorage.getItem("employeeId") || "tech001";
-      const technicianName = localStorage.getItem("userName") || "Technician";
-
-      // Get current location
-      const location = await getCurrentLocation();
-
-      const assessmentReport = {
-        id: `NA-${Date.now()}`,
-        technicianId,
-        technicianName,
-        assessmentDate: new Date().toISOString(),
-        location: {
-          latitude: location?.latitude || 0,
-          longitude: location?.longitude || 0,
-          address: location?.address || "Unknown location",
-        },
-        coreOptions: assessmentData.coreOptions,
-        reachOptions: assessmentData.reachOptions,
-        signalStrength: assessmentData.signalStrength,
-        downloadSpeed: assessmentData.downloadSpeed,
-        uploadSpeed: assessmentData.uploadSpeed,
-        networkType: assessmentData.networkType,
-        connectedDevices: assessmentData.connectedDevices,
-        issuesFound: assessmentData.issuesFound,
-        notes: assessmentData.notes,
-        images: capturedImages, // Include all captured images
-        status: "completed",
-      };
-
-      // Submit to database
-      const response = await fetch("/api/network-assessments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(assessmentReport),
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
       });
-
-      if (response.ok) {
-        alert("Network assessment saved successfully!");
-        // Reset form
-        setAssessmentData({
-          networkAreaType: "",
-          networkTechnologyType: "",
-          location: "",
-          testType: "",
-          signalStrength: -65,
-          downloadSpeed: 45.2,
-          uploadSpeed: 12.8,
-          latency: 28,
-          packetLoss: 0.1,
-          issuesFound: "",
-          recommendedActions: "",
-          priority: "medium",
-          coordinates: "",
-          equipmentLabel: "",
-          coreOptions: "",
-          reachOptions: "",
-          networkType: "fiber",
-          connectedDevices: 5,
-          notes: "",
-        });
-        setCapturedImages([]);
-        navigate("/technician");
-      } else {
-        throw new Error("Failed to save assessment");
+      setCurrentStream(stream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
       }
+      setShowCamera(true);
     } catch (error) {
-      console.error("Error saving assessment:", error);
-      alert("Failed to save assessment. Please try again.");
+      console.error("Error accessing camera:", error);
+      alert("Unable to access camera. Please use file upload instead.");
     }
+  };
+
+  // Capture image from camera
+  const captureImage = () => {
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      const context = canvas.getContext("2d");
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      if (context) {
+        context.drawImage(video, 0, 0);
+        const imageDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        setCapturedImages([...capturedImages, imageDataUrl]);
+        
+        // Stop camera
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+          setCurrentStream(null);
+        }
+        setShowCamera(false);
+      }
+    }
+  };
+
+  // Handle file upload
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            setCapturedImages([...capturedImages, e.target.result as string]);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  // Remove captured image
+  const removeImage = (index: number) => {
+    setCapturedImages(capturedImages.filter((_, i) => i !== index));
   };
 
   // Get current location
@@ -235,7 +244,84 @@ export default function NetworkAssessmentScreen() {
     });
   };
 
+  // Save assessment report with images
+  const saveAssessmentReport = async () => {
+    try {
+      const technicianId = localStorage.getItem("employeeId") || "tech001";
+      const technicianName = localStorage.getItem("userName") || "Technician";
+
+      // Get current location
+      const location = await getCurrentLocation();
+
+      const assessmentReport = {
+        id: `NA-${Date.now()}`,
+        technicianId,
+        technicianName,
+        assessmentDate: new Date().toISOString(),
+        location: {
+          latitude: location?.latitude || 0,
+          longitude: location?.longitude || 0,
+          address: location?.address || "Unknown location",
+        },
+        ...assessmentData,
+        images: capturedImages, // Include all captured images
+        status: "completed",
+      };
+
+      // Submit to database
+      const response = await fetch("/api/network-assessments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(assessmentReport),
+      });
+
+      if (response.ok) {
+        alert("Network assessment saved successfully!");
+        // Reset form
+        setAssessmentData({
+          networkAreaType: "",
+          reachOptions: "",
+          coreOptions: "",
+          location: "",
+          equipmentLabel: "",
+          signalStrength: -65,
+          downloadSpeed: 45.2,
+          uploadSpeed: 12.8,
+          latency: 28,
+          packetLoss: 0.1,
+          issuesFound: "",
+          notes: "",
+          priority: "medium",
+          coordinates: "",
+          networkType: "fiber",
+          connectedDevices: 5,
+          ethernetPortType: "",
+          switchConfiguration: "",
+          vlanConfig: "",
+          bandwidthAllocation: "",
+          redundancySetup: "",
+          wavelengthChannels: "",
+          fiberType: "",
+          amplifierConfig: "",
+          dispersionCompensation: "",
+          ontCount: "",
+          splitterRatio: "",
+          olcConfiguration: "",
+          powerBudget: "",
+        });
+        setCapturedImages([]);
+        navigate("/technician");
+      } else {
+        throw new Error("Failed to save assessment");
+      }
+    } catch (error) {
+      console.error("Error saving assessment:", error);
+      alert("Failed to save assessment. Please try again.");
+    }
+  };
+
   const signalInfo = getSignalStatus(assessmentData.signalStrength);
+  const conditionalFormType = getConditionalFormType();
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -245,7 +331,7 @@ export default function NetworkAssessmentScreen() {
           <div>
             <h1 className="text-xl font-bold">Network Assessment</h1>
             <p className="text-sm opacity-90">
-              Test and analyze network performance
+              Advanced network analysis with conditional forms
             </p>
           </div>
           <Button
@@ -261,19 +347,19 @@ export default function NetworkAssessmentScreen() {
 
       {/* Content */}
       <div className="p-4 space-y-6">
-        {/* Test Configuration */}
+        {/* Basic Configuration */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Network className="h-5 w-5" />
-              <span>Test Configuration</span>
+              <span>Assessment Configuration</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Location</Label>
               <Input
-                placeholder="Enter test location"
+                placeholder="Enter assessment location"
                 value={assessmentData.location}
                 onChange={(e) =>
                   setAssessmentData({
@@ -292,7 +378,8 @@ export default function NetworkAssessmentScreen() {
                   setAssessmentData({
                     ...assessmentData,
                     networkAreaType: value,
-                    networkTechnologyType: "" // Reset technology when area changes
+                    reachOptions: "",
+                    coreOptions: "",
                   })
                 }
               >
@@ -309,22 +396,22 @@ export default function NetworkAssessmentScreen() {
               </Select>
             </div>
 
-            {assessmentData.networkAreaType && (
+            {assessmentData.networkAreaType === "Reach" && (
               <div className="space-y-2">
-                <Label>Network Technology Type</Label>
+                <Label>Reach Options</Label>
                 <Select
-                  value={assessmentData.networkTechnologyType}
+                  value={assessmentData.reachOptions}
                   onValueChange={(value) =>
-                    setAssessmentData({ ...assessmentData, networkTechnologyType: value })
+                    setAssessmentData({ ...assessmentData, reachOptions: value })
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select technology type" />
+                    <SelectValue placeholder="Select reach option" />
                   </SelectTrigger>
                   <SelectContent>
-                    {networkTechnologyTypes[assessmentData.networkAreaType as keyof typeof networkTechnologyTypes]?.map((tech) => (
-                      <SelectItem key={tech} value={tech}>
-                        {tech}
+                    {reachOptionsData.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -332,67 +419,29 @@ export default function NetworkAssessmentScreen() {
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label>Reach Options</Label>
-              <Select
-                value={assessmentData.reachOptions}
-                onValueChange={(value) =>
-                  setAssessmentData({ ...assessmentData, reachOptions: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select reach option" />
-                </SelectTrigger>
-                <SelectContent>
-                  {reachOptionsData.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {assessmentData.networkAreaType === "Core" && (
+              <div className="space-y-2">
+                <Label>Core Options</Label>
+                <Select
+                  value={assessmentData.coreOptions}
+                  onValueChange={(value) =>
+                    setAssessmentData({ ...assessmentData, coreOptions: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select core option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {coreOptionsData.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-            <div className="space-y-2">
-              <Label>Core Options</Label>
-              <Select
-                value={assessmentData.coreOptions}
-                onValueChange={(value) =>
-                  setAssessmentData({ ...assessmentData, coreOptions: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select core option" />
-                </SelectTrigger>
-                <SelectContent>
-                  {coreOptionsData.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Test Type</Label>
-              <Select
-                value={assessmentData.testType}
-                onValueChange={(value) =>
-                  setAssessmentData({ ...assessmentData, testType: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select test type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="full">Full Network Test</SelectItem>
-                  <SelectItem value="speed">Speed Test Only</SelectItem>
-                  <SelectItem value="signal">Signal Strength Only</SelectItem>
-                  <SelectItem value="latency">Latency Test</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
             <div className="space-y-2">
               <Label>Equipment Label</Label>
               <Input
@@ -406,22 +455,363 @@ export default function NetworkAssessmentScreen() {
                 }
               />
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="space-y-2">
-              <Label>Connected Devices</Label>
-              <Input
-                type="number"
-                placeholder="Number of connected devices"
-                value={assessmentData.connectedDevices}
-                onChange={(e) =>
-                  setAssessmentData({
-                    ...assessmentData,
-                    connectedDevices: parseInt(e.target.value) || 0,
-                  })
-                }
-              />
+        {/* Conditional Forms */}
+        {conditionalFormType === "reach-active-ethernet" && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Router className="h-5 w-5" />
+                <span>Active Ethernet Configuration</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Ethernet Port Type</Label>
+                <Select
+                  value={assessmentData.ethernetPortType}
+                  onValueChange={(value) =>
+                    setAssessmentData({ ...assessmentData, ethernetPortType: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select port type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1GbE">1 Gigabit Ethernet</SelectItem>
+                    <SelectItem value="10GbE">10 Gigabit Ethernet</SelectItem>
+                    <SelectItem value="25GbE">25 Gigabit Ethernet</SelectItem>
+                    <SelectItem value="40GbE">40 Gigabit Ethernet</SelectItem>
+                    <SelectItem value="100GbE">100 Gigabit Ethernet</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Switch Configuration</Label>
+                <Input
+                  placeholder="Switch model and configuration"
+                  value={assessmentData.switchConfiguration}
+                  onChange={(e) =>
+                    setAssessmentData({
+                      ...assessmentData,
+                      switchConfiguration: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>VLAN Configuration</Label>
+                <Input
+                  placeholder="VLAN IDs and configuration"
+                  value={assessmentData.vlanConfig}
+                  onChange={(e) =>
+                    setAssessmentData({
+                      ...assessmentData,
+                      vlanConfig: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Bandwidth Allocation (Mbps)</Label>
+                <Input
+                  placeholder="Allocated bandwidth"
+                  value={assessmentData.bandwidthAllocation}
+                  onChange={(e) =>
+                    setAssessmentData({
+                      ...assessmentData,
+                      bandwidthAllocation: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Redundancy Setup</Label>
+                <Select
+                  value={assessmentData.redundancySetup}
+                  onValueChange={(value) =>
+                    setAssessmentData({ ...assessmentData, redundancySetup: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select redundancy type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No Redundancy</SelectItem>
+                    <SelectItem value="link">Link Redundancy</SelectItem>
+                    <SelectItem value="device">Device Redundancy</SelectItem>
+                    <SelectItem value="path">Path Redundancy</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {conditionalFormType === "reach-gpon" && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Cable className="h-5 w-5" />
+                <span>GPON Configuration</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>ONT Count</Label>
+                <Input
+                  type="number"
+                  placeholder="Number of ONTs"
+                  value={assessmentData.ontCount}
+                  onChange={(e) =>
+                    setAssessmentData({
+                      ...assessmentData,
+                      ontCount: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Splitter Ratio</Label>
+                <Select
+                  value={assessmentData.splitterRatio}
+                  onValueChange={(value) =>
+                    setAssessmentData({ ...assessmentData, splitterRatio: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select splitter ratio" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1:8">1:8</SelectItem>
+                    <SelectItem value="1:16">1:16</SelectItem>
+                    <SelectItem value="1:32">1:32</SelectItem>
+                    <SelectItem value="1:64">1:64</SelectItem>
+                    <SelectItem value="1:128">1:128</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>OLC Configuration</Label>
+                <Input
+                  placeholder="Optical Line Card configuration"
+                  value={assessmentData.olcConfiguration}
+                  onChange={(e) =>
+                    setAssessmentData({
+                      ...assessmentData,
+                      olcConfiguration: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Power Budget (dB)</Label>
+                <Input
+                  placeholder="Power budget measurement"
+                  value={assessmentData.powerBudget}
+                  onChange={(e) =>
+                    setAssessmentData({
+                      ...assessmentData,
+                      powerBudget: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {conditionalFormType === "core-dwdm" && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Zap className="h-5 w-5" />
+                <span>DWDM Configuration</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Wavelength Channels</Label>
+                <Input
+                  placeholder="Number and configuration of wavelength channels"
+                  value={assessmentData.wavelengthChannels}
+                  onChange={(e) =>
+                    setAssessmentData({
+                      ...assessmentData,
+                      wavelengthChannels: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Fiber Type</Label>
+                <Select
+                  value={assessmentData.fiberType}
+                  onValueChange={(value) =>
+                    setAssessmentData({ ...assessmentData, fiberType: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select fiber type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="SMF-28">SMF-28 (Standard Single Mode)</SelectItem>
+                    <SelectItem value="NZDSF">Non-Zero Dispersion Shifted</SelectItem>
+                    <SelectItem value="DSF">Dispersion Shifted</SelectItem>
+                    <SelectItem value="LEAF">Large Effective Area</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Amplifier Configuration</Label>
+                <Input
+                  placeholder="EDFA and Raman amplifier setup"
+                  value={assessmentData.amplifierConfig}
+                  onChange={(e) =>
+                    setAssessmentData({
+                      ...assessmentData,
+                      amplifierConfig: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Dispersion Compensation</Label>
+                <Select
+                  value={assessmentData.dispersionCompensation}
+                  onValueChange={(value) =>
+                    setAssessmentData({ ...assessmentData, dispersionCompensation: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select compensation method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="DCF">Dispersion Compensating Fiber</SelectItem>
+                    <SelectItem value="FBG">Fiber Bragg Grating</SelectItem>
+                    <SelectItem value="EDC">Electronic Dispersion Compensation</SelectItem>
+                    <SelectItem value="None">No Compensation</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Image Capture Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Camera className="h-5 w-5" />
+              <span>Documentation Images ({capturedImages.length})</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex space-x-2">
+              <Button
+                onClick={startCamera}
+                variant="outline"
+                className="flex-1"
+              >
+                <Camera className="h-4 w-4 mr-2" />
+                Take Photo
+              </Button>
+              <Button
+                onClick={() => fileInputRef.current?.click()}
+                variant="outline"
+                className="flex-1"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Upload Image
+              </Button>
             </div>
 
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+
+            {capturedImages.length > 0 && (
+              <div className="grid grid-cols-2 gap-2">
+                {capturedImages.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={image}
+                      alt={`Captured ${index + 1}`}
+                      className="w-full h-32 object-cover rounded border"
+                    />
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="absolute top-1 right-1 h-6 w-6 p-0"
+                      onClick={() => removeImage(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Camera Modal */}
+        {showCamera && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-white p-4 rounded-lg max-w-md w-full mx-4">
+              <div className="space-y-4">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="w-full rounded"
+                />
+                <canvas ref={canvasRef} className="hidden" />
+                <div className="flex space-x-2">
+                  <Button onClick={captureImage} className="flex-1">
+                    Capture
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      if (currentStream) {
+                        currentStream.getTracks().forEach(track => track.stop());
+                        setCurrentStream(null);
+                      }
+                      setShowCamera(false);
+                    }}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Assessment Notes */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Assessment Notes</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Issues Found</Label>
               <Textarea
@@ -438,9 +828,9 @@ export default function NetworkAssessmentScreen() {
             </div>
 
             <div className="space-y-2">
-              <Label>Notes</Label>
+              <Label>Additional Notes</Label>
               <Textarea
-                placeholder="Additional notes and observations"
+                placeholder="Additional observations and notes"
                 value={assessmentData.notes}
                 onChange={(e) =>
                   setAssessmentData({
@@ -451,210 +841,112 @@ export default function NetworkAssessmentScreen() {
                 rows={3}
               />
             </div>
+          </CardContent>
+        </Card>
 
+        {/* Network Testing */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Activity className="h-5 w-5" />
+              <span>Network Performance Test</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <Button
               onClick={runAssessment}
               disabled={
                 isAssessing ||
                 !assessmentData.location ||
-                !assessmentData.testType ||
                 !assessmentData.networkAreaType ||
-                !assessmentData.reachOptions ||
-                !assessmentData.coreOptions
+                (!assessmentData.reachOptions && !assessmentData.coreOptions)
               }
               className="w-full bg-blue-500 hover:bg-blue-600 text-white"
             >
               {isAssessing ? (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Running Assessment...
+                  Running Performance Test...
                 </>
               ) : (
                 <>
                   <Activity className="h-4 w-4 mr-2" />
-                  Start Network Assessment
+                  Start Performance Test
                 </>
               )}
             </Button>
-          </CardContent>
-        </Card>
 
-        {/* Results */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Wifi className="h-5 w-5" />
-              <span>Assessment Results</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Signal Strength */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <signalInfo.icon className="h-5 w-5 text-gray-600" />
-                <div>
-                  <div className="font-medium">Signal Strength</div>
-                  <div className="text-sm text-gray-600">
-                    {assessmentData.signalStrength} dBm
-                  </div>
-                </div>
-              </div>
-              <Badge className={`${signalInfo.color} text-white`}>
-                {signalInfo.status}
-              </Badge>
-            </div>
-
-            {/* Download Speed */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <TrendingDown className="h-5 w-5 text-gray-600" />
-                <div>
-                  <div className="font-medium">Download Speed</div>
-                  <div className="text-sm text-gray-600">
-                    {assessmentData.downloadSpeed} Mbps
-                  </div>
-                </div>
-              </div>
-              <Badge
-                className={
-                  getSpeedStatus(assessmentData.downloadSpeed, "download") ===
-                  "Good"
-                    ? "bg-green-500 text-white"
-                    : "bg-yellow-500 text-white"
-                }
-              >
-                {getSpeedStatus(assessmentData.downloadSpeed, "download")}
-              </Badge>
-            </div>
-
-            {/* Upload Speed */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <TrendingUp className="h-5 w-5 text-gray-600" />
-                <div>
-                  <div className="font-medium">Upload Speed</div>
-                  <div className="text-sm text-gray-600">
-                    {assessmentData.uploadSpeed} Mbps
-                  </div>
-                </div>
-              </div>
-              <Badge
-                className={
-                  getSpeedStatus(assessmentData.uploadSpeed, "upload") ===
-                  "Good"
-                    ? "bg-green-500 text-white"
-                    : "bg-yellow-500 text-white"
-                }
-              >
-                {getSpeedStatus(assessmentData.uploadSpeed, "upload")}
-              </Badge>
-            </div>
-
-            {/* Latency */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <Activity className="h-5 w-5 text-gray-600" />
-                <div>
-                  <div className="font-medium">Latency</div>
-                  <div className="text-sm text-gray-600">
-                    {assessmentData.latency} ms
-                  </div>
-                </div>
-              </div>
-              <Badge
-                className={
-                  assessmentData.latency < 50
-                    ? "bg-green-500 text-white"
-                    : "bg-yellow-500 text-white"
-                }
-              >
-                {assessmentData.latency < 50 ? "Good" : "High"}
-              </Badge>
-            </div>
-
-            {/* Packet Loss */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <AlertTriangle className="h-5 w-5 text-gray-600" />
-                <div>
-                  <div className="font-medium">Packet Loss</div>
-                  <div className="text-sm text-gray-600">
-                    {assessmentData.packetLoss}%
-                  </div>
-                </div>
-              </div>
-              <Badge
-                className={
-                  assessmentData.packetLoss < 1
-                    ? "bg-green-500 text-white"
-                    : "bg-red-500 text-white"
-                }
-              >
-                {assessmentData.packetLoss < 1 ? "Normal" : "High"}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Recommendations */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recommendations</CardTitle>
-          </CardHeader>
-          <CardContent>
+            {/* Test Results */}
             <div className="space-y-3">
-              {assessmentData.signalStrength < -70 && (
-                <div className="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
-                  <p className="text-sm text-yellow-800">
-                    <strong>Signal Strength:</strong> Consider repositioning
-                    equipment or checking for obstructions.
-                  </p>
-                </div>
-              )}
-              {assessmentData.downloadSpeed < 25 && (
-                <div className="p-3 bg-orange-50 border-l-4 border-orange-400 rounded">
-                  <p className="text-sm text-orange-800">
-                    <strong>Download Speed:</strong> Speed below recommended
-                    threshold. Check for network congestion.
-                  </p>
-                </div>
-              )}
-              {assessmentData.latency > 50 && (
-                <div className="p-3 bg-red-50 border-l-4 border-red-400 rounded">
-                  <p className="text-sm text-red-800">
-                    <strong>High Latency:</strong> Network response time is
-                    elevated. Check routing and infrastructure.
-                  </p>
-                </div>
-              )}
-              {assessmentData.packetLoss > 1 && (
-                <div className="p-3 bg-red-50 border-l-4 border-red-400 rounded">
-                  <p className="text-sm text-red-800">
-                    <strong>Packet Loss:</strong> Significant packet loss
-                    detected. Check connections and hardware.
-                  </p>
-                </div>
-              )}
-              {assessmentData.signalStrength > -60 &&
-                assessmentData.downloadSpeed > 25 &&
-                assessmentData.latency < 50 &&
-                assessmentData.packetLoss < 1 && (
-                  <div className="p-3 bg-green-50 border-l-4 border-green-400 rounded">
-                    <p className="text-sm text-green-800">
-                      <strong>Network Status:</strong> All metrics are within
-                      acceptable ranges. Network performance is good.
-                    </p>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <signalInfo.icon className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <div className="font-medium">Signal Strength</div>
+                    <div className="text-sm text-gray-600">
+                      {assessmentData.signalStrength} dBm
+                    </div>
                   </div>
-                )}
+                </div>
+                <Badge className={`${signalInfo.color} text-white`}>
+                  {signalInfo.status}
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <TrendingDown className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <div className="font-medium">Download Speed</div>
+                    <div className="text-sm text-gray-600">
+                      {assessmentData.downloadSpeed} Mbps
+                    </div>
+                  </div>
+                </div>
+                <Badge
+                  className={
+                    getSpeedStatus(assessmentData.downloadSpeed, "download") ===
+                    "Good"
+                      ? "bg-green-500 text-white"
+                      : "bg-yellow-500 text-white"
+                  }
+                >
+                  {getSpeedStatus(assessmentData.downloadSpeed, "download")}
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <TrendingUp className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <div className="font-medium">Upload Speed</div>
+                    <div className="text-sm text-gray-600">
+                      {assessmentData.uploadSpeed} Mbps
+                    </div>
+                  </div>
+                </div>
+                <Badge
+                  className={
+                    getSpeedStatus(assessmentData.uploadSpeed, "upload") ===
+                    "Good"
+                      ? "bg-green-500 text-white"
+                      : "bg-yellow-500 text-white"
+                  }
+                >
+                  {getSpeedStatus(assessmentData.uploadSpeed, "upload")}
+                </Badge>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Save Report */}
+        {/* Save Assessment */}
         <Button
           className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 text-lg font-semibold"
           onClick={saveAssessmentReport}
+          disabled={!assessmentData.location || !assessmentData.networkAreaType}
         >
+          <CheckCircle className="h-5 w-5 mr-2" />
           Save Assessment Report
         </Button>
       </div>

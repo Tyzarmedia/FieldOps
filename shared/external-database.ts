@@ -151,68 +151,167 @@ export class ExternalDatabaseService {
   // Sage 300 Employee Integration
   async getEmployees(): Promise<ExternalEmployee[]> {
     try {
-      const response = await fetch(`${this.sage300BaseUrl}/employees`, {
-        headers: {
-          Authorization: `Bearer ${process.env.SAGE_300_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Sage 300 API error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.employees || [];
+      // Load from local database file instead of external API
+      const employees = await this.loadSage300Data();
+      return employees.map((emp) => this.transformSage300Employee(emp));
     } catch (error) {
       console.error("Error fetching employees from Sage 300:", error);
-      throw error;
+      // Return fallback employees if file loading fails
+      return this.getFallbackEmployees();
     }
+  }
+
+  // Load Sage 300 data from JSON file
+  private async loadSage300Data(): Promise<any[]> {
+    try {
+      let filePath: string;
+      let data: any;
+
+      if (typeof window === "undefined") {
+        // Server-side: read from file system
+        const fs = await import("fs");
+        const path = await import("path");
+        filePath = path.join(
+          process.cwd(),
+          "public/data/sage-300-database.json",
+        );
+        const fileContent = fs.readFileSync(filePath, "utf-8");
+        data = JSON.parse(fileContent);
+      } else {
+        // Client-side: fetch from public directory
+        const response = await fetch("/data/sage-300-database.json");
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch Sage 300 data: ${response.statusText}`,
+          );
+        }
+        data = await response.json();
+      }
+
+      return data.employees || [];
+    } catch (error) {
+      console.error("Error loading Sage 300 data:", error);
+      return [];
+    }
+  }
+
+  // Transform Sage 300 employee data to ExternalEmployee format
+  private transformSage300Employee(sage300Employee: any): ExternalEmployee {
+    // Map Sage 300 roles to system roles
+    const roleMapping: Record<string, any> = {
+      "Maintenance Technician": "Technician",
+      "Installation Technician": "Technician",
+      "HR Officer": "HR",
+      "Payroll Officer": "Payroll",
+      Manager: "Manager",
+      "System Administrator": "IT",
+      "Fleet Manager": "FleetManager",
+    };
+
+    return {
+      employeeId: sage300Employee.EmployeeID,
+      employeeNumber:
+        sage300Employee.PayrollNumber || sage300Employee.EmployeeID,
+      firstName: sage300Employee.FullName.split(" ")[0],
+      lastName: sage300Employee.FullName.split(" ").slice(1).join(" "),
+      email: sage300Employee.Email,
+      phone: sage300Employee.Phone,
+      department: sage300Employee.Department,
+      position: sage300Employee.Role,
+      role: roleMapping[sage300Employee.Role] || "Technician",
+      startDate: sage300Employee.DateOfHire,
+      isActive: sage300Employee.EmploymentStatus === "Active",
+      supervisor: sage300Employee.Manager,
+      skills: ["Fiber Installation", "Network Testing", "Customer Service"], // Default skills
+      certifications: ["Safety Training"], // Default certifications
+      wageRate: sage300Employee.Salary / 22 / 8, // Convert monthly salary to hourly rate
+      overtimeRate: (sage300Employee.Salary / 22 / 8) * 1.5, // 1.5x overtime
+      lastSync: new Date().toISOString(),
+    };
   }
 
   async getEmployee(employeeId: string): Promise<ExternalEmployee | null> {
     try {
-      const response = await fetch(
-        `${this.sage300BaseUrl}/employees/${employeeId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.SAGE_300_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const employees = await this.loadSage300Data();
+      const employee = employees.find((emp) => emp.EmployeeID === employeeId);
 
-      if (!response.ok) {
-        if (response.status === 404) return null;
-        throw new Error(`Sage 300 API error: ${response.statusText}`);
+      if (!employee) {
+        return null;
       }
 
-      return await response.json();
+      return this.transformSage300Employee(employee);
     } catch (error) {
       console.error("Error fetching employee from Sage 300:", error);
-      throw error;
+      return null;
     }
+  }
+
+  // Fallback employees if database loading fails
+  private getFallbackEmployees(): ExternalEmployee[] {
+    return [
+      {
+        employeeId: "EMP001",
+        employeeNumber: "P001",
+        firstName: "Dyondzani Clement",
+        lastName: "Masinge",
+        email: "clement@company.com",
+        phone: "0810000001",
+        department: "Technician",
+        position: "Maintenance Technician",
+        role: "Technician",
+        startDate: "2022-01-10",
+        isActive: true,
+        supervisor: "Glassman Nkosi",
+        skills: ["Fiber Installation", "Network Testing", "Customer Service"],
+        certifications: ["Fiber Optic Certified", "Safety Training"],
+        wageRate: 106.25, // 8500/22/8 * 2
+        overtimeRate: 159.38,
+        lastSync: new Date().toISOString(),
+      },
+    ];
   }
 
   // sp.vumatel.co.za Ticket Integration
   async getJobs(): Promise<ExternalJob[]> {
     try {
-      const response = await fetch(`${this.vumatelBaseUrl}/tickets`, {
-        headers: {
-          Authorization: `Bearer ${process.env.VUMATEL_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Vumatel API error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return this.transformVumatelTicketsToJobs(data.tickets || []);
+      const tickets = await this.loadSpVumatelData();
+      return this.transformVumatelTicketsToJobs(tickets);
     } catch (error) {
       console.error("Error fetching jobs from Vumatel:", error);
-      throw error;
+      return this.getFallbackJobs();
+    }
+  }
+
+  // Load SP.Vumatel data from JSON file
+  private async loadSpVumatelData(): Promise<any[]> {
+    try {
+      let data: any;
+
+      if (typeof window === "undefined") {
+        // Server-side: read from file system
+        const fs = await import("fs");
+        const path = await import("path");
+        const filePath = path.join(
+          process.cwd(),
+          "public/data/sp-vumatel-database.json",
+        );
+        const fileContent = fs.readFileSync(filePath, "utf-8");
+        data = JSON.parse(fileContent);
+      } else {
+        // Client-side: fetch from public directory
+        const response = await fetch("/data/sp-vumatel-database.json");
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch SP.Vumatel data: ${response.statusText}`,
+          );
+        }
+        data = await response.json();
+      }
+
+      return data.tickets || [];
+    } catch (error) {
+      console.error("Error loading SP.Vumatel data:", error);
+      return [];
     }
   }
 
