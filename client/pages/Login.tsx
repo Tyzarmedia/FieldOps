@@ -81,10 +81,10 @@ export default function Login() {
     } catch (error) {
       console.error("Login error:", error);
 
-      if (error instanceof ApiError) {
-        if (error.status === 401) {
+      if (error instanceof Error) {
+        if (error.message.includes("401")) {
           setError("Invalid email or password");
-        } else if (error.status === 500) {
+        } else if (error.message.includes("500")) {
           setError("Server error. Please try again later.");
         } else {
           setError(error.message || "Authentication failed");
