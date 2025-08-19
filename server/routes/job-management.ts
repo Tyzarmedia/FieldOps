@@ -150,6 +150,7 @@ router.get("/jobs/assistant/:assistantId", (req, res) => {
     }
 
     // Get jobs assigned to the technician
+    const jobs = getJobsFromDatabase();
     const technicianJobs = jobs.filter(
       (job) => job.assignedTechnician === technicianId,
     );
