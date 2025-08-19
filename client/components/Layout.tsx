@@ -329,8 +329,10 @@ function getPageTitle(pathname: string, role: string) {
     "/assign-jobs": "Assign Jobs",
     "/monitor-progress": "Monitor Progress",
     "/reports": "Reports",
-    "/fleet-overview": "Fleet Overview",
-    "/vehicle-inspections": "Vehicle Inspections",
+    "/fleet": "Fleet Overview",
+    "/fleet/vehicles": "Vehicle Management",
+    "/fleet/inspections": "Vehicle Inspections",
+    "/fleet/compliance": "Compliance Management",
     "/stock-overview": "Stock Overview",
     "/safety-overview": "Safety Overview",
   };
