@@ -179,7 +179,32 @@ export class DatabaseService {
   ): Promise<boolean> {
     try {
       if (this.isOnline) {
-        return await this.externalDb.updateJobStatus(jobId, status, notes);
+        const result = await this.externalDb.updateJobStatus(
+          jobId,
+          status,
+          notes,
+        );
+
+        // Update local cache if successful
+        if (result && this.isBrowser()) {
+          const cached = localStorage.getItem("cachedJobs");
+          if (cached) {
+            const jobs = JSON.parse(cached);
+            const jobIndex = jobs.findIndex(
+              (job: any) => job.ticketId === jobId,
+            );
+            if (jobIndex !== -1) {
+              jobs[jobIndex].status = status;
+              jobs[jobIndex].lastUpdated = new Date().toISOString();
+              if (notes) {
+                jobs[jobIndex].notes = notes;
+              }
+              localStorage.setItem("cachedJobs", JSON.stringify(jobs));
+            }
+          }
+        }
+
+        return result;
       } else {
         // Store for sync later
         const pendingUpdate = {
@@ -627,6 +652,100 @@ export class DatabaseService {
       cacheAge.jobs > oneHour ||
       cacheAge.stock > oneHour
     );
+  }
+
+  // Save data changes back to database files (server-side only)
+  async saveDataToFile(
+    type: "employees" | "jobs" | "stock",
+    data: any,
+  ): Promise<boolean> {
+    if (this.isServerEnvironment) {
+      try {
+        const fs = await import("fs");
+        const path = await import("path");
+
+        let filePath: string;
+        let fileData: any;
+
+        switch (type) {
+          case "employees":
+            filePath = path.join(
+              process.cwd(),
+              "public/data/sage-300-database.json",
+            );
+            fileData = { employees: data };
+            break;
+          case "jobs":
+            filePath = path.join(
+              process.cwd(),
+              "public/data/sp-vumatel-database.json",
+            );
+            fileData = { tickets: data };
+            break;
+          case "stock":
+            filePath = path.join(
+              process.cwd(),
+              "public/data/sage-x3-database.json",
+            );
+            fileData = {
+              company: {
+                id: "C001",
+                name: "Demo Fiber Solutions",
+                system: "Sage X3",
+                stockDate: new Date().toISOString().split("T")[0],
+              },
+              stockItems: data,
+            };
+            break;
+          default:
+            return false;
+        }
+
+        fs.writeFileSync(filePath, JSON.stringify(fileData, null, 2));
+        console.log(`Successfully saved ${type} data to ${filePath}`);
+        return true;
+      } catch (error) {
+        console.error(`Error saving ${type} data:`, error);
+        return false;
+      }
+    }
+    return false;
+  }
+
+  // Update employee data (like last login time)
+  async updateEmployee(
+    employeeId: string,
+    updates: Partial<any>,
+  ): Promise<boolean> {
+    try {
+      const employees = await this.getEmployees();
+      const employeeIndex = employees.findIndex(
+        (emp) => emp.employeeId === employeeId,
+      );
+
+      if (employeeIndex === -1) {
+        return false;
+      }
+
+      // Update the employee data
+      Object.assign(employees[employeeIndex], updates);
+
+      // Save to file if on server
+      if (this.isServerEnvironment) {
+        return await this.saveDataToFile("employees", employees);
+      }
+
+      // Update cache if in browser
+      if (this.isBrowser()) {
+        localStorage.setItem("cachedEmployees", JSON.stringify(employees));
+        localStorage.setItem("employeesCacheTime", new Date().toISOString());
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error updating employee:", error);
+      return false;
+    }
   }
 }
 

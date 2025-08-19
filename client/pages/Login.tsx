@@ -4,104 +4,80 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { UserCheck, Building, Users, Shield } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { UserCheck, AlertCircle, Eye, EyeOff } from "lucide-react";
 
-const userRoles = [
-  {
-    value: "SystemAdmin",
-    label: "System Administrator",
-    icon: Shield,
-    color: "text-red-800",
-  },
-  { value: "CEO", label: "CEO", icon: Building, color: "text-purple-600" },
-  {
-    value: "Manager",
-    label: "Manager",
-    icon: Users,
-    color: "text-blue-600",
-  },
-  {
-    value: "Coordinator",
-    label: "Coordinator",
-    icon: UserCheck,
-    color: "text-green-600",
-  },
-  {
-    value: "Technician",
-    label: "Technician",
-    icon: UserCheck,
-    color: "text-orange-600",
-  },
-  {
-    value: "AssistantTechnician",
-    label: "Assistant Technician",
-    icon: UserCheck,
-    color: "text-orange-400",
-  },
-  {
-    value: "FleetManager",
-    label: "Fleet Manager",
-    icon: UserCheck,
-    color: "text-cyan-600",
-  },
-  {
-    value: "StockManager",
-    label: "Stock Manager",
-    icon: UserCheck,
-    color: "text-indigo-600",
-  },
-  {
-    value: "HSManager",
-    label: "Health & Safety Manager",
-    icon: Shield,
-    color: "text-red-600",
-  },
-  {
-    value: "HR",
-    label: "HR Manager",
-    icon: Users,
-    color: "text-emerald-600",
-  },
-  {
-    value: "Payroll",
-    label: "Payroll Manager",
-    icon: Building,
-    color: "text-amber-600",
-  },
-  {
-    value: "IT",
-    label: "IT Manager",
-    icon: UserCheck,
-    color: "text-slate-600",
-  },
-];
+interface LoginResponse {
+  success: boolean;
+  token?: string;
+  user?: {
+    employeeId: string;
+    email: string;
+    fullName: string;
+    role: string;
+    department: string;
+    isActive: boolean;
+    accessRoles: string[];
+  };
+  message?: string;
+}
 
 export default function Login() {
-  const [email, setEmail] = useState("demo@fieldops.com");
-  const [password, setPassword] = useState("demo123");
-  const [selectedRole, setSelectedRole] = useState("HR");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    // Simulate login process
-    setTimeout(() => {
-      // Store user role for the app
-      localStorage.setItem("userRole", selectedRole);
-      localStorage.setItem("userEmail", email);
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data: LoginResponse = await response.json();
+
+      if (data.success && data.token && data.user) {
+        // Store authentication data
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("userRole", data.user.role);
+        localStorage.setItem("userEmail", data.user.email);
+        localStorage.setItem("userFullName", data.user.fullName);
+        localStorage.setItem("employeeId", data.user.employeeId);
+        localStorage.setItem("department", data.user.department);
+
+        // Clear any existing demo data
+        localStorage.removeItem("demoMode");
+
+        setIsLoading(false);
+        navigate("/");
+      } else {
+        setError(data.message || "Login failed");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Network error. Please check your connection and try again.");
       setIsLoading(false);
-      navigate("/");
-    }, 1000);
+    }
+  };
+
+  const handleDemoLogin = () => {
+    // Demo login for testing purposes
+    localStorage.setItem("userRole", "HR");
+    localStorage.setItem("userEmail", "demo@fieldops.com");
+    localStorage.setItem("userFullName", "Demo User");
+    localStorage.setItem("demoMode", "true");
+    navigate("/");
   };
 
   return (
@@ -120,111 +96,140 @@ export default function Login() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-center">Sign In</CardTitle>
+            <CardTitle className="text-center">
+              Sign In to Your Account
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder="Enter your work email"
                   required
+                  autoComplete="email"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Select
-                  value={selectedRole}
-                  onValueChange={setSelectedRole}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {userRoles.map((role) => {
-                      const Icon = role.icon;
-                      return (
-                        <SelectItem key={role.value} value={role.value}>
-                          <div className="flex items-center space-x-2">
-                            <Icon className={`h-4 w-4 ${role.color}`} />
-                            <span>{role.label}</span>
-                          </div>
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    required
+                    autoComplete="current-password"
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
 
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading || !selectedRole}
+                disabled={isLoading || !email || !password}
               >
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
 
             <div className="mt-6 pt-6 border-t border-border">
-              <div className="text-center text-sm text-muted-foreground">
-                <p className="mb-2">Demo Credentials:</p>
-                <p>Email: demo@fieldops.com</p>
-                <p>Password: demo123</p>
+              <div className="text-center text-sm text-muted-foreground mb-4">
+                <p className="mb-2">
+                  🔗 <strong>Database Integration Active</strong>
+                </p>
+                <p>Authentication via Sage 300 Employee Database</p>
+              </div>
+
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={handleDemoLogin}
+                disabled={isLoading}
+              >
+                Continue with Demo Mode
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Database information */}
+        <Card className="mt-6 shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-sm">🗄️ Connected Databases</CardTitle>
+          </CardHeader>
+          <CardContent className="text-xs text-muted-foreground space-y-2">
+            <div className="grid grid-cols-1 gap-2">
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong className="text-green-600">✓ Sage 300:</strong>{" "}
+                  Employee Authentication & HR Data
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong className="text-green-600">✓ Sage X3:</strong> Stock &
+                  Inventory Management
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong className="text-green-600">✓ SP.Vumatel:</strong>{" "}
+                  Network Tickets & Job Management
+                </span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Role descriptions */}
-        <Card className="mt-6 shadow-sm">
+        {/* Test credentials info */}
+        <Card className="mt-4 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm">Role Descriptions</CardTitle>
+            <CardTitle className="text-sm">🔑 Test Credentials</CardTitle>
           </CardHeader>
-          <CardContent className="text-xs text-muted-foreground space-y-2">
-            <div className="grid grid-cols-1 gap-2">
-              <div>
-                <strong className="text-red-800">System Admin:</strong> Full
-                system control, user management, security
-              </div>
-              <div>
-                <strong className="text-purple-600">CEO:</strong> Full access +
-                dashboard customization
-              </div>
-              <div>
-                <strong className="text-blue-600">Manager:</strong> View/manage
-                teams, customize dashboards
-              </div>
-              <div>
-                <strong className="text-green-600">Coordinator:</strong> Assign
-                jobs, monitor technician progress
-              </div>
-              <div>
-                <strong className="text-orange-600">Technician:</strong>{" "}
-                Complete all types of assigned jobs
-              </div>
-              <div>
-                <strong className="text-red-600">H&S Manager:</strong> Assign
-                safety checklists, log incidents
-              </div>
-            </div>
+          <CardContent className="text-xs text-muted-foreground space-y-1">
+            <p>
+              <strong>HR Manager:</strong> thembi@company.com
+            </p>
+            <p>
+              <strong>Technician:</strong> clement@company.com
+            </p>
+            <p>
+              <strong>Manager:</strong> glassman@company.com
+            </p>
+            <p>
+              <strong>IT Admin:</strong> shawn@company.com
+            </p>
+            <p className="text-orange-600 mt-2">
+              <strong>Password:</strong> password123
+            </p>
           </CardContent>
         </Card>
       </div>
