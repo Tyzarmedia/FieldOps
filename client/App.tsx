@@ -764,6 +764,14 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/security-monitoring"
+                element={
+                  <ProtectedRoute allowedRoles={["SystemAdmin", "IT"]}>
+                    <SecurityMonitoringDashboard />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
