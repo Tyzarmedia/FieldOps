@@ -268,22 +268,39 @@ export class ExternalDatabaseService {
   // sp.vumatel.co.za Ticket Integration
   async getJobs(): Promise<ExternalJob[]> {
     try {
-      const response = await fetch(`${this.vumatelBaseUrl}/tickets`, {
-        headers: {
-          Authorization: `Bearer ${process.env.VUMATEL_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Vumatel API error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return this.transformVumatelTicketsToJobs(data.tickets || []);
+      const tickets = await this.loadSpVumatelData();
+      return this.transformVumatelTicketsToJobs(tickets);
     } catch (error) {
       console.error("Error fetching jobs from Vumatel:", error);
-      throw error;
+      return this.getFallbackJobs();
+    }
+  }
+
+  // Load SP.Vumatel data from JSON file
+  private async loadSpVumatelData(): Promise<any[]> {
+    try {
+      let data: any;
+
+      if (typeof window === "undefined") {
+        // Server-side: read from file system
+        const fs = await import("fs");
+        const path = await import("path");
+        const filePath = path.join(process.cwd(), "public/data/sp-vumatel-database.json");
+        const fileContent = fs.readFileSync(filePath, "utf-8");
+        data = JSON.parse(fileContent);
+      } else {
+        // Client-side: fetch from public directory
+        const response = await fetch("/data/sp-vumatel-database.json");
+        if (!response.ok) {
+          throw new Error(`Failed to fetch SP.Vumatel data: ${response.statusText}`);
+        }
+        data = await response.json();
+      }
+
+      return data.tickets || [];
+    } catch (error) {
+      console.error("Error loading SP.Vumatel data:", error);
+      return [];
     }
   }
 
