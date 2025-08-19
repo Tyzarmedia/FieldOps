@@ -64,6 +64,11 @@ import StockManagerDashboard from "./pages/StockManagerDashboard";
 import EnhancedCoordinatorDashboard from "./pages/EnhancedCoordinatorDashboard";
 import EnhancedManagerDashboard from "./pages/EnhancedManagerDashboard";
 import SecurityMonitoringDashboard from "./pages/SecurityMonitoringDashboard";
+import FleetOverviewDashboard from "./pages/FleetOverviewDashboard";
+import FleetVehicleManagement from "./pages/FleetVehicleManagement";
+import VehicleDetailScreen from "./pages/VehicleDetailScreen";
+import InspectionsScreen from "./pages/InspectionsScreen";
+import ComplianceScreen from "./pages/ComplianceScreen";
 
 const queryClient = new QueryClient();
 
