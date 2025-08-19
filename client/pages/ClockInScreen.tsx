@@ -331,7 +331,7 @@ export default function ClockInScreen({
       const clockInResult = await locationService.handleClockIn();
 
       if (clockInResult.hasLocation) {
-        showNotification.locationGranted();
+        console.log('Clock-in with GPS successful');
       } else {
         // Show notification that app continues without location
         showNotification.info(
