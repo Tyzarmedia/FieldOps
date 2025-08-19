@@ -62,6 +62,7 @@ import StockRequestScreen from "./pages/StockRequestScreen";
 import StockManagerDashboard from "./pages/StockManagerDashboard";
 import EnhancedCoordinatorDashboard from "./pages/EnhancedCoordinatorDashboard";
 import EnhancedManagerDashboard from "./pages/EnhancedManagerDashboard";
+import SecurityMonitoringDashboard from "./pages/SecurityMonitoringDashboard";
 
 const queryClient = new QueryClient();
 
