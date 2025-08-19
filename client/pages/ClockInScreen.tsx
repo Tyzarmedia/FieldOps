@@ -9,6 +9,7 @@ import {
 } from "@/services/locationService";
 import { showNotification } from "@/hooks/useNotification";
 import { authManager } from "@/utils/auth";
+import AssistantSelection from "@/components/AssistantSelection";
 
 interface ClockInScreenProps {
   userRole?: string;
