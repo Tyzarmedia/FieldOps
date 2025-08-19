@@ -36,10 +36,10 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
@@ -48,35 +48,35 @@ export default function Login() {
 
       if (data.success && data.token && data.user) {
         // Store authentication data
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('userRole', data.user.role);
-        localStorage.setItem('userEmail', data.user.email);
-        localStorage.setItem('userFullName', data.user.fullName);
-        localStorage.setItem('employeeId', data.user.employeeId);
-        localStorage.setItem('department', data.user.department);
-        
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("userRole", data.user.role);
+        localStorage.setItem("userEmail", data.user.email);
+        localStorage.setItem("userFullName", data.user.fullName);
+        localStorage.setItem("employeeId", data.user.employeeId);
+        localStorage.setItem("department", data.user.department);
+
         // Clear any existing demo data
-        localStorage.removeItem('demoMode');
-        
+        localStorage.removeItem("demoMode");
+
         setIsLoading(false);
         navigate("/");
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || "Login failed");
         setIsLoading(false);
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setError('Network error. Please check your connection and try again.');
+      console.error("Login error:", error);
+      setError("Network error. Please check your connection and try again.");
       setIsLoading(false);
     }
   };
 
   const handleDemoLogin = () => {
     // Demo login for testing purposes
-    localStorage.setItem('userRole', 'HR');
-    localStorage.setItem('userEmail', 'demo@fieldops.com');
-    localStorage.setItem('userFullName', 'Demo User');
-    localStorage.setItem('demoMode', 'true');
+    localStorage.setItem("userRole", "HR");
+    localStorage.setItem("userEmail", "demo@fieldops.com");
+    localStorage.setItem("userFullName", "Demo User");
+    localStorage.setItem("demoMode", "true");
     navigate("/");
   };
 
@@ -96,7 +96,9 @@ export default function Login() {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-center">Sign In to Your Account</CardTitle>
+            <CardTitle className="text-center">
+              Sign In to Your Account
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
@@ -160,10 +162,12 @@ export default function Login() {
 
             <div className="mt-6 pt-6 border-t border-border">
               <div className="text-center text-sm text-muted-foreground mb-4">
-                <p className="mb-2">🔗 <strong>Database Integration Active</strong></p>
+                <p className="mb-2">
+                  🔗 <strong>Database Integration Active</strong>
+                </p>
                 <p>Authentication via Sage 300 Employee Database</p>
               </div>
-              
+
               <Button
                 variant="outline"
                 className="w-full"
@@ -184,13 +188,22 @@ export default function Login() {
           <CardContent className="text-xs text-muted-foreground space-y-2">
             <div className="grid grid-cols-1 gap-2">
               <div className="flex items-center justify-between">
-                <span><strong className="text-green-600">✓ Sage 300:</strong> Employee Authentication & HR Data</span>
+                <span>
+                  <strong className="text-green-600">✓ Sage 300:</strong>{" "}
+                  Employee Authentication & HR Data
+                </span>
               </div>
               <div className="flex items-center justify-between">
-                <span><strong className="text-green-600">✓ Sage X3:</strong> Stock & Inventory Management</span>
+                <span>
+                  <strong className="text-green-600">✓ Sage X3:</strong> Stock &
+                  Inventory Management
+                </span>
               </div>
               <div className="flex items-center justify-between">
-                <span><strong className="text-green-600">✓ SP.Vumatel:</strong> Network Tickets & Job Management</span>
+                <span>
+                  <strong className="text-green-600">✓ SP.Vumatel:</strong>{" "}
+                  Network Tickets & Job Management
+                </span>
               </div>
             </div>
           </CardContent>
@@ -202,11 +215,21 @@ export default function Login() {
             <CardTitle className="text-sm">🔑 Test Credentials</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-muted-foreground space-y-1">
-            <p><strong>HR Manager:</strong> thembi@company.com</p>
-            <p><strong>Technician:</strong> clement@company.com</p>
-            <p><strong>Manager:</strong> glassman@company.com</p>
-            <p><strong>IT Admin:</strong> shawn@company.com</p>
-            <p className="text-orange-600 mt-2"><strong>Password:</strong> password123</p>
+            <p>
+              <strong>HR Manager:</strong> thembi@company.com
+            </p>
+            <p>
+              <strong>Technician:</strong> clement@company.com
+            </p>
+            <p>
+              <strong>Manager:</strong> glassman@company.com
+            </p>
+            <p>
+              <strong>IT Admin:</strong> shawn@company.com
+            </p>
+            <p className="text-orange-600 mt-2">
+              <strong>Password:</strong> password123
+            </p>
           </CardContent>
         </Card>
       </div>

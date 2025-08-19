@@ -179,14 +179,20 @@ export class DatabaseService {
   ): Promise<boolean> {
     try {
       if (this.isOnline) {
-        const result = await this.externalDb.updateJobStatus(jobId, status, notes);
+        const result = await this.externalDb.updateJobStatus(
+          jobId,
+          status,
+          notes,
+        );
 
         // Update local cache if successful
         if (result && this.isBrowser()) {
           const cached = localStorage.getItem("cachedJobs");
           if (cached) {
             const jobs = JSON.parse(cached);
-            const jobIndex = jobs.findIndex((job: any) => job.ticketId === jobId);
+            const jobIndex = jobs.findIndex(
+              (job: any) => job.ticketId === jobId,
+            );
             if (jobIndex !== -1) {
               jobs[jobIndex].status = status;
               jobs[jobIndex].lastUpdated = new Date().toISOString();
@@ -649,7 +655,10 @@ export class DatabaseService {
   }
 
   // Save data changes back to database files (server-side only)
-  async saveDataToFile(type: 'employees' | 'jobs' | 'stock', data: any): Promise<boolean> {
+  async saveDataToFile(
+    type: "employees" | "jobs" | "stock",
+    data: any,
+  ): Promise<boolean> {
     if (this.isServerEnvironment) {
       try {
         const fs = await import("fs");
@@ -659,24 +668,33 @@ export class DatabaseService {
         let fileData: any;
 
         switch (type) {
-          case 'employees':
-            filePath = path.join(process.cwd(), "public/data/sage-300-database.json");
+          case "employees":
+            filePath = path.join(
+              process.cwd(),
+              "public/data/sage-300-database.json",
+            );
             fileData = { employees: data };
             break;
-          case 'jobs':
-            filePath = path.join(process.cwd(), "public/data/sp-vumatel-database.json");
+          case "jobs":
+            filePath = path.join(
+              process.cwd(),
+              "public/data/sp-vumatel-database.json",
+            );
             fileData = { tickets: data };
             break;
-          case 'stock':
-            filePath = path.join(process.cwd(), "public/data/sage-x3-database.json");
+          case "stock":
+            filePath = path.join(
+              process.cwd(),
+              "public/data/sage-x3-database.json",
+            );
             fileData = {
               company: {
                 id: "C001",
                 name: "Demo Fiber Solutions",
                 system: "Sage X3",
-                stockDate: new Date().toISOString().split('T')[0]
+                stockDate: new Date().toISOString().split("T")[0],
               },
-              stockItems: data
+              stockItems: data,
             };
             break;
           default:
@@ -686,7 +704,6 @@ export class DatabaseService {
         fs.writeFileSync(filePath, JSON.stringify(fileData, null, 2));
         console.log(`Successfully saved ${type} data to ${filePath}`);
         return true;
-
       } catch (error) {
         console.error(`Error saving ${type} data:`, error);
         return false;
@@ -696,10 +713,15 @@ export class DatabaseService {
   }
 
   // Update employee data (like last login time)
-  async updateEmployee(employeeId: string, updates: Partial<any>): Promise<boolean> {
+  async updateEmployee(
+    employeeId: string,
+    updates: Partial<any>,
+  ): Promise<boolean> {
     try {
       const employees = await this.getEmployees();
-      const employeeIndex = employees.findIndex(emp => emp.employeeId === employeeId);
+      const employeeIndex = employees.findIndex(
+        (emp) => emp.employeeId === employeeId,
+      );
 
       if (employeeIndex === -1) {
         return false;
@@ -710,7 +732,7 @@ export class DatabaseService {
 
       // Save to file if on server
       if (this.isServerEnvironment) {
-        return await this.saveDataToFile('employees', employees);
+        return await this.saveDataToFile("employees", employees);
       }
 
       // Update cache if in browser

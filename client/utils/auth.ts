@@ -16,7 +16,7 @@ interface AuthState {
 
 export class AuthManager {
   private static instance: AuthManager;
-  
+
   static getInstance(): AuthManager {
     if (!AuthManager.instance) {
       AuthManager.instance = new AuthManager();
@@ -25,28 +25,28 @@ export class AuthManager {
   }
 
   getAuthState(): AuthState {
-    const token = localStorage.getItem('authToken');
-    const userRole = localStorage.getItem('userRole');
-    const userEmail = localStorage.getItem('userEmail');
-    const userFullName = localStorage.getItem('userFullName');
-    const employeeId = localStorage.getItem('employeeId');
-    const department = localStorage.getItem('department');
-    const demoMode = localStorage.getItem('demoMode');
+    const token = localStorage.getItem("authToken");
+    const userRole = localStorage.getItem("userRole");
+    const userEmail = localStorage.getItem("userEmail");
+    const userFullName = localStorage.getItem("userFullName");
+    const employeeId = localStorage.getItem("employeeId");
+    const department = localStorage.getItem("department");
+    const demoMode = localStorage.getItem("demoMode");
 
-    if (demoMode === 'true' && userRole && userEmail) {
+    if (demoMode === "true" && userRole && userEmail) {
       // Demo mode
       return {
         isAuthenticated: true,
         user: {
-          employeeId: 'DEMO',
+          employeeId: "DEMO",
           email: userEmail,
-          fullName: userFullName || 'Demo User',
+          fullName: userFullName || "Demo User",
           role: userRole,
-          department: 'Demo',
+          department: "Demo",
           isActive: true,
-          accessRoles: [userRole]
+          accessRoles: [userRole],
         },
-        token: null
+        token: null,
       };
     }
 
@@ -57,110 +57,113 @@ export class AuthManager {
         user: {
           employeeId,
           email: userEmail,
-          fullName: userFullName || '',
+          fullName: userFullName || "",
           role: userRole,
-          department: department || '',
+          department: department || "",
           isActive: true,
-          accessRoles: [userRole]
+          accessRoles: [userRole],
         },
-        token
+        token,
       };
     }
 
     return {
       isAuthenticated: false,
       user: null,
-      token: null
+      token: null,
     };
   }
 
   async verifyToken(): Promise<boolean> {
     const { token } = this.getAuthState();
-    
+
     if (!token) {
       return false;
     }
 
     try {
-      const response = await fetch('/api/auth/verify', {
+      const response = await fetch("/api/auth/verify", {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
         const data = await response.json();
         return data.success && data.valid;
       }
-      
+
       return false;
     } catch (error) {
-      console.error('Token verification failed:', error);
+      console.error("Token verification failed:", error);
       return false;
     }
   }
 
   async refreshToken(): Promise<boolean> {
     const { token } = this.getAuthState();
-    
+
     if (!token) {
       return false;
     }
 
     try {
-      const response = await fetch('/api/auth/refresh', {
-        method: 'POST',
+      const response = await fetch("/api/auth/refresh", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.token) {
-          localStorage.setItem('authToken', data.token);
+          localStorage.setItem("authToken", data.token);
           return true;
         }
       }
-      
+
       return false;
     } catch (error) {
-      console.error('Token refresh failed:', error);
+      console.error("Token refresh failed:", error);
       return false;
     }
   }
 
   logout(): void {
     // Clear all authentication data
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userFullName');
-    localStorage.removeItem('employeeId');
-    localStorage.removeItem('department');
-    localStorage.removeItem('demoMode');
-    
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userFullName");
+    localStorage.removeItem("employeeId");
+    localStorage.removeItem("department");
+    localStorage.removeItem("demoMode");
+
     // Also clear other user-specific data
-    localStorage.removeItem('clockedIn');
-    localStorage.removeItem('clockInTime');
-    localStorage.removeItem('currentLocation');
+    localStorage.removeItem("clockedIn");
+    localStorage.removeItem("clockInTime");
+    localStorage.removeItem("currentLocation");
   }
 
-  async makeAuthenticatedRequest(url: string, options: RequestInit = {}): Promise<Response> {
+  async makeAuthenticatedRequest(
+    url: string,
+    options: RequestInit = {},
+  ): Promise<Response> {
     const { token } = this.getAuthState();
-    
+
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(options.headers || {}),
     };
 
     if (token) {
-      (headers as any)['Authorization'] = `Bearer ${token}`;
+      (headers as any)["Authorization"] = `Bearer ${token}`;
     }
 
     const response = await fetch(url, {
       ...options,
-      headers
+      headers,
     });
 
     // If token is expired, try to refresh
@@ -168,13 +171,13 @@ export class AuthManager {
       const refreshed = await this.refreshToken();
       if (refreshed) {
         // Retry request with new token
-        const newToken = localStorage.getItem('authToken');
-        (headers as any)['Authorization'] = `Bearer ${newToken}`;
+        const newToken = localStorage.getItem("authToken");
+        (headers as any)["Authorization"] = `Bearer ${newToken}`;
         return fetch(url, { ...options, headers });
       } else {
         // Refresh failed, logout user
         this.logout();
-        window.location.href = '/login';
+        window.location.href = "/login";
       }
     }
 
@@ -197,9 +200,9 @@ export class AuthManager {
   hasAnyRole(roles: string[]): boolean {
     const user = this.getUser();
     if (!user) return false;
-    
-    return roles.some(role => 
-      user.role === role || user.accessRoles.includes(role)
+
+    return roles.some(
+      (role) => user.role === role || user.accessRoles.includes(role),
     );
   }
 }
@@ -211,5 +214,5 @@ export const authManager = AuthManager.getInstance();
 export const isAuthenticated = () => authManager.isAuthenticated();
 export const getUser = () => authManager.getUser();
 export const logout = () => authManager.logout();
-export const makeAuthenticatedRequest = (url: string, options?: RequestInit) => 
+export const makeAuthenticatedRequest = (url: string, options?: RequestInit) =>
   authManager.makeAuthenticatedRequest(url, options);
