@@ -26,6 +26,7 @@ import CeoDashboard from "./pages/CeoDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import CoordinatorDashboard from "./pages/CoordinatorDashboard";
 import AssistantTechnicianDashboard from "./pages/AssistantTechnicianDashboard";
+import AssistantJobsScreen from "./pages/AssistantJobsScreen";
 import FleetManagerDashboard from "./pages/FleetManagerDashboard";
 import HRDashboard from "./pages/HRDashboard";
 import EnhancedHRDashboard from "./pages/EnhancedHRDashboard";
