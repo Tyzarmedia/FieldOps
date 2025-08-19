@@ -82,7 +82,9 @@ class AuthService {
 
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     try {
+      console.log('Login attempt for email:', credentials.email);
       const employees = await this.loadEmployees();
+      console.log('Loaded', employees.length, 'employees from database');
 
       // Find employee by email
       const employee = employees.find(
@@ -92,11 +94,14 @@ class AuthService {
       );
 
       if (!employee) {
+        console.log('Employee not found or inactive for email:', credentials.email);
         return {
           success: false,
           message: "Invalid email or password",
         };
       }
+
+      console.log('Found employee:', employee.EmployeeID, employee.FullName);
 
       // Verify password
       let isValidPassword = false;
