@@ -521,7 +521,7 @@ router.put("/jobs/:jobId/status", (req, res) => {
       });
     }
 
-    const responseMessage =
+    // Save back to database\n    db.jobs = jobs;\n    if (!writeDatabase(db)) {\n      return res.status(500).json({\n        success: false,\n        error: \"Failed to save job status update\",\n      });\n    }\n\n    console.log(`Job ${jobId} status updated to ${status}`);\n\n    const responseMessage =
       actorRole === "assistant" &&
       jobs[jobIndex].status === "Pending Technician Review"
         ? "Job completion submitted for technician review"
