@@ -527,39 +527,6 @@ export default function App() {
                 }
               />
               {/* Fleet Manager Routes */}
-              <Route
-                path="/fleet-overview"
-                element={
-                  <ProtectedRoute>
-                    <PlaceholderPage
-                      title="Fleet Overview"
-                      description="Complete fleet management dashboard with vehicle status and maintenance."
-                    />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/vehicle-inspections"
-                element={
-                  <ProtectedRoute>
-                    <PlaceholderPage
-                      title="Vehicle Inspections"
-                      description="Schedule and track vehicle inspections and maintenance tasks."
-                    />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/assign-fleet-jobs"
-                element={
-                  <ProtectedRoute>
-                    <PlaceholderPage
-                      title="Assign Fleet Jobs"
-                      description="Assign vehicle-related tasks and maintenance jobs to technicians."
-                    />
-                  </ProtectedRoute>
-                }
-              />
               {/* Stock Manager Routes */}
               <Route
                 path="/stock-overview"
