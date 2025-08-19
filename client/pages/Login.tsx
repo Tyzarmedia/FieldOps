@@ -53,14 +53,26 @@ export default function Login() {
         statusText: response.statusText
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response text:', errorText);
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
+      let data: LoginResponse;
 
-      const data: LoginResponse = await response.json();
-      console.log('Login response data:', data);
+      if (!response.ok) {
+        // For error responses, try to parse JSON first, fallback to text
+        try {
+          data = await response.json();
+          console.error('Error response JSON:', data);
+        } catch (parseError) {
+          const errorText = await response.text();
+          console.error('Error response text:', errorText);
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // If we got JSON but it's an error, throw with the message
+        throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
+      } else {
+        // For successful responses, parse as JSON
+        data = await response.json();
+        console.log('Login response data:', data);
+      }
 
       if (data.success && data.token && data.user) {
         // Store authentication data
