@@ -37,9 +37,9 @@ export default function Login() {
     setError("");
 
     try {
-      const data: LoginResponse = await makeSafeRequest("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
+      const data: LoginResponse = await api.post("/api/auth/login", {
+        email,
+        password,
       });
 
       if (data.success && data.token && data.user) {
@@ -54,25 +54,25 @@ export default function Login() {
         // Clear any existing demo data
         localStorage.removeItem("demoMode");
 
-        setIsLoading(false);
         navigate("/");
       } else {
         setError(data.message || "Login failed");
-        setIsLoading(false);
       }
     } catch (error) {
       console.error("Login error:", error);
 
-      // More specific error handling
-      if (error instanceof TypeError && error.message.includes("body stream already read")) {
-        setError("Authentication request failed. Please try again.");
-      } else if (error instanceof Error) {
-        setError(error.message.includes("HTTP error") ?
-          "Server error. Please try again later." :
-          "Network error. Please check your connection and try again.");
+      if (error instanceof ApiError) {
+        if (error.status === 401) {
+          setError("Invalid email or password");
+        } else if (error.status === 500) {
+          setError("Server error. Please try again later.");
+        } else {
+          setError(error.message || "Authentication failed");
+        }
       } else {
-        setError("An unexpected error occurred. Please try again.");
+        setError("Network error. Please check your connection and try again.");
       }
+    } finally {
       setIsLoading(false);
     }
   };
