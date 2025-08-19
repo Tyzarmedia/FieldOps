@@ -4,6 +4,7 @@ import SecurityAuditService from "../services/securityAuditService";
 
 const authRouter = Router();
 const authService = AuthService.getInstance();
+const securityAudit = SecurityAuditService.getInstance();
 
 // Middleware to extract token from Authorization header
 const extractToken = (req: Request): string | null => {
