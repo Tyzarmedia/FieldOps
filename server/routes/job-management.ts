@@ -60,59 +60,47 @@ const getTechnicianForAssistant = (assistantId: string): string | null => {
   }
 };
 
-// Mock data for demonstration - in real app this would connect to database
-let jobs: any[] = [
-  {
-    id: "1",
-    workOrderNumber: "WO-2024-001",
-    title: "FTTH Installation",
-    description: "Install fiber to the home for new customer",
-    type: "Installation",
-    priority: "High",
-    status: "Assigned",
-    assignedTechnician: "tech001",
-    assistantTechnician: "",
-    client: {
-      name: "Vumatel (Pty) Ltd",
-      address: "123 Main Street, Central",
-      coordinates: { lat: -26.2041, lng: 28.0473 },
-      contactPerson: "John Smith",
-      phone: "+27123456789",
-    },
-    estimatedHours: 4,
-    scheduledDate: new Date().toISOString(),
-    createdDate: new Date().toISOString(),
-    lastModified: new Date().toISOString(),
-    syncStatus: "synced",
-  },
-  {
-    id: "2",
-    workOrderNumber: "WO-2024-002",
-    title: "Network Maintenance",
-    description: "Routine maintenance on fiber network",
-    type: "Maintenance",
-    priority: "Medium",
-    status: "In Progress",
-    assignedTechnician: "tech001",
-    assistantTechnician: "",
-    client: {
-      name: "TelkomSA Ltd",
-      address: "456 Oak Avenue, Sandton",
-      coordinates: { lat: -26.1076, lng: 28.0567 },
-      contactPerson: "Jane Doe",
-      phone: "+27987654321",
-    },
-    estimatedHours: 2,
-    scheduledDate: new Date().toISOString(),
-    createdDate: new Date().toISOString(),
-    lastModified: new Date().toISOString(),
-    syncStatus: "synced",
-  },
-];
+// Database file path
+const databasePath = path.join(process.cwd(), "public/data/database.json");
+
+// Helper function to read database
+const readDatabase = (): any => {
+  try {
+    if (!fs.existsSync(databasePath)) {
+      console.warn("Database file not found, creating with empty structure");
+      const emptyDb = { jobs: [], employees: [], stock: [], notifications: [] };
+      fs.writeFileSync(databasePath, JSON.stringify(emptyDb, null, 2));
+      return emptyDb;
+    }
+    const data = fs.readFileSync(databasePath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error reading database:", error);
+    return { jobs: [], employees: [], stock: [], notifications: [] };
+  }
+};
+
+// Helper function to write database
+const writeDatabase = (data: any): boolean => {
+  try {
+    fs.writeFileSync(databasePath, JSON.stringify(data, null, 2));
+    return true;
+  } catch (error) {
+    console.error("Error writing database:", error);
+    return false;
+  }
+};
+
+// Helper function to get jobs from database
+const getJobsFromDatabase = (): any[] => {
+  const db = readDatabase();
+  return db.jobs || [];
+};
 
 // Get all jobs
 router.get("/jobs", (req, res) => {
   try {
+    const jobs = getJobsFromDatabase();
     res.json({ success: true, data: jobs });
   } catch (error) {
     res.status(500).json({
@@ -127,10 +115,15 @@ router.get("/jobs", (req, res) => {
 router.get("/jobs/technician/:technicianId", (req, res) => {
   try {
     const { technicianId } = req.params;
+    const jobs = getJobsFromDatabase();
     const technicianJobs = jobs.filter(
       (job) =>
         job.assignedTechnician === technicianId ||
         job.assistantTechnician === technicianId,
+    );
+
+    console.log(
+      `Found ${technicianJobs.length} jobs for technician ${technicianId}`,
     );
     res.json({ success: true, data: technicianJobs });
   } catch (error) {
@@ -159,6 +152,7 @@ router.get("/jobs/assistant/:assistantId", (req, res) => {
     }
 
     // Get jobs assigned to the technician
+    const jobs = getJobsFromDatabase();
     const technicianJobs = jobs.filter(
       (job) => job.assignedTechnician === technicianId,
     );
@@ -191,6 +185,7 @@ router.get("/jobs/assistant/:assistantId", (req, res) => {
 router.get("/jobs/technician/:technicianId/active", (req, res) => {
   try {
     const { technicianId } = req.params;
+    const jobs = getJobsFromDatabase();
     const activeJobs = jobs.filter(
       (job) =>
         (job.assignedTechnician === technicianId ||
@@ -211,6 +206,7 @@ router.get("/jobs/technician/:technicianId/active", (req, res) => {
 router.get("/jobs/technician/:technicianId/locations", (req, res) => {
   try {
     const { technicianId } = req.params;
+    const jobs = getJobsFromDatabase();
     const technicianJobs = jobs.filter(
       (job) =>
         (job.assignedTechnician === technicianId ||
@@ -349,7 +345,10 @@ router.put("/jobs/:jobId/assign", (req, res) => {
       assignedBy = "coordinator001",
     } = req.body;
 
+    const db = readDatabase();
+    const jobs = db.jobs || [];
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
+
     if (jobIndex === -1) {
       return res.status(404).json({ success: false, error: "Job not found" });
     }
@@ -376,6 +375,17 @@ router.put("/jobs/:jobId/assign", (req, res) => {
       action: "assigned",
     });
 
+    // Save back to database
+    db.jobs = jobs;
+    if (!writeDatabase(db)) {
+      return res.status(500).json({
+        success: false,
+        error: "Failed to save job assignment",
+      });
+    }
+
+    console.log(`Job ${jobId} assigned to technician ${technicianId}`);
+
     // Create notification for the assigned technician
     const createJobNotification = (techId: string) => {
       try {
@@ -385,6 +395,11 @@ router.put("/jobs/:jobId/assign", (req, res) => {
           title: "New Job Assigned",
           message: `${jobs[jobIndex].title} - ${jobs[jobIndex].workOrderNumber || jobId} has been assigned to you`,
           priority: "high",
+          metadata: {
+            jobId,
+            workOrderNumber: jobs[jobIndex].workOrderNumber,
+            navigateTo: `/technician/jobs/${jobId}`,
+          },
         });
       } catch (error) {
         console.warn("Error creating job assignment notification:", error);
@@ -417,6 +432,8 @@ router.put("/jobs/:jobId/status", (req, res) => {
     const { jobId } = req.params;
     const { status, notes, technicianId, isAssistant, assistantId } = req.body;
 
+    const db = readDatabase();
+    const jobs = db.jobs || [];
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
     if (jobIndex === -1) {
       return res.status(404).json({ success: false, error: "Job not found" });
@@ -506,11 +523,11 @@ router.put("/jobs/:jobId/status", (req, res) => {
       });
     }
 
-    const responseMessage =
-      actorRole === "assistant" &&
-      jobs[jobIndex].status === "Pending Technician Review"
-        ? "Job completion submitted for technician review"
-        : "Job status updated successfully";
+    // Save back to database\n    db.jobs = jobs;\n    if (!writeDatabase(db)) {\n      return res.status(500).json({\n        success: false,\n        error: \"Failed to save job status update\",\n      });\n    }\n\n    console.log(`Job ${jobId} status updated to ${status}`);\n\n    const responseMessage =
+    actorRole === "assistant" &&
+    jobs[jobIndex].status === "Pending Technician Review"
+      ? "Job completion submitted for technician review"
+      : "Job status updated successfully";
 
     res.json({
       success: true,
