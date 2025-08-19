@@ -25,6 +25,7 @@ import overtimeRouter from "./routes/overtime";
 import { getOvertimeRate } from "./routes/payroll";
 import warehouseStockRouter from "./routes/warehouse-stock";
 import authRouter from "./routes/auth";
+import securityRouter from "./routes/security";
 
 export function createServer() {
   const app = express();
