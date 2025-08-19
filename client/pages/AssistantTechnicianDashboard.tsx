@@ -32,6 +32,47 @@ export default function AssistantTechnicianDashboard() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Fetch assistant's assigned jobs from technician
+  useEffect(() => {
+    const fetchAssistantJobs = async () => {
+      try {
+        setLoading(true);
+        const authUser = authManager.getUser();
+
+        if (!authUser?.employeeId) {
+          console.error("No employee ID found");
+          return;
+        }
+
+        const response = await authManager.makeAuthenticatedRequest(
+          `/api/job-mgmt/jobs/assistant/${authUser.employeeId}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setAssignedJobs(data.data || []);
+            setAssignedTechnician(data.technicianId);
+          }
+        } else {
+          console.error("Failed to fetch assistant jobs");
+          setAssignedJobs([]);
+        }
+      } catch (error) {
+        console.error("Error fetching assistant jobs:", error);
+        setAssignedJobs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssistantJobs();
+
+    // Refresh jobs every 30 seconds
+    const interval = setInterval(fetchAssistantJobs, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Update time and distance from localStorage
   useEffect(() => {
     const updateTimeAndDistance = () => {
