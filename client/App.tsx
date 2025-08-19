@@ -341,10 +341,39 @@ export default function App() {
                 path="/fleet"
                 element={
                   <ProtectedRoute>
-                    <PlaceholderPage
-                      title="Fleet Management"
-                      description="Vehicle inspections, maintenance tracking, and fleet task management."
-                    />
+                    <FleetOverviewDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fleet/vehicles"
+                element={
+                  <ProtectedRoute>
+                    <FleetVehicleManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fleet/vehicle/:vehicleId"
+                element={
+                  <ProtectedRoute>
+                    <VehicleDetailScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fleet/inspections"
+                element={
+                  <ProtectedRoute>
+                    <InspectionsScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fleet/compliance"
+                element={
+                  <ProtectedRoute>
+                    <ComplianceScreen />
                   </ProtectedRoute>
                 }
               />
