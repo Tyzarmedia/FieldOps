@@ -37,10 +37,31 @@ export default function Login() {
     setError("");
 
     try {
-      const data: LoginResponse = await api.post("/api/auth/login", {
-        email,
-        password,
+      console.log('Starting login attempt for:', email);
+
+      // Temporarily use direct fetch to debug
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
+
+      console.log('Direct fetch response:', {
+        status: response.status,
+        ok: response.ok,
+        statusText: response.statusText
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response text:', errorText);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data: LoginResponse = await response.json();
+      console.log('Login response data:', data);
 
       if (data.success && data.token && data.user) {
         // Store authentication data
