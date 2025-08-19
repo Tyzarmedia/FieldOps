@@ -311,7 +311,12 @@ class LogoutDetectionService {
         if (response.ok) {
           console.log("Auto clock-out recorded successfully in database");
         } else {
-          const errorText = await response.text().catch(() => "Unknown error");
+          let errorText = "Unknown error";
+          try {
+            errorText = await response.text();
+          } catch (textError) {
+            console.warn("Could not read error response text:", textError);
+          }
           console.warn(
             `Failed to record auto clock-out in database (${response.status}): ${errorText}`,
           );
@@ -319,20 +324,28 @@ class LogoutDetectionService {
       } catch (fetchError) {
         clearTimeout(timeoutId);
 
+        // Enhanced error logging to help debug the issue
+        console.warn("Clock-out API call failed (non-critical):", {
+          error: fetchError,
+          message: fetchError instanceof Error ? fetchError.message : String(fetchError),
+          name: fetchError instanceof Error ? fetchError.name : 'Unknown',
+          stack: fetchError instanceof Error ? fetchError.stack : undefined
+        });
+
+        // Log specific error types but don't re-throw
         if (fetchError instanceof Error) {
           if (fetchError.name === "AbortError") {
-            console.warn("Clock-out API request timed out after 5 seconds");
+            console.warn("⏰ Clock-out API request timed out after 5 seconds (non-critical)");
           } else if (fetchError.message.includes("Failed to fetch")) {
-            console.warn(
-              "Network error during clock-out API call - server may be unreachable",
-            );
+            console.warn("🌐 Network error during clock-out API call (non-critical - server may be unreachable)");
+          } else if (fetchError.message.includes("TypeError")) {
+            console.warn("🔧 Type error during clock-out API call (non-critical)");
           } else {
-            console.warn("Fetch error during clock-out:", fetchError.message);
+            console.warn("⚠️ Other error during clock-out:", fetchError.message);
           }
-        } else {
-          console.warn("Unknown fetch error during clock-out:", fetchError);
         }
-        // Don't re-throw - allow the logout process to continue
+
+        // Ensure we don't propagate the error - this is non-critical functionality
       }
     } catch (error) {
       console.warn(
