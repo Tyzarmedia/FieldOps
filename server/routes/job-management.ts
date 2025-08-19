@@ -60,59 +60,47 @@ const getTechnicianForAssistant = (assistantId: string): string | null => {
   }
 };
 
-// Mock data for demonstration - in real app this would connect to database
-let jobs: any[] = [
-  {
-    id: "1",
-    workOrderNumber: "WO-2024-001",
-    title: "FTTH Installation",
-    description: "Install fiber to the home for new customer",
-    type: "Installation",
-    priority: "High",
-    status: "Assigned",
-    assignedTechnician: "tech001",
-    assistantTechnician: "",
-    client: {
-      name: "Vumatel (Pty) Ltd",
-      address: "123 Main Street, Central",
-      coordinates: { lat: -26.2041, lng: 28.0473 },
-      contactPerson: "John Smith",
-      phone: "+27123456789",
-    },
-    estimatedHours: 4,
-    scheduledDate: new Date().toISOString(),
-    createdDate: new Date().toISOString(),
-    lastModified: new Date().toISOString(),
-    syncStatus: "synced",
-  },
-  {
-    id: "2",
-    workOrderNumber: "WO-2024-002",
-    title: "Network Maintenance",
-    description: "Routine maintenance on fiber network",
-    type: "Maintenance",
-    priority: "Medium",
-    status: "In Progress",
-    assignedTechnician: "tech001",
-    assistantTechnician: "",
-    client: {
-      name: "TelkomSA Ltd",
-      address: "456 Oak Avenue, Sandton",
-      coordinates: { lat: -26.1076, lng: 28.0567 },
-      contactPerson: "Jane Doe",
-      phone: "+27987654321",
-    },
-    estimatedHours: 2,
-    scheduledDate: new Date().toISOString(),
-    createdDate: new Date().toISOString(),
-    lastModified: new Date().toISOString(),
-    syncStatus: "synced",
-  },
-];
+// Database file path
+const databasePath = path.join(process.cwd(), "public/data/database.json");
+
+// Helper function to read database
+const readDatabase = (): any => {
+  try {
+    if (!fs.existsSync(databasePath)) {
+      console.warn("Database file not found, creating with empty structure");
+      const emptyDb = { jobs: [], employees: [], stock: [], notifications: [] };
+      fs.writeFileSync(databasePath, JSON.stringify(emptyDb, null, 2));
+      return emptyDb;
+    }
+    const data = fs.readFileSync(databasePath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error reading database:", error);
+    return { jobs: [], employees: [], stock: [], notifications: [] };
+  }
+};
+
+// Helper function to write database
+const writeDatabase = (data: any): boolean => {
+  try {
+    fs.writeFileSync(databasePath, JSON.stringify(data, null, 2));
+    return true;
+  } catch (error) {
+    console.error("Error writing database:", error);
+    return false;
+  }
+};
+
+// Helper function to get jobs from database
+const getJobsFromDatabase = (): any[] => {
+  const db = readDatabase();
+  return db.jobs || [];
+};
 
 // Get all jobs
 router.get("/jobs", (req, res) => {
   try {
+    const jobs = getJobsFromDatabase();
     res.json({ success: true, data: jobs });
   } catch (error) {
     res.status(500).json({
@@ -127,11 +115,14 @@ router.get("/jobs", (req, res) => {
 router.get("/jobs/technician/:technicianId", (req, res) => {
   try {
     const { technicianId } = req.params;
+    const jobs = getJobsFromDatabase();
     const technicianJobs = jobs.filter(
       (job) =>
         job.assignedTechnician === technicianId ||
         job.assistantTechnician === technicianId,
     );
+
+    console.log(`Found ${technicianJobs.length} jobs for technician ${technicianId}`);
     res.json({ success: true, data: technicianJobs });
   } catch (error) {
     res.status(500).json({
