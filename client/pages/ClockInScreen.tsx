@@ -405,6 +405,79 @@ export default function ClockInScreen({
     }
   };
 
+  // Helper function to force clock-in regardless of location permission
+  const forceClockIn = async () => {
+    if (isClockingIn || isClockedIn) return;
+
+    setIsClockingIn(true);
+    setIsProcessingClockIn(true);
+
+    const clockInTime = new Date().toISOString();
+    const updatedClockIns = [
+      ...dailyClockIns,
+      { clockIn: clockInTime },
+    ];
+
+    // Reset distance for new session
+    setTotalDistance(0);
+    setDistanceTraveled("0.0");
+    localStorage.setItem("distanceTraveled", "0.0");
+
+    setIsClockedIn(true);
+    setDailyClockIns(updatedClockIns);
+
+    // Force clock-in without location
+    const result = locationService.forceClockInWithoutLocation();
+
+    if (result.success) {
+      showNotification.success(
+        'Clock-in successful! Using office location since GPS is unavailable.'
+      );
+      console.log('Force clock-in completed:', result.location);
+    }
+
+    // Create technician-assistant assignment if assistant selected
+    if (selectedAssistant) {
+      try {
+        const authUser = authManager.getUser();
+        await authManager.makeAuthenticatedRequest(
+          "/api/assistants/assignments",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              technicianId: authUser?.employeeId,
+              assistantId: selectedAssistant.id,
+              startTime: clockInTime,
+            }),
+          },
+        );
+        console.log("Technician-assistant assignment created successfully");
+      } catch (error) {
+        console.error(
+          "Failed to create technician-assistant assignment:",
+          error,
+        );
+      }
+    }
+
+    // Save clock record to database
+    await saveClockRecordToDatabase(updatedClockIns);
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setIsClockingIn(false);
+    setSliderPosition(0);
+    setIsProcessingClockIn(false);
+
+    // Navigate to appropriate dashboard
+    const authUser = authManager.getUser();
+    if (authUser?.role === "AssistantTechnician") {
+      navigate("/assistant-technician-dashboard");
+    } else {
+      navigate("/technician-dashboard");
+    }
+  };
+
   const checkIfAtClientSite = async (location: {
     lat: number;
     lng: number;
