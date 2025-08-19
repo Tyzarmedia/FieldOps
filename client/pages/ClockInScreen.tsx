@@ -443,9 +443,11 @@ export default function ClockInScreen({
   };
 
   const submitDailyFeedback = async () => {
+    const authUser = authManager.getUser();
     const feedback = {
       id: Date.now().toString(),
-      technician: userName,
+      technician: authUser?.employeeId || "UNKNOWN",
+      technicianName: authUser?.fullName || userName,
       date: new Date().toISOString(),
       rating: feedbackRating,
       feedback: dailyFeedback,
