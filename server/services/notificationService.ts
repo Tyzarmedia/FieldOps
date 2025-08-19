@@ -8,6 +8,14 @@ interface Notification {
   read: boolean;
   priority: "low" | "medium" | "high";
   deleted?: boolean;
+  metadata?: {
+    jobId?: string;
+    stockId?: string;
+    workOrderNumber?: string;
+    navigateTo?: string;
+    action?: string;
+    [key: string]: any;
+  };
 }
 
 // Shared notifications array (in real app this would be database)
