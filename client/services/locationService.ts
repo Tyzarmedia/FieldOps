@@ -116,8 +116,8 @@ class LocationService {
     }
   }
 
-  // For work phones - aggressively try to get location access
-  async forceLocationAccess(): Promise<boolean> {
+  // Try to get location access silently without blocking the user
+  async tryLocationSilently(): Promise<boolean> {
     if (!navigator.geolocation) {
       console.error("Geolocation not supported on this device");
       return false;
@@ -163,9 +163,8 @@ class LocationService {
         console.warn(`Location attempt ${i + 1} failed:`, error.message);
 
         if (error.code === 1) { // PERMISSION_DENIED
-          // For work phones, show insistent message about location requirement
-          this.showLocationRequiredMessage();
-          // Continue trying - don't give up on permission denied for work phones
+          console.log('Location permission denied - app will continue without GPS');
+          // Don't show any blocking dialogs - just continue
         }
 
         if (i < attempts.length - 1) {
@@ -175,42 +174,35 @@ class LocationService {
       }
     }
 
-    this.state.status = "denied";
-    this.notifyListeners();
+    // Don't mark as denied - just log and continue
+    console.log('Location access not available - app continues normally');
+    this.logLocationIssue();
     return false;
   }
 
-  private showLocationRequiredMessage(): void {
-    // Show persistent message for work phone users
-    if (typeof window !== 'undefined') {
-      const message = [
-        '🔒 WORK PHONE REQUIREMENT:',
-        '',
-        'Location access is mandatory for work phones.',
-        'Please enable location access to continue.',
-        '',
-        'To enable:',
-        '1. Click the location icon in browser address bar',
-        '2. Select "Allow" or "Always Allow"',
-        '3. Refresh if needed',
-        '',
-        'Contact IT support if issues persist.'
-      ].join('\n');
+  private logLocationIssue(): void {
+    // Silently log location access issues without blocking the user
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      event: 'LOCATION_ACCESS_DENIED',
+      userAgent: navigator.userAgent,
+      note: 'App continuing without GPS - check browser location settings'
+    };
 
-      // Use confirm dialog to get user attention
-      setTimeout(() => {
-        if (confirm(message + '\n\nTry again now?')) {
-          this.forceLocationAccess();
-        }
-      }, 1000);
+    try {
+      const logs = JSON.parse(localStorage.getItem('locationLogs') || '[]');
+      logs.push(logEntry);
+      localStorage.setItem('locationLogs', JSON.stringify(logs));
+    } catch (error) {
+      console.error('Failed to log location event:', error);
     }
   }
 
   async handleClockIn(): Promise<{success: boolean, hasLocation: boolean}> {
     this.state.clockedIn = true;
 
-    // For work phones, aggressively request location permission
-    const permissionGranted = await this.forceLocationAccess();
+    // Try to get location silently - don't block if denied
+    const permissionGranted = await this.tryLocationSilently();
 
     if (permissionGranted) {
       // Start continuous tracking
@@ -218,9 +210,10 @@ class LocationService {
       return { success: true, hasLocation: true };
     }
 
-    // For work phones, location is mandatory - keep trying
-    console.warn('Location access required for work phone - will retry on next interaction');
-    return { success: false, hasLocation: false };
+    // Always allow clock-in to succeed - location is optional
+    console.log('Clock-in successful without location - GPS will retry in background');
+    this.logLocationIssue();
+    return { success: true, hasLocation: false };
   }
 
   handleClockOut() {
