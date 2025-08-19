@@ -305,6 +305,10 @@ export class DatabaseService {
     technician: string,
     date: string,
   ): Promise<InternalClockRecord | null> {
+    if (this.isServerEnvironment || !this.internalDb) {
+      console.log("Clock record requested in server environment:", { technician, date });
+      return null;
+    }
     return await this.internalDb.getClockRecord(technician, date);
   }
 
