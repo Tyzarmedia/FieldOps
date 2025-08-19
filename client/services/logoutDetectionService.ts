@@ -210,6 +210,29 @@ class LogoutDetectionService {
   private async handleLogout(reason: LogoutEvent["reason"]): Promise<void> {
     if (!this.technicianId) return;
 
+    // Wrap the entire logout process in a timeout to prevent hanging
+    const logoutPromise = this.performLogoutSequence(reason);
+    const timeoutPromise = new Promise<void>((_, reject) => {
+      setTimeout(() => reject(new Error("Logout process timed out")), 10000);
+    });
+
+    try {
+      await Promise.race([logoutPromise, timeoutPromise]);
+    } catch (error) {
+      console.warn("Logout process failed or timed out:", error);
+      // Ensure local storage is always updated
+      try {
+        localStorage.setItem("isClockedIn", "false");
+        localStorage.removeItem("clockInTime");
+        console.log("Emergency logout completed via fallback");
+      } catch (fallbackError) {
+        console.error("Critical: Could not complete emergency logout:", fallbackError);
+      }
+    }
+  }
+
+  // Separate method for the actual logout sequence
+  private async performLogoutSequence(reason: LogoutEvent["reason"]): Promise<void> {
     try {
       // Get current session data
       const clockInTime = localStorage.getItem("clockInTime");
