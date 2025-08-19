@@ -243,6 +243,7 @@ function getNavigationForRole(role: string) {
           href: "/fleet/compliance",
           icon: Shield,
         },
+        { name: "Settings", href: "/fleet/settings", icon: Settings },
       ];
 
     case "StockManager":
