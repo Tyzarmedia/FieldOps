@@ -112,7 +112,8 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
                               ? "Thembi Khumalo"
                               : userRole === "IT"
                                 ? "Shawn Petersen"
-                                : localStorage.getItem("userFullName") || "User"}
+                                : localStorage.getItem("userFullName") ||
+                                  "User"}
                 </p>
                 <p className="text-xs text-sidebar-foreground/60">{userRole}</p>
                 <div className="flex items-center mt-1">

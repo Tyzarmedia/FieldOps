@@ -92,13 +92,13 @@ export default function FleetVehicleManagement() {
   useEffect(() => {
     const loadAvisData = async () => {
       try {
-        const response = await fetch('/data/avis-database.json');
+        const response = await fetch("/data/avis-database.json");
         const data = await response.json();
         setVehicles(data.vehicles);
         setDrivers(data.drivers);
         setFilteredVehicles(data.vehicles);
       } catch (error) {
-        console.error('Failed to load AVIS database:', error);
+        console.error("Failed to load AVIS database:", error);
       }
     };
 
@@ -110,16 +110,21 @@ export default function FleetVehicleManagement() {
     let filtered = vehicles;
 
     if (searchTerm) {
-      filtered = filtered.filter(vehicle =>
-        vehicle.plate_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vehicle.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vehicle.assigned_driver.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (vehicle) =>
+          vehicle.plate_number
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          vehicle.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          vehicle.assigned_driver
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()),
       );
     }
 
     if (statusFilter !== "all") {
-      filtered = filtered.filter(vehicle => vehicle.status === statusFilter);
+      filtered = filtered.filter((vehicle) => vehicle.status === statusFilter);
     }
 
     setFilteredVehicles(filtered);
@@ -128,12 +133,14 @@ export default function FleetVehicleManagement() {
   const handleAssignDriver = () => {
     if (!selectedVehicle || !selectedDriver) return;
 
-    const driverName = drivers.find(d => d.driver_id.toString() === selectedDriver)?.name || "";
-    
-    const updatedVehicles = vehicles.map(vehicle =>
+    const driverName =
+      drivers.find((d) => d.driver_id.toString() === selectedDriver)?.name ||
+      "";
+
+    const updatedVehicles = vehicles.map((vehicle) =>
       vehicle.vehicle_id === selectedVehicle.vehicle_id
         ? { ...vehicle, assigned_driver: driverName }
-        : vehicle
+        : vehicle,
     );
 
     setVehicles(updatedVehicles);
@@ -145,10 +152,10 @@ export default function FleetVehicleManagement() {
   const handleSetService = (status: string) => {
     if (!selectedVehicle) return;
 
-    const updatedVehicles = vehicles.map(vehicle =>
+    const updatedVehicles = vehicles.map((vehicle) =>
       vehicle.vehicle_id === selectedVehicle.vehicle_id
         ? { ...vehicle, status: status }
-        : vehicle
+        : vehicle,
     );
 
     setVehicles(updatedVehicles);
@@ -158,33 +165,48 @@ export default function FleetVehicleManagement() {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case "active": return "bg-green-100 text-green-800";
-      case "in maintenance": return "bg-yellow-100 text-yellow-800";
-      case "inactive": return "bg-red-100 text-red-800";
-      case "in service": return "bg-blue-100 text-blue-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "in maintenance":
+        return "bg-yellow-100 text-yellow-800";
+      case "inactive":
+        return "bg-red-100 text-red-800";
+      case "in service":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
-      case "active": return <CheckCircle className="h-4 w-4" />;
-      case "in maintenance": return <Wrench className="h-4 w-4" />;
-      case "in service": return <Wrench className="h-4 w-4" />;
-      case "inactive": return <AlertTriangle className="h-4 w-4" />;
-      default: return <Clock className="h-4 w-4" />;
+      case "active":
+        return <CheckCircle className="h-4 w-4" />;
+      case "in maintenance":
+        return <Wrench className="h-4 w-4" />;
+      case "in service":
+        return <Wrench className="h-4 w-4" />;
+      case "inactive":
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <Clock className="h-4 w-4" />;
     }
   };
 
-  const availableDrivers = drivers.filter(driver => driver.status === "Available");
+  const availableDrivers = drivers.filter(
+    (driver) => driver.status === "Available",
+  );
 
   // Calculate fleet statistics
   const fleetStats = {
     totalVehicles: vehicles.length,
-    activeVehicles: vehicles.filter(v => v.status === "Active").length,
-    inMaintenance: vehicles.filter(v => v.status === "In Maintenance").length,
-    assignedVehicles: vehicles.filter(v => v.assigned_driver !== "Not Assigned").length,
-    avgFuelEfficiency: vehicles.reduce((sum, v) => sum + v.fuel_efficiency, 0) / vehicles.length,
+    activeVehicles: vehicles.filter((v) => v.status === "Active").length,
+    inMaintenance: vehicles.filter((v) => v.status === "In Maintenance").length,
+    assignedVehicles: vehicles.filter(
+      (v) => v.assigned_driver !== "Not Assigned",
+    ).length,
+    avgFuelEfficiency:
+      vehicles.reduce((sum, v) => sum + v.fuel_efficiency, 0) / vehicles.length,
   };
 
   return (
@@ -192,7 +214,9 @@ export default function FleetVehicleManagement() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">AVIS Fleet Management</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            AVIS Fleet Management
+          </h1>
           <p className="text-muted-foreground">
             Manage vehicle assignments and maintenance status
           </p>
@@ -205,7 +229,9 @@ export default function FleetVehicleManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Fleet</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Fleet
+                </p>
                 <p className="text-2xl font-bold">{fleetStats.totalVehicles}</p>
               </div>
               <Truck className="h-8 w-8 text-blue-600" />
@@ -217,8 +243,12 @@ export default function FleetVehicleManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active</p>
-                <p className="text-2xl font-bold text-green-600">{fleetStats.activeVehicles}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Active
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  {fleetStats.activeVehicles}
+                </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
@@ -229,8 +259,12 @@ export default function FleetVehicleManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">In Service</p>
-                <p className="text-2xl font-bold text-yellow-600">{fleetStats.inMaintenance}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  In Service
+                </p>
+                <p className="text-2xl font-bold text-yellow-600">
+                  {fleetStats.inMaintenance}
+                </p>
               </div>
               <Wrench className="h-8 w-8 text-yellow-600" />
             </div>
@@ -241,8 +275,12 @@ export default function FleetVehicleManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Assigned</p>
-                <p className="text-2xl font-bold text-purple-600">{fleetStats.assignedVehicles}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Assigned
+                </p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {fleetStats.assignedVehicles}
+                </p>
               </div>
               <User className="h-8 w-8 text-purple-600" />
             </div>
@@ -253,7 +291,9 @@ export default function FleetVehicleManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Avg Efficiency</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Avg Efficiency
+                </p>
                 <p className="text-2xl font-bold text-blue-600">
                   {fleetStats.avgFuelEfficiency.toFixed(1)}L
                 </p>
@@ -334,7 +374,13 @@ export default function FleetVehicleManagement() {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-muted-foreground" />
-                      <span className={vehicle.assigned_driver === "Not Assigned" ? "text-muted-foreground italic" : ""}>
+                      <span
+                        className={
+                          vehicle.assigned_driver === "Not Assigned"
+                            ? "text-muted-foreground italic"
+                            : ""
+                        }
+                      >
                         {vehicle.assigned_driver}
                       </span>
                     </div>
@@ -411,7 +457,10 @@ export default function FleetVehicleManagement() {
                 <SelectContent>
                   <SelectItem value="unassign">Unassign Driver</SelectItem>
                   {availableDrivers.map((driver) => (
-                    <SelectItem key={driver.driver_id} value={driver.driver_id.toString()}>
+                    <SelectItem
+                      key={driver.driver_id}
+                      value={driver.driver_id.toString()}
+                    >
                       {driver.name} ({driver.employee_id})
                     </SelectItem>
                   ))}
@@ -419,7 +468,10 @@ export default function FleetVehicleManagement() {
               </Select>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setAssignDialogOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setAssignDialogOpen(false)}
+              >
                 Cancel
               </Button>
               <Button onClick={handleAssignDriver} disabled={!selectedDriver}>

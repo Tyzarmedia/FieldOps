@@ -70,11 +70,11 @@ export default function FleetOverviewDashboard() {
   useEffect(() => {
     const loadAvisData = async () => {
       try {
-        const response = await fetch('/data/avis-database.json');
+        const response = await fetch("/data/avis-database.json");
         const data = await response.json();
         setVehicles(data.vehicles);
       } catch (error) {
-        console.error('Failed to load AVIS database:', error);
+        console.error("Failed to load AVIS database:", error);
       }
     };
     loadAvisData();
@@ -83,13 +83,18 @@ export default function FleetOverviewDashboard() {
   // Calculate fleet KPIs from AVIS data
   const fleetKPIs = {
     totalVehicles: vehicles.length,
-    activeVehicles: vehicles.filter(v => v.status === "Active").length,
-    inactiveVehicles: vehicles.filter(v => v.status === "In Maintenance").length,
+    activeVehicles: vehicles.filter((v) => v.status === "Active").length,
+    inactiveVehicles: vehicles.filter((v) => v.status === "In Maintenance")
+      .length,
     inspectionsDue: 6,
-    maintenanceQueue: vehicles.filter(v => v.status === "In Maintenance").length,
+    maintenanceQueue: vehicles.filter((v) => v.status === "In Maintenance")
+      .length,
     complianceRate: 92,
-    avgFuelEfficiency: vehicles.length > 0 ?
-      vehicles.reduce((sum, v) => sum + v.fuel_efficiency, 0) / vehicles.length : 0,
+    avgFuelEfficiency:
+      vehicles.length > 0
+        ? vehicles.reduce((sum, v) => sum + v.fuel_efficiency, 0) /
+          vehicles.length
+        : 0,
     totalMileage: vehicles.reduce((sum, v) => sum + v.mileage, 0),
     activeAlerts: 8,
     criticalAlerts: 2,
@@ -101,7 +106,8 @@ export default function FleetOverviewDashboard() {
       id: "1",
       type: "predictive",
       title: "Maintenance Prediction",
-      description: "Vehicles FL-003 and FL-007 likely need service within 7 days based on usage patterns",
+      description:
+        "Vehicles FL-003 and FL-007 likely need service within 7 days based on usage patterns",
       impact: "high",
       confidence: 87,
       actionRequired: true,
@@ -110,7 +116,8 @@ export default function FleetOverviewDashboard() {
       id: "2",
       type: "optimization",
       title: "Fuel Efficiency",
-      description: "Route optimization could save 12% fuel costs on Route A-D corridor",
+      description:
+        "Route optimization could save 12% fuel costs on Route A-D corridor",
       impact: "medium",
       confidence: 93,
       actionRequired: false,
@@ -171,55 +178,69 @@ export default function FleetOverviewDashboard() {
 
   const handleAIQuestion = async () => {
     if (!aiQuestion.trim()) return;
-    
+
     setIsAskingAI(true);
-    
+
     // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     // Mock AI responses based on common fleet questions
     const responses: { [key: string]: string } = {
-      "worst mpg": "Vehicle FL-003 has the worst fuel efficiency at 24.2 MPG. This is 15% below fleet average. Consider route optimization or maintenance check.",
-      "maintenance due": "Currently 6 vehicles have maintenance due: FL-003, FL-007, FL-012, FL-015, FL-018, FL-021. FL-003 and FL-007 are highest priority.",
-      "fuel cost": "Current weekly fuel cost is $1,247. This is 8% higher than last week due to increased mileage on Route C. Consider route optimization.",
-      "compliance issues": "3 vehicles have compliance issues: FL-005 (license expires in 12 days), FL-009 (inspection overdue), FL-016 (insurance renewal needed).",
-      "best driver": "Driver Sarah Johnson has the highest efficiency score of 96.2 with lowest fuel consumption and best route adherence.",
+      "worst mpg":
+        "Vehicle FL-003 has the worst fuel efficiency at 24.2 MPG. This is 15% below fleet average. Consider route optimization or maintenance check.",
+      "maintenance due":
+        "Currently 6 vehicles have maintenance due: FL-003, FL-007, FL-012, FL-015, FL-018, FL-021. FL-003 and FL-007 are highest priority.",
+      "fuel cost":
+        "Current weekly fuel cost is $1,247. This is 8% higher than last week due to increased mileage on Route C. Consider route optimization.",
+      "compliance issues":
+        "3 vehicles have compliance issues: FL-005 (license expires in 12 days), FL-009 (inspection overdue), FL-016 (insurance renewal needed).",
+      "best driver":
+        "Driver Sarah Johnson has the highest efficiency score of 96.2 with lowest fuel consumption and best route adherence.",
     };
-    
+
     const lowerQuestion = aiQuestion.toLowerCase();
     let response = "I'm analyzing your fleet data...";
-    
+
     for (const [key, value] of Object.entries(responses)) {
       if (lowerQuestion.includes(key)) {
         response = value;
         break;
       }
     }
-    
+
     if (response === "I'm analyzing your fleet data...") {
       response = `Based on current fleet data: ${fleetKPIs.totalVehicles} vehicles, ${fleetKPIs.complianceRate}% compliance rate, ${fleetKPIs.avgFuelEfficiency} MPG average. ${fleetKPIs.criticalAlerts} critical alerts need immediate attention.`;
     }
-    
+
     setAiResponse(response);
     setIsAskingAI(false);
   };
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
-      case "high": return "text-red-600 bg-red-50";
-      case "medium": return "text-yellow-600 bg-yellow-50";
-      case "low": return "text-green-600 bg-green-50";
-      default: return "text-gray-600 bg-gray-50";
+      case "high":
+        return "text-red-600 bg-red-50";
+      case "medium":
+        return "text-yellow-600 bg-yellow-50";
+      case "low":
+        return "text-green-600 bg-green-50";
+      default:
+        return "text-gray-600 bg-gray-50";
     }
   };
 
   const getInsightIcon = (type: string) => {
     switch (type) {
-      case "predictive": return <Brain className="h-4 w-4" />;
-      case "optimization": return <TrendingUp className="h-4 w-4" />;
-      case "alert": return <AlertTriangle className="h-4 w-4" />;
-      case "recommendation": return <Zap className="h-4 w-4" />;
-      default: return <Activity className="h-4 w-4" />;
+      case "predictive":
+        return <Brain className="h-4 w-4" />;
+      case "optimization":
+        return <TrendingUp className="h-4 w-4" />;
+      case "alert":
+        return <AlertTriangle className="h-4 w-4" />;
+      case "recommendation":
+        return <Zap className="h-4 w-4" />;
+      default:
+        return <Activity className="h-4 w-4" />;
     }
   };
 
@@ -251,7 +272,9 @@ export default function FleetOverviewDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Fleet Status</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Fleet Status
+                </p>
                 <div className="flex items-center space-x-2 mt-2">
                   <span className="text-2xl font-bold text-green-600">
                     {fleetKPIs.activeVehicles}
@@ -273,7 +296,9 @@ export default function FleetOverviewDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Compliance Rate</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Compliance Rate
+                </p>
                 <div className="flex items-center space-x-2 mt-2">
                   <span className="text-2xl font-bold text-blue-600">
                     {fleetKPIs.complianceRate}%
@@ -291,7 +316,9 @@ export default function FleetOverviewDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Fuel Efficiency</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Fuel Efficiency
+                </p>
                 <div className="flex items-center space-x-2 mt-2">
                   <span className="text-2xl font-bold text-purple-600">
                     {fleetKPIs.avgFuelEfficiency}
@@ -309,7 +336,9 @@ export default function FleetOverviewDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Alerts</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Active Alerts
+                </p>
                 <div className="flex items-center space-x-2 mt-2">
                   <span className="text-2xl font-bold text-red-600">
                     {fleetKPIs.activeAlerts}
@@ -339,17 +368,25 @@ export default function FleetOverviewDashboard() {
         <CardContent>
           <div className="grid gap-4">
             {aiInsights.map((insight) => (
-              <Alert key={insight.id} className={`border-l-4 ${
-                insight.impact === 'high' ? 'border-l-red-500' :
-                insight.impact === 'medium' ? 'border-l-yellow-500' : 'border-l-green-500'
-              }`}>
+              <Alert
+                key={insight.id}
+                className={`border-l-4 ${
+                  insight.impact === "high"
+                    ? "border-l-red-500"
+                    : insight.impact === "medium"
+                      ? "border-l-yellow-500"
+                      : "border-l-green-500"
+                }`}
+              >
                 <div className="flex items-start gap-3">
                   {getInsightIcon(insight.type)}
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <h4 className="font-semibold text-sm">{insight.title}</h4>
                       <div className="flex items-center gap-2">
-                        <Badge className={`text-xs ${getImpactColor(insight.impact)}`}>
+                        <Badge
+                          className={`text-xs ${getImpactColor(insight.impact)}`}
+                        >
                           {insight.impact} impact
                         </Badge>
                         <span className="text-xs text-muted-foreground">
@@ -388,7 +425,7 @@ export default function FleetOverviewDashboard() {
                 placeholder="Ask me anything about your fleet... (e.g., 'Which vehicle has the worst MPG?')"
                 value={aiQuestion}
                 onChange={(e) => setAiQuestion(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleAIQuestion()}
+                onKeyPress={(e) => e.key === "Enter" && handleAIQuestion()}
               />
               <Button onClick={handleAIQuestion} disabled={isAskingAI}>
                 {isAskingAI ? (
@@ -425,8 +462,20 @@ export default function FleetOverviewDashboard() {
                 <YAxis yAxisId="left" />
                 <YAxis yAxisId="right" orientation="right" />
                 <Tooltip />
-                <Bar yAxisId="left" dataKey="fuel" fill="#3b82f6" name="Fuel (L)" />
-                <Line yAxisId="right" type="monotone" dataKey="efficiency" stroke="#10b981" strokeWidth={2} name="MPG" />
+                <Bar
+                  yAxisId="left"
+                  dataKey="fuel"
+                  fill="#3b82f6"
+                  name="Fuel (L)"
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="efficiency"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  name="MPG"
+                />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -444,7 +493,13 @@ export default function FleetOverviewDashboard() {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Area type="monotone" dataKey="compliance" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} />
+                <Area
+                  type="monotone"
+                  dataKey="compliance"
+                  stroke="#8b5cf6"
+                  fill="#8b5cf6"
+                  fillOpacity={0.3}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
@@ -463,7 +518,9 @@ export default function FleetOverviewDashboard() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) =>
+                    `${name}: ${(percent * 100).toFixed(0)}%`
+                  }
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"

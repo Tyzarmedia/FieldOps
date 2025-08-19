@@ -147,7 +147,8 @@ export default function VehicleDetailScreen() {
       daysUntilService: 12,
       confidence: 89,
       priority: "high",
-      description: "Based on usage patterns and current wear, brake pads will need replacement soon",
+      description:
+        "Based on usage patterns and current wear, brake pads will need replacement soon",
     },
     {
       component: "Oil Change",
@@ -161,7 +162,8 @@ export default function VehicleDetailScreen() {
       daysUntilService: 45,
       confidence: 76,
       priority: "low",
-      description: "Tire wear patterns suggest rotation needed for optimal performance",
+      description:
+        "Tire wear patterns suggest rotation needed for optimal performance",
     },
   ];
 
@@ -207,10 +209,14 @@ export default function VehicleDetailScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active": return "bg-green-100 text-green-800";
-      case "maintenance": return "bg-yellow-100 text-yellow-800";
-      case "inactive": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "maintenance":
+        return "bg-yellow-100 text-yellow-800";
+      case "inactive":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -222,10 +228,14 @@ export default function VehicleDetailScreen() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-red-100 text-red-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "low": return "bg-green-100 text-green-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "high":
+        return "bg-red-100 text-red-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -287,7 +297,10 @@ export default function VehicleDetailScreen() {
                   />
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setReportIssueOpen(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setReportIssueOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button onClick={() => setReportIssueOpen(false)}>
@@ -298,7 +311,10 @@ export default function VehicleDetailScreen() {
             </DialogContent>
           </Dialog>
 
-          <Dialog open={scheduleMaintenanceOpen} onOpenChange={setScheduleMaintenanceOpen}>
+          <Dialog
+            open={scheduleMaintenanceOpen}
+            onOpenChange={setScheduleMaintenanceOpen}
+          >
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">
                 <Wrench className="h-4 w-4 mr-2" />
@@ -320,7 +336,9 @@ export default function VehicleDetailScreen() {
                       <SelectValue placeholder="Select maintenance type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="scheduled">Scheduled Service</SelectItem>
+                      <SelectItem value="scheduled">
+                        Scheduled Service
+                      </SelectItem>
                       <SelectItem value="oil">Oil Change</SelectItem>
                       <SelectItem value="brakes">Brake Service</SelectItem>
                       <SelectItem value="tires">Tire Service</SelectItem>
@@ -340,7 +358,10 @@ export default function VehicleDetailScreen() {
                   />
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setScheduleMaintenanceOpen(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setScheduleMaintenanceOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button onClick={() => setScheduleMaintenanceOpen(false)}>
@@ -381,7 +402,10 @@ export default function VehicleDetailScreen() {
                   </Select>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setAssignDriverOpen(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setAssignDriverOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button onClick={() => setAssignDriverOpen(false)}>
@@ -422,13 +446,17 @@ export default function VehicleDetailScreen() {
                   <Activity className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Mileage</p>
-                    <p className="font-medium">{vehicle.mileage.toLocaleString()} km</p>
+                    <p className="font-medium">
+                      {vehicle.mileage.toLocaleString()} km
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <User className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Assigned Driver</p>
+                    <p className="text-sm text-muted-foreground">
+                      Assigned Driver
+                    </p>
                     <p className="font-medium">{vehicle.assignedDriver}</p>
                   </div>
                 </div>
@@ -444,26 +472,36 @@ export default function VehicleDetailScreen() {
                   <MapPin className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Location</p>
-                    <p className="font-medium text-sm">{vehicle.location.address}</p>
+                    <p className="font-medium text-sm">
+                      {vehicle.location.address}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Fuel className="h-5 w-5 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="text-sm text-muted-foreground mb-1">Fuel Level</p>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      Fuel Level
+                    </p>
                     <div className="flex items-center space-x-2">
                       <Progress value={vehicle.fuelLevel} className="flex-1" />
-                      <span className="text-sm font-medium">{vehicle.fuelLevel}%</span>
+                      <span className="text-sm font-medium">
+                        {vehicle.fuelLevel}%
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Gauge className="h-5 w-5 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="text-sm text-muted-foreground mb-1">Overall Health</p>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      Overall Health
+                    </p>
                     <div className="flex items-center space-x-2">
                       <Progress value={healthData.overall} className="flex-1" />
-                      <span className={`text-sm font-medium ${getHealthColor(healthData.overall)}`}>
+                      <span
+                        className={`text-sm font-medium ${getHealthColor(healthData.overall)}`}
+                      >
                         {healthData.overall}%
                       </span>
                     </div>
@@ -478,25 +516,33 @@ export default function VehicleDetailScreen() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Insurance</span>
+                  <span className="text-sm text-muted-foreground">
+                    Insurance
+                  </span>
                   <Badge variant="outline" className="text-green-600">
-                    Valid until {new Date(vehicle.insuranceExpiry).toLocaleDateString()}
+                    Valid until{" "}
+                    {new Date(vehicle.insuranceExpiry).toLocaleDateString()}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">License</span>
                   <Badge variant="outline" className="text-green-600">
-                    Valid until {new Date(vehicle.licenseExpiry).toLocaleDateString()}
+                    Valid until{" "}
+                    {new Date(vehicle.licenseExpiry).toLocaleDateString()}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Last Service</span>
+                  <span className="text-sm text-muted-foreground">
+                    Last Service
+                  </span>
                   <span className="text-sm">
                     {new Date(vehicle.lastService).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Next Service</span>
+                  <span className="text-sm text-muted-foreground">
+                    Next Service
+                  </span>
                   <span className="text-sm font-medium text-yellow-600">
                     {new Date(vehicle.nextService).toLocaleDateString()}
                   </span>
@@ -518,8 +564,22 @@ export default function VehicleDetailScreen() {
                   <YAxis yAxisId="left" />
                   <YAxis yAxisId="right" orientation="right" />
                   <Tooltip />
-                  <Line yAxisId="left" type="monotone" dataKey="fuelEfficiency" stroke="#3b82f6" strokeWidth={2} name="Fuel Efficiency (MPG)" />
-                  <Line yAxisId="right" type="monotone" dataKey="engineHealth" stroke="#10b981" strokeWidth={2} name="Engine Health %" />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="fuelEfficiency"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    name="Fuel Efficiency (MPG)"
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="engineHealth"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                    name="Engine Health %"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -539,15 +599,21 @@ export default function VehicleDetailScreen() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">{component.name}</p>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {component.name}
+                      </p>
                       <div className="flex items-center space-x-2 mt-2">
-                        <span className={`text-2xl font-bold ${getHealthColor(component.value)}`}>
+                        <span
+                          className={`text-2xl font-bold ${getHealthColor(component.value)}`}
+                        >
                           {component.value}%
                         </span>
                       </div>
                       <Progress value={component.value} className="mt-2" />
                     </div>
-                    <component.icon className={`h-8 w-8 ${getHealthColor(component.value)}`} />
+                    <component.icon
+                      className={`h-8 w-8 ${getHealthColor(component.value)}`}
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -565,10 +631,16 @@ export default function VehicleDetailScreen() {
             <CardContent>
               <div className="space-y-4">
                 {predictiveMaintenance.map((item, index) => (
-                  <Alert key={index} className={`border-l-4 ${
-                    item.priority === 'high' ? 'border-l-red-500' :
-                    item.priority === 'medium' ? 'border-l-yellow-500' : 'border-l-green-500'
-                  }`}>
+                  <Alert
+                    key={index}
+                    className={`border-l-4 ${
+                      item.priority === "high"
+                        ? "border-l-red-500"
+                        : item.priority === "medium"
+                          ? "border-l-yellow-500"
+                          : "border-l-green-500"
+                    }`}
+                  >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
@@ -584,7 +656,8 @@ export default function VehicleDetailScreen() {
                           {item.description}
                         </AlertDescription>
                         <p className="text-sm font-medium">
-                          Estimated service needed in {item.daysUntilService} days
+                          Estimated service needed in {item.daysUntilService}{" "}
+                          days
                         </p>
                       </div>
                       <Button size="sm" variant="outline">
@@ -644,13 +717,18 @@ export default function VehicleDetailScreen() {
                 <Alert>
                   <Calendar className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Next Service Due:</strong> {new Date(vehicle.nextService).toLocaleDateString()} - Scheduled maintenance service
+                    <strong>Next Service Due:</strong>{" "}
+                    {new Date(vehicle.nextService).toLocaleDateString()} -
+                    Scheduled maintenance service
                   </AlertDescription>
                 </Alert>
-                
+
                 <div className="space-y-3">
                   {predictiveMaintenance.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div>
                         <h4 className="font-medium">{item.component}</h4>
                         <p className="text-sm text-muted-foreground">
@@ -680,30 +758,42 @@ export default function VehicleDetailScreen() {
                 <div className="flex items-center justify-between p-3 border rounded">
                   <div>
                     <p className="font-medium">Brake Pads (Set)</p>
-                    <p className="text-sm text-muted-foreground">Part #: BP-FORD-001</p>
+                    <p className="text-sm text-muted-foreground">
+                      Part #: BP-FORD-001
+                    </p>
                   </div>
                   <div className="text-right">
-                    <Badge className="bg-green-100 text-green-800">In Stock</Badge>
+                    <Badge className="bg-green-100 text-green-800">
+                      In Stock
+                    </Badge>
                     <p className="text-sm text-muted-foreground">Qty: 4</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between p-3 border rounded">
                   <div>
                     <p className="font-medium">Engine Oil (5L)</p>
-                    <p className="text-sm text-muted-foreground">Part #: OIL-5W30-001</p>
+                    <p className="text-sm text-muted-foreground">
+                      Part #: OIL-5W30-001
+                    </p>
                   </div>
                   <div className="text-right">
-                    <Badge className="bg-green-100 text-green-800">In Stock</Badge>
+                    <Badge className="bg-green-100 text-green-800">
+                      In Stock
+                    </Badge>
                     <p className="text-sm text-muted-foreground">Qty: 12</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between p-3 border rounded">
                   <div>
                     <p className="font-medium">Air Filter</p>
-                    <p className="text-sm text-muted-foreground">Part #: AF-FORD-003</p>
+                    <p className="text-sm text-muted-foreground">
+                      Part #: AF-FORD-003
+                    </p>
                   </div>
                   <div className="text-right">
-                    <Badge className="bg-yellow-100 text-yellow-800">Low Stock</Badge>
+                    <Badge className="bg-yellow-100 text-yellow-800">
+                      Low Stock
+                    </Badge>
                     <p className="text-sm text-muted-foreground">Qty: 1</p>
                   </div>
                 </div>
@@ -721,7 +811,10 @@ export default function VehicleDetailScreen() {
             <CardContent>
               <div className="space-y-4">
                 {maintenanceHistory.map((record) => (
-                  <div key={record.id} className="flex items-start space-x-4 p-4 border rounded-lg">
+                  <div
+                    key={record.id}
+                    className="flex items-start space-x-4 p-4 border rounded-lg"
+                  >
                     <div className="flex-shrink-0">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                         <Wrench className="h-5 w-5 text-blue-600" />
@@ -738,8 +831,12 @@ export default function VehicleDetailScreen() {
                         {record.description}
                       </p>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-sm">Technician: {record.technician}</span>
-                        <span className="text-sm font-medium">R{record.cost}</span>
+                        <span className="text-sm">
+                          Technician: {record.technician}
+                        </span>
+                        <span className="text-sm font-medium">
+                          R{record.cost}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -764,15 +861,19 @@ export default function VehicleDetailScreen() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Safety Inspection</h4>
-                      <span className="text-sm text-muted-foreground">2024-01-20</span>
+                      <span className="text-sm text-muted-foreground">
+                        2024-01-20
+                      </span>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">
                       All safety checks passed. Minor wear on brake pads noted.
                     </p>
-                    <Badge className="mt-2 bg-green-100 text-green-800">Passed</Badge>
+                    <Badge className="mt-2 bg-green-100 text-green-800">
+                      Passed
+                    </Badge>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-4 p-4 border rounded-lg">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
@@ -782,12 +883,17 @@ export default function VehicleDetailScreen() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Pre-Trip Inspection</h4>
-                      <span className="text-sm text-muted-foreground">2024-01-18</span>
+                      <span className="text-sm text-muted-foreground">
+                        2024-01-18
+                      </span>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Tire pressure low in rear left tire. Corrected before trip.
+                      Tire pressure low in rear left tire. Corrected before
+                      trip.
                     </p>
-                    <Badge className="mt-2 bg-yellow-100 text-yellow-800">Attention Required</Badge>
+                    <Badge className="mt-2 bg-yellow-100 text-yellow-800">
+                      Attention Required
+                    </Badge>
                   </div>
                 </div>
               </div>

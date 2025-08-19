@@ -69,7 +69,9 @@ interface ComplianceAlert {
 
 export default function ComplianceScreen() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [complianceAlerts, setComplianceAlerts] = useState<ComplianceAlert[]>([]);
+  const [complianceAlerts, setComplianceAlerts] = useState<ComplianceAlert[]>(
+    [],
+  );
   const [editingVehicle, setEditingVehicle] = useState<number | null>(null);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [newDate, setNewDate] = useState("");
@@ -79,12 +81,12 @@ export default function ComplianceScreen() {
   useEffect(() => {
     const loadAvisData = async () => {
       try {
-        const response = await fetch('/data/avis-database.json');
+        const response = await fetch("/data/avis-database.json");
         const data = await response.json();
         setVehicles(data.vehicles);
         generateComplianceAlerts(data.vehicles);
       } catch (error) {
-        console.error('Failed to load AVIS database:', error);
+        console.error("Failed to load AVIS database:", error);
       }
     };
 
@@ -97,21 +99,26 @@ export default function ComplianceScreen() {
     const twoMonthsFromNow = new Date();
     twoMonthsFromNow.setMonth(today.getMonth() + 2);
 
-    vehicleData.forEach(vehicle => {
+    vehicleData.forEach((vehicle) => {
       const complianceTypes = [
-        { key: 'license_expiry', name: 'License' },
-        { key: 'insurance_expiry', name: 'Insurance' },
-        { key: 'roadworthy_expiry', name: 'Roadworthy' },
-        { key: 'registration_expiry', name: 'Registration' }
+        { key: "license_expiry", name: "License" },
+        { key: "insurance_expiry", name: "Insurance" },
+        { key: "roadworthy_expiry", name: "Roadworthy" },
+        { key: "registration_expiry", name: "Registration" },
       ];
 
-      complianceTypes.forEach(type => {
-        const expiryDate = new Date(vehicle.compliance[type.key as keyof typeof vehicle.compliance]);
-        const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      complianceTypes.forEach((type) => {
+        const expiryDate = new Date(
+          vehicle.compliance[type.key as keyof typeof vehicle.compliance],
+        );
+        const daysUntilExpiry = Math.ceil(
+          (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+        );
 
-        if (daysUntilExpiry <= 60) { // Alert 2 months before expiry
+        if (daysUntilExpiry <= 60) {
+          // Alert 2 months before expiry
           let severity: "critical" | "warning" | "normal" = "normal";
-          
+
           if (daysUntilExpiry <= 0) {
             severity = "critical"; // Expired
           } else if (daysUntilExpiry <= 30) {
@@ -124,9 +131,10 @@ export default function ComplianceScreen() {
             vehicleId: vehicle.vehicle_id,
             plateNumber: vehicle.plate_number,
             documentType: type.name,
-            expiryDate: vehicle.compliance[type.key as keyof typeof vehicle.compliance],
+            expiryDate:
+              vehicle.compliance[type.key as keyof typeof vehicle.compliance],
             daysUntilExpiry,
-            severity
+            severity,
           });
         }
       });
@@ -144,24 +152,28 @@ export default function ComplianceScreen() {
     setComplianceAlerts(alerts);
   };
 
-  const updateComplianceDate = (vehicleId: number, documentType: string, newExpiryDate: string) => {
-    const updatedVehicles = vehicles.map(vehicle => {
+  const updateComplianceDate = (
+    vehicleId: number,
+    documentType: string,
+    newExpiryDate: string,
+  ) => {
+    const updatedVehicles = vehicles.map((vehicle) => {
       if (vehicle.vehicle_id === vehicleId) {
         const fieldMap: { [key: string]: keyof typeof vehicle.compliance } = {
-          'License': 'license_expiry',
-          'Insurance': 'insurance_expiry',
-          'Roadworthy': 'roadworthy_expiry',
-          'Registration': 'registration_expiry'
+          License: "license_expiry",
+          Insurance: "insurance_expiry",
+          Roadworthy: "roadworthy_expiry",
+          Registration: "registration_expiry",
         };
-        
+
         const field = fieldMap[documentType];
         if (field) {
           return {
             ...vehicle,
             compliance: {
               ...vehicle.compliance,
-              [field]: newExpiryDate
-            }
+              [field]: newExpiryDate,
+            },
           };
         }
       }
@@ -170,14 +182,18 @@ export default function ComplianceScreen() {
 
     setVehicles(updatedVehicles);
     generateComplianceAlerts(updatedVehicles);
-    
+
     // Reset editing state
     setEditingVehicle(null);
     setEditingField(null);
     setNewDate("");
   };
 
-  const startEditing = (vehicleId: number, field: string, currentDate: string) => {
+  const startEditing = (
+    vehicleId: number,
+    field: string,
+    currentDate: string,
+  ) => {
     setEditingVehicle(vehicleId);
     setEditingField(field);
     setNewDate(currentDate);
@@ -197,33 +213,57 @@ export default function ComplianceScreen() {
 
   const getAlertColor = (severity: string) => {
     switch (severity) {
-      case "critical": return "bg-red-100 text-red-800 border-red-200";
-      case "warning": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      default: return "bg-blue-100 text-blue-800 border-blue-200";
+      case "critical":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "warning":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      default:
+        return "bg-blue-100 text-blue-800 border-blue-200";
     }
   };
 
   const getAlertIcon = (severity: string) => {
     switch (severity) {
-      case "critical": return <XCircle className="h-4 w-4" />;
-      case "warning": return <AlertTriangle className="h-4 w-4" />;
-      default: return <Clock className="h-4 w-4" />;
+      case "critical":
+        return <XCircle className="h-4 w-4" />;
+      case "warning":
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <Clock className="h-4 w-4" />;
     }
   };
 
   const getComplianceStatus = (expiryDate: string) => {
     const today = new Date();
     const expiry = new Date(expiryDate);
-    const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const daysUntilExpiry = Math.ceil(
+      (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    );
 
     if (daysUntilExpiry <= 0) {
-      return { status: "Expired", color: "bg-red-100 text-red-800", icon: <XCircle className="h-4 w-4" /> };
+      return {
+        status: "Expired",
+        color: "bg-red-100 text-red-800",
+        icon: <XCircle className="h-4 w-4" />,
+      };
     } else if (daysUntilExpiry <= 30) {
-      return { status: "Critical", color: "bg-red-100 text-red-800", icon: <AlertTriangle className="h-4 w-4" /> };
+      return {
+        status: "Critical",
+        color: "bg-red-100 text-red-800",
+        icon: <AlertTriangle className="h-4 w-4" />,
+      };
     } else if (daysUntilExpiry <= 60) {
-      return { status: "Warning", color: "bg-yellow-100 text-yellow-800", icon: <AlertTriangle className="h-4 w-4" /> };
+      return {
+        status: "Warning",
+        color: "bg-yellow-100 text-yellow-800",
+        icon: <AlertTriangle className="h-4 w-4" />,
+      };
     } else {
-      return { status: "Valid", color: "bg-green-100 text-green-800", icon: <CheckCircle className="h-4 w-4" /> };
+      return {
+        status: "Valid",
+        color: "bg-green-100 text-green-800",
+        icon: <CheckCircle className="h-4 w-4" />,
+      };
     }
   };
 
@@ -234,28 +274,42 @@ export default function ComplianceScreen() {
         vehicle.compliance.license_expiry,
         vehicle.compliance.insurance_expiry,
         vehicle.compliance.roadworthy_expiry,
-        vehicle.compliance.registration_expiry
+        vehicle.compliance.registration_expiry,
       ];
-      
-      return count + docs.filter(date => {
-        const daysUntilExpiry = Math.ceil((new Date(date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-        return daysUntilExpiry > 0;
-      }).length;
+
+      return (
+        count +
+        docs.filter((date) => {
+          const daysUntilExpiry = Math.ceil(
+            (new Date(date).getTime() - new Date().getTime()) /
+              (1000 * 60 * 60 * 24),
+          );
+          return daysUntilExpiry > 0;
+        }).length
+      );
     }, 0);
 
-    return totalDocuments > 0 ? Math.round((validDocuments / totalDocuments) * 100) : 0;
+    return totalDocuments > 0
+      ? Math.round((validDocuments / totalDocuments) * 100)
+      : 0;
   };
 
   const complianceRate = calculateComplianceRate();
-  const criticalAlerts = complianceAlerts.filter(alert => alert.severity === "critical").length;
-  const warningAlerts = complianceAlerts.filter(alert => alert.severity === "warning").length;
+  const criticalAlerts = complianceAlerts.filter(
+    (alert) => alert.severity === "critical",
+  ).length;
+  const warningAlerts = complianceAlerts.filter(
+    (alert) => alert.severity === "warning",
+  ).length;
 
   return (
     <div className="p-6 space-y-6 bg-background min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Fleet Compliance</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            Fleet Compliance
+          </h1>
           <p className="text-muted-foreground">
             Monitor and manage vehicle compliance documents and expiry dates
           </p>
@@ -268,9 +322,13 @@ export default function ComplianceScreen() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Compliance Rate</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Compliance Rate
+                </p>
                 <div className="flex items-center space-x-2 mt-2">
-                  <span className="text-2xl font-bold text-blue-600">{complianceRate}%</span>
+                  <span className="text-2xl font-bold text-blue-600">
+                    {complianceRate}%
+                  </span>
                 </div>
                 <Progress value={complianceRate} className="mt-2" />
               </div>
@@ -283,11 +341,17 @@ export default function ComplianceScreen() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Critical Alerts</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Critical Alerts
+                </p>
                 <div className="flex items-center space-x-2 mt-2">
-                  <span className="text-2xl font-bold text-red-600">{criticalAlerts}</span>
+                  <span className="text-2xl font-bold text-red-600">
+                    {criticalAlerts}
+                  </span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Requires immediate attention</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Requires immediate attention
+                </p>
               </div>
               <XCircle className="h-8 w-8 text-red-600" />
             </div>
@@ -298,11 +362,17 @@ export default function ComplianceScreen() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Warning Alerts</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Warning Alerts
+                </p>
                 <div className="flex items-center space-x-2 mt-2">
-                  <span className="text-2xl font-bold text-yellow-600">{warningAlerts}</span>
+                  <span className="text-2xl font-bold text-yellow-600">
+                    {warningAlerts}
+                  </span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Expiring within 60 days</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Expiring within 60 days
+                </p>
               </div>
               <AlertTriangle className="h-8 w-8 text-yellow-600" />
             </div>
@@ -313,9 +383,13 @@ export default function ComplianceScreen() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Vehicles</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Vehicles
+                </p>
                 <div className="flex items-center space-x-2 mt-2">
-                  <span className="text-2xl font-bold text-green-600">{vehicles.length}</span>
+                  <span className="text-2xl font-bold text-green-600">
+                    {vehicles.length}
+                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">Fleet size</p>
               </div>
@@ -335,7 +409,8 @@ export default function ComplianceScreen() {
 
         <TabsContent value="overview" className="space-y-6">
           {/* Critical Alerts */}
-          {complianceAlerts.filter(alert => alert.severity === "critical").length > 0 && (
+          {complianceAlerts.filter((alert) => alert.severity === "critical")
+            .length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-red-600">
@@ -346,31 +421,35 @@ export default function ComplianceScreen() {
               <CardContent>
                 <div className="space-y-3">
                   {complianceAlerts
-                    .filter(alert => alert.severity === "critical")
+                    .filter((alert) => alert.severity === "critical")
                     .slice(0, 5)
                     .map((alert, index) => (
-                    <Alert key={index} className="border-red-200 bg-red-50">
-                      <XCircle className="h-4 w-4 text-red-600" />
-                      <AlertDescription>
-                        <div className="flex justify-between items-center">
-                          <span>
-                            <strong>{alert.plateNumber}</strong> - {alert.documentType} 
-                            {alert.daysUntilExpiry <= 0 ? " has expired" : ` expires in ${alert.daysUntilExpiry} days`}
-                          </span>
-                          <Button size="sm" variant="outline">
-                            Renew Now
-                          </Button>
-                        </div>
-                      </AlertDescription>
-                    </Alert>
-                  ))}
+                      <Alert key={index} className="border-red-200 bg-red-50">
+                        <XCircle className="h-4 w-4 text-red-600" />
+                        <AlertDescription>
+                          <div className="flex justify-between items-center">
+                            <span>
+                              <strong>{alert.plateNumber}</strong> -{" "}
+                              {alert.documentType}
+                              {alert.daysUntilExpiry <= 0
+                                ? " has expired"
+                                : ` expires in ${alert.daysUntilExpiry} days`}
+                            </span>
+                            <Button size="sm" variant="outline">
+                              Renew Now
+                            </Button>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    ))}
                 </div>
               </CardContent>
             </Card>
           )}
 
           {/* Warning Alerts */}
-          {complianceAlerts.filter(alert => alert.severity === "warning").length > 0 && (
+          {complianceAlerts.filter((alert) => alert.severity === "warning")
+            .length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-yellow-600">
@@ -381,23 +460,28 @@ export default function ComplianceScreen() {
               <CardContent>
                 <div className="space-y-3">
                   {complianceAlerts
-                    .filter(alert => alert.severity === "warning")
+                    .filter((alert) => alert.severity === "warning")
                     .slice(0, 5)
                     .map((alert, index) => (
-                    <Alert key={index} className="border-yellow-200 bg-yellow-50">
-                      <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                      <AlertDescription>
-                        <div className="flex justify-between items-center">
-                          <span>
-                            <strong>{alert.plateNumber}</strong> - {alert.documentType} expires in {alert.daysUntilExpiry} days
-                          </span>
-                          <Button size="sm" variant="outline">
-                            Schedule Renewal
-                          </Button>
-                        </div>
-                      </AlertDescription>
-                    </Alert>
-                  ))}
+                      <Alert
+                        key={index}
+                        className="border-yellow-200 bg-yellow-50"
+                      >
+                        <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                        <AlertDescription>
+                          <div className="flex justify-between items-center">
+                            <span>
+                              <strong>{alert.plateNumber}</strong> -{" "}
+                              {alert.documentType} expires in{" "}
+                              {alert.daysUntilExpiry} days
+                            </span>
+                            <Button size="sm" variant="outline">
+                              Schedule Renewal
+                            </Button>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    ))}
                 </div>
               </CardContent>
             </Card>
@@ -412,16 +496,19 @@ export default function ComplianceScreen() {
             <CardContent>
               <div className="space-y-3">
                 {complianceAlerts.map((alert, index) => (
-                  <div key={index} className={`p-4 border rounded-lg ${getAlertColor(alert.severity)}`}>
+                  <div
+                    key={index}
+                    className={`p-4 border rounded-lg ${getAlertColor(alert.severity)}`}
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         {getAlertIcon(alert.severity)}
                         <div>
                           <h4 className="font-medium">{alert.plateNumber}</h4>
                           <p className="text-sm">
-                            {alert.documentType} - 
-                            {alert.daysUntilExpiry <= 0 
-                              ? " Expired" 
+                            {alert.documentType} -
+                            {alert.daysUntilExpiry <= 0
+                              ? " Expired"
                               : ` Expires in ${alert.daysUntilExpiry} days`}
                           </p>
                         </div>
@@ -430,7 +517,13 @@ export default function ComplianceScreen() {
                         <div className="text-sm font-medium">
                           {new Date(alert.expiryDate).toLocaleDateString()}
                         </div>
-                        <Badge className={alert.severity === "critical" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"}>
+                        <Badge
+                          className={
+                            alert.severity === "critical"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-yellow-100 text-yellow-800"
+                          }
+                        >
                           {alert.severity}
                         </Badge>
                       </div>
@@ -463,22 +556,29 @@ export default function ComplianceScreen() {
                     <TableRow key={vehicle.vehicle_id}>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{vehicle.plate_number}</div>
+                          <div className="font-medium">
+                            {vehicle.plate_number}
+                          </div>
                           <div className="text-sm text-muted-foreground">
                             {vehicle.year} {vehicle.make} {vehicle.model}
                           </div>
                         </div>
                       </TableCell>
                       {[
-                        { key: 'license_expiry', name: 'License' },
-                        { key: 'insurance_expiry', name: 'Insurance' },
-                        { key: 'roadworthy_expiry', name: 'Roadworthy' },
-                        { key: 'registration_expiry', name: 'Registration' }
+                        { key: "license_expiry", name: "License" },
+                        { key: "insurance_expiry", name: "Insurance" },
+                        { key: "roadworthy_expiry", name: "Roadworthy" },
+                        { key: "registration_expiry", name: "Registration" },
                       ].map((docType) => {
-                        const date = vehicle.compliance[docType.key as keyof typeof vehicle.compliance];
+                        const date =
+                          vehicle.compliance[
+                            docType.key as keyof typeof vehicle.compliance
+                          ];
                         const status = getComplianceStatus(date);
-                        const isEditing = editingVehicle === vehicle.vehicle_id && editingField === docType.name;
-                        
+                        const isEditing =
+                          editingVehicle === vehicle.vehicle_id &&
+                          editingField === docType.name;
+
                         return (
                           <TableCell key={docType.key}>
                             <div className="space-y-2">
@@ -493,7 +593,11 @@ export default function ComplianceScreen() {
                                   <Button size="sm" onClick={saveEdit}>
                                     <Save className="h-3 w-3" />
                                   </Button>
-                                  <Button size="sm" variant="outline" onClick={cancelEditing}>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={cancelEditing}
+                                  >
                                     <X className="h-3 w-3" />
                                   </Button>
                                 </div>
@@ -513,7 +617,13 @@ export default function ComplianceScreen() {
                                   <Button
                                     size="sm"
                                     variant="ghost"
-                                    onClick={() => startEditing(vehicle.vehicle_id, docType.name, date)}
+                                    onClick={() =>
+                                      startEditing(
+                                        vehicle.vehicle_id,
+                                        docType.name,
+                                        date,
+                                      )
+                                    }
                                   >
                                     <Edit className="h-3 w-3" />
                                   </Button>
