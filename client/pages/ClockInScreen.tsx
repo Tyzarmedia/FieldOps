@@ -8,6 +8,7 @@ import {
   LocationPermissionState,
 } from "@/services/locationService";
 import { showNotification } from "@/hooks/useNotification";
+import { authManager } from "@/utils/auth";
 
 interface ClockInScreenProps {
   userRole?: string;
