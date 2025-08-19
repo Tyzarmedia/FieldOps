@@ -261,18 +261,60 @@ export default function Login() {
             <CardTitle className="text-sm">🔑 Test Credentials</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-muted-foreground space-y-1">
-            <p>
-              <strong>HR Manager:</strong> thembi@company.com
-            </p>
-            <p>
-              <strong>Technician:</strong> clement@company.com
-            </p>
-            <p>
-              <strong>Manager:</strong> glassman@company.com
-            </p>
-            <p>
-              <strong>IT Admin:</strong> shawn@company.com
-            </p>
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span><strong>HR Manager:</strong> thembi@company.com</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("thembi@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span><strong>Technician:</strong> clement@company.com</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("clement@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span><strong>Manager:</strong> glassman@company.com</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("glassman@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span><strong>IT Admin:</strong> shawn@company.com</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("shawn@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+            </div>
             <div className="flex items-center justify-between text-orange-600 mt-2">
               <span>
                 <strong>Password:</strong> password123
