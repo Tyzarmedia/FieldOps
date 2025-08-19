@@ -533,6 +533,24 @@ export default function ClockInScreen({
     setFeedbackRating(null);
   };
 
+  const handleAssistantSelection = async (assistantId: string | null, assistantName: string | null) => {
+    setSelectedAssistant({ id: assistantId, name: assistantName });
+    setShowAssistantSelection(false);
+    setIsProcessingClockIn(true);
+
+    try {
+      // Proceed with clock in after assistant selection
+      await processClockToggle(true);
+    } finally {
+      setIsProcessingClockIn(false);
+    }
+  };
+
+  const handleAssistantSelectionCancel = () => {
+    setShowAssistantSelection(false);
+    setSelectedAssistant(null);
+  };
+
   // Make the entire slider clickable
   const handleSliderClick = (e: React.MouseEvent) => {
     if (!isClockingIn && !isDragging) {
