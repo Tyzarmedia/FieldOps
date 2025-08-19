@@ -8,6 +8,8 @@ import {
   LocationPermissionState,
 } from "@/services/locationService";
 import { showNotification } from "@/hooks/useNotification";
+import { authManager } from "@/utils/auth";
+import AssistantSelection from "@/components/AssistantSelection";
 
 interface ClockInScreenProps {
   userRole?: string;
@@ -18,11 +20,10 @@ export default function ClockInScreen({
   userRole: propUserRole,
   userName: propUserName,
 }: ClockInScreenProps = {}) {
-  // Get user info from localStorage if not provided as props
-  const userRole =
-    propUserRole || localStorage.getItem("userRole") || "Technician";
-  const userName =
-    propUserName || localStorage.getItem("userName") || "John Doe";
+  // Get authenticated user info from auth manager
+  const authUser = authManager.getUser();
+  const userRole = propUserRole || authUser?.role || "Technician";
+  const userName = propUserName || authUser?.fullName || "Unknown User";
   const [isClockingIn, setIsClockingIn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [workingHours, setWorkingHours] = useState("0:00");
@@ -41,6 +42,12 @@ export default function ClockInScreen({
   const [showFeedbackOverlay, setShowFeedbackOverlay] = useState(false);
   const [dailyFeedback, setDailyFeedback] = useState("");
   const [feedbackRating, setFeedbackRating] = useState<number | null>(null);
+  const [showAssistantSelection, setShowAssistantSelection] = useState(false);
+  const [selectedAssistant, setSelectedAssistant] = useState<{
+    id: string | null;
+    name: string | null;
+  } | null>(null);
+  const [isProcessingClockIn, setIsProcessingClockIn] = useState(false);
   const [locationState, setLocationState] = useState<LocationPermissionState>({
     status: "unknown",
     isTracking: false,
@@ -61,6 +68,13 @@ export default function ClockInScreen({
 
   // Initialize clock state from localStorage and subscribe to location service
   useEffect(() => {
+    // Verify we have authenticated user data
+    if (!authManager.isAuthenticated()) {
+      console.warn("User not authenticated, redirecting to login");
+      navigate("/login");
+      return;
+    }
+
     const clockedIn = localStorage.getItem("isClockedIn") === "true";
     const storedWorkingHours = localStorage.getItem("workingHours") || "0:00";
     const storedDistance = localStorage.getItem("distanceTraveled") || "0.0";
@@ -72,6 +86,12 @@ export default function ClockInScreen({
 
     if (storedClockIns) {
       setDailyClockIns(JSON.parse(storedClockIns));
+    }
+
+    // Load current technician-assistant assignment
+    const authUser = authManager.getUser();
+    if (authUser?.employeeId) {
+      fetchCurrentAssignment(authUser.employeeId);
     }
 
     // Subscribe to location service updates
@@ -88,7 +108,7 @@ export default function ClockInScreen({
     });
 
     return unsubscribe;
-  }, []);
+  }, [navigate]);
 
   // Update time every second and calculate working hours
   useEffect(() => {
@@ -231,6 +251,16 @@ export default function ClockInScreen({
   const handleClockToggle = async () => {
     const wasClockingIn = !isClockedIn; // Track if we're clocking in before state changes
 
+    // For technicians clocking in, show assistant selection first
+    if (!isClockedIn && userRole === "Technician") {
+      setShowAssistantSelection(true);
+      return;
+    }
+
+    await processClockToggle(wasClockingIn);
+  };
+
+  const processClockToggle = async (wasClockingIn: boolean) => {
     if (isClockedIn) {
       // Clock Out
       setIsClockingIn(true);
@@ -262,6 +292,19 @@ export default function ClockInScreen({
 
       // Check for automatic overtime claims
       await checkForOvertimeClaims();
+
+      // End technician-assistant assignment
+      const authUser = authManager.getUser();
+      if (authUser?.employeeId) {
+        try {
+          await authManager.makeAuthenticatedRequest(
+            `/api/assistants/assignments/${authUser.employeeId}/end`,
+            { method: "POST" },
+          );
+        } catch (error) {
+          console.warn("Failed to end assistant assignment:", error);
+        }
+      }
     } else {
       // Clock In
       setIsClockingIn(true);
@@ -290,6 +333,29 @@ export default function ClockInScreen({
         showNotification.locationGranted();
       } else {
         showNotification.locationDenied();
+      }
+
+      // Create technician-assistant assignment if assistant selected
+      if (selectedAssistant) {
+        try {
+          await authManager.makeAuthenticatedRequest(
+            "/api/assistants/assignments",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                technicianId: authUser?.employeeId,
+                assistantId: selectedAssistant.id,
+                startTime: clockInTime,
+              }),
+            },
+          );
+          console.log("Technician-assistant assignment created successfully");
+        } catch (error) {
+          console.error(
+            "Failed to create technician-assistant assignment:",
+            error,
+          );
+        }
       }
 
       // Save clock record to database
@@ -360,11 +426,13 @@ export default function ClockInScreen({
   };
 
   const createOvertimeClaim = async () => {
+    const authUser = authManager.getUser();
     const workOrderNumber =
       localStorage.getItem("currentWorkOrder") || "Unknown";
     const overtimeClaim = {
       id: Date.now().toString(),
-      technician: userName,
+      technician: authUser?.employeeId || "UNKNOWN",
+      technicianName: authUser?.fullName || userName,
       date: new Date().toISOString(),
       workOrder: workOrderNumber,
       reason: "Still on site after working hours (System Claim)",
@@ -383,10 +451,8 @@ export default function ClockInScreen({
     clockIns: Array<{ clockIn: string; clockOut?: string }>,
   ) => {
     try {
-      const employeeId =
-        localStorage.getItem("employeeId") ||
-        localStorage.getItem("userName") ||
-        "tech001";
+      const authUser = authManager.getUser();
+      const employeeId = authUser?.employeeId || "UNKNOWN";
       const today = new Date().toISOString().split("T")[0];
 
       // Calculate total working hours and distance
@@ -405,7 +471,9 @@ export default function ClockInScreen({
 
       const clockRecord = {
         id: `${employeeId}-${today}`,
-        technician: employeeId,
+        employeeId: employeeId,
+        technicianName: authUser?.fullName || userName,
+        department: authUser?.department || "Unknown",
         date: today,
         clockIns: clockIns,
         totalWorkingHours,
@@ -443,9 +511,11 @@ export default function ClockInScreen({
   };
 
   const submitDailyFeedback = async () => {
+    const authUser = authManager.getUser();
     const feedback = {
       id: Date.now().toString(),
-      technician: userName,
+      technician: authUser?.employeeId || "UNKNOWN",
+      technicianName: authUser?.fullName || userName,
       date: new Date().toISOString(),
       rating: feedbackRating,
       feedback: dailyFeedback,
@@ -473,6 +543,48 @@ export default function ClockInScreen({
     setShowFeedbackOverlay(false);
     setDailyFeedback("");
     setFeedbackRating(null);
+  };
+
+  const handleAssistantSelection = async (
+    assistantId: string | null,
+    assistantName: string | null,
+  ) => {
+    setSelectedAssistant({ id: assistantId, name: assistantName });
+    setShowAssistantSelection(false);
+    setIsProcessingClockIn(true);
+
+    try {
+      // Proceed with clock in after assistant selection
+      await processClockToggle(true);
+    } finally {
+      setIsProcessingClockIn(false);
+    }
+  };
+
+  const handleAssistantSelectionCancel = () => {
+    setShowAssistantSelection(false);
+    setSelectedAssistant(null);
+  };
+
+  const fetchCurrentAssignment = async (technicianId: string) => {
+    try {
+      const response = await authManager.makeAuthenticatedRequest(
+        `/api/assistants/assignments/${technicianId}`,
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.assignment) {
+          const assignment = data.assignment;
+          setSelectedAssistant({
+            id: assignment.assistantId,
+            name: assignment.assistantDetails?.fullName || "Unknown Assistant",
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch current assignment:", error);
+    }
   };
 
   // Make the entire slider clickable
@@ -532,6 +644,19 @@ export default function ClockInScreen({
             {userName}
           </h2>
           <p className="text-white/80 text-center">{userRole}</p>
+          {selectedAssistant && selectedAssistant.id && (
+            <div className="mt-2 bg-white/20 px-4 py-2 rounded-full text-center">
+              <p className="text-white/90 text-sm">
+                Working with:{" "}
+                <span className="font-medium">{selectedAssistant.name}</span>
+              </p>
+            </div>
+          )}
+          {selectedAssistant && !selectedAssistant.id && (
+            <div className="mt-2 bg-white/20 px-4 py-2 rounded-full text-center">
+              <p className="text-white/90 text-sm font-medium">Working Alone</p>
+            </div>
+          )}
         </div>
 
         {/* Date */}
@@ -662,6 +787,13 @@ export default function ClockInScreen({
           </svg>
         </div>
       </div>
+
+      {/* Assistant Selection Overlay */}
+      <AssistantSelection
+        isVisible={showAssistantSelection}
+        onSelection={handleAssistantSelection}
+        onCancel={handleAssistantSelectionCancel}
+      />
 
       {/* Daily Feedback Overlay */}
       {showFeedbackOverlay && (

@@ -21,12 +21,59 @@ import {
   UserCheck,
 } from "lucide-react";
 import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
+import { authManager } from "@/utils/auth";
 
 export default function AssistantTechnicianDashboard() {
   const [workingHours, setWorkingHours] = useState("0:00");
   const [distanceTraveled, setDistanceTraveled] = useState("0.0");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [assignedJobs, setAssignedJobs] = useState<any[]>([]);
+  const [assignedTechnician, setAssignedTechnician] = useState<string | null>(
+    null,
+  );
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  // Fetch assistant's assigned jobs from technician
+  useEffect(() => {
+    const fetchAssistantJobs = async () => {
+      try {
+        setLoading(true);
+        const authUser = authManager.getUser();
+
+        if (!authUser?.employeeId) {
+          console.error("No employee ID found");
+          return;
+        }
+
+        const response = await authManager.makeAuthenticatedRequest(
+          `/api/job-mgmt/jobs/assistant/${authUser.employeeId}`,
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setAssignedJobs(data.data || []);
+            setAssignedTechnician(data.technicianId);
+          }
+        } else {
+          console.error("Failed to fetch assistant jobs");
+          setAssignedJobs([]);
+        }
+      } catch (error) {
+        console.error("Error fetching assistant jobs:", error);
+        setAssignedJobs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssistantJobs();
+
+    // Refresh jobs every 30 seconds
+    const interval = setInterval(fetchAssistantJobs, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Update time and distance from localStorage
   useEffect(() => {
@@ -56,10 +103,18 @@ export default function AssistantTechnicianDashboard() {
   }, []);
 
   const stats = {
-    assignedJobs: getJobsByStatus("assigned").length,
-    acceptedJobs: getJobsByStatus("accepted").length,
-    inProgressJobs: getJobsByStatus("in-progress").length,
-    completedJobs: getJobsByStatus("completed").length,
+    assignedJobs: assignedJobs.filter((job) => job.status === "Assigned")
+      .length,
+    acceptedJobs: assignedJobs.filter((job) => job.status === "Accepted")
+      .length,
+    inProgressJobs: assignedJobs.filter((job) => job.status === "In Progress")
+      .length,
+    completedJobs: assignedJobs.filter((job) => job.status === "Completed")
+      .length,
+    pendingReview: assignedJobs.filter(
+      (job) => job.status === "Pending Technician Review",
+    ).length,
+    totalJobs: assignedJobs.length,
   };
 
   const sideNavItems = [
@@ -73,11 +128,13 @@ export default function AssistantTechnicianDashboard() {
   const dashboardCards = [
     {
       id: "jobs",
-      title: "Jobs",
+      title: "Assigned Jobs",
       icon: Briefcase,
       color: "bg-orange-500",
-      description: `${stats.assignedJobs + stats.acceptedJobs + stats.inProgressJobs} active jobs`,
-      action: () => navigate("/technician/jobs"),
+      description: assignedTechnician
+        ? `${stats.totalJobs} jobs from technician (${stats.inProgressJobs} active)`
+        : "No technician assigned",
+      action: () => navigate("/assistant/jobs"),
     },
     {
       id: "safety",
@@ -190,11 +247,30 @@ export default function AssistantTechnicianDashboard() {
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                <UserCheck className="h-5 w-5 text-orange-600" />
+                <span className="text-orange-600 text-sm font-bold">
+                  {authManager
+                    .getUser()
+                    ?.fullName.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase() || "AS"}
+                </span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">John Doe</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {authManager.getUser()?.fullName || "Assistant Technician"}
+                </p>
                 <p className="text-xs text-gray-500">Assistant Technician</p>
+                {assignedTechnician && (
+                  <p className="text-xs text-green-600 font-medium">
+                    Working with: Tech {assignedTechnician}
+                  </p>
+                )}
+                {!assignedTechnician && !loading && (
+                  <p className="text-xs text-yellow-600">
+                    No technician assigned
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -285,32 +361,47 @@ export default function AssistantTechnicianDashboard() {
           <h3 className="font-semibold text-gray-800 mb-4">
             Today's Job Status
           </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {stats.assignedJobs}
-              </div>
-              <div className="text-sm text-gray-600">Assigned</div>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+              <span className="ml-2 text-gray-600">Loading jobs...</span>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">
-                {stats.acceptedJobs}
+          ) : assignedTechnician ? (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">
+                  {stats.assignedJobs}
+                </div>
+                <div className="text-sm text-gray-600">Assigned</div>
               </div>
-              <div className="text-sm text-gray-600">Accepted</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {stats.inProgressJobs}
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {stats.inProgressJobs}
+                </div>
+                <div className="text-sm text-gray-600">In Progress</div>
               </div>
-              <div className="text-sm text-gray-600">In Progress</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">
-                {stats.completedJobs}
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">
+                  {stats.completedJobs}
+                </div>
+                <div className="text-sm text-gray-600">Completed</div>
               </div>
-              <div className="text-sm text-gray-600">Completed</div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">
+                  {stats.pendingReview}
+                </div>
+                <div className="text-sm text-gray-600">Pending Review</div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="text-center py-8">
+              <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-600 mb-2">No technician assigned</p>
+              <p className="text-sm text-gray-500">
+                Clock in with a technician to see assigned jobs
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Dashboard Cards Grid - Only 4 cards */}

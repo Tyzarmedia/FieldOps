@@ -1,8 +1,64 @@
 // Job Management API Routes for Coordinators and Technicians
 import { Router } from "express";
 import { createNotification } from "../services/notificationService";
+import fs from "fs";
+import path from "path";
 
 const router = Router();
+
+// Helper function to check if assistant is working with technician
+const isAssistantWorkingWithTechnician = (
+  assistantId: string,
+  technicianId: string,
+): boolean => {
+  try {
+    const assignmentsPath = path.join(
+      process.cwd(),
+      "public/data/technician-assistant-assignments.json",
+    );
+
+    if (!fs.existsSync(assignmentsPath)) {
+      return false;
+    }
+
+    const assignments = JSON.parse(fs.readFileSync(assignmentsPath, "utf-8"));
+    const activeAssignment = assignments.find(
+      (a: any) =>
+        a.technicianId === technicianId &&
+        a.assistantId === assistantId &&
+        a.status === "active",
+    );
+
+    return !!activeAssignment;
+  } catch (error) {
+    console.error("Error checking assistant assignment:", error);
+    return false;
+  }
+};
+
+// Helper function to get technician for assistant
+const getTechnicianForAssistant = (assistantId: string): string | null => {
+  try {
+    const assignmentsPath = path.join(
+      process.cwd(),
+      "public/data/technician-assistant-assignments.json",
+    );
+
+    if (!fs.existsSync(assignmentsPath)) {
+      return null;
+    }
+
+    const assignments = JSON.parse(fs.readFileSync(assignmentsPath, "utf-8"));
+    const activeAssignment = assignments.find(
+      (a: any) => a.assistantId === assistantId && a.status === "active",
+    );
+
+    return activeAssignment ? activeAssignment.technicianId : null;
+  } catch (error) {
+    console.error("Error getting technician for assistant:", error);
+    return null;
+  }
+};
 
 // Mock data for demonstration - in real app this would connect to database
 let jobs: any[] = [
@@ -81,6 +137,51 @@ router.get("/jobs/technician/:technicianId", (req, res) => {
     res.status(500).json({
       success: false,
       error: "Failed to fetch technician jobs",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get jobs for assistant (based on current technician assignment)
+router.get("/jobs/assistant/:assistantId", (req, res) => {
+  try {
+    const { assistantId } = req.params;
+
+    // Find which technician this assistant is currently working with
+    const technicianId = getTechnicianForAssistant(assistantId);
+
+    if (!technicianId) {
+      return res.json({
+        success: true,
+        data: [],
+        message: "No active technician assignment found",
+      });
+    }
+
+    // Get jobs assigned to the technician
+    const technicianJobs = jobs.filter(
+      (job) => job.assignedTechnician === technicianId,
+    );
+
+    // Add assistant relationship info to jobs
+    const jobsWithAssistantInfo = technicianJobs.map((job) => ({
+      ...job,
+      assistantAccess: true,
+      workingWithTechnician: technicianId,
+      canModifyStatus: true, // Assistant can modify job status
+      requiresTechnicianReview: job.status === "Completed", // Completed jobs need technician review
+    }));
+
+    res.json({
+      success: true,
+      data: jobsWithAssistantInfo,
+      technicianId,
+      message: `Found ${jobsWithAssistantInfo.length} jobs from assigned technician`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch assistant jobs",
       details: error instanceof Error ? error.message : "Unknown error",
     });
   }
@@ -310,30 +411,65 @@ router.put("/jobs/:jobId/assign", (req, res) => {
   }
 });
 
-// Update job status (Technician actions)
+// Update job status (Technician and Assistant actions)
 router.put("/jobs/:jobId/status", (req, res) => {
   try {
     const { jobId } = req.params;
-    const { status, notes, technicianId } = req.body;
+    const { status, notes, technicianId, isAssistant, assistantId } = req.body;
 
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
     if (jobIndex === -1) {
       return res.status(404).json({ success: false, error: "Job not found" });
     }
 
-    // Verify technician is assigned to this job
     const job = jobs[jobIndex];
+    let isAuthorized = false;
+    let actorId = technicianId;
+    let actorRole = "technician";
+
+    // Check authorization - technician or assistant
     if (
-      job.assignedTechnician !== technicianId &&
-      job.assistantTechnician !== technicianId
+      technicianId &&
+      (job.assignedTechnician === technicianId ||
+        job.assistantTechnician === technicianId)
     ) {
+      isAuthorized = true;
+      actorId = technicianId;
+      actorRole = "technician";
+    } else if (isAssistant && assistantId) {
+      // Check if assistant is working with the assigned technician
+      const isWorkingWithTechnician = isAssistantWorkingWithTechnician(
+        assistantId,
+        job.assignedTechnician,
+      );
+      if (isWorkingWithTechnician) {
+        isAuthorized = true;
+        actorId = assistantId;
+        actorRole = "assistant";
+      }
+    }
+
+    if (!isAuthorized) {
       return res.status(403).json({
         success: false,
         error: "Not authorized to update this job",
       });
     }
 
-    jobs[jobIndex].status = status;
+    // Handle assistant closing job - needs technician review
+    if (
+      actorRole === "assistant" &&
+      (status === "Completed" || status === "Closed")
+    ) {
+      jobs[jobIndex].status = "Pending Technician Review";
+      jobs[jobIndex].pendingReviewBy = job.assignedTechnician;
+      jobs[jobIndex].requestedStatus = status;
+      jobs[jobIndex].reviewRequestedBy = assistantId;
+      jobs[jobIndex].reviewRequestedAt = new Date().toISOString();
+    } else {
+      jobs[jobIndex].status = status;
+    }
+
     jobs[jobIndex].lastModified = new Date().toISOString();
 
     if (notes) {
@@ -342,25 +478,172 @@ router.put("/jobs/:jobId/status", (req, res) => {
       }
       jobs[jobIndex].notes.push({
         timestamp: new Date().toISOString(),
-        technician: technicianId,
+        technician: actorId,
+        role: actorRole,
         note: notes,
       });
     }
 
-    // Set completed date if job is being closed
-    if (status === "Completed" || status === "Closed") {
+    // Set completed date if job is being closed by technician
+    if (
+      actorRole === "technician" &&
+      (status === "Completed" || status === "Closed")
+    ) {
       jobs[jobIndex].completedDate = new Date().toISOString();
     }
+
+    // Create notification for technician if assistant requested review
+    if (
+      actorRole === "assistant" &&
+      jobs[jobIndex].status === "Pending Technician Review"
+    ) {
+      createNotification({
+        recipientId: job.assignedTechnician,
+        type: "job_review_required",
+        title: "Job Review Required",
+        message: `Assistant has completed job ${job.workOrderNumber} and requires your review`,
+        data: { jobId, assistantId },
+      });
+    }
+
+    const responseMessage =
+      actorRole === "assistant" &&
+      jobs[jobIndex].status === "Pending Technician Review"
+        ? "Job completion submitted for technician review"
+        : "Job status updated successfully";
 
     res.json({
       success: true,
       data: jobs[jobIndex],
-      message: "Job status updated successfully",
+      message: responseMessage,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: "Failed to update job status",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Technician review of assistant job completion
+router.put("/jobs/:jobId/review", (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { action, notes, technicianId } = req.body; // action: 'approve' or 'reject'
+
+    const jobIndex = jobs.findIndex((j) => j.id === jobId);
+    if (jobIndex === -1) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+
+    const job = jobs[jobIndex];
+
+    // Verify this is the assigned technician
+    if (job.assignedTechnician !== technicianId) {
+      return res.status(403).json({
+        success: false,
+        error: "Not authorized to review this job",
+      });
+    }
+
+    // Verify job is in review status
+    if (job.status !== "Pending Technician Review") {
+      return res.status(400).json({
+        success: false,
+        error: "Job is not pending review",
+      });
+    }
+
+    if (action === "approve") {
+      // Approve the assistant's completion
+      jobs[jobIndex].status = job.requestedStatus || "Completed";
+      jobs[jobIndex].completedDate = new Date().toISOString();
+      jobs[jobIndex].reviewedBy = technicianId;
+      jobs[jobIndex].reviewedAt = new Date().toISOString();
+      jobs[jobIndex].reviewResult = "approved";
+    } else if (action === "reject") {
+      // Reject and return to previous status (usually In Progress)
+      jobs[jobIndex].status = "In Progress";
+      jobs[jobIndex].reviewedBy = technicianId;
+      jobs[jobIndex].reviewedAt = new Date().toISOString();
+      jobs[jobIndex].reviewResult = "rejected";
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid action. Must be 'approve' or 'reject'",
+      });
+    }
+
+    // Add review note
+    if (!jobs[jobIndex].notes) {
+      jobs[jobIndex].notes = [];
+    }
+    jobs[jobIndex].notes.push({
+      timestamp: new Date().toISOString(),
+      technician: technicianId,
+      role: "technician",
+      note: `Review ${action}: ${notes || `Assistant completion ${action}d`}`,
+      isReview: true,
+    });
+
+    // Clear review-related fields
+    delete jobs[jobIndex].pendingReviewBy;
+    delete jobs[jobIndex].requestedStatus;
+
+    jobs[jobIndex].lastModified = new Date().toISOString();
+
+    // Create notification for assistant
+    if (job.reviewRequestedBy) {
+      createNotification({
+        recipientId: job.reviewRequestedBy,
+        type: action === "approve" ? "job_approved" : "job_rejected",
+        title: action === "approve" ? "Job Approved" : "Job Needs Revision",
+        message:
+          action === "approve"
+            ? `Your completion of job ${job.workOrderNumber} has been approved`
+            : `Job ${job.workOrderNumber} needs revision. Please check technician notes.`,
+        data: { jobId, technicianId },
+      });
+    }
+
+    delete jobs[jobIndex].reviewRequestedBy;
+    delete jobs[jobIndex].reviewRequestedAt;
+
+    res.json({
+      success: true,
+      data: jobs[jobIndex],
+      message: `Job completion ${action}d successfully`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to review job",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get jobs pending technician review
+router.get("/jobs/technician/:technicianId/pending-review", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+
+    const pendingReviewJobs = jobs.filter(
+      (job) =>
+        job.assignedTechnician === technicianId &&
+        job.status === "Pending Technician Review",
+    );
+
+    res.json({
+      success: true,
+      data: pendingReviewJobs,
+      count: pendingReviewJobs.length,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch pending review jobs",
       details: error instanceof Error ? error.message : "Unknown error",
     });
   }
