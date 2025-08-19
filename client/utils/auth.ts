@@ -161,27 +161,64 @@ export class AuthManager {
       (headers as any)["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers,
+      });
 
-    // If token is expired, try to refresh
-    if (response.status === 401 && token) {
-      const refreshed = await this.refreshToken();
-      if (refreshed) {
-        // Retry request with new token
-        const newToken = localStorage.getItem("authToken");
-        (headers as any)["Authorization"] = `Bearer ${newToken}`;
-        return fetch(url, { ...options, headers });
-      } else {
-        // Refresh failed, logout user
-        this.logout();
-        window.location.href = "/login";
+      // If token is expired, try to refresh
+      if (response.status === 401 && token) {
+        const refreshed = await this.refreshToken();
+        if (refreshed) {
+          // Retry request with new token
+          const newToken = localStorage.getItem("authToken");
+          (headers as any)["Authorization"] = `Bearer ${newToken}`;
+          return fetch(url, { ...options, headers });
+        } else {
+          // Refresh failed, logout user
+          this.logout();
+          window.location.href = "/login";
+        }
       }
-    }
 
-    return response;
+      return response;
+    } catch (error) {
+      console.error("Request failed:", error);
+
+      // If it's a stream error, rethrow with more context
+      if (error instanceof TypeError && (error.message.includes("body stream already read") || error.message.includes("already read"))) {
+        throw new Error("Request body was already consumed. Please try again.");
+      }
+
+      throw error;
+    }
+  }
+
+  async makeSafeRequest(url: string, options: RequestInit = {}): Promise<any> {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {}),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid response format - expected JSON");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Safe request failed:", error);
+      throw error;
+    }
   }
 
   isAuthenticated(): boolean {
