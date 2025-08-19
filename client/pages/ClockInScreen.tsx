@@ -19,11 +19,10 @@ export default function ClockInScreen({
   userRole: propUserRole,
   userName: propUserName,
 }: ClockInScreenProps = {}) {
-  // Get user info from localStorage if not provided as props
-  const userRole =
-    propUserRole || localStorage.getItem("userRole") || "Technician";
-  const userName =
-    propUserName || localStorage.getItem("userName") || "John Doe";
+  // Get authenticated user info from auth manager
+  const authUser = authManager.getUser();
+  const userRole = propUserRole || authUser?.role || "Technician";
+  const userName = propUserName || authUser?.fullName || "Unknown User";
   const [isClockingIn, setIsClockingIn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [workingHours, setWorkingHours] = useState("0:00");
