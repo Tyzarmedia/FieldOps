@@ -503,21 +503,33 @@ export default function FleetOverviewDashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-20 flex-col">
-              <Wrench className="h-6 w-6 mb-2" />
-              Schedule Maintenance
+            <Button
+              variant="outline"
+              className="h-20 flex-col"
+              onClick={() => navigate("/fleet/vehicles")}
+            >
+              <Truck className="h-6 w-6 mb-2" />
+              Manage Vehicles
             </Button>
-            <Button variant="outline" className="h-20 flex-col">
+            <Button
+              variant="outline"
+              className="h-20 flex-col"
+              onClick={() => navigate("/fleet/inspections")}
+            >
               <CheckCircle className="h-6 w-6 mb-2" />
               Run Inspection
+            </Button>
+            <Button
+              variant="outline"
+              className="h-20 flex-col"
+              onClick={() => navigate("/fleet/compliance")}
+            >
+              <Shield className="h-6 w-6 mb-2" />
+              Check Compliance
             </Button>
             <Button variant="outline" className="h-20 flex-col">
               <BarChart3 className="h-6 w-6 mb-2" />
               Generate Report
-            </Button>
-            <Button variant="outline" className="h-20 flex-col">
-              <MapPin className="h-6 w-6 mb-2" />
-              Track Vehicles
             </Button>
           </div>
         </CardContent>
