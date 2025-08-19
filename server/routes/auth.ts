@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import AuthService, { LoginRequest } from "../services/authService";
+import SecurityAuditService from "../services/securityAuditService";
 
 const authRouter = Router();
 const authService = AuthService.getInstance();
