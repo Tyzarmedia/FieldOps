@@ -253,3 +253,5 @@ export const getUser = () => authManager.getUser();
 export const logout = () => authManager.logout();
 export const makeAuthenticatedRequest = (url: string, options?: RequestInit) =>
   authManager.makeAuthenticatedRequest(url, options);
+export const makeSafeRequest = (url: string, options?: RequestInit) =>
+  authManager.makeSafeRequest(url, options);
