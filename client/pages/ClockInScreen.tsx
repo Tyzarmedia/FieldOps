@@ -557,6 +557,27 @@ export default function ClockInScreen({
     setSelectedAssistant(null);
   };
 
+  const fetchCurrentAssignment = async (technicianId: string) => {
+    try {
+      const response = await authManager.makeAuthenticatedRequest(
+        `/api/assistants/assignments/${technicianId}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.assignment) {
+          const assignment = data.assignment;
+          setSelectedAssistant({
+            id: assignment.assistantId,
+            name: assignment.assistantDetails?.fullName || "Unknown Assistant"
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch current assignment:", error);
+    }
+  };
+
   // Make the entire slider clickable
   const handleSliderClick = (e: React.MouseEvent) => {
     if (!isClockingIn && !isDragging) {
