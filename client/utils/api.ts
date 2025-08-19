@@ -55,6 +55,13 @@ export class ApiClient {
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
+      console.log('API Request:', {
+        url: `${this.baseURL}${url}`,
+        method: requestConfig.method || 'GET',
+        headers,
+        body: requestConfig.body
+      });
+
       const response = await fetch(`${this.baseURL}${url}`, {
         ...requestConfig,
         headers: {
@@ -66,8 +73,17 @@ export class ApiClient {
 
       clearTimeout(timeoutId);
 
+      console.log('API Response:', {
+        url: `${this.baseURL}${url}`,
+        status: response.status,
+        ok: response.ok,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries())
+      });
+
       // Check if response is ok
       if (!response.ok) {
+        console.error('Response not ok:', response.status, response.statusText);
         throw new ApiError(
           `HTTP error! status: ${response.status}`,
           response.status,
