@@ -53,25 +53,33 @@ export default function Login() {
         statusText: response.statusText
       });
 
+      // Clone the response to prevent "body stream already read" errors
+      const responseClone = response.clone();
+
       let data: LoginResponse;
 
-      if (!response.ok) {
-        // For error responses, try to parse JSON first, fallback to text
+      try {
+        // Always try to parse as JSON first
+        data = await response.json();
+        console.log('Parsed response data:', data);
+
+        // Check if it's an error response
+        if (!response.ok) {
+          console.error('Error response:', data);
+          throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
+        }
+      } catch (parseError) {
+        console.warn('JSON parsing failed, trying with cloned response:', parseError);
+
+        // If JSON parsing failed, try with the cloned response as text
         try {
-          data = await response.json();
-          console.error('Error response JSON:', data);
-        } catch (parseError) {
-          const errorText = await response.text();
+          const errorText = await responseClone.text();
           console.error('Error response text:', errorText);
+          throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
+        } catch (cloneError) {
+          console.error('Failed to read cloned response:', cloneError);
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-
-        // If we got JSON but it's an error, throw with the message
-        throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
-      } else {
-        // For successful responses, parse as JSON
-        data = await response.json();
-        console.log('Login response data:', data);
       }
 
       if (data.success && data.token && data.user) {
