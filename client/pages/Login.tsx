@@ -273,9 +273,21 @@ export default function Login() {
             <p>
               <strong>IT Admin:</strong> shawn@company.com
             </p>
-            <p className="text-orange-600 mt-2">
-              <strong>Password:</strong> password123
-            </p>
+            <div className="flex items-center justify-between text-orange-600 mt-2">
+              <span>
+                <strong>Password:</strong> password123
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setPassword("password123")}
+                disabled={isLoading}
+                className="text-xs h-6 px-2"
+              >
+                Auto-fill
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
