@@ -540,6 +540,19 @@ export class DatabaseService {
     isOnline: boolean;
     lastSync?: string;
   }> {
+    if (this.isServerEnvironment || !this.internalDb) {
+      return {
+        pendingJobs: 0,
+        pendingStockUsage: 0,
+        pendingClockRecords: 0,
+        pendingSafetyChecks: 0,
+        pendingIncidentReports: 0,
+        pendingNetworkAssessments: 0,
+        isOnline: true,
+        lastSync: new Date().toISOString()
+      };
+    }
+
     const pendingData = await this.internalDb.getAllPendingSync();
 
     return {

@@ -1034,6 +1034,20 @@
       "totalAmount": 0,
       "createdAt": "2025-08-19T17:44:42.603Z",
       "updatedAt": "2025-08-19T17:44:42.603Z"
+    },
+    {
+      "id": "OT-1755625518431",
+      "technicianId": "tech001",
+      "startTime": "2025-08-19T15:00:36.020Z",
+      "totalHours": 0,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 0,
+      "createdAt": "2025-08-19T17:45:19.496Z",
+      "updatedAt": "2025-08-19T17:45:19.496Z"
     }
   ]
 }
