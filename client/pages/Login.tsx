@@ -103,7 +103,7 @@ export default function Login() {
 
       if (error instanceof Error) {
         if (error.message.includes("401")) {
-          setError("Invalid email or password");
+          setError("Invalid email or password. Please use the test credentials shown below.");
         } else if (error.message.includes("500")) {
           setError("Server error. Please try again later.");
         } else {
