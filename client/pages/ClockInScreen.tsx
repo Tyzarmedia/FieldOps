@@ -360,11 +360,13 @@ export default function ClockInScreen({
   };
 
   const createOvertimeClaim = async () => {
+    const authUser = authManager.getUser();
     const workOrderNumber =
       localStorage.getItem("currentWorkOrder") || "Unknown";
     const overtimeClaim = {
       id: Date.now().toString(),
-      technician: userName,
+      technician: authUser?.employeeId || "UNKNOWN",
+      technicianName: authUser?.fullName || userName,
       date: new Date().toISOString(),
       workOrder: workOrderNumber,
       reason: "Still on site after working hours (System Claim)",
