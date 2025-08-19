@@ -21,6 +21,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { teamJobs, getJobsByStatus } from "../data/sharedJobs";
+import { authManager } from "@/utils/auth";
 
 export default function AssistantTechnicianDashboard() {
   const [workingHours, setWorkingHours] = useState("0:00");
