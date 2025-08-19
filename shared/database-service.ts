@@ -18,14 +18,19 @@ import InternalDatabaseService, {
 export class DatabaseService {
   private static instance: DatabaseService;
   private externalDb: ExternalDatabaseService;
-  private internalDb: InternalDatabaseService;
+  private internalDb: InternalDatabaseService | null = null;
   private isOnline: boolean =
     typeof navigator !== "undefined" ? navigator.onLine : true;
   private syncInterval: NodeJS.Timeout | null = null;
+  private isServerEnvironment: boolean = typeof window === "undefined";
 
   private constructor() {
     this.externalDb = ExternalDatabaseService.getInstance();
-    this.internalDb = InternalDatabaseService.getInstance();
+
+    // Only initialize internal DB in browser environment
+    if (!this.isServerEnvironment) {
+      this.internalDb = InternalDatabaseService.getInstance();
+    }
 
     // Only add event listeners in browser environment
     if (typeof window !== "undefined") {
