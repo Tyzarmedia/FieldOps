@@ -120,11 +120,13 @@ export default function AssistantTechnicianDashboard() {
   const dashboardCards = [
     {
       id: "jobs",
-      title: "Jobs",
+      title: "Assigned Jobs",
       icon: Briefcase,
       color: "bg-orange-500",
-      description: `${stats.assignedJobs + stats.acceptedJobs + stats.inProgressJobs} active jobs`,
-      action: () => navigate("/technician/jobs"),
+      description: assignedTechnician
+        ? `${stats.totalJobs} jobs from technician (${stats.inProgressJobs} active)`
+        : "No technician assigned",
+      action: () => navigate("/assistant/jobs"),
     },
     {
       id: "safety",
