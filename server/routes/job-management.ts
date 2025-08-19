@@ -204,6 +204,7 @@ router.get("/jobs/technician/:technicianId/active", (req, res) => {
 router.get("/jobs/technician/:technicianId/locations", (req, res) => {
   try {
     const { technicianId } = req.params;
+    const jobs = getJobsFromDatabase();
     const technicianJobs = jobs.filter(
       (job) =>
         (job.assignedTechnician === technicianId ||
