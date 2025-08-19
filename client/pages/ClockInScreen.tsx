@@ -61,6 +61,13 @@ export default function ClockInScreen({
 
   // Initialize clock state from localStorage and subscribe to location service
   useEffect(() => {
+    // Verify we have authenticated user data
+    if (!authManager.isAuthenticated()) {
+      console.warn("User not authenticated, redirecting to login");
+      navigate("/login");
+      return;
+    }
+
     const clockedIn = localStorage.getItem("isClockedIn") === "true";
     const storedWorkingHours = localStorage.getItem("workingHours") || "0:00";
     const storedDistance = localStorage.getItem("distanceTraveled") || "0.0";
@@ -88,7 +95,7 @@ export default function ClockInScreen({
     });
 
     return unsubscribe;
-  }, []);
+  }, [navigate]);
 
   // Update time every second and calculate working hours
   useEffect(() => {
