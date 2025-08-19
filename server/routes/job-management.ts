@@ -1,6 +1,8 @@
 // Job Management API Routes for Coordinators and Technicians
 import { Router } from "express";
 import { createNotification } from "../services/notificationService";
+import fs from "fs";
+import path from "path";
 
 const router = Router();
 
