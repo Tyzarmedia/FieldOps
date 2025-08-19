@@ -1,4 +1,5 @@
 import { geolocationUtils, LocationResult } from "@/utils/geolocationUtils";
+import { logError, getUserFriendlyErrorMessage } from "@/utils/errorUtils";
 
 interface JobLocation {
   id: string;
@@ -86,7 +87,7 @@ class LocationTrackingService {
         return false;
       }
     } catch (error) {
-      console.error("Error starting location tracking:", error);
+      logError(error, "Error starting location tracking");
       return false;
     }
   }
@@ -215,7 +216,7 @@ class LocationTrackingService {
         }
       }
     } catch (error) {
-      console.error("Error loading job locations:", error);
+      logError(error, "Error loading job locations");
     }
   }
 
@@ -267,7 +268,7 @@ class LocationTrackingService {
       try {
         callback(location);
       } catch (error) {
-        console.error("Error in location callback:", error);
+        logError(error, "Error in location callback");
       }
     });
   }
@@ -386,7 +387,7 @@ class LocationTrackingService {
         body: JSON.stringify(locationUpdate),
       });
     } catch (error) {
-      console.error("Error sending location update:", error);
+      logError(error, "Error sending location update");
     }
   }
 

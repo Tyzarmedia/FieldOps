@@ -44,9 +44,23 @@ class AuthService {
         process.cwd(),
         "public/data/sage-300-database.json",
       );
+      console.log("Loading employees from:", filePath);
+
+      if (!fs.existsSync(filePath)) {
+        console.error("Employee database file does not exist at:", filePath);
+        return [];
+      }
+
       const fileContent = fs.readFileSync(filePath, "utf-8");
       const data = JSON.parse(fileContent);
-      return data.employees || [];
+
+      if (!data.employees || !Array.isArray(data.employees)) {
+        console.error("Invalid employee data structure in database file");
+        return [];
+      }
+
+      console.log("Successfully loaded", data.employees.length, "employees");
+      return data.employees;
     } catch (error) {
       console.error("Error loading employee data:", error);
       return [];
@@ -82,7 +96,9 @@ class AuthService {
 
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     try {
+      console.log("Login attempt for email:", credentials.email);
       const employees = await this.loadEmployees();
+      console.log("Loaded", employees.length, "employees from database");
 
       // Find employee by email
       const employee = employees.find(
@@ -92,11 +108,17 @@ class AuthService {
       );
 
       if (!employee) {
+        console.log(
+          "Employee not found or inactive for email:",
+          credentials.email,
+        );
         return {
           success: false,
           message: "Invalid email or password",
         };
       }
+
+      console.log("Found employee:", employee.EmployeeID, employee.FullName);
 
       // Verify password
       let isValidPassword = false;
@@ -108,25 +130,50 @@ class AuthService {
           employee.Password,
         );
       } catch (error) {
-        // If bcrypt fails, check for plain text password (development only)
-        if (
-          process.env.NODE_ENV === "development" &&
-          credentials.password === "password123"
-        ) {
-          isValidPassword = true;
-          // Hash the password properly for future use
+        console.log("Bcrypt verification failed:", error.message);
+        isValidPassword = false;
+      }
+
+      // If bcrypt verification failed, try development fallback
+      if (!isValidPassword && credentials.password === "password123") {
+        console.log("Using development fallback for password123");
+        isValidPassword = true;
+
+        // Hash the password properly for future use
+        try {
           const hashedPassword = await bcrypt.hash("password123", 10);
-          employee.Password = hashedPassword;
-          await this.saveEmployees(await this.loadEmployees());
+          console.log("Generated new hash for password123:", hashedPassword);
+
+          // Update the employee's password in the array
+          const employees = await this.loadEmployees();
+          const employeeIndex = employees.findIndex(
+            (emp) => emp.EmployeeID === employee.EmployeeID,
+          );
+          if (employeeIndex !== -1) {
+            employees[employeeIndex].Password = hashedPassword;
+            await this.saveEmployees(employees);
+            console.log("Updated password for employee:", employee.EmployeeID);
+          }
+        } catch (hashError) {
+          console.error("Failed to hash password:", hashError);
         }
       }
 
       if (!isValidPassword) {
+        console.log(
+          "Password verification failed for employee:",
+          employee.EmployeeID,
+        );
         return {
           success: false,
           message: "Invalid email or password",
         };
       }
+
+      console.log(
+        "Password verification successful for employee:",
+        employee.EmployeeID,
+      );
 
       // Update last login
       employee.LastLogin = new Date().toISOString();

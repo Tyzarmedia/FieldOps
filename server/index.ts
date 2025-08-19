@@ -25,14 +25,27 @@ import overtimeRouter from "./routes/overtime";
 import { getOvertimeRate } from "./routes/payroll";
 import warehouseStockRouter from "./routes/warehouse-stock";
 import authRouter from "./routes/auth";
+import securityRouter from "./routes/security";
 
 export function createServer() {
   const app = express();
 
   // Middleware
   app.use(cors());
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json({ limit: "10mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+  // Add error handling middleware for JSON parsing
+  app.use((error: any, req: any, res: any, next: any) => {
+    if (error instanceof SyntaxError && "body" in error) {
+      console.error("JSON parsing error:", error.message);
+      return res.status(400).json({
+        success: false,
+        message: "Invalid JSON in request body",
+      });
+    }
+    next();
+  });
 
   // Example API routes
   app.get("/api/ping", (_req, res) => {
@@ -43,6 +56,9 @@ export function createServer() {
 
   // Authentication API
   app.use("/api/auth", authRouter);
+
+  // Security Monitoring API
+  app.use("/api/security", securityRouter);
 
   // New Job Management API (must come before old routes)
   app.use("/api/job-mgmt", jobManagementRouter);

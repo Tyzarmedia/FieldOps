@@ -36,15 +36,57 @@ export default function Login() {
     setError("");
 
     try {
+      console.log("Starting login attempt for:", email);
+      console.log("Password length:", password.length);
+      console.log("Password value (first 5 chars):", password.substring(0, 5));
+
+      const requestBody = { email, password };
+      console.log("Request body being sent:", requestBody);
+
+      // Temporarily use direct fetch to debug
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(requestBody),
       });
 
-      const data: LoginResponse = await response.json();
+      console.log("Direct fetch response:", {
+        status: response.status,
+        ok: response.ok,
+        statusText: response.statusText,
+      });
+
+      let data: LoginResponse;
+
+      // Check if it's an error response first (before reading body)
+      if (!response.ok) {
+        // For error responses, try to get the error message
+        try {
+          const errorData = await response.json();
+          console.error("Error response JSON:", errorData);
+          throw new Error(
+            errorData.message ||
+              `HTTP ${response.status}: ${response.statusText}`,
+          );
+        } catch (parseError) {
+          console.warn("Could not parse error response as JSON:", parseError);
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+      }
+
+      // For successful responses, parse as JSON
+      try {
+        data = await response.json();
+        console.log("Login response data:", data);
+      } catch (parseError) {
+        console.error(
+          "Failed to parse successful response as JSON:",
+          parseError,
+        );
+        throw new Error("Invalid response format from server");
+      }
 
       if (data.success && data.token && data.user) {
         // Store authentication data
@@ -58,15 +100,27 @@ export default function Login() {
         // Clear any existing demo data
         localStorage.removeItem("demoMode");
 
-        setIsLoading(false);
         navigate("/");
       } else {
         setError(data.message || "Login failed");
-        setIsLoading(false);
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("Network error. Please check your connection and try again.");
+
+      if (error instanceof Error) {
+        if (error.message.includes("401")) {
+          setError(
+            "Invalid email or password. Please use the test credentials shown below.",
+          );
+        } else if (error.message.includes("500")) {
+          setError("Server error. Please try again later.");
+        } else {
+          setError(error.message || "Authentication failed");
+        }
+      } else {
+        setError("Network error. Please check your connection and try again.");
+      }
+    } finally {
       setIsLoading(false);
     }
   };
@@ -215,21 +269,83 @@ export default function Login() {
             <CardTitle className="text-sm">🔑 Test Credentials</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-muted-foreground space-y-1">
-            <p>
-              <strong>HR Manager:</strong> thembi@company.com
-            </p>
-            <p>
-              <strong>Technician:</strong> clement@company.com
-            </p>
-            <p>
-              <strong>Manager:</strong> glassman@company.com
-            </p>
-            <p>
-              <strong>IT Admin:</strong> shawn@company.com
-            </p>
-            <p className="text-orange-600 mt-2">
-              <strong>Password:</strong> password123
-            </p>
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong>HR Manager:</strong> thembi@company.com
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("thembi@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong>Technician:</strong> clement@company.com
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("clement@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong>Manager:</strong> glassman@company.com
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("glassman@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong>IT Admin:</strong> shawn@company.com
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("shawn@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+            </div>
+            <div className="flex items-center justify-between text-orange-600 mt-2">
+              <span>
+                <strong>Password:</strong> password123
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setPassword("password123")}
+                disabled={isLoading}
+                className="text-xs h-6 px-2"
+              >
+                Auto-fill
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
