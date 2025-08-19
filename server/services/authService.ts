@@ -141,11 +141,14 @@ class AuthService {
       }
 
       if (!isValidPassword) {
+        console.log('Password verification failed for employee:', employee.EmployeeID);
         return {
           success: false,
           message: "Invalid email or password",
         };
       }
+
+      console.log('Password verification successful for employee:', employee.EmployeeID);
 
       // Update last login
       employee.LastLogin = new Date().toISOString();
