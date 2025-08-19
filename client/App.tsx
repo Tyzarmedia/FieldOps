@@ -379,6 +379,14 @@ export default function App() {
                 }
               />
               <Route
+                path="/fleet/settings"
+                element={
+                  <ProtectedRoute>
+                    <FleetManagerSettings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/safety"
                 element={
                   <ProtectedRoute>
