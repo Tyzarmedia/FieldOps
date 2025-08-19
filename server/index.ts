@@ -57,6 +57,9 @@ export function createServer() {
   // Authentication API
   app.use("/api/auth", authRouter);
 
+  // Security Monitoring API
+  app.use("/api/security", securityRouter);
+
   // New Job Management API (must come before old routes)
   app.use("/api/job-mgmt", jobManagementRouter);
 
