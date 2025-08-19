@@ -99,23 +99,16 @@ export class ApiClient {
         return text as unknown as T;
       }
 
-      // Clone the response to prevent "body stream already read" errors
-      const clonedResponse = response.clone();
-      
+      // Parse JSON response
       try {
         const data = await response.json();
+        console.log('API Response Data:', data);
         return data;
       } catch (parseError) {
-        // If JSON parsing fails, try with the cloned response
-        console.warn('JSON parsing failed, trying with cloned response:', parseError);
-        try {
-          const data = await clonedResponse.json();
-          return data;
-        } catch (clonedParseError) {
-          // If both fail, return the text content
-          const text = await clonedResponse.text();
-          throw new ApiError(`Invalid JSON response: ${text}`);
-        }
+        console.error('JSON parsing failed:', parseError);
+        const text = await response.text();
+        console.error('Response text:', text);
+        throw new ApiError(`Invalid JSON response: ${text}`);
       }
     } catch (error) {
       clearTimeout(timeoutId);
