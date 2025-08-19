@@ -45,6 +45,7 @@ import {
   Shield,
   Zap,
   Send,
+  Shield,
 } from "lucide-react";
 
 interface AIInsight {
