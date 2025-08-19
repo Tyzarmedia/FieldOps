@@ -383,10 +383,8 @@ export default function ClockInScreen({
     clockIns: Array<{ clockIn: string; clockOut?: string }>,
   ) => {
     try {
-      const employeeId =
-        localStorage.getItem("employeeId") ||
-        localStorage.getItem("userName") ||
-        "tech001";
+      const authUser = authManager.getUser();
+      const employeeId = authUser?.employeeId || "UNKNOWN";
       const today = new Date().toISOString().split("T")[0];
 
       // Calculate total working hours and distance
