@@ -90,6 +90,12 @@ export function createServer() {
   // Warehouse Stock API
   app.use("/api/warehouse-stock", warehouseStockRouter);
 
+  // Assistant Management API
+  app.get("/api/assistants/available", getAvailableAssistants);
+  app.post("/api/assistants/assignments", createTechnicianAssistantAssignment);
+  app.get("/api/assistants/assignments/:technicianId", getCurrentAssignment);
+  app.post("/api/assistants/assignments/:technicianId/end", endAssignment);
+
   // Job Management API
   app.get("/api/jobs", getJobs);
   app.get("/api/jobs/technician/:technicianId", getJobsByTechnician);
