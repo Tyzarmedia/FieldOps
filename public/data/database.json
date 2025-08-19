@@ -1185,15 +1185,45 @@
       "id": "OT-1755633249842",
       "technicianId": "EMP001",
       "startTime": "2025-08-19T15:00:18.975Z",
-      "totalHours": 5.031349722222222,
+      "totalHours": 5.055140833333334,
       "isAutoDetected": true,
       "workOrderNumbers": [],
       "reason": "Late work after 17:00",
       "status": "pending",
       "rate": 150,
-      "totalAmount": 754.7024583333333,
+      "totalAmount": 758.2711250000001,
       "createdAt": "2025-08-19T19:54:10.896Z",
-      "updatedAt": "2025-08-19T20:02:12.917Z"
+      "updatedAt": "2025-08-19T20:03:38.207Z",
+      "endTime": "2025-08-19T20:03:37.482Z"
+    },
+    {
+      "id": "OT-1755633823978",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-19T15:00:18.975Z",
+      "totalHours": 5.058153611111111,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 195,
+      "totalAmount": 986.3399541666666,
+      "createdAt": "2025-08-19T20:03:45.055Z",
+      "updatedAt": "2025-08-19T20:03:49.072Z",
+      "endTime": "2025-08-19T20:03:48.328Z"
+    },
+    {
+      "id": "OT-1755633864064",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-19T15:00:18.975Z",
+      "totalHours": 0,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 195,
+      "totalAmount": 0,
+      "createdAt": "2025-08-19T20:04:25.118Z",
+      "updatedAt": "2025-08-19T20:04:25.118Z"
     }
   ]
 }
