@@ -4,6 +4,7 @@ export interface LocationData {
   address?: string;
   timestamp: number;
   accuracy?: number;
+  isDefault?: boolean; // Indicates if this is a fallback/default location
 }
 
 export interface LocationPermissionState {
@@ -115,7 +116,7 @@ class LocationService {
     }
   }
 
-  async handleClockIn(): Promise<boolean> {
+  async handleClockIn(): Promise<{success: boolean, hasLocation: boolean, fallbackLocation?: any}> {
     this.state.clockedIn = true;
 
     // Request location permission during clock-in
@@ -124,12 +125,30 @@ class LocationService {
     if (permissionGranted) {
       // Start continuous tracking
       this.startTracking();
-      return true;
+      return { success: true, hasLocation: true };
     }
 
-    // Even if permission denied, allow clock-in but without tracking
+    // Even if permission denied, allow clock-in but use fallback location
+    console.log('Location permission denied, using fallback location for clock-in');
+
+    // Set a fallback location (office/default location)
+    const fallbackLocation = {
+      latitude: -33.0197, // East London coordinates
+      longitude: 27.9117,
+      address: 'Office Location (Default - Location Access Denied)',
+      timestamp: Date.now(),
+      accuracy: 0,
+      isDefault: true
+    };
+
+    this.updateLocation(fallbackLocation);
     this.notifyListeners();
-    return false; // Returns false to indicate location permission was denied
+
+    return {
+      success: true,
+      hasLocation: false,
+      fallbackLocation
+    };
   }
 
   handleClockOut() {
@@ -189,6 +208,9 @@ class LocationService {
     // Persist to localStorage
     try {
       localStorage.setItem("lastKnownLocation", JSON.stringify(location));
+
+      // Also save clock-in status to ensure continuity
+      localStorage.setItem("isClockedIn", this.state.clockedIn.toString());
     } catch (error) {
       console.error("Error saving location to storage:", error);
     }
@@ -237,7 +259,9 @@ class LocationService {
   // Manual location update for cases where GPS might not be available
   async updateLocationManually(): Promise<boolean> {
     if (!navigator.geolocation) {
-      return false;
+      console.log('Geolocation not available, using fallback location');
+      this.setFallbackLocation();
+      return true;
     }
 
     try {
@@ -262,8 +286,50 @@ class LocationService {
         userMessage: error.userMessage || "Location update failed",
         timestamp: new Date().toISOString(),
       });
-      return false;
+
+      // If manual update fails, use fallback
+      console.log('Manual location update failed, using fallback location');
+      this.setFallbackLocation();
+      return true;
     }
+  }
+
+  // Set a fallback location when GPS is unavailable
+  setFallbackLocation(): void {
+    const fallbackLocation = {
+      latitude: -33.0197, // East London coordinates
+      longitude: 27.9117,
+      address: 'Office Location (Default)',
+      timestamp: Date.now(),
+      accuracy: 0,
+      isDefault: true
+    };
+
+    this.updateLocation(fallbackLocation);
+  }
+
+  // Force clock-in without location permissions
+  forceClockInWithoutLocation(): {success: boolean, location: LocationData} {
+    this.state.clockedIn = true;
+
+    const fallbackLocation = {
+      latitude: -33.0197, // East London coordinates
+      longitude: 27.9117,
+      address: 'Office Location (Location Access Denied)',
+      timestamp: Date.now(),
+      accuracy: 0,
+      isDefault: true
+    };
+
+    this.updateLocation(fallbackLocation);
+    this.notifyListeners();
+
+    console.log('Force clock-in without location permission completed');
+
+    return {
+      success: true,
+      location: fallbackLocation
+    };
   }
 }
 
