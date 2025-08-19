@@ -99,12 +99,21 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-sidebar-foreground truncate">
                   {userRole === "StockManager"
-                    ? "John Smith"
+                    ? "Siyanda Dlamini"
                     : userRole === "Coordinator"
-                      ? "Sarah Wilson"
+                      ? "Nancy Dube"
                       : userRole === "Technician"
                         ? "Clement Masinge"
-                        : "John Doe"}
+                        : userRole === "FleetManager"
+                          ? "Nancy Dube"
+                          : userRole === "Manager"
+                            ? "Glassman Nkosi"
+                            : userRole === "HR"
+                              ? "Thembi Khumalo"
+                              : userRole === "IT"
+                                ? "Shawn Petersen"
+                                : localStorage.getItem("userFullName") ||
+                                  "User"}
                 </p>
                 <p className="text-xs text-sidebar-foreground/60">{userRole}</p>
                 <div className="flex items-center mt-1">
@@ -222,16 +231,17 @@ function getNavigationForRole(role: string) {
     case "FleetManager":
       return [
         ...baseNavigation,
-        { name: "Fleet Overview", href: "/fleet-overview", icon: Truck },
+        { name: "Fleet Overview", href: "/fleet", icon: Truck },
+        { name: "Vehicle Management", href: "/fleet/vehicles", icon: Truck },
         {
           name: "Vehicle Inspections",
-          href: "/vehicle-inspections",
+          href: "/fleet/inspections",
           icon: ClipboardList,
         },
         {
-          name: "Assign Fleet Jobs",
-          href: "/assign-fleet-jobs",
-          icon: ClipboardList,
+          name: "Compliance",
+          href: "/fleet/compliance",
+          icon: Shield,
         },
       ];
 
@@ -320,8 +330,10 @@ function getPageTitle(pathname: string, role: string) {
     "/assign-jobs": "Assign Jobs",
     "/monitor-progress": "Monitor Progress",
     "/reports": "Reports",
-    "/fleet-overview": "Fleet Overview",
-    "/vehicle-inspections": "Vehicle Inspections",
+    "/fleet": "Fleet Overview",
+    "/fleet/vehicles": "Vehicle Management",
+    "/fleet/inspections": "Vehicle Inspections",
+    "/fleet/compliance": "Compliance Management",
     "/stock-overview": "Stock Overview",
     "/safety-overview": "Safety Overview",
   };

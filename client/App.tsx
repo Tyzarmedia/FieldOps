@@ -64,6 +64,11 @@ import StockManagerDashboard from "./pages/StockManagerDashboard";
 import EnhancedCoordinatorDashboard from "./pages/EnhancedCoordinatorDashboard";
 import EnhancedManagerDashboard from "./pages/EnhancedManagerDashboard";
 import SecurityMonitoringDashboard from "./pages/SecurityMonitoringDashboard";
+import FleetOverviewDashboard from "./pages/FleetOverviewDashboard";
+import FleetVehicleManagement from "./pages/FleetVehicleManagement";
+import VehicleDetailScreen from "./pages/VehicleDetailScreen";
+import InspectionsScreen from "./pages/InspectionsScreen";
+import ComplianceScreen from "./pages/ComplianceScreen";
 
 const queryClient = new QueryClient();
 
@@ -170,7 +175,7 @@ function DashboardRouter() {
       // Redirect to mobile-first route
       return <Navigate to="/assistant-technician" replace />;
     case "FleetManager":
-      return <EnhancedFleetManagerDashboard />;
+      return <FleetOverviewDashboard />;
     case "StockManager":
       return <EnhancedStockManagementScreen />;
     case "HSManager":
@@ -336,10 +341,39 @@ export default function App() {
                 path="/fleet"
                 element={
                   <ProtectedRoute>
-                    <PlaceholderPage
-                      title="Fleet Management"
-                      description="Vehicle inspections, maintenance tracking, and fleet task management."
-                    />
+                    <FleetOverviewDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fleet/vehicles"
+                element={
+                  <ProtectedRoute>
+                    <FleetVehicleManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fleet/vehicle/:vehicleId"
+                element={
+                  <ProtectedRoute>
+                    <VehicleDetailScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fleet/inspections"
+                element={
+                  <ProtectedRoute>
+                    <InspectionsScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fleet/compliance"
+                element={
+                  <ProtectedRoute>
+                    <ComplianceScreen />
                   </ProtectedRoute>
                 }
               />
@@ -493,39 +527,6 @@ export default function App() {
                 }
               />
               {/* Fleet Manager Routes */}
-              <Route
-                path="/fleet-overview"
-                element={
-                  <ProtectedRoute>
-                    <PlaceholderPage
-                      title="Fleet Overview"
-                      description="Complete fleet management dashboard with vehicle status and maintenance."
-                    />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/vehicle-inspections"
-                element={
-                  <ProtectedRoute>
-                    <PlaceholderPage
-                      title="Vehicle Inspections"
-                      description="Schedule and track vehicle inspections and maintenance tasks."
-                    />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/assign-fleet-jobs"
-                element={
-                  <ProtectedRoute>
-                    <PlaceholderPage
-                      title="Assign Fleet Jobs"
-                      description="Assign vehicle-related tasks and maintenance jobs to technicians."
-                    />
-                  </ProtectedRoute>
-                }
-              />
               {/* Stock Manager Routes */}
               <Route
                 path="/stock-overview"
