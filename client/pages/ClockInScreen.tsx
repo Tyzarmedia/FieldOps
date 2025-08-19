@@ -245,6 +245,16 @@ export default function ClockInScreen({
   const handleClockToggle = async () => {
     const wasClockingIn = !isClockedIn; // Track if we're clocking in before state changes
 
+    // For technicians clocking in, show assistant selection first
+    if (!isClockedIn && userRole === "Technician") {
+      setShowAssistantSelection(true);
+      return;
+    }
+
+    await processClockToggle(wasClockingIn);
+  };
+
+  const processClockToggle = async (wasClockingIn: boolean) => {
     if (isClockedIn) {
       // Clock Out
       setIsClockingIn(true);
