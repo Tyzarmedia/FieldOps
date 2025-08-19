@@ -1331,15 +1331,15 @@
       "id": "OT-1755634027360",
       "technicianId": "EMP001",
       "startTime": "2025-08-19T15:00:36.833Z",
-      "totalHours": 5.175278333333333,
+      "totalHours": 5.2430538888888885,
       "isAutoDetected": true,
       "workOrderNumbers": [],
       "reason": "Late work after 17:00",
       "status": "pending",
       "rate": 195,
-      "totalAmount": 1009.179275,
+      "totalAmount": 1022.3955083333333,
       "createdAt": "2025-08-19T20:07:08.470Z",
-      "updatedAt": "2025-08-19T20:11:09.098Z"
+      "updatedAt": "2025-08-19T20:15:12.963Z"
     },
     {
       "id": "OT-1755634153551",
@@ -1390,6 +1390,21 @@
       "id": "OT-1755634265002",
       "technicianId": "EMP001",
       "startTime": "2025-08-19T15:00:53.144Z",
+      "totalHours": 5.1913052777777775,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 195,
+      "totalAmount": 1012.3045291666666,
+      "createdAt": "2025-08-19T20:11:05.722Z",
+      "updatedAt": "2025-08-19T20:12:22.339Z",
+      "endTime": "2025-08-19T20:12:21.843Z"
+    },
+    {
+      "id": "OT-1755634345187",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-19T15:00:53.144Z",
       "totalHours": 0,
       "isAutoDetected": true,
       "workOrderNumbers": [],
@@ -1397,8 +1412,23 @@
       "status": "pending",
       "rate": 195,
       "totalAmount": 0,
-      "createdAt": "2025-08-19T20:11:05.722Z",
-      "updatedAt": "2025-08-19T20:11:05.722Z"
+      "createdAt": "2025-08-19T20:12:25.903Z",
+      "updatedAt": "2025-08-19T20:12:25.903Z"
+    },
+    {
+      "id": "OT-1755634387591",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-19T15:00:50.895Z",
+      "totalHours": 5.204800277777778,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 195,
+      "totalAmount": 1014.9360541666667,
+      "createdAt": "2025-08-19T20:13:08.306Z",
+      "updatedAt": "2025-08-19T20:13:08.506Z",
+      "endTime": "2025-08-19T20:13:08.176Z"
     }
   ]
 }
