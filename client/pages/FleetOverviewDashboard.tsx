@@ -65,18 +65,31 @@ export default function FleetOverviewDashboard() {
   const [isAskingAI, setIsAskingAI] = useState(false);
   const [vehicles, setVehicles] = useState<any[]>([]);
 
-  // Load AVIS database
+  // Load AVIS database with cleanup
   useEffect(() => {
+    let cancelled = false;
+
     const loadAvisData = async () => {
       try {
         const response = await fetch("/data/avis-database.json");
+        if (cancelled) return;
+
         const data = await response.json();
+        if (cancelled) return;
+
         setVehicles(data.vehicles);
       } catch (error) {
-        console.error("Failed to load AVIS database:", error);
+        if (!cancelled) {
+          console.error("Failed to load AVIS database:", error);
+        }
       }
     };
+
     loadAvisData();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Calculate fleet KPIs from AVIS data
