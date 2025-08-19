@@ -27,6 +27,9 @@ export default function AssistantTechnicianDashboard() {
   const [workingHours, setWorkingHours] = useState("0:00");
   const [distanceTraveled, setDistanceTraveled] = useState("0.0");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [assignedJobs, setAssignedJobs] = useState<any[]>([]);
+  const [assignedTechnician, setAssignedTechnician] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // Update time and distance from localStorage
