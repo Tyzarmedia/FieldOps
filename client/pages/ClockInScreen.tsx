@@ -608,6 +608,18 @@ export default function ClockInScreen({
             {userName}
           </h2>
           <p className="text-white/80 text-center">{userRole}</p>
+          {selectedAssistant && selectedAssistant.id && (
+            <div className="mt-2 bg-white/20 px-4 py-2 rounded-full text-center">
+              <p className="text-white/90 text-sm">
+                Working with: <span className="font-medium">{selectedAssistant.name}</span>
+              </p>
+            </div>
+          )}
+          {selectedAssistant && !selectedAssistant.id && (
+            <div className="mt-2 bg-white/20 px-4 py-2 rounded-full text-center">
+              <p className="text-white/90 text-sm font-medium">Working Alone</p>
+            </div>
+          )}
         </div>
 
         {/* Date */}
