@@ -61,17 +61,33 @@ export default function FleetOverviewDashboard() {
   const [aiQuestion, setAiQuestion] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [isAskingAI, setIsAskingAI] = useState(false);
+  const [vehicles, setVehicles] = useState<any[]>([]);
 
-  // Mock fleet data
+  // Load AVIS database
+  useEffect(() => {
+    const loadAvisData = async () => {
+      try {
+        const response = await fetch('/data/avis-database.json');
+        const data = await response.json();
+        setVehicles(data.vehicles);
+      } catch (error) {
+        console.error('Failed to load AVIS database:', error);
+      }
+    };
+    loadAvisData();
+  }, []);
+
+  // Calculate fleet KPIs from AVIS data
   const fleetKPIs = {
-    totalVehicles: 24,
-    activeVehicles: 20,
-    inactiveVehicles: 4,
+    totalVehicles: vehicles.length,
+    activeVehicles: vehicles.filter(v => v.status === "Active").length,
+    inactiveVehicles: vehicles.filter(v => v.status === "In Maintenance").length,
     inspectionsDue: 6,
-    maintenanceQueue: 3,
+    maintenanceQueue: vehicles.filter(v => v.status === "In Maintenance").length,
     complianceRate: 92,
-    avgFuelEfficiency: 28.5,
-    totalMileage: 125000,
+    avgFuelEfficiency: vehicles.length > 0 ?
+      vehicles.reduce((sum, v) => sum + v.fuel_efficiency, 0) / vehicles.length : 0,
+    totalMileage: vehicles.reduce((sum, v) => sum + v.mileage, 0),
     activeAlerts: 8,
     criticalAlerts: 2,
   };
