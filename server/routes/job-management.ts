@@ -343,7 +343,10 @@ router.put("/jobs/:jobId/assign", (req, res) => {
       assignedBy = "coordinator001",
     } = req.body;
 
+    const db = readDatabase();
+    const jobs = db.jobs || [];
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
+
     if (jobIndex === -1) {
       return res.status(404).json({ success: false, error: "Job not found" });
     }
@@ -370,6 +373,17 @@ router.put("/jobs/:jobId/assign", (req, res) => {
       action: "assigned",
     });
 
+    // Save back to database
+    db.jobs = jobs;
+    if (!writeDatabase(db)) {
+      return res.status(500).json({
+        success: false,
+        error: "Failed to save job assignment",
+      });
+    }
+
+    console.log(`Job ${jobId} assigned to technician ${technicianId}`);
+
     // Create notification for the assigned technician
     const createJobNotification = (techId: string) => {
       try {
@@ -379,6 +393,11 @@ router.put("/jobs/:jobId/assign", (req, res) => {
           title: "New Job Assigned",
           message: `${jobs[jobIndex].title} - ${jobs[jobIndex].workOrderNumber || jobId} has been assigned to you`,
           priority: "high",
+          metadata: {
+            jobId,
+            workOrderNumber: jobs[jobIndex].workOrderNumber,
+            navigateTo: `/technician/jobs/${jobId}`
+          }
         });
       } catch (error) {
         console.warn("Error creating job assignment notification:", error);
@@ -411,6 +430,8 @@ router.put("/jobs/:jobId/status", (req, res) => {
     const { jobId } = req.params;
     const { status, notes, technicianId, isAssistant, assistantId } = req.body;
 
+    const db = readDatabase();
+    const jobs = db.jobs || [];
     const jobIndex = jobs.findIndex((j) => j.id === jobId);
     if (jobIndex === -1) {
       return res.status(404).json({ success: false, error: "Job not found" });
