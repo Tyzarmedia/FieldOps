@@ -88,6 +88,12 @@ export default function ClockInScreen({
       setDailyClockIns(JSON.parse(storedClockIns));
     }
 
+    // Load current technician-assistant assignment
+    const authUser = authManager.getUser();
+    if (authUser?.employeeId) {
+      fetchCurrentAssignment(authUser.employeeId);
+    }
+
     // Subscribe to location service updates
     const unsubscribe = locationService.subscribe((state) => {
       setLocationState(state);
