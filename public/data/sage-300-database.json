@@ -3,9 +3,10 @@
     {
       "EmployeeID": "EMP001",
       "FullName": "Dyondzani Clement Masinge",
+      "Email": "clement@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "Maintenance Technician",
       "Department": "Technician",
-      "Email": "clement@company.com",
       "Phone": "0810000001",
       "Manager": "Glassman Nkosi",
       "EmploymentStatus": "Active",
@@ -23,14 +24,17 @@
       "OvertimeHours": 12,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thabitha Ndlovu, 0812345678",
-      "AccessRoles": ["Technician"]
+      "AccessRoles": ["Technician"],
+      "IsActive": true,
+      "LastLogin": null
     },
     {
       "EmployeeID": "EMP002",
       "FullName": "Thabo Matlou",
+      "Email": "thabo@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "Maintenance Technician",
       "Department": "Technician",
-      "Email": "thabo@company.com",
       "Phone": "0810000002",
       "Manager": "Glassman Nkosi",
       "EmploymentStatus": "Active",
@@ -48,14 +52,17 @@
       "OvertimeHours": 20,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Nancy Dube, 0812345679",
-      "AccessRoles": ["Technician"]
+      "AccessRoles": ["Technician"],
+      "IsActive": true,
+      "LastLogin": null
     },
     {
       "EmployeeID": "EMP003",
       "FullName": "Thabitha Ndlovu",
+      "Email": "thabitha@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "Installation Technician",
       "Department": "Technician",
-      "Email": "thabitha@company.com",
       "Phone": "0810000003",
       "Manager": "Glassman Nkosi",
       "EmploymentStatus": "Active",
@@ -73,14 +80,17 @@
       "OvertimeHours": 8,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Dyondzani Clement Masinge, 0810000001",
-      "AccessRoles": ["Technician"]
+      "AccessRoles": ["Technician"],
+      "IsActive": true,
+      "LastLogin": null
     },
     {
       "EmployeeID": "EMP004",
       "FullName": "Thembi Khumalo",
+      "Email": "thembi@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "HR Officer",
       "Department": "HR",
-      "Email": "thembi@company.com",
       "Phone": "0810000004",
       "Manager": "Glassman Nkosi",
       "EmploymentStatus": "Active",
@@ -98,14 +108,17 @@
       "OvertimeHours": 5,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thabo Matlou, 0810000002",
-      "AccessRoles": ["HR"]
+      "AccessRoles": ["HR"],
+      "IsActive": true,
+      "LastLogin": null
     },
     {
       "EmployeeID": "EMP005",
       "FullName": "Lerato Mokoena",
+      "Email": "lerato@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "HR Officer",
       "Department": "HR",
-      "Email": "lerato@company.com",
       "Phone": "0810000005",
       "Manager": "Glassman Nkosi",
       "EmploymentStatus": "Active",
@@ -123,14 +136,17 @@
       "OvertimeHours": 6,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Nancy Dube, 0810000010",
-      "AccessRoles": ["HR"]
+      "AccessRoles": ["HR"],
+      "IsActive": true,
+      "LastLogin": null
     },
     {
       "EmployeeID": "EMP006",
       "FullName": "Siyanda Dlamini",
+      "Email": "siyanda@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "Payroll Officer",
       "Department": "Payroll",
-      "Email": "siyanda@company.com",
       "Phone": "0810000006",
       "Manager": "Glassman Nkosi",
       "EmploymentStatus": "Active",
@@ -148,14 +164,17 @@
       "OvertimeHours": 10,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thabitha Ndlovu, 0810000003",
-      "AccessRoles": ["Payroll"]
+      "AccessRoles": ["Payroll"],
+      "IsActive": true,
+      "LastLogin": null
     },
     {
       "EmployeeID": "EMP007",
       "FullName": "Nokuthula Mthembu",
+      "Email": "nokuthula@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "Payroll Officer",
       "Department": "Payroll",
-      "Email": "nokuthula@company.com",
       "Phone": "0810000007",
       "Manager": "Glassman Nkosi",
       "EmploymentStatus": "Active",
@@ -173,14 +192,17 @@
       "OvertimeHours": 7,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Glassman Nkosi, 0810000008",
-      "AccessRoles": ["Payroll"]
+      "AccessRoles": ["Payroll"],
+      "IsActive": true,
+      "LastLogin": null
     },
     {
       "EmployeeID": "EMP008",
       "FullName": "Glassman Nkosi",
+      "Email": "glassman@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "Manager",
       "Department": "Management",
-      "Email": "glassman@company.com",
       "Phone": "0810000008",
       "Manager": "Clement Masinge",
       "EmploymentStatus": "Active",
@@ -198,14 +220,17 @@
       "OvertimeHours": 0,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thembi Khumalo, 0810000004",
-      "AccessRoles": ["Management"]
+      "AccessRoles": ["Manager"],
+      "IsActive": true,
+      "LastLogin": null
     },
     {
       "EmployeeID": "EMP009",
       "FullName": "Shawn Petersen",
+      "Email": "shawn@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "System Administrator",
       "Department": "IT",
-      "Email": "shawn@company.com",
       "Phone": "0810000009",
       "Manager": "Glassman Nkosi",
       "EmploymentStatus": "Active",
@@ -223,14 +248,17 @@
       "OvertimeHours": 12,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Thabo Matlou, 0810000002",
-      "AccessRoles": ["IT"]
+      "AccessRoles": ["IT"],
+      "IsActive": true,
+      "LastLogin": null
     },
     {
       "EmployeeID": "EMP010",
       "FullName": "Nancy Dube",
+      "Email": "nancy@company.com",
+      "Password": "$2b$10$rQR1YqLfEJ5.6KZ2PXMRwuJ7Lp2X5HQ4.vE9TrE1ZkF2RvL9XqT6M",
       "Role": "Fleet Manager",
       "Department": "Fleet",
-      "Email": "nancy@company.com",
       "Phone": "0810000010",
       "Manager": "Glassman Nkosi",
       "EmploymentStatus": "Active",
@@ -248,7 +276,9 @@
       "OvertimeHours": 8,
       "WorkSchedule": "08:00-17:00",
       "EmergencyContact": "Lerato Mokoena, 0810000005",
-      "AccessRoles": ["Fleet"]
+      "AccessRoles": ["FleetManager"],
+      "IsActive": true,
+      "LastLogin": null
     }
   ]
 }
