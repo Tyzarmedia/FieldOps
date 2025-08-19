@@ -44,9 +44,23 @@ class AuthService {
         process.cwd(),
         "public/data/sage-300-database.json",
       );
+      console.log('Loading employees from:', filePath);
+
+      if (!fs.existsSync(filePath)) {
+        console.error('Employee database file does not exist at:', filePath);
+        return [];
+      }
+
       const fileContent = fs.readFileSync(filePath, "utf-8");
       const data = JSON.parse(fileContent);
-      return data.employees || [];
+
+      if (!data.employees || !Array.isArray(data.employees)) {
+        console.error('Invalid employee data structure in database file');
+        return [];
+      }
+
+      console.log('Successfully loaded', data.employees.length, 'employees');
+      return data.employees;
     } catch (error) {
       console.error("Error loading employee data:", error);
       return [];
