@@ -239,11 +239,25 @@ export default function AssistantTechnicianDashboard() {
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                <UserCheck className="h-5 w-5 text-orange-600" />
+                <span className="text-orange-600 text-sm font-bold">
+                  {authManager.getUser()?.fullName.split(' ').map(n => n[0]).join('').toUpperCase() || 'AS'}
+                </span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">John Doe</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {authManager.getUser()?.fullName || 'Assistant Technician'}
+                </p>
                 <p className="text-xs text-gray-500">Assistant Technician</p>
+                {assignedTechnician && (
+                  <p className="text-xs text-green-600 font-medium">
+                    Working with: Tech {assignedTechnician}
+                  </p>
+                )}
+                {!assignedTechnician && !loading && (
+                  <p className="text-xs text-yellow-600">
+                    No technician assigned
+                  </p>
+                )}
               </div>
             </div>
           </div>
