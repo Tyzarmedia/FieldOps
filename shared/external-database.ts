@@ -226,26 +226,43 @@ export class ExternalDatabaseService {
 
   async getEmployee(employeeId: string): Promise<ExternalEmployee | null> {
     try {
-      const response = await fetch(
-        `${this.sage300BaseUrl}/employees/${employeeId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.SAGE_300_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const employees = await this.loadSage300Data();
+      const employee = employees.find(emp => emp.EmployeeID === employeeId);
 
-      if (!response.ok) {
-        if (response.status === 404) return null;
-        throw new Error(`Sage 300 API error: ${response.statusText}`);
+      if (!employee) {
+        return null;
       }
 
-      return await response.json();
+      return this.transformSage300Employee(employee);
     } catch (error) {
       console.error("Error fetching employee from Sage 300:", error);
-      throw error;
+      return null;
     }
+  }
+
+  // Fallback employees if database loading fails
+  private getFallbackEmployees(): ExternalEmployee[] {
+    return [
+      {
+        employeeId: "EMP001",
+        employeeNumber: "P001",
+        firstName: "Dyondzani Clement",
+        lastName: "Masinge",
+        email: "clement@company.com",
+        phone: "0810000001",
+        department: "Technician",
+        position: "Maintenance Technician",
+        role: "Technician",
+        startDate: "2022-01-10",
+        isActive: true,
+        supervisor: "Glassman Nkosi",
+        skills: ["Fiber Installation", "Network Testing", "Customer Service"],
+        certifications: ["Fiber Optic Certified", "Safety Training"],
+        wageRate: 106.25, // 8500/22/8 * 2
+        overtimeRate: 159.38,
+        lastSync: new Date().toISOString(),
+      }
+    ];
   }
 
   // sp.vumatel.co.za Ticket Integration
