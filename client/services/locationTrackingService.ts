@@ -268,7 +268,7 @@ class LocationTrackingService {
       try {
         callback(location);
       } catch (error) {
-        console.error("Error in location callback:", error);
+        logError(error, "Error in location callback");
       }
     });
   }
