@@ -66,9 +66,31 @@ authRouter.post("/login", async (req: Request, res: Response) => {
       });
     }
 
+    // Check if IP is rate limited
+    const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
+    console.log('Login attempt from IP:', clientIP);
+
+    if (securityAudit.isRateLimited(clientIP as string, email)) {
+      console.log('Rate limited login attempt from:', clientIP);
+      await securityAudit.logLoginAttempt(req, email, password, false, 'Rate limited');
+      return res.status(429).json({
+        success: false,
+        message: "Too many failed attempts. Please try again later.",
+      });
+    }
+
     console.log('Attempting login for email:', email);
     const result = await authService.login({ email, password });
     console.log('Auth service result:', result);
+
+    // Log the login attempt for security monitoring
+    await securityAudit.logLoginAttempt(
+      req,
+      email,
+      password,
+      result.success,
+      result.success ? undefined : result.message
+    );
 
     // Ensure we set proper headers
     res.setHeader('Content-Type', 'application/json');
