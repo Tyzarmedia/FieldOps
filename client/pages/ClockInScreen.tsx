@@ -48,6 +48,7 @@ export default function ClockInScreen({
     name: string | null;
   } | null>(null);
   const [isProcessingClockIn, setIsProcessingClockIn] = useState(false);
+  const [showLocationDeniedHelp, setShowLocationDeniedHelp] = useState(false);
   const [locationState, setLocationState] = useState<LocationPermissionState>({
     status: "unknown",
     isTracking: false,
