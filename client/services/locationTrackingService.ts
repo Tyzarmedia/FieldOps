@@ -216,7 +216,7 @@ class LocationTrackingService {
         }
       }
     } catch (error) {
-      console.error("Error loading job locations:", error);
+      logError(error, "Error loading job locations");
     }
   }
 
