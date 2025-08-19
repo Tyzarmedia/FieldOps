@@ -237,7 +237,7 @@ export default function Login() {
         {/* Database information */}
         <Card className="mt-6 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm">🗄️ Connected Databases</CardTitle>
+            <CardTitle className="text-sm">🗄��� Connected Databases</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-muted-foreground space-y-2">
             <div className="grid grid-cols-1 gap-2">
@@ -324,6 +324,36 @@ export default function Login() {
                   variant="outline"
                   size="sm"
                   onClick={() => setEmail("shawn@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong>Coordinator:</strong> nancy@company.com
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("nancy@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong>Stock Manager:</strong> siyanda@company.com
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("siyanda@company.com")}
                   disabled={isLoading}
                   className="text-xs h-6 px-2 ml-2"
                 >
