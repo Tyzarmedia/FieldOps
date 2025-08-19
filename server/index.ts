@@ -24,6 +24,7 @@ import networkAssessmentsRouter from "./routes/network-assessments";
 import overtimeRouter from "./routes/overtime";
 import { getOvertimeRate } from "./routes/payroll";
 import warehouseStockRouter from "./routes/warehouse-stock";
+import authRouter from "./routes/auth";
 
 export function createServer() {
   const app = express();
@@ -39,6 +40,9 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
+
+  // Authentication API
+  app.use("/api/auth", authRouter);
 
   // New Job Management API (must come before old routes)
   app.use("/api/job-mgmt", jobManagementRouter);
