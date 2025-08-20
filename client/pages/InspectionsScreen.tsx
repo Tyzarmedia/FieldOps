@@ -2013,6 +2013,7 @@ export default function InspectionsScreen() {
                       </div>
                     </div>
                   </CardHeader>
+                  {expandedSections.overdueToolboxes && (
                   <CardContent>
                     <div className="space-y-4">
                       <Alert>
@@ -2312,6 +2313,7 @@ export default function InspectionsScreen() {
                       </div>
                     </div>
                   </CardContent>
+                  )}
                 </Card>
               </div>
             </TabsContent>
