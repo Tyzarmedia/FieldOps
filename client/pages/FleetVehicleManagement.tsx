@@ -252,7 +252,8 @@ export default function FleetVehicleManagement() {
         }
       } else {
         // Regular status update
-        const response = await makeAuthenticatedRequest(`/api/vehicles/${selectedVehicle.vehicle_id}/status`, {
+        const serverVehicleId = `FL-${String(selectedVehicle.vehicle_id).padStart(3, "0")}`;
+        const response = await makeAuthenticatedRequest(`/api/vehicles/${serverVehicleId}/status`, {
           method: "PATCH",
           body: JSON.stringify({
             status: status,
