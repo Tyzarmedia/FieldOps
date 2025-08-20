@@ -1571,41 +1571,32 @@ export default function InspectionsScreen() {
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Tool Inspection History</CardTitle>
+                    <CardTitle>Toolbox Inspection History</CardTitle>
                     <p className="text-muted-foreground">
-                      All tool inspections from previous month to 3 years back
+                      Historical toolbox inspections by technician from previous months
                     </p>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       {/* Enhanced Filter and Search for History */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                           <Input
-                            placeholder="Search by technician name..."
+                            placeholder="Search technician..."
                             className="pl-10"
                           />
                         </div>
-                        <Input type="date" placeholder="Select date" />
                         <Select>
                           <SelectTrigger>
-                            <SelectValue placeholder="Assigned To" />
+                            <SelectValue placeholder="Technician" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">All Technicians</SelectItem>
-                            <SelectItem value="john-smith">
-                              John Smith
-                            </SelectItem>
-                            <SelectItem value="sarah-johnson">
-                              Sarah Johnson
-                            </SelectItem>
-                            <SelectItem value="mike-wilson">
-                              Mike Wilson
-                            </SelectItem>
-                            <SelectItem value="david-brown">
-                              David Brown
-                            </SelectItem>
+                            <SelectItem value="john-smith">John Smith</SelectItem>
+                            <SelectItem value="sarah-johnson">Sarah Johnson</SelectItem>
+                            <SelectItem value="mike-wilson">Mike Wilson</SelectItem>
+                            <SelectItem value="david-brown">David Brown</SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
@@ -1639,75 +1630,72 @@ export default function InspectionsScreen() {
                         </Select>
                         <Select>
                           <SelectTrigger>
-                            <SelectValue placeholder="Warehouse" />
+                            <SelectValue placeholder="Department" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="WH-001">WH-001</SelectItem>
-                            <SelectItem value="WH-002">WH-002</SelectItem>
-                            <SelectItem value="WH-003">WH-003</SelectItem>
+                            <SelectItem value="all">All Departments</SelectItem>
+                            <SelectItem value="maintenance">Maintenance</SelectItem>
+                            <SelectItem value="installation">Installation</SelectItem>
+                            <SelectItem value="fiber-ops">Fiber Operations</SelectItem>
                           </SelectContent>
                         </Select>
                         <Button variant="outline">
                           <Download className="h-4 w-4 mr-2" />
-                          Export
+                          Export History
                         </Button>
                       </div>
 
-                      {/* Historical Tool Inspection List */}
+                      {/* Historical Toolbox Inspections */}
                       <div className="space-y-4">
                         {[
                           {
-                            id: "TI-H001",
-                            inspector: "John Smith",
-                            assignedTo: "John Smith",
-                            warehouseNumber: "WH-001",
-                            toolType: "Power Drill",
-                            toolId: "PD-2024-001",
-                            dateCompleted: "2024-12-15",
-                            status: "Completed",
-                            overallScore: 92,
-                            toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned",
+                            id: "TBH-001",
+                            technicianName: "John Smith",
+                            department: "Maintenance",
+                            inspectionDate: "2024-12-15",
+                            totalTools: 8,
+                            goodCondition: 8,
+                            damaged: 0,
+                            missing: 0,
+                            overallScore: 100,
+                            status: "Complete"
                           },
                           {
-                            id: "TI-H002",
-                            inspector: "Sarah Johnson",
-                            assignedTo: "Sarah Johnson",
-                            warehouseNumber: "WH-002",
-                            toolType: "Oscilloscope",
-                            toolId: "OS-2024-003",
-                            dateCompleted: "2024-11-28",
-                            status: "Completed",
-                            overallScore: 89,
-                            toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned",
+                            id: "TBH-002",
+                            technicianName: "Sarah Johnson",
+                            department: "Installation",
+                            inspectionDate: "2024-11-28",
+                            totalTools: 6,
+                            goodCondition: 6,
+                            damaged: 0,
+                            missing: 0,
+                            overallScore: 100,
+                            status: "Complete"
                           },
                           {
-                            id: "TI-H003",
-                            inspector: "Mike Wilson",
-                            assignedTo: "Mike Wilson",
-                            warehouseNumber: "WH-001",
-                            toolType: "Cable Tester",
-                            toolId: "CT-2024-008",
-                            dateCompleted: "2024-10-22",
-                            status: "Completed",
-                            overallScore: 85,
-                            toolCondition: "Good Condition",
-                            assignmentStatus: "Loaned",
+                            id: "TBH-003",
+                            technicianName: "Mike Wilson",
+                            department: "Fiber Operations",
+                            inspectionDate: "2024-10-22",
+                            totalTools: 10,
+                            goodCondition: 9,
+                            damaged: 1,
+                            missing: 0,
+                            overallScore: 90,
+                            status: "Issues Noted"
                           },
                           {
-                            id: "TI-H004",
-                            inspector: "David Brown",
-                            assignedTo: "David Brown",
-                            warehouseNumber: "WH-003",
-                            toolType: "Digital Meter",
-                            toolId: "DM-2024-015",
-                            dateCompleted: "2024-09-30",
-                            status: "Completed",
-                            overallScore: 94,
-                            toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned",
-                          },
+                            id: "TBH-004",
+                            technicianName: "David Brown",
+                            department: "Maintenance",
+                            inspectionDate: "2024-09-30",
+                            totalTools: 7,
+                            goodCondition: 6,
+                            damaged: 0,
+                            missing: 1,
+                            overallScore: 86,
+                            status: "Missing Tools"
+                          }
                         ].map((inspection) => (
                           <Card key={inspection.id}>
                             <CardContent className="p-4">
@@ -1716,30 +1704,29 @@ export default function InspectionsScreen() {
                                   <div className="flex items-center gap-6">
                                     <div>
                                       <h4 className="font-medium">
-                                        {inspection.toolType}
+                                        {inspection.technicianName}'s Toolbox
                                       </h4>
                                       <p className="text-sm text-muted-foreground">
-                                        {inspection.toolId} •{" "}
-                                        {inspection.warehouseNumber}
+                                        {inspection.department} • {new Date(inspection.inspectionDate).toLocaleDateString()}
                                       </p>
                                     </div>
-                                    <div>
-                                      <p className="text-sm font-medium">
-                                        Assigned To: {inspection.assignedTo}
-                                      </p>
-                                      <p className="text-sm text-muted-foreground">
-                                        Status: {inspection.assignmentStatus}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="text-sm font-medium">
-                                        Inspector: {inspection.inspector}
-                                      </p>
-                                      <p className="text-sm text-muted-foreground">
-                                        {new Date(
-                                          inspection.dateCompleted,
-                                        ).toLocaleDateString()}
-                                      </p>
+                                    <div className="grid grid-cols-4 gap-4 text-sm">
+                                      <div className="text-center">
+                                        <div className="font-semibold text-blue-600">{inspection.totalTools}</div>
+                                        <p className="text-xs text-muted-foreground">Total</p>
+                                      </div>
+                                      <div className="text-center">
+                                        <div className="font-semibold text-green-600">{inspection.goodCondition}</div>
+                                        <p className="text-xs text-muted-foreground">Good</p>
+                                      </div>
+                                      <div className="text-center">
+                                        <div className="font-semibold text-red-600">{inspection.damaged}</div>
+                                        <p className="text-xs text-muted-foreground">Damaged</p>
+                                      </div>
+                                      <div className="text-center">
+                                        <div className="font-semibold text-yellow-600">{inspection.missing}</div>
+                                        <p className="text-xs text-muted-foreground">Missing</p>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -1748,18 +1735,19 @@ export default function InspectionsScreen() {
                                     <div className="text-lg font-bold">
                                       {inspection.overallScore}%
                                     </div>
-                                    <p className="text-xs text-muted-foreground">
-                                      Score
-                                    </p>
+                                    <p className="text-xs text-muted-foreground">Score</p>
                                   </div>
-                                  <div className="flex flex-col gap-1">
-                                    <Badge variant="default">
-                                      {inspection.status}
-                                    </Badge>
-                                    <Badge variant="default">
-                                      {inspection.toolCondition}
-                                    </Badge>
-                                  </div>
+                                  <Badge
+                                    variant={
+                                      inspection.status === "Complete"
+                                        ? "default"
+                                        : inspection.status === "Issues Noted"
+                                        ? "secondary"
+                                        : "destructive"
+                                    }
+                                  >
+                                    {inspection.status}
+                                  </Badge>
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button variant="ghost" size="sm">
@@ -1769,7 +1757,7 @@ export default function InspectionsScreen() {
                                     <DropdownMenuContent>
                                       <DropdownMenuItem>
                                         <Eye className="h-4 w-4 mr-2" />
-                                        View Details
+                                        View Full Toolbox
                                       </DropdownMenuItem>
                                       <DropdownMenuItem>
                                         <Download className="h-4 w-4 mr-2" />
