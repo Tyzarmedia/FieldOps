@@ -27,71 +27,29 @@ export interface Vehicle {
   notes?: string;
 }
 
-// In-memory storage (in production, this would be a database)
-let vehicles: Vehicle[] = [
-  {
-    id: "FL-001",
-    registration: "EL-123-ABC",
-    make: "Ford",
-    model: "Transit",
-    year: 2022,
-    vin: "1FTBR1C89PKA12345",
-    status: "active",
-    assignedTo: "John Smith",
-    assignedDate: "2025-01-15",
-    location: "Johannesburg Depot",
-    mileage: 45230,
-    lastInspection: "2025-01-10",
-    nextInspection: "2025-02-10",
-    fuelEfficiency: 28.5,
-    licensePlate: "EL-123-ABC",
-    insuranceExpiry: "2025-12-31",
-    registrationExpiry: "2025-11-30",
-    createdAt: "2024-01-15T08:00:00Z",
-    updatedAt: "2025-01-15T10:30:00Z",
-    createdBy: "fleet-admin",
-  },
-  {
-    id: "FL-002",
-    registration: "EL-124-DEF",
-    make: "Mercedes",
-    model: "Sprinter",
-    year: 2023,
-    vin: "2FTBR1C89PKA12346",
-    status: "available",
-    location: "Cape Town Depot",
-    mileage: 23100,
-    lastInspection: "2025-01-12",
-    nextInspection: "2025-02-12",
-    fuelEfficiency: 32.1,
-    licensePlate: "EL-124-DEF",
-    insuranceExpiry: "2025-12-31",
-    registrationExpiry: "2025-11-30",
-    createdAt: "2024-02-20T08:00:00Z",
-    updatedAt: "2025-01-12T14:20:00Z",
-    createdBy: "fleet-admin",
-  },
-  {
-    id: "FL-003",
-    registration: "EL-125-GHI",
-    make: "Iveco",
-    model: "Daily",
-    year: 2021,
-    vin: "3FTBR1C89PKA12347",
-    status: "maintenance",
-    location: "Pretoria Service Center",
-    mileage: 67890,
-    lastInspection: "2024-12-20",
-    nextInspection: "2025-01-20",
-    fuelEfficiency: 26.8,
-    licensePlate: "EL-125-GHI",
-    insuranceExpiry: "2025-12-31",
-    registrationExpiry: "2025-11-30",
-    createdAt: "2023-05-10T08:00:00Z",
-    updatedAt: "2025-01-08T09:15:00Z",
-    createdBy: "fleet-admin",
-  },
-];
+// Load vehicles from AVIS database file
+let vehicles: Vehicle[] = [];
+
+// Initialize vehicles from AVIS database
+function loadVehicles() {
+  try {
+    const avisDataPath = path.join(process.cwd(), "public", "data", "avis-database.json");
+    const avisData = JSON.parse(fs.readFileSync(avisDataPath, "utf8"));
+    vehicles = avisData.vehicles.map((vehicle: any) => ({
+      ...vehicle,
+      assignedTo: vehicle.assigned_driver !== "Not Assigned" ? vehicle.assigned_driver : undefined,
+      location: "Fleet Depot", // Default location
+    }));
+    console.log(`Loaded ${vehicles.length} vehicles from AVIS database`);
+  } catch (error) {
+    console.error("Failed to load AVIS database:", error);
+    // Fallback to empty array
+    vehicles = [];
+  }
+}
+
+// Load vehicles on startup
+loadVehicles();
 
 // Get all vehicles
 export const getAllVehicles: RequestHandler = (req, res) => {
