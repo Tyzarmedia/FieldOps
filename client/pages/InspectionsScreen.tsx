@@ -434,10 +434,10 @@ export default function InspectionsScreen() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            Vehicle Inspections
+            Inspection
           </h1>
           <p className="text-muted-foreground">
-            Digital inspection checklists with AI-powered analysis
+            Digital inspection checklists with AI-powered analysis for vehicles and tools
           </p>
         </div>
         <div className="flex gap-2">
