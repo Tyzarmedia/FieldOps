@@ -174,8 +174,9 @@ export default function FleetVehicleManagement() {
 
       const driverName = selectedDriverObj.name;
 
-      // Update on server first
-      const response = await makeAuthenticatedRequest(`/api/vehicles/${selectedVehicle.vehicle_id}/assign`, {
+      // Update on server first - convert vehicle_id to server format
+      const serverVehicleId = `FL-${String(selectedVehicle.vehicle_id).padStart(3, "0")}`;
+      const response = await makeAuthenticatedRequest(`/api/vehicles/${serverVehicleId}/assign`, {
         method: "POST",
         body: JSON.stringify({
           assignedTo: driverName,
