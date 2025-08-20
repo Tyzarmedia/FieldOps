@@ -93,6 +93,8 @@ export default function InspectionsScreen() {
   const [selectedTab, setSelectedTab] = useState("current");
   const [selectedToolTab, setSelectedToolTab] = useState("current");
   const [selectedVehicle, setSelectedVehicle] = useState("");
+  const [selectedInspectionType, setSelectedInspectionType] = useState<"vehicle" | "tools" | "">("");
+  const [selectedTechnician, setSelectedTechnician] = useState("");
   const [selectedInspection, setSelectedInspection] =
     useState<Inspection | null>(null);
   const [showNewInspection, setShowNewInspection] = useState(false);
