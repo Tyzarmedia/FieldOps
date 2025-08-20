@@ -526,9 +526,9 @@ export default function InspectionsScreen() {
           {/* Vehicle Inspections Sub-tabs */}
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="current">Current Inspection</TabsTrigger>
-              <TabsTrigger value="history">Inspection History</TabsTrigger>
-              <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
+              <TabsTrigger value="current">Current Inspections</TabsTrigger>
+              <TabsTrigger value="history">History Inspections</TabsTrigger>
+              <TabsTrigger value="missed">Missed Inspections</TabsTrigger>
             </TabsList>
 
             <TabsContent value="current" className="space-y-6">
