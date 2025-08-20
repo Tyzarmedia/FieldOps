@@ -53,6 +53,8 @@ import {
 } from "lucide-react";
 import ToolboxInspection from '@/components/ToolboxInspection';
 import type { Toolbox } from '@/components/ToolboxInspection';
+import VehicleInspection from '@/components/VehicleInspection';
+import type { VehicleInspectionData } from '@/components/VehicleInspection';
 
 interface InspectionItem {
   id: string;
