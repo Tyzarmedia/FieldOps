@@ -1993,13 +1993,25 @@ export default function InspectionsScreen() {
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>
-                      Overdue Toolbox Inspections & Missing Tools
-                    </CardTitle>
-                    <p className="text-muted-foreground">
-                      Technician toolboxes with overdue inspections or
-                      missing/damaged tools requiring immediate attention
-                    </p>
+                    <div
+                      className="flex items-center justify-between cursor-pointer"
+                      onClick={() => toggleSection('overdueToolboxes')}
+                    >
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          Overdue Toolbox Inspections & Missing Tools
+                          {expandedSections.overdueToolboxes ? (
+                            <ChevronUp className="h-5 w-5" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5" />
+                          )}
+                        </CardTitle>
+                        <p className="text-muted-foreground">
+                          Technician toolboxes with overdue inspections or
+                          missing/damaged tools requiring immediate attention
+                        </p>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
