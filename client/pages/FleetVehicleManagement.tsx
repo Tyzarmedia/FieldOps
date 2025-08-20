@@ -674,6 +674,13 @@ export default function FleetVehicleManagement() {
                           <Wrench className="h-4 w-4 mr-2" />
                           Set Service Status
                         </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleRemoveVehicle(vehicle)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <AlertTriangle className="h-4 w-4 mr-2" />
+                          Remove Vehicle
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
