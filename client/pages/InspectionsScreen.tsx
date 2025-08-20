@@ -1691,20 +1691,38 @@ export default function InspectionsScreen() {
               )}
 
               <div>
-                <h4 className="font-medium mb-2">Inspection Items</h4>
+                <h4 className="font-medium mb-2">Inspection Items ({selectedInspection.items.length} items)</h4>
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {selectedInspection.items.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-2 border rounded"
+                      className="flex items-center justify-between p-3 border rounded-lg"
                     >
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         <div className={getItemStatusColor(item.status)}>
                           {getItemStatusIcon(item.status)}
                         </div>
-                        <span>{item.name}</span>
+                        <div>
+                          <span className="font-medium">{item.name}</span>
+                          {item.notes && (
+                            <p className="text-sm text-muted-foreground mt-1">{item.notes}</p>
+                          )}
+                        </div>
                       </div>
-                      <Badge variant="outline">{item.status}</Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant={item.status === 'Pass' ? 'default' :
+                                 item.status === 'Fail' ? 'destructive' : 'secondary'}
+                        >
+                          {item.status}
+                        </Badge>
+                        {item.photoUrl && (
+                          <Badge variant="outline">
+                            <Camera className="h-3 w-3 mr-1" />
+                            Photo
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
