@@ -1456,7 +1456,7 @@ export default function InspectionsScreen() {
                   <CardContent>
                     <div className="space-y-4">
                       {/* Enhanced Filter and Search for History */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                           <Input
@@ -1465,6 +1465,28 @@ export default function InspectionsScreen() {
                           />
                         </div>
                         <Input type="date" placeholder="Select date" />
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Assigned To" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Technicians</SelectItem>
+                            <SelectItem value="john-smith">John Smith</SelectItem>
+                            <SelectItem value="sarah-johnson">Sarah Johnson</SelectItem>
+                            <SelectItem value="mike-wilson">Mike Wilson</SelectItem>
+                            <SelectItem value="david-brown">David Brown</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="2024">2024</SelectItem>
+                            <SelectItem value="2023">2023</SelectItem>
+                            <SelectItem value="2022">2022</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <Select>
                           <SelectTrigger>
                             <SelectValue placeholder="Month" />
@@ -1482,16 +1504,6 @@ export default function InspectionsScreen() {
                             <SelectItem value="10">October</SelectItem>
                             <SelectItem value="11">November</SelectItem>
                             <SelectItem value="12">December</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Year" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="2024">2024</SelectItem>
-                            <SelectItem value="2023">2023</SelectItem>
-                            <SelectItem value="2022">2022</SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
