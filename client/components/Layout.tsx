@@ -336,6 +336,11 @@ function getNavigationForRole(role: string) {
           icon: ClipboardList,
         },
         {
+          name: "Incident Report",
+          href: "/fleet/incident-reports",
+          icon: AlertCircle,
+        },
+        {
           name: "Compliance",
           href: "/fleet/compliance",
           icon: Shield,
