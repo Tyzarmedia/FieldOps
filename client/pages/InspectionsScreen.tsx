@@ -1308,6 +1308,7 @@ export default function InspectionsScreen() {
                       </div>
                     </div>
                   </CardHeader>
+                  {expandedSections.toolboxInspections && (
                   <CardContent>
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -1721,6 +1722,7 @@ export default function InspectionsScreen() {
                       </div>
                     </div>
                   </CardContent>
+                  )}
                 </Card>
               </div>
             </TabsContent>
