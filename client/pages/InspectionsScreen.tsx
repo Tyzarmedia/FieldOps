@@ -1582,11 +1582,17 @@ export default function InspectionsScreen() {
                             <CardContent className="p-4">
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
-                                  <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-6">
                                     <div>
                                       <h4 className="font-medium">{inspection.toolType}</h4>
                                       <p className="text-sm text-muted-foreground">
                                         {inspection.toolId} • {inspection.warehouseNumber}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium">Assigned To: {inspection.assignedTo}</p>
+                                      <p className="text-sm text-muted-foreground">
+                                        Status: {inspection.assignmentStatus}
                                       </p>
                                     </div>
                                     <div>
@@ -1602,9 +1608,14 @@ export default function InspectionsScreen() {
                                     <div className="text-lg font-bold">{inspection.overallScore}%</div>
                                     <p className="text-xs text-muted-foreground">Score</p>
                                   </div>
-                                  <Badge variant="default">
-                                    {inspection.status}
-                                  </Badge>
+                                  <div className="flex flex-col gap-1">
+                                    <Badge variant="default">
+                                      {inspection.status}
+                                    </Badge>
+                                    <Badge variant="default">
+                                      {inspection.toolCondition}
+                                    </Badge>
+                                  </div>
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button variant="ghost" size="sm">
