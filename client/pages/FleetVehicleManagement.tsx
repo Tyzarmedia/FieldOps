@@ -513,7 +513,7 @@ export default function FleetVehicleManagement() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <Button
                 variant="outline"
                 onClick={() => handleSetService("Active")}
@@ -529,6 +529,14 @@ export default function FleetVehicleManagement() {
               >
                 <Wrench className="h-6 w-6 mb-2 text-yellow-600" />
                 In Service
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleSetService("Loan Vehicle")}
+                className="h-20 flex-col"
+              >
+                <Repeat className="h-6 w-6 mb-2 text-blue-600" />
+                Loan Vehicle
               </Button>
             </div>
             <Button
