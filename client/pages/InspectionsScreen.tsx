@@ -130,6 +130,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "tire_pressure",
@@ -139,6 +140,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "brakes",
@@ -148,6 +150,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "lights",
@@ -157,6 +160,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "mirrors",
