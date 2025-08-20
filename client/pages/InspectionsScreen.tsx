@@ -1233,22 +1233,22 @@ export default function InspectionsScreen() {
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Current Tool Inspections</CardTitle>
+                    <CardTitle>Toolbox Inspections by Technician</CardTitle>
                     <p className="text-muted-foreground">
-                      Tool inspections for this month only
+                      Each technician's toolbox with all assigned tools - organized for fleet manager visibility
                     </p>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <Card>
                           <CardContent className="p-4">
                             <div className="text-center">
                               <div className="text-2xl font-bold text-green-600">
-                                12
+                                8
                               </div>
                               <p className="text-sm text-muted-foreground">
-                                This Month
+                                Toolboxes Inspected
                               </p>
                             </div>
                           </CardContent>
@@ -1257,10 +1257,22 @@ export default function InspectionsScreen() {
                           <CardContent className="p-4">
                             <div className="text-center">
                               <div className="text-2xl font-bold text-yellow-600">
-                                4
+                                3
                               </div>
                               <p className="text-sm text-muted-foreground">
-                                Pending
+                                Missing Tools
+                              </p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                        <Card>
+                          <CardContent className="p-4">
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-red-600">
+                                2
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                Damaged Tools
                               </p>
                             </div>
                           </CardContent>
@@ -1269,10 +1281,10 @@ export default function InspectionsScreen() {
                           <CardContent className="p-4">
                             <div className="text-center">
                               <div className="text-2xl font-bold text-blue-600">
-                                8
+                                47
                               </div>
                               <p className="text-sm text-muted-foreground">
-                                Completed
+                                Total Tools
                               </p>
                             </div>
                           </CardContent>
@@ -1280,49 +1292,35 @@ export default function InspectionsScreen() {
                       </div>
 
                       {/* Enhanced Filter and Search */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                           <Input
-                            placeholder="Search by technician name..."
+                            placeholder="Search technician..."
                             className="pl-10"
                           />
                         </div>
                         <Input type="date" placeholder="Select date" />
                         <Select>
                           <SelectTrigger>
-                            <SelectValue placeholder="Assigned To" />
+                            <SelectValue placeholder="Department" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="all">All Technicians</SelectItem>
-                            <SelectItem value="john-smith">
-                              John Smith
-                            </SelectItem>
-                            <SelectItem value="sarah-johnson">
-                              Sarah Johnson
-                            </SelectItem>
-                            <SelectItem value="mike-wilson">
-                              Mike Wilson
-                            </SelectItem>
-                            <SelectItem value="david-brown">
-                              David Brown
-                            </SelectItem>
-                            <SelectItem value="lisa-davis">
-                              Lisa Davis
-                            </SelectItem>
+                            <SelectItem value="all">All Departments</SelectItem>
+                            <SelectItem value="maintenance">Maintenance</SelectItem>
+                            <SelectItem value="installation">Installation</SelectItem>
+                            <SelectItem value="fiber-ops">Fiber Operations</SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
                           <SelectTrigger>
-                            <SelectValue placeholder="Tool Condition" />
+                            <SelectValue placeholder="Toolbox Status" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="all">All Conditions</SelectItem>
-                            <SelectItem value="good">Good Condition</SelectItem>
-                            <SelectItem value="damaged">Damaged</SelectItem>
-                            <SelectItem value="stolen">
-                              Stolen/Missing
-                            </SelectItem>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="complete">Complete Toolbox</SelectItem>
+                            <SelectItem value="missing">Missing Tools</SelectItem>
+                            <SelectItem value="damaged">Damaged Tools</SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
@@ -1335,176 +1333,229 @@ export default function InspectionsScreen() {
                             <SelectItem value="WH-003">WH-003</SelectItem>
                           </SelectContent>
                         </Select>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Month" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="01">January</SelectItem>
-                            <SelectItem value="02">February</SelectItem>
-                            <SelectItem value="03">March</SelectItem>
-                            <SelectItem value="04">April</SelectItem>
-                            <SelectItem value="05">May</SelectItem>
-                            <SelectItem value="06">June</SelectItem>
-                            <SelectItem value="07">July</SelectItem>
-                            <SelectItem value="08">August</SelectItem>
-                            <SelectItem value="09">September</SelectItem>
-                            <SelectItem value="10">October</SelectItem>
-                            <SelectItem value="11">November</SelectItem>
-                            <SelectItem value="12">December</SelectItem>
-                          </SelectContent>
-                        </Select>
                         <Button variant="outline">
                           <Download className="h-4 w-4 mr-2" />
-                          Export
+                          Export Report
                         </Button>
                       </div>
 
-                      {/* Current Tool Inspection List */}
-                      <div className="space-y-4">
+                      {/* Toolbox Inspections - Organized by Technician */}
+                      <div className="space-y-6">
                         {[
                           {
-                            id: "TI-001",
-                            inspector: "John Smith",
-                            assignedTo: "John Smith",
-                            warehouseNumber: "WH-001",
-                            toolType: "Power Drill",
-                            toolId: "PD-2025-001",
-                            dateCompleted: "2025-01-15",
-                            status: "Completed",
-                            overallScore: 95,
-                            toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned",
-                          },
-                          {
-                            id: "TI-002",
-                            inspector: "Sarah Johnson",
-                            assignedTo: "Sarah Johnson",
-                            warehouseNumber: "WH-002",
-                            toolType: "Multimeter",
-                            toolId: "MM-2025-005",
-                            dateCompleted: "2025-01-14",
-                            status: "Completed",
+                            technicianId: "T001",
+                            technicianName: "John Smith",
+                            department: "Maintenance",
+                            inspectionDate: "2025-01-15",
+                            totalTools: 8,
+                            goodCondition: 7,
+                            damaged: 1,
+                            missing: 0,
                             overallScore: 88,
-                            toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned",
+                            tools: [
+                              { id: "PD-2025-001", name: "Power Drill", condition: "Good", status: "Present" },
+                              { id: "MM-2025-005", name: "Multimeter", condition: "Good", status: "Present" },
+                              { id: "CT-2025-012", name: "Cable Tester", condition: "Damaged", status: "Present" },
+                              { id: "VT-2025-008", name: "Voltage Tester", condition: "Good", status: "Present" },
+                              { id: "WS-2025-015", name: "Wire Stripper", condition: "Good", status: "Present" },
+                              { id: "SC-2025-022", name: "Safety Cones (4x)", condition: "Good", status: "Present" },
+                              { id: "TL-2025-029", name: "Tool Ladder", condition: "Good", status: "Present" },
+                              { id: "FK-2025-036", name: "First Aid Kit", condition: "Good", status: "Present" }
+                            ]
                           },
                           {
-                            id: "TI-003",
-                            inspector: "Mike Wilson",
-                            assignedTo: "Mike Wilson",
-                            warehouseNumber: "WH-001",
-                            toolType: "Cable Tester",
-                            toolId: "CT-2025-012",
-                            dateCompleted: "2025-01-13",
-                            status: "Attention Required",
-                            overallScore: 72,
-                            toolCondition: "Damaged",
-                            assignmentStatus: "Assigned",
+                            technicianId: "T002",
+                            technicianName: "Sarah Johnson",
+                            department: "Installation",
+                            inspectionDate: "2025-01-14",
+                            totalTools: 6,
+                            goodCondition: 5,
+                            damaged: 0,
+                            missing: 1,
+                            overallScore: 83,
+                            tools: [
+                              { id: "FS-2025-043", name: "Fiber Splicer", condition: "Good", status: "Present" },
+                              { id: "OT-2025-050", name: "OTDR", condition: "Good", status: "Present" },
+                              { id: "CP-2025-057", name: "Cleaver & Polish Kit", condition: "Good", status: "Present" },
+                              { id: "FT-2025-064", name: "Fusion Tester", condition: "Good", status: "Present" },
+                              { id: "SF-2025-071", name: "Safety Glasses", condition: "Good", status: "Present" },
+                              { id: "TM-2025-078", name: "Tape Measure", condition: "Good", status: "Missing" }
+                            ]
                           },
                           {
-                            id: "TI-004",
-                            inspector: "David Brown",
-                            assignedTo: "David Brown",
-                            warehouseNumber: "WH-003",
-                            toolType: "Voltage Tester",
-                            toolId: "VT-2025-008",
-                            dateCompleted: "2025-01-12",
-                            status: "Completed",
-                            overallScore: 93,
-                            toolCondition: "Good Condition",
-                            assignmentStatus: "Loaned",
+                            technicianId: "T003",
+                            technicianName: "Mike Wilson",
+                            department: "Fiber Operations",
+                            inspectionDate: "2025-01-13",
+                            totalTools: 10,
+                            goodCondition: 8,
+                            damaged: 1,
+                            missing: 1,
+                            overallScore: 80,
+                            tools: [
+                              { id: "FC-2025-085", name: "Fiber Cleaver", condition: "Good", status: "Present" },
+                              { id: "LS-2025-092", name: "Light Source", condition: "Good", status: "Present" },
+                              { id: "PM-2025-099", name: "Power Meter", condition: "Good", status: "Present" },
+                              { id: "VF-2025-106", name: "Visual Fault Locator", condition: "Damaged", status: "Present" },
+                              { id: "CT-2025-113", name: "Connector Toolkit", condition: "Good", status: "Present" },
+                              { id: "SP-2025-120", name: "Splice Protectors", condition: "Good", status: "Present" },
+                              { id: "FB-2025-127", name: "Fiber Buffer", condition: "Good", status: "Present" },
+                              { id: "AL-2025-134", name: "Alignment Tool", condition: "Good", status: "Present" },
+                              { id: "MC-2025-141", name: "Mechanical Cleaver", condition: "Good", status: "Present" },
+                              { id: "FL-2025-148", name: "Flashlight", condition: "Good", status: "Missing" }
+                            ]
                           },
-                        ].map((inspection) => (
-                          <Card key={inspection.id}>
-                            <CardContent className="p-4">
+                          {
+                            technicianId: "T004",
+                            technicianName: "David Brown",
+                            department: "Maintenance",
+                            inspectionDate: "2025-01-12",
+                            totalTools: 7,
+                            goodCondition: 7,
+                            damaged: 0,
+                            missing: 0,
+                            overallScore: 100,
+                            tools: [
+                              { id: "ID-2025-155", name: "Impact Driver", condition: "Good", status: "Present" },
+                              { id: "TW-2025-162", name: "Torque Wrench", condition: "Good", status: "Present" },
+                              { id: "SB-2025-169", name: "Socket Set", condition: "Good", status: "Present" },
+                              { id: "RL-2025-176", name: "Ratchet & Extension", condition: "Good", status: "Present" },
+                              { id: "PL-2025-183", name: "Pliers Set", condition: "Good", status: "Present" },
+                              { id: "SW-2025-190", name: "Screwdriver Set", condition: "Good", status: "Present" },
+                              { id: "TB-2025-197", name: "Tool Bag", condition: "Good", status: "Present" }
+                            ]
+                          }
+                        ].map((toolbox) => (
+                          <Card key={toolbox.technicianId} className="border-l-4 border-l-blue-500">
+                            <CardHeader className="pb-3">
                               <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-6">
-                                    <div>
-                                      <h4 className="font-medium">
-                                        {inspection.toolType}
-                                      </h4>
-                                      <p className="text-sm text-muted-foreground">
-                                        {inspection.toolId} •{" "}
-                                        {inspection.warehouseNumber}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="text-sm font-medium">
-                                        Assigned To: {inspection.assignedTo}
-                                      </p>
-                                      <p className="text-sm text-muted-foreground">
-                                        Status: {inspection.assignmentStatus}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="text-sm font-medium">
-                                        Inspector: {inspection.inspector}
-                                      </p>
-                                      <p className="text-sm text-muted-foreground">
-                                        {new Date(
-                                          inspection.dateCompleted,
-                                        ).toLocaleDateString()}
-                                      </p>
-                                    </div>
-                                  </div>
+                                <div>
+                                  <CardTitle className="text-lg">
+                                    {toolbox.technicianName}'s Toolbox
+                                  </CardTitle>
+                                  <p className="text-sm text-muted-foreground">
+                                    {toolbox.department} • Inspected: {new Date(toolbox.inspectionDate).toLocaleDateString()}
+                                  </p>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                  <div className="text-right">
-                                    <div className="text-lg font-bold">
-                                      {inspection.overallScore}%
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                      Score
-                                    </p>
-                                  </div>
-                                  <div className="flex flex-col gap-1">
-                                    <Badge
-                                      variant={
-                                        inspection.status === "Completed"
-                                          ? "default"
-                                          : "destructive"
-                                      }
-                                    >
-                                      {inspection.status}
-                                    </Badge>
-                                    <Badge
-                                      variant={
-                                        inspection.toolCondition ===
-                                        "Good Condition"
-                                          ? "default"
-                                          : inspection.toolCondition ===
-                                              "Damaged"
-                                            ? "destructive"
-                                            : "secondary"
-                                      }
-                                    >
-                                      {inspection.toolCondition}
-                                    </Badge>
-                                  </div>
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button variant="ghost" size="sm">
-                                        <MoreVertical className="h-4 w-4" />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                      <DropdownMenuItem>
-                                        <Eye className="h-4 w-4 mr-2" />
-                                        View Details
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem>
-                                        <User className="h-4 w-4 mr-2" />
-                                        Reassign Tool
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem>
-                                        <Download className="h-4 w-4 mr-2" />
-                                        Export Report
-                                      </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
+                                <div className="text-right">
+                                  <div className="text-2xl font-bold">{toolbox.overallScore}%</div>
+                                  <p className="text-xs text-muted-foreground">Overall Score</p>
                                 </div>
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              {/* Quick Stats */}
+                              <div className="grid grid-cols-4 gap-4 mb-4 p-3 bg-slate-50 rounded-lg">
+                                <div className="text-center">
+                                  <div className="text-lg font-semibold text-blue-600">{toolbox.totalTools}</div>
+                                  <p className="text-xs text-muted-foreground">Total Tools</p>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-lg font-semibold text-green-600">{toolbox.goodCondition}</div>
+                                  <p className="text-xs text-muted-foreground">Good Condition</p>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-lg font-semibold text-red-600">{toolbox.damaged}</div>
+                                  <p className="text-xs text-muted-foreground">Damaged</p>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-lg font-semibold text-yellow-600">{toolbox.missing}</div>
+                                  <p className="text-xs text-muted-foreground">Missing</p>
+                                </div>
+                              </div>
+
+                              {/* Tools Grid */}
+                              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                {toolbox.tools.map((tool) => (
+                                  <div
+                                    key={tool.id}
+                                    className={`p-3 rounded-lg border ${
+                                      tool.status === "Missing"
+                                        ? "border-yellow-300 bg-yellow-50"
+                                        : tool.condition === "Damaged"
+                                        ? "border-red-300 bg-red-50"
+                                        : "border-green-300 bg-green-50"
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between mb-2">
+                                      <h5 className="font-medium text-sm">{tool.name}</h5>
+                                      <div className="flex items-center gap-1">
+                                        {tool.status === "Present" ? (
+                                          <CheckCircle className="h-4 w-4 text-green-600" />
+                                        ) : (
+                                          <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                                        )}
+                                      </div>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mb-2">{tool.id}</p>
+                                    <div className="flex gap-1">
+                                      <Badge
+                                        variant={
+                                          tool.status === "Present" ? "default" : "destructive"
+                                        }
+                                        className="text-xs"
+                                      >
+                                        {tool.status}
+                                      </Badge>
+                                      <Badge
+                                        variant={
+                                          tool.condition === "Good"
+                                            ? "default"
+                                            : "destructive"
+                                        }
+                                        className="text-xs"
+                                      >
+                                        {tool.condition}
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className="flex justify-between items-center mt-4 pt-4 border-t">
+                                <div className="flex gap-2">
+                                  {toolbox.missing > 0 && (
+                                    <Badge variant="destructive">
+                                      {toolbox.missing} Missing
+                                    </Badge>
+                                  )}
+                                  {toolbox.damaged > 0 && (
+                                    <Badge variant="destructive">
+                                      {toolbox.damaged} Damaged
+                                    </Badge>
+                                  )}
+                                  {toolbox.missing === 0 && toolbox.damaged === 0 && (
+                                    <Badge variant="default">
+                                      Complete Toolbox
+                                    </Badge>
+                                  )}
+                                </div>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm">
+                                      <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent>
+                                    <DropdownMenuItem>
+                                      <Eye className="h-4 w-4 mr-2" />
+                                      View Full Details
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <AlertTriangle className="h-4 w-4 mr-2" />
+                                      Report Issues
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <User className="h-4 w-4 mr-2" />
+                                      Reassign Tools
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <Download className="h-4 w-4 mr-2" />
+                                      Export Toolbox Report
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               </div>
                             </CardContent>
                           </Card>
