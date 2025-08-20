@@ -392,42 +392,6 @@ export default function FleetOverviewDashboard() {
       </div>
 
 
-      {/* Smart Assistant */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-green-600" />
-            Ask AI About Your Fleet
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Ask me anything about your fleet... (e.g., 'Which vehicle has the worst MPG?')"
-                value={aiQuestion}
-                onChange={(e) => setAiQuestion(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleAIQuestion()}
-              />
-              <Button onClick={handleAIQuestion} disabled={isAskingAI}>
-                {isAskingAI ? (
-                  <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-            {aiResponse && (
-              <Alert>
-                <Brain className="h-4 w-4" />
-                <AlertDescription className="font-medium">
-                  {aiResponse}
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Interactive Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
