@@ -832,37 +832,72 @@ export default function InspectionsScreen() {
             </TabsContent>
 
             <TabsContent value="history" className="space-y-6">
-          {/* Filter and Search */}
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <Input placeholder="Search inspections..." />
-                </div>
-                <Select>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="failed">Failed</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Filter by vehicle" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Vehicles</SelectItem>
-                    {vehicles.map((vehicle) => (
-                      <SelectItem key={vehicle.id} value={vehicle.id}>
-                        {vehicle.registration}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Vehicle Inspection History</CardTitle>
+                  <p className="text-muted-foreground">
+                    All vehicle inspections from previous month to 3 years back
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Enhanced Filter and Search */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                        <Input
+                          placeholder="Search by technician name..."
+                          className="pl-10"
+                        />
+                      </div>
+                      <Input type="date" placeholder="Select date" />
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="01">January</SelectItem>
+                          <SelectItem value="02">February</SelectItem>
+                          <SelectItem value="03">March</SelectItem>
+                          <SelectItem value="04">April</SelectItem>
+                          <SelectItem value="05">May</SelectItem>
+                          <SelectItem value="06">June</SelectItem>
+                          <SelectItem value="07">July</SelectItem>
+                          <SelectItem value="08">August</SelectItem>
+                          <SelectItem value="09">September</SelectItem>
+                          <SelectItem value="10">October</SelectItem>
+                          <SelectItem value="11">November</SelectItem>
+                          <SelectItem value="12">December</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="2024">2024</SelectItem>
+                          <SelectItem value="2023">2023</SelectItem>
+                          <SelectItem value="2022">2022</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Vehicle" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Vehicles</SelectItem>
+                          {vehicles.map((vehicle) => (
+                            <SelectItem key={vehicle.id} value={vehicle.id}>
+                              {vehicle.registration}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button variant="outline">
+                        <Download className="h-4 w-4 mr-2" />
+                        Export
+                      </Button>
+                    </div>
               </div>
             </CardContent>
           </Card>
