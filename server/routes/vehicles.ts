@@ -125,27 +125,29 @@ export const addVehicle: RequestHandler = (req, res) => {
 
     // Generate new ID
     const maxId = vehicles.reduce((max, vehicle) => {
-      const num = parseInt(vehicle.id.split("-")[1]);
-      return num > max ? num : max;
+      return vehicle.vehicle_id > max ? vehicle.vehicle_id : max;
     }, 0);
 
     const newVehicle: Vehicle = {
-      id: `FL-${String(maxId + 1).padStart(3, "0")}`,
-      registration: vehicleData.registration,
+      vehicle_id: maxId + 1,
+      plate_number: vehicleData.licensePlate || vehicleData.registration,
       make: vehicleData.make,
       model: vehicleData.model,
       year: vehicleData.year,
-      vin: vehicleData.vin,
-      status: vehicleData.status || "available",
-      location: vehicleData.location,
+      status: vehicleData.status || "Active",
       mileage: vehicleData.mileage || 0,
-      fuelEfficiency: vehicleData.fuelEfficiency,
-      licensePlate: vehicleData.licensePlate,
-      insuranceExpiry: vehicleData.insuranceExpiry,
-      registrationExpiry: vehicleData.registrationExpiry,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      createdBy: "fleet-manager", // In real app, get from auth
+      fuel_efficiency: vehicleData.fuelEfficiency || 0,
+      assigned_driver: "Not Assigned",
+      compliance: {
+        license_expiry: "",
+        insurance_expiry: vehicleData.insuranceExpiry || "",
+        roadworthy_expiry: "",
+        registration_expiry: vehicleData.registrationExpiry || "",
+      },
+      last_service: "",
+      next_service_due: "",
+      vin: vehicleData.vin,
+      location: vehicleData.location,
       notes: vehicleData.notes,
     };
 
