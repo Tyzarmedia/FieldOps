@@ -372,6 +372,14 @@ export default function App() {
                 }
               />
               <Route
+                path="/fleet/incident-reports"
+                element={
+                  <ProtectedRoute>
+                    <IncidentReports />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/fleet/compliance"
                 element={
                   <ProtectedRoute>
