@@ -190,11 +190,11 @@ export default function IncidentReports() {
       report.reportedBy.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesSeverity =
       !selectedSeverity ||
-      selectedSeverity === "all" ||
+      selectedSeverity === "" ||
       report.severity === selectedSeverity;
     const matchesStatus =
       !selectedStatus ||
-      selectedStatus === "all" ||
+      selectedStatus === "" ||
       report.status === selectedStatus;
     const matchesTab =
       selectedTab === "all" ||
