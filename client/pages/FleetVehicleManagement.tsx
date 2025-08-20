@@ -204,38 +204,76 @@ export default function FleetVehicleManagement() {
     }
   };
 
-  const handleSetService = (status: string) => {
+  const handleSetService = async (status: string) => {
     if (!selectedVehicle) {
       showNotification.error("Service Update Failed", "No vehicle selected");
       return;
     }
 
     try {
+      // Handle loan vehicle differently
+      if (status === "Loan Vehicle") {
+        const response = await makeAuthenticatedRequest(`/api/vehicles/${selectedVehicle.vehicle_id}/loan`, {
+          method: "POST",
+          body: JSON.stringify({
+            loanedTo: "Fleet Pool",
+            loanDate: new Date().toISOString(),
+            returnDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+            notes: "Loaned via Fleet Management Dashboard",
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Server loan operation failed");
+        }
+
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.error || "Loan operation failed");
+        }
+      } else {
+        // Regular status update
+        const response = await makeAuthenticatedRequest(`/api/vehicles/${selectedVehicle.vehicle_id}/status`, {
+          method: "PATCH",
+          body: JSON.stringify({
+            status: status,
+            notes: `Status updated via Fleet Management Dashboard`,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Server status update failed");
+        }
+
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.error || "Status update failed");
+        }
+      }
+
+      // Update local state only after successful server update
       const updatedVehicles = vehicles.map((vehicle) =>
         vehicle.vehicle_id === selectedVehicle.vehicle_id
           ? { ...vehicle, status: status }
           : vehicle,
       );
 
-      // Update vehicles state
       setVehicles(updatedVehicles);
 
       // Clear dialog state immediately
       setServiceDialogOpen(false);
       setSelectedVehicle(null);
 
-      // Show notification after state updates
-      setTimeout(() => {
-        showNotification.success(
-          "Status Updated",
-          `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`,
-        );
-      }, 100);
+      // Show success notification
+      showNotification.success(
+        "Status Updated",
+        `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`,
+      );
     } catch (error) {
       console.error("Error updating vehicle status:", error);
       showNotification.error(
         "Update Failed",
-        "Failed to update vehicle status",
+        error instanceof Error ? error.message : "Failed to update vehicle status",
       );
     }
   };
