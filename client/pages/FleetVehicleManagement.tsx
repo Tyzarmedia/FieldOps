@@ -175,7 +175,6 @@ export default function FleetVehicleManagement() {
       const driverName = selectedDriverObj.name;
 
       // Update on server first
-      console.log("Assigning vehicle:", { selectedVehicle, driverName });
 
       const response = await makeAuthenticatedRequest(
         `/api/vehicles/${selectedVehicle.vehicle_id}/assign`,
@@ -189,11 +188,9 @@ export default function FleetVehicleManagement() {
         },
       );
 
-      console.log("Server response:", response.status, response.statusText);
 
       if (!response.ok) {
         const errorData = await response.text();
-        console.error("Server error:", errorData);
         throw new Error(
           `Server assignment failed: ${response.status} - ${errorData}`,
         );
