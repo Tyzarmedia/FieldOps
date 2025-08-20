@@ -155,8 +155,8 @@ export default function IncidentReports() {
     const matchesSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          report.reportedBy.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSeverity = !selectedSeverity || report.severity === selectedSeverity;
-    const matchesStatus = !selectedStatus || report.status === selectedStatus;
+    const matchesSeverity = !selectedSeverity || selectedSeverity === 'all' || report.severity === selectedSeverity;
+    const matchesStatus = !selectedStatus || selectedStatus === 'all' || report.status === selectedStatus;
     const matchesTab = selectedTab === "all" || 
                       (selectedTab === "open" && ["open", "investigating"].includes(report.status)) ||
                       (selectedTab === "resolved" && ["resolved", "closed"].includes(report.status)) ||
