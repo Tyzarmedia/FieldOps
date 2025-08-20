@@ -114,14 +114,32 @@ export default function InspectionsScreen() {
     { id: "FL-004", registration: "EL-126-JKL" },
   ];
 
-  const inspectionTypes = [
-    "Pre-Trip Inspection",
-    "Safety Inspection",
-    "Maintenance Inspection",
-    "Post-Repair Inspection",
-    "Monthly Inspection",
-    "Annual Inspection",
+  const technicians = [
+    { id: "T001", name: "John Smith", department: "Maintenance" },
+    { id: "T002", name: "Sarah Johnson", department: "Installation" },
+    { id: "T003", name: "Mike Wilson", department: "Fiber Operations" },
+    { id: "T004", name: "David Brown", department: "Maintenance" },
+    { id: "T005", name: "Lisa Chen", department: "Installation" },
+    { id: "T006", name: "Robert Garcia", department: "Field Operations" },
   ];
+
+  const inspectionTypes = {
+    vehicle: [
+      "Pre-Trip Inspection",
+      "Safety Inspection",
+      "Maintenance Inspection",
+      "Post-Repair Inspection",
+      "Monthly Inspection",
+      "Annual Inspection",
+    ],
+    tools: [
+      "Daily Tool Check",
+      "Weekly Toolbox Inspection",
+      "Monthly Equipment Audit",
+      "Tool Condition Assessment",
+      "Safety Equipment Check",
+    ]
+  };
 
   const defaultChecklist: InspectionItem[] = [
     {
