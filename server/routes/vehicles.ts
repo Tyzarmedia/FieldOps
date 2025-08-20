@@ -418,6 +418,9 @@ export const updateVehicleStatus: RequestHandler = (req, res) => {
       };
     }
 
+    // Save changes to file
+    saveVehicles();
+
     res.json({
       success: true,
       data: vehicles[vehicleIndex],
