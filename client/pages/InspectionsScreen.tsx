@@ -79,6 +79,8 @@ interface Inspection {
   dateCompleted?: string;
   items: InspectionItem[];
   overallScore: number;
+  imagesUploaded: number;
+  imagesRequired: number;
   aiAnalysis?: {
     detected: string[];
     confidence: number;
