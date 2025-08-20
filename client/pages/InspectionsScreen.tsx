@@ -1235,7 +1235,8 @@ export default function InspectionsScreen() {
                   <CardHeader>
                     <CardTitle>Toolbox Inspections by Technician</CardTitle>
                     <p className="text-muted-foreground">
-                      Each technician's toolbox with all assigned tools - organized for fleet manager visibility
+                      Each technician's toolbox with all assigned tools -
+                      organized for fleet manager visibility
                     </p>
                   </CardHeader>
                   <CardContent>
@@ -1307,9 +1308,15 @@ export default function InspectionsScreen() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">All Departments</SelectItem>
-                            <SelectItem value="maintenance">Maintenance</SelectItem>
-                            <SelectItem value="installation">Installation</SelectItem>
-                            <SelectItem value="fiber-ops">Fiber Operations</SelectItem>
+                            <SelectItem value="maintenance">
+                              Maintenance
+                            </SelectItem>
+                            <SelectItem value="installation">
+                              Installation
+                            </SelectItem>
+                            <SelectItem value="fiber-ops">
+                              Fiber Operations
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
@@ -1318,9 +1325,15 @@ export default function InspectionsScreen() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">All Status</SelectItem>
-                            <SelectItem value="complete">Complete Toolbox</SelectItem>
-                            <SelectItem value="missing">Missing Tools</SelectItem>
-                            <SelectItem value="damaged">Damaged Tools</SelectItem>
+                            <SelectItem value="complete">
+                              Complete Toolbox
+                            </SelectItem>
+                            <SelectItem value="missing">
+                              Missing Tools
+                            </SelectItem>
+                            <SelectItem value="damaged">
+                              Damaged Tools
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
@@ -1353,15 +1366,55 @@ export default function InspectionsScreen() {
                             missing: 0,
                             overallScore: 88,
                             tools: [
-                              { id: "PD-2025-001", name: "Power Drill", condition: "Good", status: "Present" },
-                              { id: "MM-2025-005", name: "Multimeter", condition: "Good", status: "Present" },
-                              { id: "CT-2025-012", name: "Cable Tester", condition: "Damaged", status: "Present" },
-                              { id: "VT-2025-008", name: "Voltage Tester", condition: "Good", status: "Present" },
-                              { id: "WS-2025-015", name: "Wire Stripper", condition: "Good", status: "Present" },
-                              { id: "SC-2025-022", name: "Safety Cones (4x)", condition: "Good", status: "Present" },
-                              { id: "TL-2025-029", name: "Tool Ladder", condition: "Good", status: "Present" },
-                              { id: "FK-2025-036", name: "First Aid Kit", condition: "Good", status: "Present" }
-                            ]
+                              {
+                                id: "PD-2025-001",
+                                name: "Power Drill",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "MM-2025-005",
+                                name: "Multimeter",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "CT-2025-012",
+                                name: "Cable Tester",
+                                condition: "Damaged",
+                                status: "Present",
+                              },
+                              {
+                                id: "VT-2025-008",
+                                name: "Voltage Tester",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "WS-2025-015",
+                                name: "Wire Stripper",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "SC-2025-022",
+                                name: "Safety Cones (4x)",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "TL-2025-029",
+                                name: "Tool Ladder",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "FK-2025-036",
+                                name: "First Aid Kit",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                            ],
                           },
                           {
                             technicianId: "T002",
@@ -1374,13 +1427,43 @@ export default function InspectionsScreen() {
                             missing: 1,
                             overallScore: 83,
                             tools: [
-                              { id: "FS-2025-043", name: "Fiber Splicer", condition: "Good", status: "Present" },
-                              { id: "OT-2025-050", name: "OTDR", condition: "Good", status: "Present" },
-                              { id: "CP-2025-057", name: "Cleaver & Polish Kit", condition: "Good", status: "Present" },
-                              { id: "FT-2025-064", name: "Fusion Tester", condition: "Good", status: "Present" },
-                              { id: "SF-2025-071", name: "Safety Glasses", condition: "Good", status: "Present" },
-                              { id: "TM-2025-078", name: "Tape Measure", condition: "Good", status: "Missing" }
-                            ]
+                              {
+                                id: "FS-2025-043",
+                                name: "Fiber Splicer",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "OT-2025-050",
+                                name: "OTDR",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "CP-2025-057",
+                                name: "Cleaver & Polish Kit",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "FT-2025-064",
+                                name: "Fusion Tester",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "SF-2025-071",
+                                name: "Safety Glasses",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "TM-2025-078",
+                                name: "Tape Measure",
+                                condition: "Good",
+                                status: "Missing",
+                              },
+                            ],
                           },
                           {
                             technicianId: "T003",
@@ -1393,17 +1476,67 @@ export default function InspectionsScreen() {
                             missing: 1,
                             overallScore: 80,
                             tools: [
-                              { id: "FC-2025-085", name: "Fiber Cleaver", condition: "Good", status: "Present" },
-                              { id: "LS-2025-092", name: "Light Source", condition: "Good", status: "Present" },
-                              { id: "PM-2025-099", name: "Power Meter", condition: "Good", status: "Present" },
-                              { id: "VF-2025-106", name: "Visual Fault Locator", condition: "Damaged", status: "Present" },
-                              { id: "CT-2025-113", name: "Connector Toolkit", condition: "Good", status: "Present" },
-                              { id: "SP-2025-120", name: "Splice Protectors", condition: "Good", status: "Present" },
-                              { id: "FB-2025-127", name: "Fiber Buffer", condition: "Good", status: "Present" },
-                              { id: "AL-2025-134", name: "Alignment Tool", condition: "Good", status: "Present" },
-                              { id: "MC-2025-141", name: "Mechanical Cleaver", condition: "Good", status: "Present" },
-                              { id: "FL-2025-148", name: "Flashlight", condition: "Good", status: "Missing" }
-                            ]
+                              {
+                                id: "FC-2025-085",
+                                name: "Fiber Cleaver",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "LS-2025-092",
+                                name: "Light Source",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "PM-2025-099",
+                                name: "Power Meter",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "VF-2025-106",
+                                name: "Visual Fault Locator",
+                                condition: "Damaged",
+                                status: "Present",
+                              },
+                              {
+                                id: "CT-2025-113",
+                                name: "Connector Toolkit",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "SP-2025-120",
+                                name: "Splice Protectors",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "FB-2025-127",
+                                name: "Fiber Buffer",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "AL-2025-134",
+                                name: "Alignment Tool",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "MC-2025-141",
+                                name: "Mechanical Cleaver",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "FL-2025-148",
+                                name: "Flashlight",
+                                condition: "Good",
+                                status: "Missing",
+                              },
+                            ],
                           },
                           {
                             technicianId: "T004",
@@ -1416,17 +1549,55 @@ export default function InspectionsScreen() {
                             missing: 0,
                             overallScore: 100,
                             tools: [
-                              { id: "ID-2025-155", name: "Impact Driver", condition: "Good", status: "Present" },
-                              { id: "TW-2025-162", name: "Torque Wrench", condition: "Good", status: "Present" },
-                              { id: "SB-2025-169", name: "Socket Set", condition: "Good", status: "Present" },
-                              { id: "RL-2025-176", name: "Ratchet & Extension", condition: "Good", status: "Present" },
-                              { id: "PL-2025-183", name: "Pliers Set", condition: "Good", status: "Present" },
-                              { id: "SW-2025-190", name: "Screwdriver Set", condition: "Good", status: "Present" },
-                              { id: "TB-2025-197", name: "Tool Bag", condition: "Good", status: "Present" }
-                            ]
-                          }
+                              {
+                                id: "ID-2025-155",
+                                name: "Impact Driver",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "TW-2025-162",
+                                name: "Torque Wrench",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "SB-2025-169",
+                                name: "Socket Set",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "RL-2025-176",
+                                name: "Ratchet & Extension",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "PL-2025-183",
+                                name: "Pliers Set",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "SW-2025-190",
+                                name: "Screwdriver Set",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                              {
+                                id: "TB-2025-197",
+                                name: "Tool Bag",
+                                condition: "Good",
+                                status: "Present",
+                              },
+                            ],
+                          },
                         ].map((toolbox) => (
-                          <Card key={toolbox.technicianId} className="border-l-4 border-l-blue-500">
+                          <Card
+                            key={toolbox.technicianId}
+                            className="border-l-4 border-l-blue-500"
+                          >
                             <CardHeader className="pb-3">
                               <div className="flex items-center justify-between">
                                 <div>
@@ -1434,12 +1605,19 @@ export default function InspectionsScreen() {
                                     {toolbox.technicianName}'s Toolbox
                                   </CardTitle>
                                   <p className="text-sm text-muted-foreground">
-                                    {toolbox.department} • Inspected: {new Date(toolbox.inspectionDate).toLocaleDateString()}
+                                    {toolbox.department} • Inspected:{" "}
+                                    {new Date(
+                                      toolbox.inspectionDate,
+                                    ).toLocaleDateString()}
                                   </p>
                                 </div>
                                 <div className="text-right">
-                                  <div className="text-2xl font-bold">{toolbox.overallScore}%</div>
-                                  <p className="text-xs text-muted-foreground">Overall Score</p>
+                                  <div className="text-2xl font-bold">
+                                    {toolbox.overallScore}%
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">
+                                    Overall Score
+                                  </p>
                                 </div>
                               </div>
                             </CardHeader>
@@ -1447,20 +1625,36 @@ export default function InspectionsScreen() {
                               {/* Quick Stats */}
                               <div className="grid grid-cols-4 gap-4 mb-4 p-3 bg-slate-50 rounded-lg">
                                 <div className="text-center">
-                                  <div className="text-lg font-semibold text-blue-600">{toolbox.totalTools}</div>
-                                  <p className="text-xs text-muted-foreground">Total Tools</p>
+                                  <div className="text-lg font-semibold text-blue-600">
+                                    {toolbox.totalTools}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">
+                                    Total Tools
+                                  </p>
                                 </div>
                                 <div className="text-center">
-                                  <div className="text-lg font-semibold text-green-600">{toolbox.goodCondition}</div>
-                                  <p className="text-xs text-muted-foreground">Good Condition</p>
+                                  <div className="text-lg font-semibold text-green-600">
+                                    {toolbox.goodCondition}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">
+                                    Good Condition
+                                  </p>
                                 </div>
                                 <div className="text-center">
-                                  <div className="text-lg font-semibold text-red-600">{toolbox.damaged}</div>
-                                  <p className="text-xs text-muted-foreground">Damaged</p>
+                                  <div className="text-lg font-semibold text-red-600">
+                                    {toolbox.damaged}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">
+                                    Damaged
+                                  </p>
                                 </div>
                                 <div className="text-center">
-                                  <div className="text-lg font-semibold text-yellow-600">{toolbox.missing}</div>
-                                  <p className="text-xs text-muted-foreground">Missing</p>
+                                  <div className="text-lg font-semibold text-yellow-600">
+                                    {toolbox.missing}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">
+                                    Missing
+                                  </p>
                                 </div>
                               </div>
 
@@ -1473,12 +1667,14 @@ export default function InspectionsScreen() {
                                       tool.status === "Missing"
                                         ? "border-yellow-300 bg-yellow-50"
                                         : tool.condition === "Damaged"
-                                        ? "border-red-300 bg-red-50"
-                                        : "border-green-300 bg-green-50"
+                                          ? "border-red-300 bg-red-50"
+                                          : "border-green-300 bg-green-50"
                                     }`}
                                   >
                                     <div className="flex items-center justify-between mb-2">
-                                      <h5 className="font-medium text-sm">{tool.name}</h5>
+                                      <h5 className="font-medium text-sm">
+                                        {tool.name}
+                                      </h5>
                                       <div className="flex items-center gap-1">
                                         {tool.status === "Present" ? (
                                           <CheckCircle className="h-4 w-4 text-green-600" />
@@ -1487,11 +1683,15 @@ export default function InspectionsScreen() {
                                         )}
                                       </div>
                                     </div>
-                                    <p className="text-xs text-muted-foreground mb-2">{tool.id}</p>
+                                    <p className="text-xs text-muted-foreground mb-2">
+                                      {tool.id}
+                                    </p>
                                     <div className="flex gap-1">
                                       <Badge
                                         variant={
-                                          tool.status === "Present" ? "default" : "destructive"
+                                          tool.status === "Present"
+                                            ? "default"
+                                            : "destructive"
                                         }
                                         className="text-xs"
                                       >
@@ -1525,11 +1725,12 @@ export default function InspectionsScreen() {
                                       {toolbox.damaged} Damaged
                                     </Badge>
                                   )}
-                                  {toolbox.missing === 0 && toolbox.damaged === 0 && (
-                                    <Badge variant="default">
-                                      Complete Toolbox
-                                    </Badge>
-                                  )}
+                                  {toolbox.missing === 0 &&
+                                    toolbox.damaged === 0 && (
+                                      <Badge variant="default">
+                                        Complete Toolbox
+                                      </Badge>
+                                    )}
                                 </div>
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
@@ -1573,7 +1774,8 @@ export default function InspectionsScreen() {
                   <CardHeader>
                     <CardTitle>Toolbox Inspection History</CardTitle>
                     <p className="text-muted-foreground">
-                      Historical toolbox inspections by technician from previous months
+                      Historical toolbox inspections by technician from previous
+                      months
                     </p>
                   </CardHeader>
                   <CardContent>
@@ -1593,10 +1795,18 @@ export default function InspectionsScreen() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">All Technicians</SelectItem>
-                            <SelectItem value="john-smith">John Smith</SelectItem>
-                            <SelectItem value="sarah-johnson">Sarah Johnson</SelectItem>
-                            <SelectItem value="mike-wilson">Mike Wilson</SelectItem>
-                            <SelectItem value="david-brown">David Brown</SelectItem>
+                            <SelectItem value="john-smith">
+                              John Smith
+                            </SelectItem>
+                            <SelectItem value="sarah-johnson">
+                              Sarah Johnson
+                            </SelectItem>
+                            <SelectItem value="mike-wilson">
+                              Mike Wilson
+                            </SelectItem>
+                            <SelectItem value="david-brown">
+                              David Brown
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
@@ -1634,9 +1844,15 @@ export default function InspectionsScreen() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">All Departments</SelectItem>
-                            <SelectItem value="maintenance">Maintenance</SelectItem>
-                            <SelectItem value="installation">Installation</SelectItem>
-                            <SelectItem value="fiber-ops">Fiber Operations</SelectItem>
+                            <SelectItem value="maintenance">
+                              Maintenance
+                            </SelectItem>
+                            <SelectItem value="installation">
+                              Installation
+                            </SelectItem>
+                            <SelectItem value="fiber-ops">
+                              Fiber Operations
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <Button variant="outline">
@@ -1658,7 +1874,7 @@ export default function InspectionsScreen() {
                             damaged: 0,
                             missing: 0,
                             overallScore: 100,
-                            status: "Complete"
+                            status: "Complete",
                           },
                           {
                             id: "TBH-002",
@@ -1670,7 +1886,7 @@ export default function InspectionsScreen() {
                             damaged: 0,
                             missing: 0,
                             overallScore: 100,
-                            status: "Complete"
+                            status: "Complete",
                           },
                           {
                             id: "TBH-003",
@@ -1682,7 +1898,7 @@ export default function InspectionsScreen() {
                             damaged: 1,
                             missing: 0,
                             overallScore: 90,
-                            status: "Issues Noted"
+                            status: "Issues Noted",
                           },
                           {
                             id: "TBH-004",
@@ -1694,8 +1910,8 @@ export default function InspectionsScreen() {
                             damaged: 0,
                             missing: 1,
                             overallScore: 86,
-                            status: "Missing Tools"
-                          }
+                            status: "Missing Tools",
+                          },
                         ].map((inspection) => (
                           <Card key={inspection.id}>
                             <CardContent className="p-4">
@@ -1707,25 +1923,44 @@ export default function InspectionsScreen() {
                                         {inspection.technicianName}'s Toolbox
                                       </h4>
                                       <p className="text-sm text-muted-foreground">
-                                        {inspection.department} • {new Date(inspection.inspectionDate).toLocaleDateString()}
+                                        {inspection.department} •{" "}
+                                        {new Date(
+                                          inspection.inspectionDate,
+                                        ).toLocaleDateString()}
                                       </p>
                                     </div>
                                     <div className="grid grid-cols-4 gap-4 text-sm">
                                       <div className="text-center">
-                                        <div className="font-semibold text-blue-600">{inspection.totalTools}</div>
-                                        <p className="text-xs text-muted-foreground">Total</p>
+                                        <div className="font-semibold text-blue-600">
+                                          {inspection.totalTools}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                          Total
+                                        </p>
                                       </div>
                                       <div className="text-center">
-                                        <div className="font-semibold text-green-600">{inspection.goodCondition}</div>
-                                        <p className="text-xs text-muted-foreground">Good</p>
+                                        <div className="font-semibold text-green-600">
+                                          {inspection.goodCondition}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                          Good
+                                        </p>
                                       </div>
                                       <div className="text-center">
-                                        <div className="font-semibold text-red-600">{inspection.damaged}</div>
-                                        <p className="text-xs text-muted-foreground">Damaged</p>
+                                        <div className="font-semibold text-red-600">
+                                          {inspection.damaged}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                          Damaged
+                                        </p>
                                       </div>
                                       <div className="text-center">
-                                        <div className="font-semibold text-yellow-600">{inspection.missing}</div>
-                                        <p className="text-xs text-muted-foreground">Missing</p>
+                                        <div className="font-semibold text-yellow-600">
+                                          {inspection.missing}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                          Missing
+                                        </p>
                                       </div>
                                     </div>
                                   </div>
@@ -1735,15 +1970,17 @@ export default function InspectionsScreen() {
                                     <div className="text-lg font-bold">
                                       {inspection.overallScore}%
                                     </div>
-                                    <p className="text-xs text-muted-foreground">Score</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      Score
+                                    </p>
                                   </div>
                                   <Badge
                                     variant={
                                       inspection.status === "Complete"
                                         ? "default"
                                         : inspection.status === "Issues Noted"
-                                        ? "secondary"
-                                        : "destructive"
+                                          ? "secondary"
+                                          : "destructive"
                                     }
                                   >
                                     {inspection.status}
@@ -1781,9 +2018,12 @@ export default function InspectionsScreen() {
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Overdue Toolbox Inspections & Missing Tools</CardTitle>
+                    <CardTitle>
+                      Overdue Toolbox Inspections & Missing Tools
+                    </CardTitle>
                     <p className="text-muted-foreground">
-                      Technician toolboxes with overdue inspections or missing/damaged tools requiring immediate attention
+                      Technician toolboxes with overdue inspections or
+                      missing/damaged tools requiring immediate attention
                     </p>
                   </CardHeader>
                   <CardContent>
@@ -1791,7 +2031,8 @@ export default function InspectionsScreen() {
                       <Alert>
                         <AlertTriangle className="h-4 w-4" />
                         <AlertDescription>
-                          <strong>Critical:</strong> 3 technician toolboxes have missing/damaged tools and 2 have overdue inspections
+                          <strong>Critical:</strong> 3 technician toolboxes have
+                          missing/damaged tools and 2 have overdue inspections
                         </AlertDescription>
                       </Alert>
 
@@ -1810,9 +2051,15 @@ export default function InspectionsScreen() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">All Issues</SelectItem>
-                            <SelectItem value="overdue">Overdue Inspection</SelectItem>
-                            <SelectItem value="missing">Missing Tools</SelectItem>
-                            <SelectItem value="damaged">Damaged Tools</SelectItem>
+                            <SelectItem value="overdue">
+                              Overdue Inspection
+                            </SelectItem>
+                            <SelectItem value="missing">
+                              Missing Tools
+                            </SelectItem>
+                            <SelectItem value="damaged">
+                              Damaged Tools
+                            </SelectItem>
                             <SelectItem value="stolen">Stolen Tools</SelectItem>
                           </SelectContent>
                         </Select>
@@ -1833,9 +2080,15 @@ export default function InspectionsScreen() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">All Departments</SelectItem>
-                            <SelectItem value="maintenance">Maintenance</SelectItem>
-                            <SelectItem value="installation">Installation</SelectItem>
-                            <SelectItem value="fiber-ops">Fiber Operations</SelectItem>
+                            <SelectItem value="maintenance">
+                              Maintenance
+                            </SelectItem>
+                            <SelectItem value="installation">
+                              Installation
+                            </SelectItem>
+                            <SelectItem value="fiber-ops">
+                              Fiber Operations
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <Button variant="outline">
@@ -1862,8 +2115,11 @@ export default function InspectionsScreen() {
                             totalTools: 8,
                             missingTools: 2,
                             damagedTools: 0,
-                            missingItems: ["Digital Caliper (DC-2024-022)", "Safety Harness (SH-2024-029)"],
-                            lastInspection: "2024-11-15"
+                            missingItems: [
+                              "Digital Caliper (DC-2024-022)",
+                              "Safety Harness (SH-2024-029)",
+                            ],
+                            lastInspection: "2024-11-15",
                           },
                           {
                             id: "TBM-002",
@@ -1876,8 +2132,11 @@ export default function InspectionsScreen() {
                             totalTools: 6,
                             missingTools: 2,
                             damagedTools: 0,
-                            missingItems: ["Wire Stripper (WS-2024-035)", "Cable Crimper (CC-2024-042)"],
-                            lastInspection: "2024-10-25"
+                            missingItems: [
+                              "Wire Stripper (WS-2024-035)",
+                              "Cable Crimper (CC-2024-042)",
+                            ],
+                            lastInspection: "2024-10-25",
                           },
                           {
                             id: "TBM-003",
@@ -1890,8 +2149,11 @@ export default function InspectionsScreen() {
                             totalTools: 9,
                             missingTools: 0,
                             damagedTools: 2,
-                            missingItems: ["Torque Wrench (TW-2024-015)", "Impact Socket Set (IS-2024-022)"],
-                            lastInspection: "2024-12-01"
+                            missingItems: [
+                              "Torque Wrench (TW-2024-015)",
+                              "Impact Socket Set (IS-2024-022)",
+                            ],
+                            lastInspection: "2024-12-01",
                           },
                           {
                             id: "TBM-004",
@@ -1905,7 +2167,7 @@ export default function InspectionsScreen() {
                             missingTools: 0,
                             damagedTools: 0,
                             missingItems: [],
-                            lastInspection: "2024-11-01"
+                            lastInspection: "2024-11-01",
                           },
                           {
                             id: "TBM-005",
@@ -1918,9 +2180,12 @@ export default function InspectionsScreen() {
                             totalTools: 11,
                             missingTools: 1,
                             damagedTools: 1,
-                            missingItems: ["Fiber Scope (FS-2024-088)", "Patch Cord Tester (PCT-2024-095) - Damaged"],
-                            lastInspection: "2024-12-15"
-                          }
+                            missingItems: [
+                              "Fiber Scope (FS-2024-088)",
+                              "Patch Cord Tester (PCT-2024-095) - Damaged",
+                            ],
+                            lastInspection: "2024-12-15",
+                          },
                         ].map((issue) => (
                           <Card
                             key={issue.id}
@@ -1928,8 +2193,8 @@ export default function InspectionsScreen() {
                               issue.severity === "Critical"
                                 ? "border-l-red-500 bg-red-50"
                                 : issue.severity === "High"
-                                ? "border-l-yellow-500 bg-yellow-50"
-                                : "border-l-orange-500 bg-orange-50"
+                                  ? "border-l-yellow-500 bg-yellow-50"
+                                  : "border-l-orange-500 bg-orange-50"
                             }`}
                           >
                             <CardContent className="p-4">
@@ -1941,7 +2206,10 @@ export default function InspectionsScreen() {
                                         {issue.technicianName}'s Toolbox
                                       </h4>
                                       <p className="text-sm text-muted-foreground">
-                                        {issue.department} • Last Inspection: {new Date(issue.lastInspection).toLocaleDateString()}
+                                        {issue.department} • Last Inspection:{" "}
+                                        {new Date(
+                                          issue.lastInspection,
+                                        ).toLocaleDateString()}
                                       </p>
                                     </div>
                                     <Badge
@@ -1949,8 +2217,8 @@ export default function InspectionsScreen() {
                                         issue.severity === "Critical"
                                           ? "destructive"
                                           : issue.severity === "High"
-                                          ? "destructive"
-                                          : "secondary"
+                                            ? "destructive"
+                                            : "secondary"
                                       }
                                     >
                                       {issue.severity}
@@ -1962,21 +2230,36 @@ export default function InspectionsScreen() {
                                       <p className="text-sm font-medium text-red-600 mb-2">
                                         {issue.issueType}
                                         {issue.daysPastDue > 0 && (
-                                          <span> - {issue.daysPastDue} days overdue</span>
+                                          <span>
+                                            {" "}
+                                            - {issue.daysPastDue} days overdue
+                                          </span>
                                         )}
                                       </p>
                                       <div className="grid grid-cols-3 gap-2 text-sm">
                                         <div className="text-center p-2 bg-white rounded border">
-                                          <div className="font-semibold">{issue.totalTools}</div>
-                                          <p className="text-xs text-muted-foreground">Total</p>
+                                          <div className="font-semibold">
+                                            {issue.totalTools}
+                                          </div>
+                                          <p className="text-xs text-muted-foreground">
+                                            Total
+                                          </p>
                                         </div>
                                         <div className="text-center p-2 bg-white rounded border">
-                                          <div className="font-semibold text-red-600">{issue.missingTools}</div>
-                                          <p className="text-xs text-muted-foreground">Missing</p>
+                                          <div className="font-semibold text-red-600">
+                                            {issue.missingTools}
+                                          </div>
+                                          <p className="text-xs text-muted-foreground">
+                                            Missing
+                                          </p>
                                         </div>
                                         <div className="text-center p-2 bg-white rounded border">
-                                          <div className="font-semibold text-yellow-600">{issue.damagedTools}</div>
-                                          <p className="text-xs text-muted-foreground">Damaged</p>
+                                          <div className="font-semibold text-yellow-600">
+                                            {issue.damagedTools}
+                                          </div>
+                                          <p className="text-xs text-muted-foreground">
+                                            Damaged
+                                          </p>
                                         </div>
                                       </div>
                                     </div>
@@ -1987,12 +2270,17 @@ export default function InspectionsScreen() {
                                           Affected Tools:
                                         </p>
                                         <ul className="space-y-1">
-                                          {issue.missingItems.map((item, index) => (
-                                            <li key={index} className="text-xs bg-white p-2 rounded border flex items-center gap-2">
-                                              <AlertTriangle className="h-3 w-3 text-red-500" />
-                                              {item}
-                                            </li>
-                                          ))}
+                                          {issue.missingItems.map(
+                                            (item, index) => (
+                                              <li
+                                                key={index}
+                                                className="text-xs bg-white p-2 rounded border flex items-center gap-2"
+                                              >
+                                                <AlertTriangle className="h-3 w-3 text-red-500" />
+                                                {item}
+                                              </li>
+                                            ),
+                                          )}
                                         </ul>
                                       </div>
                                     )}
