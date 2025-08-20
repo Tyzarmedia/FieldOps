@@ -110,6 +110,34 @@ export default function FleetManagerSettings() {
     biometricLogin: false,
   });
 
+  // Load settings from server on component mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        setIsLoading(true);
+        const response = await makeAuthenticatedRequest("/api/fleet-settings");
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data) {
+            const settings = data.data;
+            setProfile(settings.profile);
+            setNotifications(settings.notifications);
+            setFleetPreferences(settings.fleetPreferences);
+            setSystemPreferences(settings.systemPreferences);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load settings:", error);
+        showNotification.error("Load Failed", "Could not load your settings");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSettings();
+  }, [showNotification]);
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
