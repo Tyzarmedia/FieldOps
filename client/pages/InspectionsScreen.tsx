@@ -1042,6 +1042,7 @@ export default function InspectionsScreen() {
                     </div>
                   </div>
                 </CardHeader>
+                {expandedSections.vehicleHistory && (
                 <CardContent>
                   <div className="space-y-4">
                     {/* Enhanced Filter and Search */}
@@ -1103,6 +1104,7 @@ export default function InspectionsScreen() {
                     </div>
                   </div>
                 </CardContent>
+                )}
               </Card>
 
               {/* Inspection History List */}
