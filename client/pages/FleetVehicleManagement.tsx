@@ -294,6 +294,115 @@ export default function FleetVehicleManagement() {
     }
   };
 
+  const handleAddVehicle = async () => {
+    try {
+      if (!newVehicleData.registration || !newVehicleData.make || !newVehicleData.model) {
+        showNotification.error("Validation Error", "Please fill in all required fields");
+        return;
+      }
+
+      const response = await makeAuthenticatedRequest("/api/vehicles", {
+        method: "POST",
+        body: JSON.stringify(newVehicleData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Server error while adding vehicle");
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || "Failed to add vehicle");
+      }
+
+      // Add to local state
+      const newVehicle = {
+        vehicle_id: Math.max(...vehicles.map(v => v.vehicle_id), 0) + 1,
+        plate_number: newVehicleData.licensePlate || newVehicleData.registration,
+        make: newVehicleData.make,
+        model: newVehicleData.model,
+        year: newVehicleData.year,
+        status: "Active",
+        mileage: newVehicleData.mileage,
+        fuel_efficiency: newVehicleData.fuelEfficiency,
+        assigned_driver: "Not Assigned",
+        compliance: {
+          license_expiry: "",
+          insurance_expiry: newVehicleData.insuranceExpiry || "",
+          roadworthy_expiry: "",
+          registration_expiry: newVehicleData.registrationExpiry || "",
+        },
+        last_service: "",
+        next_service_due: "",
+      };
+
+      setVehicles([...vehicles, newVehicle]);
+      setAddVehicleDialogOpen(false);
+      setNewVehicleData({
+        registration: "",
+        make: "",
+        model: "",
+        year: new Date().getFullYear(),
+        vin: "",
+        licensePlate: "",
+        location: "",
+        mileage: 0,
+        fuelEfficiency: 0,
+        insuranceExpiry: "",
+        registrationExpiry: "",
+        notes: "",
+      });
+
+      showNotification.success(
+        "Vehicle Added",
+        `${newVehicleData.make} ${newVehicleData.model} has been added to the fleet`,
+      );
+    } catch (error) {
+      console.error("Error adding vehicle:", error);
+      showNotification.error(
+        "Add Failed",
+        error instanceof Error ? error.message : "Failed to add vehicle",
+      );
+    }
+  };
+
+  const handleRemoveVehicle = async (vehicle: Vehicle) => {
+    try {
+      const confirmed = window.confirm(
+        `Are you sure you want to remove ${vehicle.make} ${vehicle.model} (${vehicle.plate_number}) from the fleet?`
+      );
+
+      if (!confirmed) return;
+
+      const response = await makeAuthenticatedRequest(`/api/vehicles/${vehicle.vehicle_id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Server error while removing vehicle");
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || "Failed to remove vehicle");
+      }
+
+      // Remove from local state
+      setVehicles(vehicles.filter(v => v.vehicle_id !== vehicle.vehicle_id));
+
+      showNotification.success(
+        "Vehicle Removed",
+        `${vehicle.make} ${vehicle.model} (${vehicle.plate_number}) has been removed from the fleet`,
+      );
+    } catch (error) {
+      console.error("Error removing vehicle:", error);
+      showNotification.error(
+        "Remove Failed",
+        error instanceof Error ? error.message : "Failed to remove vehicle",
+      );
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
