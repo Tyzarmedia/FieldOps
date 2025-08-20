@@ -1288,11 +1288,25 @@ export default function InspectionsScreen() {
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Toolbox Inspections by Technician</CardTitle>
-                    <p className="text-muted-foreground">
-                      Each technician's toolbox with all assigned tools -
-                      organized for fleet manager visibility
-                    </p>
+                    <div
+                      className="flex items-center justify-between cursor-pointer"
+                      onClick={() => toggleSection('toolboxInspections')}
+                    >
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          Toolbox Inspections by Technician
+                          {expandedSections.toolboxInspections ? (
+                            <ChevronUp className="h-5 w-5" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5" />
+                          )}
+                        </CardTitle>
+                        <p className="text-muted-foreground">
+                          Each technician's toolbox with all assigned tools -
+                          organized for fleet manager visibility
+                        </p>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
