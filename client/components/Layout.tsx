@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import NotificationBell, { Notification } from "./NotificationBell";
 import {
   Menu,
   X,
@@ -46,10 +47,74 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
 
   const navigation = getNavigationForRole(userRole);
 
+  // Mock notifications - in real app this would come from a service
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: "1",
+      type: "inspection_complete",
+      title: "Vehicle Inspection Complete",
+      message: "John Smith completed inspection for vehicle EL-123-ABC",
+      timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
+      read: false,
+      priority: "medium",
+      data: {
+        technicianName: "John Smith",
+        vehicleRegistration: "EL-123-ABC",
+        inspectionType: "Pre-Trip Inspection",
+      },
+    },
+    {
+      id: "2",
+      type: "incident_report",
+      title: "New Incident Report",
+      message: "Sarah Johnson submitted incident report #INC-2025-003",
+      timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 minutes ago
+      read: false,
+      priority: "high",
+      data: {
+        technicianName: "Sarah Johnson",
+        incidentId: "INC-2025-003",
+      },
+    },
+    {
+      id: "3",
+      type: "vehicle_assigned",
+      title: "Vehicle Assignment",
+      message: "Vehicle EL-124-DEF assigned to Mike Wilson",
+      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
+      read: true,
+      priority: "low",
+      data: {
+        technicianName: "Mike Wilson",
+        vehicleRegistration: "EL-124-DEF",
+      },
+    },
+  ]);
+
   const handleLogout = () => {
     localStorage.removeItem("userRole");
     localStorage.removeItem("userEmail");
     navigate("/login");
+  };
+
+  const handleMarkAsRead = (id: string) => {
+    setNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === id ? { ...notification, read: true } : notification,
+      ),
+    );
+  };
+
+  const handleMarkAllAsRead = () => {
+    setNotifications((prev) =>
+      prev.map((notification) => ({ ...notification, read: true })),
+    );
+  };
+
+  const handleClearNotification = (id: string) => {
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id),
+    );
   };
 
   return (
@@ -163,8 +228,40 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
 
       {/* Main content */}
       <div className="lg:pl-64">
+        {/* Header */}
+        <header className="bg-background border-b border-border px-4 sm:px-6 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="lg:hidden"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              <h1 className="text-lg font-semibold text-foreground">
+                {getPageTitle(location.pathname, userRole)}
+              </h1>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Only show notifications for fleet managers and relevant roles */}
+              {(userRole === "FleetManager" ||
+                userRole === "Manager" ||
+                userRole === "CEO") && (
+                <NotificationBell
+                  notifications={notifications}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  onClearNotification={handleClearNotification}
+                />
+              )}
+            </div>
+          </div>
+        </header>
+
         {/* Page content */}
-        <main className="p-4 sm:p-6 sm:pt-px">{children}</main>
+        <main className="p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );
@@ -237,6 +334,11 @@ function getNavigationForRole(role: string) {
           name: "Inspection",
           href: "/fleet/inspections",
           icon: ClipboardList,
+        },
+        {
+          name: "Incident Report",
+          href: "/fleet/incident-reports",
+          icon: AlertCircle,
         },
         {
           name: "Compliance",
