@@ -47,10 +47,76 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
 
   const navigation = getNavigationForRole(userRole);
 
+  // Mock notifications - in real app this would come from a service
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: "1",
+      type: "inspection_complete",
+      title: "Vehicle Inspection Complete",
+      message: "John Smith completed inspection for vehicle EL-123-ABC",
+      timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
+      read: false,
+      priority: "medium",
+      data: {
+        technicianName: "John Smith",
+        vehicleRegistration: "EL-123-ABC",
+        inspectionType: "Pre-Trip Inspection"
+      }
+    },
+    {
+      id: "2",
+      type: "incident_report",
+      title: "New Incident Report",
+      message: "Sarah Johnson submitted incident report #INC-2025-003",
+      timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 minutes ago
+      read: false,
+      priority: "high",
+      data: {
+        technicianName: "Sarah Johnson",
+        incidentId: "INC-2025-003"
+      }
+    },
+    {
+      id: "3",
+      type: "vehicle_assigned",
+      title: "Vehicle Assignment",
+      message: "Vehicle EL-124-DEF assigned to Mike Wilson",
+      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
+      read: true,
+      priority: "low",
+      data: {
+        technicianName: "Mike Wilson",
+        vehicleRegistration: "EL-124-DEF"
+      }
+    }
+  ]);
+
   const handleLogout = () => {
     localStorage.removeItem("userRole");
     localStorage.removeItem("userEmail");
     navigate("/login");
+  };
+
+  const handleMarkAsRead = (id: string) => {
+    setNotifications(prev =>
+      prev.map(notification =>
+        notification.id === id
+          ? { ...notification, read: true }
+          : notification
+      )
+    );
+  };
+
+  const handleMarkAllAsRead = () => {
+    setNotifications(prev =>
+      prev.map(notification => ({ ...notification, read: true }))
+    );
+  };
+
+  const handleClearNotification = (id: string) => {
+    setNotifications(prev =>
+      prev.filter(notification => notification.id !== id)
+    );
   };
 
   return (
