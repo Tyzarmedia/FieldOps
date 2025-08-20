@@ -68,6 +68,7 @@ import FleetOverviewDashboard from "./pages/FleetOverviewDashboard";
 import FleetVehicleManagement from "./pages/FleetVehicleManagement";
 import VehicleDetailScreen from "./pages/VehicleDetailScreen";
 import InspectionsScreen from "./pages/InspectionsScreen";
+import IncidentReports from "./pages/IncidentReports";
 import ComplianceScreen from "./pages/ComplianceScreen";
 import FleetManagerSettings from "./pages/FleetManagerSettings";
 
