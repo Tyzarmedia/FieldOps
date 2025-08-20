@@ -92,6 +92,21 @@ export default function FleetVehicleManagement() {
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const [addVehicleDialogOpen, setAddVehicleDialogOpen] = useState(false);
+  const [newVehicleData, setNewVehicleData] = useState({
+    registration: "",
+    make: "",
+    model: "",
+    year: new Date().getFullYear(),
+    vin: "",
+    licensePlate: "",
+    location: "",
+    mileage: 0,
+    fuelEfficiency: 0,
+    insuranceExpiry: "",
+    registrationExpiry: "",
+    notes: "",
+  });
 
   // Load AVIS database
   useEffect(() => {
