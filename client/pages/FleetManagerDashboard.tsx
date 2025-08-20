@@ -19,7 +19,7 @@ import {
 
 export default function FleetManagerDashboard() {
   const [systemData, setSystemData] = useState<any>(null);
-  const { showNotification } = useNotification();
+  const { show: showNotification } = useNotification();
 
   const fleetStats = {
     totalVehicles: 24,
