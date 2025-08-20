@@ -438,7 +438,10 @@
       "address": "123 Business Ave, Downtown",
       "manager": "Sarah Wilson",
       "employees": 25,
-      "departments": ["Field Operations", "IT Support"],
+      "departments": [
+        "Field Operations",
+        "IT Support"
+      ],
       "performance": {
         "efficiency": 92.1,
         "revenue": 450000,
@@ -451,7 +454,11 @@
       "address": "456 Corporate Blvd, Midtown",
       "manager": "David Brown",
       "employees": 30,
-      "departments": ["Fleet Management", "Network Operations", "HR"],
+      "departments": [
+        "Fleet Management",
+        "Network Operations",
+        "HR"
+      ],
       "performance": {
         "efficiency": 89.3,
         "revenue": 520000,
@@ -464,7 +471,10 @@
       "address": "789 Service St, Uptown",
       "manager": "Lisa Garcia",
       "employees": 20,
-      "departments": ["Customer Service", "Sales"],
+      "departments": [
+        "Customer Service",
+        "Sales"
+      ],
       "performance": {
         "efficiency": 91.8,
         "revenue": 380000,
@@ -1448,6 +1458,35 @@
       "totalAmount": 0,
       "createdAt": "2025-08-19T20:20:02.209Z",
       "updatedAt": "2025-08-19T20:20:02.209Z"
+    },
+    {
+      "id": "OT-1755666406743",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-20T05:06:38.016Z",
+      "totalHours": 0.010329166666666667,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Early start before 08:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 1.549375,
+      "createdAt": "2025-08-20T05:06:47.454Z",
+      "updatedAt": "2025-08-20T05:07:15.501Z",
+      "endTime": "2025-08-20T05:07:15.201Z"
+    },
+    {
+      "id": "OT-1755666492389",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-20T05:06:38.016Z",
+      "totalHours": 0.042784166666666665,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Early start before 08:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 6.417625,
+      "createdAt": "2025-08-20T05:08:13.071Z",
+      "updatedAt": "2025-08-20T05:09:12.747Z"
     }
   ]
 }
