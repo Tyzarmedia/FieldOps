@@ -281,7 +281,7 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => alert("Scheduling fleet inspection...")}
+            onClick={() => showNotification.success("Inspection Scheduled", "Fleet inspection has been scheduled successfully")}
           >
             <Plus className="h-4 w-4 mr-2" />
             Schedule Inspection
@@ -289,7 +289,7 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => alert("Opening inspection calendar...")}
+            onClick={() => showNotification.info("Calendar", "Opening inspection calendar...")}
           >
             <Calendar className="h-4 w-4 mr-2" />
             View Calendar
@@ -297,7 +297,7 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => alert("Opening maintenance schedule...")}
+            onClick={() => showNotification.info("Maintenance", "Opening maintenance schedule...")}
           >
             <Wrench className="h-4 w-4 mr-2" />
             Maintenance
@@ -305,7 +305,7 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => alert("Generating fleet report...")}
+            onClick={() => showNotification.success("Report Generated", "Fleet report has been generated successfully")}
           >
             <FileText className="h-4 w-4 mr-2" />
             Generate Report
