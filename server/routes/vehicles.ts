@@ -239,6 +239,9 @@ export const updateVehicle: RequestHandler = (req, res) => {
       updatedAt: new Date().toISOString(),
     };
 
+    // Save changes to file
+    saveVehicles();
+
     res.json({
       success: true,
       data: vehicles[vehicleIndex],
