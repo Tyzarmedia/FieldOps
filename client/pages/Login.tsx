@@ -332,7 +332,7 @@ export default function Login() {
               </div>
               <div className="flex items-center justify-between">
                 <span>
-                  <strong>Coordinator:</strong> nancy@company.com
+                  <strong>Fleet Manager:</strong> nancy@company.com
                 </span>
                 <Button
                   type="button"
