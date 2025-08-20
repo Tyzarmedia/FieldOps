@@ -121,6 +121,11 @@ export function createServer() {
   app.delete("/api/vehicles/:id", removeVehicle);
   app.patch("/api/vehicles/:id/status", updateVehicleStatus);
 
+  // Fleet Manager Settings API
+  app.get("/api/fleet-settings", getFleetManagerSettings);
+  app.post("/api/fleet-settings", saveFleetManagerSettings);
+  app.patch("/api/fleet-settings/:category", updateSettingCategory);
+
   // Job Management API
   app.get("/api/jobs", getJobs);
   app.get("/api/jobs/technician/:technicianId", getJobsByTechnician);
