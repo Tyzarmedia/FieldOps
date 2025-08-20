@@ -1528,32 +1528,54 @@ export default function InspectionsScreen() {
                           {
                             id: "TI-H001",
                             inspector: "John Smith",
+                            assignedTo: "John Smith",
                             warehouseNumber: "WH-001",
                             toolType: "Power Drill",
                             toolId: "PD-2024-001",
                             dateCompleted: "2024-12-15",
                             status: "Completed",
-                            overallScore: 92
+                            overallScore: 92,
+                            toolCondition: "Good Condition",
+                            assignmentStatus: "Assigned"
                           },
                           {
                             id: "TI-H002",
                             inspector: "Sarah Johnson",
+                            assignedTo: "Sarah Johnson",
                             warehouseNumber: "WH-002",
                             toolType: "Oscilloscope",
                             toolId: "OS-2024-003",
                             dateCompleted: "2024-11-28",
                             status: "Completed",
-                            overallScore: 89
+                            overallScore: 89,
+                            toolCondition: "Good Condition",
+                            assignmentStatus: "Assigned"
                           },
                           {
                             id: "TI-H003",
                             inspector: "Mike Wilson",
+                            assignedTo: "Mike Wilson",
                             warehouseNumber: "WH-001",
                             toolType: "Cable Tester",
                             toolId: "CT-2024-008",
                             dateCompleted: "2024-10-22",
                             status: "Completed",
-                            overallScore: 85
+                            overallScore: 85,
+                            toolCondition: "Good Condition",
+                            assignmentStatus: "Loaned"
+                          },
+                          {
+                            id: "TI-H004",
+                            inspector: "David Brown",
+                            assignedTo: "David Brown",
+                            warehouseNumber: "WH-003",
+                            toolType: "Digital Meter",
+                            toolId: "DM-2024-015",
+                            dateCompleted: "2024-09-30",
+                            status: "Completed",
+                            overallScore: 94,
+                            toolCondition: "Good Condition",
+                            assignmentStatus: "Assigned"
                           }
                         ].map((inspection) => (
                           <Card key={inspection.id}>
