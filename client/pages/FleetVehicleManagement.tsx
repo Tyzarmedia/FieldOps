@@ -80,7 +80,7 @@ interface Driver {
 }
 
 export default function FleetVehicleManagement() {
-  const { showNotification } = useNotification();
+  const { show: showNotification } = useNotification();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>([]);
