@@ -81,6 +81,7 @@ interface Inspection {
 }
 
 export default function InspectionsScreen() {
+  const [mainTab, setMainTab] = useState("vehicle");
   const [selectedTab, setSelectedTab] = useState("current");
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedInspection, setSelectedInspection] =
