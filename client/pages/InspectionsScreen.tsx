@@ -515,11 +515,10 @@ export default function InspectionsScreen() {
       </div>
 
       {/* Main Content */}
-      <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="current">Current Inspection</TabsTrigger>
-          <TabsTrigger value="history">Inspection History</TabsTrigger>
-          <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
+      <Tabs value={mainTab} onValueChange={setMainTab}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="vehicle">Vehicle Inspections</TabsTrigger>
+          <TabsTrigger value="tool">Tool Inspection</TabsTrigger>
         </TabsList>
 
         <TabsContent value="current" className="space-y-6">
