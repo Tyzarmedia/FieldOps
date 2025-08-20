@@ -134,7 +134,7 @@ export default function FleetVehicleManagement() {
     setFilteredVehicles(filtered);
   }, [vehicles, searchTerm, statusFilter]);
 
-  const handleAssignDriver = () => {
+  const handleAssignDriver = async () => {
     if (!selectedVehicle || !selectedDriver) {
       showNotification.error(
         "Assignment Failed",
@@ -157,13 +157,32 @@ export default function FleetVehicleManagement() {
 
       const driverName = selectedDriverObj.name;
 
+      // Update on server first
+      const response = await makeAuthenticatedRequest(`/api/vehicles/${selectedVehicle.vehicle_id}/assign`, {
+        method: "POST",
+        body: JSON.stringify({
+          assignedTo: driverName,
+          assignedDate: new Date().toISOString(),
+          notes: `Assigned via Fleet Management Dashboard`,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Server assignment failed");
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || "Assignment failed");
+      }
+
+      // Update local state only after successful server update
       const updatedVehicles = vehicles.map((vehicle) =>
         vehicle.vehicle_id === selectedVehicle.vehicle_id
           ? { ...vehicle, assigned_driver: driverName }
           : vehicle,
       );
 
-      // Update vehicles state
       setVehicles(updatedVehicles);
 
       // Clear dialog state immediately
@@ -171,16 +190,17 @@ export default function FleetVehicleManagement() {
       setSelectedDriver("");
       setSelectedVehicle(null);
 
-      // Show notification after state updates
-      setTimeout(() => {
-        showNotification.success(
-          "Driver Assigned",
-          `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`,
-        );
-      }, 100);
+      // Show success notification
+      showNotification.success(
+        "Driver Assigned",
+        `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`,
+      );
     } catch (error) {
       console.error("Error assigning driver:", error);
-      showNotification.error("Assignment Failed", "Failed to assign driver");
+      showNotification.error(
+        "Assignment Failed",
+        error instanceof Error ? error.message : "Failed to assign driver"
+      );
     }
   };
 
