@@ -1009,73 +1009,15 @@ export default function InspectionsScreen() {
               {/* Inspection History List */}
               <div className="space-y-4">
                 {inspections.map((inspection) => (
-                  <Card key={inspection.id}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <h3 className="font-semibold">{inspection.type}</h3>
-                            <Badge
-                              className={getStatusColor(inspection.status)}
-                            >
-                              {inspection.status}
-                            </Badge>
-                          </div>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
-                            <div>
-                              <span className="font-medium">Vehicle:</span>{" "}
-                              {inspection.vehicleRegistration}
-                            </div>
-                            <div>
-                              <span className="font-medium">Inspector:</span>{" "}
-                              {inspection.inspector}
-                            </div>
-                            <div>
-                              <span className="font-medium">Date:</span>{" "}
-                              {inspection.dateCompleted ||
-                                inspection.dateScheduled}
-                            </div>
-                            <div>
-                              <span className="font-medium">Score:</span>{" "}
-                              {inspection.overallScore}%
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <div className="text-right mr-4">
-                            <div className="text-2xl font-bold">
-                              {inspection.overallScore}%
-                            </div>
-                            <Progress
-                              value={inspection.overallScore}
-                              className="w-20"
-                            />
-                          </div>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  setSelectedInspection(inspection)
-                                }
-                              >
-                                <Eye className="h-4 w-4 mr-2" />
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Download className="h-4 w-4 mr-2" />
-                                Export Report
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <VehicleInspection
+                    key={inspection.id}
+                    inspection={inspection as VehicleInspectionData}
+                    showImageUploadStatus={true}
+                    onViewDetails={(inspection) => setSelectedInspection(inspection)}
+                    onReportIssues={(inspection) => console.log('Report vehicle issues:', inspection)}
+                    onExportReport={(inspection) => console.log('Export vehicle report:', inspection)}
+                    onContinueInspection={(inspection) => console.log('Continue vehicle inspection:', inspection)}
+                  />
                 ))}
               </div>
             </TabsContent>
