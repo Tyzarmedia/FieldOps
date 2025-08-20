@@ -521,7 +521,16 @@ export default function InspectionsScreen() {
           <TabsTrigger value="tool">Tool Inspection</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="current" className="space-y-6">
+        <TabsContent value="vehicle" className="space-y-6">
+          {/* Vehicle Inspections Sub-tabs */}
+          <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="current">Current Inspection</TabsTrigger>
+              <TabsTrigger value="history">Inspection History</TabsTrigger>
+              <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="current" className="space-y-6">
           {currentInspection ? (
             <>
               {/* Current Inspection Header */}
@@ -819,9 +828,9 @@ export default function InspectionsScreen() {
               </CardContent>
             </Card>
           )}
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="history" className="space-y-6">
+            <TabsContent value="history" className="space-y-6">
           {/* Filter and Search */}
           <Card>
             <CardContent className="p-4">
@@ -924,9 +933,9 @@ export default function InspectionsScreen() {
               </Card>
             ))}
           </div>
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="scheduled" className="space-y-6">
+            <TabsContent value="scheduled" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Scheduled Inspections</CardTitle>
@@ -992,6 +1001,182 @@ export default function InspectionsScreen() {
               </div>
             </CardContent>
           </Card>
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        <TabsContent value="tool" className="space-y-6">
+          {/* Tool Inspection Content */}
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Tool Inspection</CardTitle>
+                <p className="text-muted-foreground">
+                  Manage and track tool inspections by technicians
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card>
+                      <CardContent className="p-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-600">24</div>
+                          <p className="text-sm text-muted-foreground">Tools Inspected</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-yellow-600">6</div>
+                          <p className="text-sm text-muted-foreground">Pending Inspection</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-red-600">2</div>
+                          <p className="text-sm text-muted-foreground">Overdue</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Filter and Search */}
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                      <Input
+                        placeholder="Search by technician name, tool ID, or warehouse..."
+                        className="pl-10"
+                      />
+                    </div>
+                    <Select defaultValue="weekly">
+                      <SelectTrigger className="w-full sm:w-48">
+                        <SelectValue placeholder="Filter by period" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="weekly">This Week</SelectItem>
+                        <SelectItem value="monthly">This Month</SelectItem>
+                        <SelectItem value="yearly">This Year</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button variant="outline">
+                      <Filter className="h-4 w-4 mr-2" />
+                      Filter
+                    </Button>
+                    <Button variant="outline">
+                      <Download className="h-4 w-4 mr-2" />
+                      Print Report
+                    </Button>
+                  </div>
+
+                  {/* Tool Inspection List */}
+                  <div className="space-y-4">
+                    {[
+                      {
+                        id: "TI-001",
+                        technicianName: "John Smith",
+                        warehouseNumber: "WH-001",
+                        toolType: "Power Drill",
+                        toolId: "PD-2024-001",
+                        dateCompleted: "2025-01-15",
+                        status: "Completed",
+                        overallScore: 95
+                      },
+                      {
+                        id: "TI-002",
+                        technicianName: "Sarah Johnson",
+                        warehouseNumber: "WH-002",
+                        toolType: "Multimeter",
+                        toolId: "MM-2024-005",
+                        dateCompleted: "2025-01-14",
+                        status: "Completed",
+                        overallScore: 88
+                      },
+                      {
+                        id: "TI-003",
+                        technicianName: "Mike Wilson",
+                        warehouseNumber: "WH-001",
+                        toolType: "Cable Tester",
+                        toolId: "CT-2024-012",
+                        dateCompleted: "2025-01-13",
+                        status: "Attention Required",
+                        overallScore: 72
+                      },
+                      {
+                        id: "TI-004",
+                        technicianName: "David Brown",
+                        warehouseNumber: "WH-003",
+                        toolType: "Impact Driver",
+                        toolId: "ID-2024-008",
+                        dateCompleted: null,
+                        status: "Missed",
+                        overallScore: null
+                      }
+                    ].map((inspection) => (
+                      <Card key={inspection.id}>
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-4">
+                                <div>
+                                  <h4 className="font-medium">{inspection.toolType}</h4>
+                                  <p className="text-sm text-muted-foreground">
+                                    {inspection.toolId} • {inspection.warehouseNumber}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium">{inspection.technicianName}</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {inspection.dateCompleted ? new Date(inspection.dateCompleted).toLocaleDateString() : 'Not completed'}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              {inspection.overallScore && (
+                                <div className="text-right">
+                                  <div className="text-lg font-bold">{inspection.overallScore}%</div>
+                                  <p className="text-xs text-muted-foreground">Score</p>
+                                </div>
+                              )}
+                              <Badge
+                                variant={inspection.status === 'Completed' ? 'default' :
+                                       inspection.status === 'Attention Required' ? 'destructive' :
+                                       'secondary'}
+                              >
+                                {inspection.status}
+                              </Badge>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                  <DropdownMenuItem>
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    View Details
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Export Report
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 
