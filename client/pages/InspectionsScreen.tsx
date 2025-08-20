@@ -1722,32 +1722,54 @@ export default function InspectionsScreen() {
                           {
                             id: "TI-M001",
                             inspector: "David Brown",
+                            assignedTo: "David Brown",
                             warehouseNumber: "WH-003",
                             toolType: "Impact Driver",
                             toolId: "ID-2024-008",
                             dueDate: "2025-01-01",
                             daysPastDue: 15,
-                            status: "Overdue"
+                            status: "Overdue",
+                            toolCondition: "Unknown",
+                            assignmentStatus: "Assigned"
                           },
                           {
                             id: "TI-M002",
                             inspector: "Lisa Davis",
+                            assignedTo: "Lisa Davis",
                             warehouseNumber: "WH-001",
                             toolType: "Torque Wrench",
                             toolId: "TW-2024-015",
                             dueDate: "2024-12-28",
                             daysPastDue: 18,
-                            status: "Critical"
+                            status: "Critical",
+                            toolCondition: "Damaged",
+                            assignmentStatus: "Assigned"
                           },
                           {
                             id: "TI-M003",
                             inspector: "Robert Lee",
+                            assignedTo: "Robert Lee",
                             warehouseNumber: "WH-002",
                             toolType: "Digital Caliper",
                             toolId: "DC-2024-022",
                             dueDate: "2024-12-20",
                             daysPastDue: 26,
-                            status: "Critical"
+                            status: "Critical",
+                            toolCondition: "Stolen/Missing",
+                            assignmentStatus: "Missing"
+                          },
+                          {
+                            id: "TI-M004",
+                            inspector: "Emily Johnson",
+                            assignedTo: "Emily Johnson",
+                            warehouseNumber: "WH-001",
+                            toolType: "Wire Stripper",
+                            toolId: "WS-2024-035",
+                            dueDate: "2024-12-10",
+                            daysPastDue: 36,
+                            status: "Critical",
+                            toolCondition: "Stolen/Missing",
+                            assignmentStatus: "Missing"
                           }
                         ].map((inspection) => (
                           <Card key={inspection.id} className="border-red-200">
