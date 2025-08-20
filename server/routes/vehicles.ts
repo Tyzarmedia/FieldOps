@@ -29,16 +29,20 @@ export interface Vehicle {
 
 // Load vehicles from AVIS database file
 let vehicles: Vehicle[] = [];
+let vehiclesLoaded = false;
+
+const avisDataPath = path.join(
+  process.cwd(),
+  "public",
+  "data",
+  "avis-database.json",
+);
 
 // Initialize vehicles from AVIS database
 function loadVehicles() {
+  if (vehiclesLoaded) return; // Only load once
+
   try {
-    const avisDataPath = path.join(
-      process.cwd(),
-      "public",
-      "data",
-      "avis-database.json",
-    );
     const avisData = JSON.parse(fs.readFileSync(avisDataPath, "utf8"));
     vehicles = avisData.vehicles.map((vehicle: any) => ({
       ...vehicle,
@@ -48,11 +52,42 @@ function loadVehicles() {
           : undefined,
       location: "Fleet Depot", // Default location
     }));
+    vehiclesLoaded = true;
     console.log(`Loaded ${vehicles.length} vehicles from AVIS database`);
   } catch (error) {
     console.error("Failed to load AVIS database:", error);
     // Fallback to empty array
     vehicles = [];
+    vehiclesLoaded = true;
+  }
+}
+
+// Save vehicles back to AVIS database file
+function saveVehicles() {
+  try {
+    const avisData = JSON.parse(fs.readFileSync(avisDataPath, "utf8"));
+
+    // Update the vehicles array in the JSON structure
+    avisData.vehicles = vehicles.map((vehicle: Vehicle) => ({
+      vehicle_id: vehicle.vehicle_id,
+      plate_number: vehicle.plate_number,
+      make: vehicle.make,
+      model: vehicle.model,
+      year: vehicle.year,
+      status: vehicle.status,
+      mileage: vehicle.mileage,
+      fuel_efficiency: vehicle.fuel_efficiency,
+      assigned_driver: vehicle.assigned_driver,
+      compliance: vehicle.compliance,
+      last_service: vehicle.last_service,
+      next_service_due: vehicle.next_service_due,
+    }));
+
+    // Write back to file
+    fs.writeFileSync(avisDataPath, JSON.stringify(avisData, null, 2), "utf8");
+    console.log(`Saved ${vehicles.length} vehicles to AVIS database`);
+  } catch (error) {
+    console.error("Failed to save AVIS database:", error);
   }
 }
 
