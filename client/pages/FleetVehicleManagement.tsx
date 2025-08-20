@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "@/hooks/useNotification";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -46,6 +47,7 @@ import {
   Clock,
   Fuel,
   Gauge,
+  Repeat,
 } from "lucide-react";
 
 interface Vehicle {
@@ -78,6 +80,7 @@ interface Driver {
 }
 
 export default function FleetVehicleManagement() {
+  const { show: showNotification } = useNotification();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>([]);
@@ -87,6 +90,7 @@ export default function FleetVehicleManagement() {
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
 
   // Load AVIS database
   useEffect(() => {
@@ -131,36 +135,89 @@ export default function FleetVehicleManagement() {
   }, [vehicles, searchTerm, statusFilter]);
 
   const handleAssignDriver = () => {
-    if (!selectedVehicle || !selectedDriver) return;
+    if (!selectedVehicle || !selectedDriver) {
+      showNotification.error(
+        "Assignment Failed",
+        "Please select both a vehicle and driver",
+      );
+      return;
+    }
 
-    const driverName =
-      drivers.find((d) => d.driver_id.toString() === selectedDriver)?.name ||
-      "";
+    try {
+      const selectedDriverObj = drivers.find(
+        (d) => d.driver_id.toString() === selectedDriver,
+      );
+      if (!selectedDriverObj) {
+        showNotification.error(
+          "Driver Not Found",
+          "Selected driver could not be found",
+        );
+        return;
+      }
 
-    const updatedVehicles = vehicles.map((vehicle) =>
-      vehicle.vehicle_id === selectedVehicle.vehicle_id
-        ? { ...vehicle, assigned_driver: driverName }
-        : vehicle,
-    );
+      const driverName = selectedDriverObj.name;
 
-    setVehicles(updatedVehicles);
-    setAssignDialogOpen(false);
-    setSelectedDriver("");
-    setSelectedVehicle(null);
+      const updatedVehicles = vehicles.map((vehicle) =>
+        vehicle.vehicle_id === selectedVehicle.vehicle_id
+          ? { ...vehicle, assigned_driver: driverName }
+          : vehicle,
+      );
+
+      // Update vehicles state
+      setVehicles(updatedVehicles);
+
+      // Clear dialog state immediately
+      setAssignDialogOpen(false);
+      setSelectedDriver("");
+      setSelectedVehicle(null);
+
+      // Show notification after state updates
+      setTimeout(() => {
+        showNotification.success(
+          "Driver Assigned",
+          `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`,
+        );
+      }, 100);
+    } catch (error) {
+      console.error("Error assigning driver:", error);
+      showNotification.error("Assignment Failed", "Failed to assign driver");
+    }
   };
 
   const handleSetService = (status: string) => {
-    if (!selectedVehicle) return;
+    if (!selectedVehicle) {
+      showNotification.error("Service Update Failed", "No vehicle selected");
+      return;
+    }
 
-    const updatedVehicles = vehicles.map((vehicle) =>
-      vehicle.vehicle_id === selectedVehicle.vehicle_id
-        ? { ...vehicle, status: status }
-        : vehicle,
-    );
+    try {
+      const updatedVehicles = vehicles.map((vehicle) =>
+        vehicle.vehicle_id === selectedVehicle.vehicle_id
+          ? { ...vehicle, status: status }
+          : vehicle,
+      );
 
-    setVehicles(updatedVehicles);
-    setServiceDialogOpen(false);
-    setSelectedVehicle(null);
+      // Update vehicles state
+      setVehicles(updatedVehicles);
+
+      // Clear dialog state immediately
+      setServiceDialogOpen(false);
+      setSelectedVehicle(null);
+
+      // Show notification after state updates
+      setTimeout(() => {
+        showNotification.success(
+          "Status Updated",
+          `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`,
+        );
+      }, 100);
+    } catch (error) {
+      console.error("Error updating vehicle status:", error);
+      showNotification.error(
+        "Update Failed",
+        "Failed to update vehicle status",
+      );
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -173,6 +230,8 @@ export default function FleetVehicleManagement() {
         return "bg-red-100 text-red-800";
       case "in service":
         return "bg-blue-100 text-blue-800";
+      case "loan vehicle":
+        return "bg-purple-100 text-purple-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -492,7 +551,7 @@ export default function FleetVehicleManagement() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <Button
                 variant="outline"
                 onClick={() => handleSetService("Active")}
@@ -508,6 +567,14 @@ export default function FleetVehicleManagement() {
               >
                 <Wrench className="h-6 w-6 mb-2 text-yellow-600" />
                 In Service
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleSetService("Loan Vehicle")}
+                className="h-20 flex-col"
+              >
+                <Repeat className="h-6 w-6 mb-2 text-blue-600" />
+                Loan Vehicle
               </Button>
             </div>
             <Button

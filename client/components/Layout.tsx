@@ -234,7 +234,7 @@ function getNavigationForRole(role: string) {
         { name: "Fleet Overview", href: "/fleet", icon: Truck },
         { name: "Vehicle Management", href: "/fleet/vehicles", icon: Truck },
         {
-          name: "Vehicle Inspections",
+          name: "Inspection",
           href: "/fleet/inspections",
           icon: ClipboardList,
         },

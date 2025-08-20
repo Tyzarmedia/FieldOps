@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNotification } from "@/hooks/useNotification";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,7 @@ import {
 
 export default function FleetManagerDashboard() {
   const [systemData, setSystemData] = useState<any>(null);
+  const { show: showNotification } = useNotification();
 
   const fleetStats = {
     totalVehicles: 24,
@@ -146,43 +148,58 @@ export default function FleetManagerDashboard() {
   const handleCardAction = (cardId: string) => {
     switch (cardId) {
       case "fleet-overview":
-        alert("Opening Fleet Overview...");
+        showNotification.info("Fleet Overview", "Opening Fleet Overview...");
         break;
       case "inspections":
-        alert("Opening Fleet Inspections...");
+        showNotification.info(
+          "Fleet Inspections",
+          "Opening Fleet Inspections...",
+        );
         break;
       case "maintenance":
-        alert("Opening Maintenance Management...");
+        showNotification.info(
+          "Maintenance",
+          "Opening Maintenance Management...",
+        );
         break;
       case "compliance":
-        alert("Opening Compliance Dashboard...");
+        showNotification.info("Compliance", "Opening Compliance Dashboard...");
         break;
       case "fuel-efficiency":
-        alert("Opening Fuel Efficiency Reports...");
+        showNotification.info(
+          "Fuel Efficiency",
+          "Opening Fuel Efficiency Reports...",
+        );
         break;
       case "mileage":
-        alert("Opening Mileage Tracking...");
+        showNotification.info(
+          "Mileage Tracking",
+          "Opening Mileage Tracking...",
+        );
         break;
       case "alerts":
-        alert("Opening Fleet Alerts...");
+        showNotification.info("Fleet Alerts", "Opening Fleet Alerts...");
         break;
       case "reports":
-        alert("Opening Fleet Reports...");
+        showNotification.info("Fleet Reports", "Opening Fleet Reports...");
         break;
       case "schedule":
-        alert("Opening Scheduling System...");
+        showNotification.info("Scheduling", "Opening Scheduling System...");
         break;
       case "add-vehicle":
-        alert("Opening Add Vehicle Form...");
+        showNotification.info("Add Vehicle", "Opening Add Vehicle Form...");
         break;
       case "analytics":
-        alert("Opening Fleet Analytics...");
+        showNotification.info("Analytics", "Opening Fleet Analytics...");
         break;
       case "activity":
-        alert("Opening Fleet Activity Monitor...");
+        showNotification.info(
+          "Activity Monitor",
+          "Opening Fleet Activity Monitor...",
+        );
         break;
       default:
-        alert(`Opening ${cardId}...`);
+        showNotification.info("Action", `Opening ${cardId}...`);
     }
   };
 
@@ -279,7 +296,12 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => alert("Scheduling fleet inspection...")}
+            onClick={() =>
+              showNotification.success(
+                "Inspection Scheduled",
+                "Fleet inspection has been scheduled successfully",
+              )
+            }
           >
             <Plus className="h-4 w-4 mr-2" />
             Schedule Inspection
@@ -287,7 +309,12 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => alert("Opening inspection calendar...")}
+            onClick={() =>
+              showNotification.info(
+                "Calendar",
+                "Opening inspection calendar...",
+              )
+            }
           >
             <Calendar className="h-4 w-4 mr-2" />
             View Calendar
@@ -295,7 +322,12 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => alert("Opening maintenance schedule...")}
+            onClick={() =>
+              showNotification.info(
+                "Maintenance",
+                "Opening maintenance schedule...",
+              )
+            }
           >
             <Wrench className="h-4 w-4 mr-2" />
             Maintenance
@@ -303,7 +335,12 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => alert("Generating fleet report...")}
+            onClick={() =>
+              showNotification.success(
+                "Report Generated",
+                "Fleet report has been generated successfully",
+              )
+            }
           >
             <FileText className="h-4 w-4 mr-2" />
             Generate Report
