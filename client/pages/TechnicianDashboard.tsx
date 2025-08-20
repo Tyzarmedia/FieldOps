@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NotificationSystem } from "@/components/NotificationSystem";
 import { locationTrackingService } from "@/services/locationTrackingService";
+import { distanceTrackingFix } from "@/utils/distanceTrackingFix";
 import { overtimeTrackingService, OvertimeSession } from "@/services/overtimeTrackingService";
 import { logoutDetectionService } from "@/services/logoutDetectionService";
 import { Card, CardContent } from "@/components/ui/card";
@@ -331,14 +332,22 @@ export default function TechnicianDashboard() {
       const minutes = diffInMinutes % 60;
       setWorkingHours(`${hours}:${minutes.toString().padStart(2, "0")}`);
 
-      // Use real distance tracking if available, otherwise simulate
-      const realDistance = locationTrackingService.getTotalDistanceTraveled();
+      // Use enhanced distance tracking first, then fallback to original service
+      let realDistance = distanceTrackingFix.getTotalDistance();
+
+      // If enhanced tracking has no data, try original service
+      if (realDistance === 0) {
+        realDistance = locationTrackingService.getTotalDistanceTraveled();
+      }
+
       if (realDistance > 0) {
         setDistanceTraveled(realDistance.toFixed(1));
+        console.log(`Distance updated: ${realDistance.toFixed(1)}km`);
       } else {
-        // Fallback to simulation if no real tracking data
+        // Fallback to simulation only if no real tracking data at all
         const distanceKm = (diffInMinutes / 60) * 0.5;
         setDistanceTraveled(distanceKm.toFixed(1));
+        console.log(`Using simulated distance: ${distanceKm.toFixed(1)}km`);
       }
     }
   };
@@ -348,11 +357,13 @@ export default function TechnicianDashboard() {
     const initializeTracking = async () => {
       const employeeId = localStorage.getItem("employeeId") || "tech001";
 
-      // Start comprehensive location tracking
-      const trackingStarted = await locationTrackingService.startTracking(employeeId);
-      setIsLocationTracking(trackingStarted);
+      // Start both enhanced and original location tracking
+      const enhancedTrackingStarted = await distanceTrackingFix.startTracking(employeeId);
+      const originalTrackingStarted = await locationTrackingService.startTracking(employeeId);
 
-      if (trackingStarted) {
+      setIsLocationTracking(enhancedTrackingStarted || originalTrackingStarted);
+
+      if (originalTrackingStarted) {
         // Add location update callback
         locationTrackingService.addLocationCallback((location) => {
           console.log('Location update received:', location);
@@ -368,8 +379,10 @@ export default function TechnicianDashboard() {
             setNearbyJob(null);
           }
 
-          // Update total distance
-          setTotalDistance(locationTrackingService.getTotalDistanceTraveled());
+          // Update total distance using enhanced tracking
+          const enhancedDistance = distanceTrackingFix.getTotalDistance();
+          const originalDistance = locationTrackingService.getTotalDistanceTraveled();
+          setTotalDistance(Math.max(enhancedDistance, originalDistance));
         });
 
         console.log('Location tracking initialized successfully');
