@@ -357,11 +357,13 @@ export default function TechnicianDashboard() {
     const initializeTracking = async () => {
       const employeeId = localStorage.getItem("employeeId") || "tech001";
 
-      // Start comprehensive location tracking
-      const trackingStarted = await locationTrackingService.startTracking(employeeId);
-      setIsLocationTracking(trackingStarted);
+      // Start both enhanced and original location tracking
+      const enhancedTrackingStarted = await distanceTrackingFix.startTracking(employeeId);
+      const originalTrackingStarted = await locationTrackingService.startTracking(employeeId);
 
-      if (trackingStarted) {
+      setIsLocationTracking(enhancedTrackingStarted || originalTrackingStarted);
+
+      if (originalTrackingStarted) {
         // Add location update callback
         locationTrackingService.addLocationCallback((location) => {
           console.log('Location update received:', location);
@@ -377,8 +379,10 @@ export default function TechnicianDashboard() {
             setNearbyJob(null);
           }
 
-          // Update total distance
-          setTotalDistance(locationTrackingService.getTotalDistanceTraveled());
+          // Update total distance using enhanced tracking
+          const enhancedDistance = distanceTrackingFix.getTotalDistance();
+          const originalDistance = locationTrackingService.getTotalDistanceTraveled();
+          setTotalDistance(Math.max(enhancedDistance, originalDistance));
         });
 
         console.log('Location tracking initialized successfully');
