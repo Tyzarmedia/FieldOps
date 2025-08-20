@@ -287,7 +287,9 @@ export const removeVehicle: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
 
-    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
       return res.status(404).json({
@@ -317,7 +319,9 @@ export const updateVehicleStatus: RequestHandler = (req, res) => {
     const { id } = req.params;
     const { status, notes } = req.body;
 
-    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
       return res.status(404).json({
@@ -327,21 +331,20 @@ export const updateVehicleStatus: RequestHandler = (req, res) => {
     }
 
     // If setting to available, clear assignment
-    if (status === "available") {
+    if (status === "Active" || status === "available") {
       vehicles[vehicleIndex] = {
         ...vehicles[vehicleIndex],
-        status,
+        status: "Active",
+        assigned_driver: "Not Assigned",
         assignedTo: undefined,
         assignedDate: undefined,
         notes,
-        updatedAt: new Date().toISOString(),
       };
     } else {
       vehicles[vehicleIndex] = {
         ...vehicles[vehicleIndex],
         status,
         notes,
-        updatedAt: new Date().toISOString(),
       };
     }
 
