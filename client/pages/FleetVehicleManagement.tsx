@@ -169,19 +169,31 @@ export default function FleetVehicleManagement() {
       return;
     }
 
-    const updatedVehicles = vehicles.map((vehicle) =>
-      vehicle.vehicle_id === selectedVehicle.vehicle_id
-        ? { ...vehicle, status: status }
-        : vehicle,
-    );
+    try {
+      const updatedVehicles = vehicles.map((vehicle) =>
+        vehicle.vehicle_id === selectedVehicle.vehicle_id
+          ? { ...vehicle, status: status }
+          : vehicle,
+      );
 
-    setVehicles(updatedVehicles);
-    showNotification.success(
-      "Status Updated",
-      `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`
-    );
-    setServiceDialogOpen(false);
-    setSelectedVehicle(null);
+      // Update vehicles state
+      setVehicles(updatedVehicles);
+
+      // Clear dialog state immediately
+      setServiceDialogOpen(false);
+      setSelectedVehicle(null);
+
+      // Show notification after state updates
+      setTimeout(() => {
+        showNotification.success(
+          "Status Updated",
+          `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`
+        );
+      }, 100);
+    } catch (error) {
+      console.error("Error updating vehicle status:", error);
+      showNotification.error("Update Failed", "Failed to update vehicle status");
+    }
   };
 
   const getStatusColor = (status: string) => {
