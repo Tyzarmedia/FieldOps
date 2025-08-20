@@ -463,6 +463,10 @@ export default function FleetVehicleManagement() {
             Manage vehicle assignments and maintenance status
           </p>
         </div>
+        <Button onClick={() => setAddVehicleDialogOpen(true)}>
+          <Truck className="h-4 w-4 mr-2" />
+          Add Vehicle
+        </Button>
       </div>
 
       {/* Fleet Statistics */}
