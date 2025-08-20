@@ -1,26 +1,29 @@
 import { RequestHandler } from "express";
+import * as fs from "fs";
+import * as path from "path";
 
 export interface Vehicle {
-  id: string;
-  registration: string;
+  vehicle_id: number;
+  plate_number: string;
   make: string;
   model: string;
   year: number;
-  vin: string;
-  status: "active" | "maintenance" | "inactive" | "assigned" | "available";
+  status: string;
+  mileage: number;
+  fuel_efficiency: number;
+  assigned_driver: string;
+  compliance: {
+    license_expiry: string;
+    insurance_expiry: string;
+    roadworthy_expiry: string;
+    registration_expiry: string;
+  };
+  last_service: string;
+  next_service_due: string;
+  vin?: string;
+  location?: string;
   assignedTo?: string;
   assignedDate?: string;
-  location?: string;
-  mileage: number;
-  lastInspection?: string;
-  nextInspection?: string;
-  fuelEfficiency?: number;
-  licensePlate: string;
-  insuranceExpiry?: string;
-  registrationExpiry?: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
   notes?: string;
 }
 
