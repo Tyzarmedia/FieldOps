@@ -323,6 +323,9 @@ export const loanVehicle: RequestHandler = (req, res) => {
         : `Loan until ${returnDate}`,
     };
 
+    // Save changes to file
+    saveVehicles();
+
     res.json({
       success: true,
       data: vehicles[vehicleIndex],
