@@ -294,9 +294,9 @@ export default function FleetManagerSettings() {
               <RefreshCw className="h-4 w-4 mr-2" />
               Reset
             </Button>
-            <Button onClick={handleSaveSettings}>
+            <Button onClick={handleSaveSettings} disabled={isLoading}>
               <Save className="h-4 w-4 mr-2" />
-              Save Changes
+              {isLoading ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>
