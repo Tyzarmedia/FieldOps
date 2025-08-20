@@ -365,6 +365,9 @@ export const removeVehicle: RequestHandler = (req, res) => {
 
     const removedVehicle = vehicles.splice(vehicleIndex, 1)[0];
 
+    // Save changes to file
+    saveVehicles();
+
     res.json({
       success: true,
       data: removedVehicle,
