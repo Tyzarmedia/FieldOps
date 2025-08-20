@@ -220,6 +220,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "first_aid",
@@ -229,6 +230,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: false,
+      imageUploaded: false,
     },
     {
       id: "fire_extinguisher",
@@ -238,6 +240,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
   ];
 
