@@ -64,6 +64,8 @@ interface InspectionItem {
   notes: string;
   photos: string[];
   required: boolean;
+  imageUploaded: boolean;
+  inspectionDate?: string;
 }
 
 interface Inspection {
