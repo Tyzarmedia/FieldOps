@@ -90,6 +90,7 @@ export default function FleetVehicleManagement() {
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
 
   // Load AVIS database
   useEffect(() => {
