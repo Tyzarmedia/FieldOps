@@ -198,6 +198,9 @@ export const addVehicle: RequestHandler = (req, res) => {
 
     vehicles.push(newVehicle);
 
+    // Save changes to file
+    saveVehicles();
+
     res.status(201).json({
       success: true,
       data: newVehicle,
