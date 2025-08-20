@@ -208,7 +208,9 @@ export const assignVehicle: RequestHandler = (req, res) => {
     const { id } = req.params;
     const { assignedTo, assignedDate, notes } = req.body;
 
-    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
       return res.status(404).json({
@@ -219,11 +221,11 @@ export const assignVehicle: RequestHandler = (req, res) => {
 
     vehicles[vehicleIndex] = {
       ...vehicles[vehicleIndex],
-      status: "assigned",
+      status: "Active", // Keep as Active when assigned
+      assigned_driver: assignedTo,
       assignedTo,
       assignedDate: assignedDate || new Date().toISOString(),
       notes,
-      updatedAt: new Date().toISOString(),
     };
 
     res.json({
