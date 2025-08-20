@@ -47,6 +47,7 @@ import {
   Clock,
   Fuel,
   Gauge,
+  Repeat,
 } from "lucide-react";
 
 interface Vehicle {
