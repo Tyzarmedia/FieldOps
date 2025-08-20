@@ -136,14 +136,22 @@ export default function FleetVehicleManagement() {
 
   const handleAssignDriver = () => {
     if (!selectedVehicle || !selectedDriver) {
-      showNotification.error("Assignment Failed", "Please select both a vehicle and driver");
+      showNotification.error(
+        "Assignment Failed",
+        "Please select both a vehicle and driver",
+      );
       return;
     }
 
     try {
-      const selectedDriverObj = drivers.find((d) => d.driver_id.toString() === selectedDriver);
+      const selectedDriverObj = drivers.find(
+        (d) => d.driver_id.toString() === selectedDriver,
+      );
       if (!selectedDriverObj) {
-        showNotification.error("Driver Not Found", "Selected driver could not be found");
+        showNotification.error(
+          "Driver Not Found",
+          "Selected driver could not be found",
+        );
         return;
       }
 
@@ -167,7 +175,7 @@ export default function FleetVehicleManagement() {
       setTimeout(() => {
         showNotification.success(
           "Driver Assigned",
-          `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`
+          `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`,
         );
       }, 100);
     } catch (error) {
@@ -200,12 +208,15 @@ export default function FleetVehicleManagement() {
       setTimeout(() => {
         showNotification.success(
           "Status Updated",
-          `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`
+          `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`,
         );
       }, 100);
     } catch (error) {
       console.error("Error updating vehicle status:", error);
-      showNotification.error("Update Failed", "Failed to update vehicle status");
+      showNotification.error(
+        "Update Failed",
+        "Failed to update vehicle status",
+      );
     }
   };
 

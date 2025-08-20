@@ -151,19 +151,31 @@ export default function FleetManagerDashboard() {
         showNotification.info("Fleet Overview", "Opening Fleet Overview...");
         break;
       case "inspections":
-        showNotification.info("Fleet Inspections", "Opening Fleet Inspections...");
+        showNotification.info(
+          "Fleet Inspections",
+          "Opening Fleet Inspections...",
+        );
         break;
       case "maintenance":
-        showNotification.info("Maintenance", "Opening Maintenance Management...");
+        showNotification.info(
+          "Maintenance",
+          "Opening Maintenance Management...",
+        );
         break;
       case "compliance":
         showNotification.info("Compliance", "Opening Compliance Dashboard...");
         break;
       case "fuel-efficiency":
-        showNotification.info("Fuel Efficiency", "Opening Fuel Efficiency Reports...");
+        showNotification.info(
+          "Fuel Efficiency",
+          "Opening Fuel Efficiency Reports...",
+        );
         break;
       case "mileage":
-        showNotification.info("Mileage Tracking", "Opening Mileage Tracking...");
+        showNotification.info(
+          "Mileage Tracking",
+          "Opening Mileage Tracking...",
+        );
         break;
       case "alerts":
         showNotification.info("Fleet Alerts", "Opening Fleet Alerts...");
@@ -181,7 +193,10 @@ export default function FleetManagerDashboard() {
         showNotification.info("Analytics", "Opening Fleet Analytics...");
         break;
       case "activity":
-        showNotification.info("Activity Monitor", "Opening Fleet Activity Monitor...");
+        showNotification.info(
+          "Activity Monitor",
+          "Opening Fleet Activity Monitor...",
+        );
         break;
       default:
         showNotification.info("Action", `Opening ${cardId}...`);
@@ -281,7 +296,12 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => showNotification.success("Inspection Scheduled", "Fleet inspection has been scheduled successfully")}
+            onClick={() =>
+              showNotification.success(
+                "Inspection Scheduled",
+                "Fleet inspection has been scheduled successfully",
+              )
+            }
           >
             <Plus className="h-4 w-4 mr-2" />
             Schedule Inspection
@@ -289,7 +309,12 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => showNotification.info("Calendar", "Opening inspection calendar...")}
+            onClick={() =>
+              showNotification.info(
+                "Calendar",
+                "Opening inspection calendar...",
+              )
+            }
           >
             <Calendar className="h-4 w-4 mr-2" />
             View Calendar
@@ -297,7 +322,12 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => showNotification.info("Maintenance", "Opening maintenance schedule...")}
+            onClick={() =>
+              showNotification.info(
+                "Maintenance",
+                "Opening maintenance schedule...",
+              )
+            }
           >
             <Wrench className="h-4 w-4 mr-2" />
             Maintenance
@@ -305,7 +335,12 @@ export default function FleetManagerDashboard() {
           <Button
             variant="outline"
             className="justify-start"
-            onClick={() => showNotification.success("Report Generated", "Fleet report has been generated successfully")}
+            onClick={() =>
+              showNotification.success(
+                "Report Generated",
+                "Fleet report has been generated successfully",
+              )
+            }
           >
             <FileText className="h-4 w-4 mr-2" />
             Generate Report

@@ -238,7 +238,8 @@ export default function InspectionsScreen() {
       items: defaultChecklist.map((item) => ({
         ...item,
         status: "pass" as const,
-        notes: item.name === "Tire Pressure" ? "All tires at optimal pressure" : "",
+        notes:
+          item.name === "Tire Pressure" ? "All tires at optimal pressure" : "",
       })),
       overallScore: 98,
       aiAnalysis: {
@@ -346,7 +347,7 @@ export default function InspectionsScreen() {
         status: "pass" as const,
       })),
       overallScore: 90,
-    }
+    },
   ];
 
   const [inspections, setInspections] = useState(mockInspections);
@@ -503,11 +504,10 @@ export default function InspectionsScreen() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Inspection
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground">Inspection</h1>
           <p className="text-muted-foreground">
-            Digital inspection checklists with AI-powered analysis for vehicles and tools
+            Digital inspection checklists with AI-powered analysis for vehicles
+            and tools
           </p>
         </div>
         <div className="flex gap-2">
@@ -600,303 +600,309 @@ export default function InspectionsScreen() {
             </TabsList>
 
             <TabsContent value="current" className="space-y-6">
-          {currentInspection ? (
-            <>
-              {/* Current Inspection Header */}
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <CardTitle>
-                        {currentInspection.type} -{" "}
-                        {currentInspection.vehicleRegistration}
-                      </CardTitle>
-                      <p className="text-muted-foreground">
-                        Started by {currentInspection.inspector} on{" "}
-                        {currentInspection.dateScheduled}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold">
-                        {currentInspection.overallScore}%
+              {currentInspection ? (
+                <>
+                  {/* Current Inspection Header */}
+                  <Card>
+                    <CardHeader>
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <CardTitle>
+                            {currentInspection.type} -{" "}
+                            {currentInspection.vehicleRegistration}
+                          </CardTitle>
+                          <p className="text-muted-foreground">
+                            Started by {currentInspection.inspector} on{" "}
+                            {currentInspection.dateScheduled}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold">
+                            {currentInspection.overallScore}%
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            Overall Score
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Overall Score
-                      </p>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
+                    </CardHeader>
+                  </Card>
 
-              {/* AI Analysis */}
-              {(currentInspection.aiAnalysis || aiAnalyzing) && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Brain className="h-5 w-5 text-blue-600" />
-                      AI Analysis
-                      {aiAnalyzing && (
-                        <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
-                      )}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {aiAnalyzing ? (
-                      <p className="text-muted-foreground">
-                        Analyzing uploaded images...
-                      </p>
-                    ) : (
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="font-medium mb-2">Detected Issues:</h4>
-                          <ul className="space-y-1">
-                            {currentInspection.aiAnalysis?.detected.map(
-                              (item, index) => (
-                                <li
-                                  key={index}
-                                  className="text-sm flex items-center gap-2"
-                                >
-                                  <Scan className="h-4 w-4 text-blue-600" />
-                                  {item}
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </div>
-                        <div>
-                          <h4 className="font-medium mb-2">Recommendations:</h4>
-                          <ul className="space-y-1">
-                            {currentInspection.aiAnalysis?.recommendations.map(
-                              (item, index) => (
-                                <li
-                                  key={index}
-                                  className="text-sm flex items-center gap-2"
-                                >
-                                  <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                                  {item}
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </div>
-                        <Badge className="bg-blue-100 text-blue-800">
-                          {currentInspection.aiAnalysis?.confidence}% confidence
-                        </Badge>
+                  {/* AI Analysis */}
+                  {(currentInspection.aiAnalysis || aiAnalyzing) && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Brain className="h-5 w-5 text-blue-600" />
+                          AI Analysis
+                          {aiAnalyzing && (
+                            <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                          )}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {aiAnalyzing ? (
+                          <p className="text-muted-foreground">
+                            Analyzing uploaded images...
+                          </p>
+                        ) : (
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="font-medium mb-2">
+                                Detected Issues:
+                              </h4>
+                              <ul className="space-y-1">
+                                {currentInspection.aiAnalysis?.detected.map(
+                                  (item, index) => (
+                                    <li
+                                      key={index}
+                                      className="text-sm flex items-center gap-2"
+                                    >
+                                      <Scan className="h-4 w-4 text-blue-600" />
+                                      {item}
+                                    </li>
+                                  ),
+                                )}
+                              </ul>
+                            </div>
+                            <div>
+                              <h4 className="font-medium mb-2">
+                                Recommendations:
+                              </h4>
+                              <ul className="space-y-1">
+                                {currentInspection.aiAnalysis?.recommendations.map(
+                                  (item, index) => (
+                                    <li
+                                      key={index}
+                                      className="text-sm flex items-center gap-2"
+                                    >
+                                      <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                                      {item}
+                                    </li>
+                                  ),
+                                )}
+                              </ul>
+                            </div>
+                            <Badge className="bg-blue-100 text-blue-800">
+                              {currentInspection.aiAnalysis?.confidence}%
+                              confidence
+                            </Badge>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Inspection Checklist */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Inspection Checklist</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-6">
+                        {["External", "Mechanical", "Electrical", "Safety"].map(
+                          (category) => (
+                            <div key={category}>
+                              <h3 className="font-semibold mb-4">{category}</h3>
+                              <div className="space-y-4">
+                                {currentInspection.items
+                                  .filter((item) => item.category === category)
+                                  .map((item) => (
+                                    <div
+                                      key={item.id}
+                                      className="border rounded-lg p-4"
+                                    >
+                                      <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center space-x-3">
+                                          <div
+                                            className={getItemStatusColor(
+                                              item.status,
+                                            )}
+                                          >
+                                            {getItemStatusIcon(item.status)}
+                                          </div>
+                                          <div>
+                                            <h4 className="font-medium">
+                                              {item.name}
+                                            </h4>
+                                            {item.required && (
+                                              <Badge
+                                                variant="outline"
+                                                className="text-xs"
+                                              >
+                                                Required
+                                              </Badge>
+                                            )}
+                                          </div>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                          <Button
+                                            size="sm"
+                                            variant={
+                                              item.status === "pass"
+                                                ? "default"
+                                                : "outline"
+                                            }
+                                            onClick={() =>
+                                              updateInspectionItem(item.id, {
+                                                status: "pass",
+                                              })
+                                            }
+                                          >
+                                            Pass
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant={
+                                              item.status === "attention"
+                                                ? "default"
+                                                : "outline"
+                                            }
+                                            onClick={() =>
+                                              updateInspectionItem(item.id, {
+                                                status: "attention",
+                                              })
+                                            }
+                                          >
+                                            Attention
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant={
+                                              item.status === "fail"
+                                                ? "destructive"
+                                                : "outline"
+                                            }
+                                            onClick={() =>
+                                              updateInspectionItem(item.id, {
+                                                status: "fail",
+                                              })
+                                            }
+                                          >
+                                            Fail
+                                          </Button>
+                                        </div>
+                                      </div>
+
+                                      {/* Notes */}
+                                      <Textarea
+                                        placeholder="Add notes..."
+                                        value={item.notes}
+                                        onChange={(e) =>
+                                          updateInspectionItem(item.id, {
+                                            notes: e.target.value,
+                                          })
+                                        }
+                                        className="mb-3"
+                                      />
+
+                                      {/* Photo/Video Upload */}
+                                      <div className="flex items-center space-x-2 mb-3">
+                                        <input
+                                          ref={fileInputRef}
+                                          type="file"
+                                          accept="image/*"
+                                          multiple
+                                          className="hidden"
+                                          onChange={(e) =>
+                                            e.target.files &&
+                                            handlePhotoUpload(
+                                              item.id,
+                                              e.target.files,
+                                            )
+                                          }
+                                        />
+                                        <input
+                                          ref={videoInputRef}
+                                          type="file"
+                                          accept="video/*"
+                                          className="hidden"
+                                          onChange={(e) =>
+                                            e.target.files &&
+                                            handlePhotoUpload(
+                                              item.id,
+                                              e.target.files,
+                                            )
+                                          }
+                                        />
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() =>
+                                            fileInputRef.current?.click()
+                                          }
+                                          disabled={uploadingMedia}
+                                        >
+                                          <Camera className="h-4 w-4 mr-2" />
+                                          {uploadingMedia
+                                            ? "Uploading..."
+                                            : "Photo"}
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() =>
+                                            videoInputRef.current?.click()
+                                          }
+                                          disabled={uploadingMedia}
+                                        >
+                                          <Video className="h-4 w-4 mr-2" />
+                                          Video
+                                        </Button>
+                                      </div>
+
+                                      {/* Photo Gallery */}
+                                      {item.photos.length > 0 && (
+                                        <div className="flex space-x-2">
+                                          {item.photos.map((photo, index) => (
+                                            <img
+                                              key={index}
+                                              src={photo}
+                                              alt={`${item.name} photo ${index + 1}`}
+                                              className="h-16 w-16 object-cover rounded border"
+                                            />
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          ),
+                        )}
                       </div>
-                    )}
+
+                      <div className="mt-6 flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setCurrentInspection(null)}
+                        >
+                          Save Draft
+                        </Button>
+                        <Button onClick={completeInspection}>
+                          Complete Inspection
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </>
+              ) : (
+                <Card>
+                  <CardContent className="p-12 text-center">
+                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium mb-2">
+                      No Active Inspection
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      Start a new inspection to begin the digital checklist
+                      process
+                    </p>
+                    <Button onClick={() => setShowNewInspection(true)}>
+                      Start New Inspection
+                    </Button>
                   </CardContent>
                 </Card>
               )}
-
-              {/* Inspection Checklist */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Inspection Checklist</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {["External", "Mechanical", "Electrical", "Safety"].map(
-                      (category) => (
-                        <div key={category}>
-                          <h3 className="font-semibold mb-4">{category}</h3>
-                          <div className="space-y-4">
-                            {currentInspection.items
-                              .filter((item) => item.category === category)
-                              .map((item) => (
-                                <div
-                                  key={item.id}
-                                  className="border rounded-lg p-4"
-                                >
-                                  <div className="flex items-center justify-between mb-3">
-                                    <div className="flex items-center space-x-3">
-                                      <div
-                                        className={getItemStatusColor(
-                                          item.status,
-                                        )}
-                                      >
-                                        {getItemStatusIcon(item.status)}
-                                      </div>
-                                      <div>
-                                        <h4 className="font-medium">
-                                          {item.name}
-                                        </h4>
-                                        {item.required && (
-                                          <Badge
-                                            variant="outline"
-                                            className="text-xs"
-                                          >
-                                            Required
-                                          </Badge>
-                                        )}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                      <Button
-                                        size="sm"
-                                        variant={
-                                          item.status === "pass"
-                                            ? "default"
-                                            : "outline"
-                                        }
-                                        onClick={() =>
-                                          updateInspectionItem(item.id, {
-                                            status: "pass",
-                                          })
-                                        }
-                                      >
-                                        Pass
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant={
-                                          item.status === "attention"
-                                            ? "default"
-                                            : "outline"
-                                        }
-                                        onClick={() =>
-                                          updateInspectionItem(item.id, {
-                                            status: "attention",
-                                          })
-                                        }
-                                      >
-                                        Attention
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant={
-                                          item.status === "fail"
-                                            ? "destructive"
-                                            : "outline"
-                                        }
-                                        onClick={() =>
-                                          updateInspectionItem(item.id, {
-                                            status: "fail",
-                                          })
-                                        }
-                                      >
-                                        Fail
-                                      </Button>
-                                    </div>
-                                  </div>
-
-                                  {/* Notes */}
-                                  <Textarea
-                                    placeholder="Add notes..."
-                                    value={item.notes}
-                                    onChange={(e) =>
-                                      updateInspectionItem(item.id, {
-                                        notes: e.target.value,
-                                      })
-                                    }
-                                    className="mb-3"
-                                  />
-
-                                  {/* Photo/Video Upload */}
-                                  <div className="flex items-center space-x-2 mb-3">
-                                    <input
-                                      ref={fileInputRef}
-                                      type="file"
-                                      accept="image/*"
-                                      multiple
-                                      className="hidden"
-                                      onChange={(e) =>
-                                        e.target.files &&
-                                        handlePhotoUpload(
-                                          item.id,
-                                          e.target.files,
-                                        )
-                                      }
-                                    />
-                                    <input
-                                      ref={videoInputRef}
-                                      type="file"
-                                      accept="video/*"
-                                      className="hidden"
-                                      onChange={(e) =>
-                                        e.target.files &&
-                                        handlePhotoUpload(
-                                          item.id,
-                                          e.target.files,
-                                        )
-                                      }
-                                    />
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() =>
-                                        fileInputRef.current?.click()
-                                      }
-                                      disabled={uploadingMedia}
-                                    >
-                                      <Camera className="h-4 w-4 mr-2" />
-                                      {uploadingMedia
-                                        ? "Uploading..."
-                                        : "Photo"}
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() =>
-                                        videoInputRef.current?.click()
-                                      }
-                                      disabled={uploadingMedia}
-                                    >
-                                      <Video className="h-4 w-4 mr-2" />
-                                      Video
-                                    </Button>
-                                  </div>
-
-                                  {/* Photo Gallery */}
-                                  {item.photos.length > 0 && (
-                                    <div className="flex space-x-2">
-                                      {item.photos.map((photo, index) => (
-                                        <img
-                                          key={index}
-                                          src={photo}
-                                          alt={`${item.name} photo ${index + 1}`}
-                                          className="h-16 w-16 object-cover rounded border"
-                                        />
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
-                          </div>
-                        </div>
-                      ),
-                    )}
-                  </div>
-
-                  <div className="mt-6 flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setCurrentInspection(null)}
-                    >
-                      Save Draft
-                    </Button>
-                    <Button onClick={completeInspection}>
-                      Complete Inspection
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </>
-          ) : (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">
-                  No Active Inspection
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  Start a new inspection to begin the digital checklist process
-                </p>
-                <Button onClick={() => setShowNewInspection(true)}>
-                  Start New Inspection
-                </Button>
-              </CardContent>
-            </Card>
-          )}
             </TabsContent>
 
             <TabsContent value="history" className="space-y-6">
@@ -966,77 +972,82 @@ export default function InspectionsScreen() {
                         Export
                       </Button>
                     </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Inspection History List */}
-          <div className="space-y-4">
-            {inspections.map((inspection) => (
-              <Card key={inspection.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="font-semibold">{inspection.type}</h3>
-                        <Badge className={getStatusColor(inspection.status)}>
-                          {inspection.status}
-                        </Badge>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
-                        <div>
-                          <span className="font-medium">Vehicle:</span>{" "}
-                          {inspection.vehicleRegistration}
-                        </div>
-                        <div>
-                          <span className="font-medium">Inspector:</span>{" "}
-                          {inspection.inspector}
-                        </div>
-                        <div>
-                          <span className="font-medium">Date:</span>{" "}
-                          {inspection.dateCompleted || inspection.dateScheduled}
-                        </div>
-                        <div>
-                          <span className="font-medium">Score:</span>{" "}
-                          {inspection.overallScore}%
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="text-right mr-4">
-                        <div className="text-2xl font-bold">
-                          {inspection.overallScore}%
-                        </div>
-                        <Progress
-                          value={inspection.overallScore}
-                          className="w-20"
-                        />
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem
-                            onClick={() => setSelectedInspection(inspection)}
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Download className="h-4 w-4 mr-2" />
-                            Export Report
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+
+              {/* Inspection History List */}
+              <div className="space-y-4">
+                {inspections.map((inspection) => (
+                  <Card key={inspection.id}>
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <h3 className="font-semibold">{inspection.type}</h3>
+                            <Badge
+                              className={getStatusColor(inspection.status)}
+                            >
+                              {inspection.status}
+                            </Badge>
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
+                            <div>
+                              <span className="font-medium">Vehicle:</span>{" "}
+                              {inspection.vehicleRegistration}
+                            </div>
+                            <div>
+                              <span className="font-medium">Inspector:</span>{" "}
+                              {inspection.inspector}
+                            </div>
+                            <div>
+                              <span className="font-medium">Date:</span>{" "}
+                              {inspection.dateCompleted ||
+                                inspection.dateScheduled}
+                            </div>
+                            <div>
+                              <span className="font-medium">Score:</span>{" "}
+                              {inspection.overallScore}%
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="text-right mr-4">
+                            <div className="text-2xl font-bold">
+                              {inspection.overallScore}%
+                            </div>
+                            <Progress
+                              value={inspection.overallScore}
+                              className="w-20"
+                            />
+                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  setSelectedInspection(inspection)
+                                }
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Download className="h-4 w-4 mr-2" />
+                                Export Report
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </TabsContent>
 
             <TabsContent value="missed" className="space-y-6">
@@ -1052,7 +1063,8 @@ export default function InspectionsScreen() {
                     <Alert>
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        <strong>Warning:</strong> 4 vehicle inspections are overdue and require immediate attention
+                        <strong>Warning:</strong> 4 vehicle inspections are
+                        overdue and require immediate attention
                       </AlertDescription>
                     </Alert>
 
@@ -1084,8 +1096,12 @@ export default function InspectionsScreen() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="1week">1 Week Overdue</SelectItem>
-                          <SelectItem value="2weeks">2 Weeks Overdue</SelectItem>
-                          <SelectItem value="1month">1 Month Overdue</SelectItem>
+                          <SelectItem value="2weeks">
+                            2 Weeks Overdue
+                          </SelectItem>
+                          <SelectItem value="1month">
+                            1 Month Overdue
+                          </SelectItem>
                           <SelectItem value="all">All Overdue</SelectItem>
                         </SelectContent>
                       </Select>
@@ -1109,7 +1125,7 @@ export default function InspectionsScreen() {
                           type: "Safety Inspection",
                           dueDate: "2025-01-01",
                           daysPastDue: 15,
-                          status: "Overdue"
+                          status: "Overdue",
                         },
                         {
                           id: "VI-M002",
@@ -1118,7 +1134,7 @@ export default function InspectionsScreen() {
                           type: "Monthly Inspection",
                           dueDate: "2024-12-28",
                           daysPastDue: 18,
-                          status: "Critical"
+                          status: "Critical",
                         },
                         {
                           id: "VI-M003",
@@ -1127,7 +1143,7 @@ export default function InspectionsScreen() {
                           type: "Pre-Trip Inspection",
                           dueDate: "2024-12-20",
                           daysPastDue: 26,
-                          status: "Critical"
+                          status: "Critical",
                         },
                         {
                           id: "VI-M004",
@@ -1136,8 +1152,8 @@ export default function InspectionsScreen() {
                           type: "Maintenance Inspection",
                           dueDate: "2024-12-15",
                           daysPastDue: 31,
-                          status: "Critical"
-                        }
+                          status: "Critical",
+                        },
                       ].map((inspection) => (
                         <Card key={inspection.id} className="border-red-200">
                           <CardContent className="p-4">
@@ -1145,15 +1161,23 @@ export default function InspectionsScreen() {
                               <div className="flex-1">
                                 <div className="flex items-center gap-4">
                                   <div>
-                                    <h4 className="font-medium">{inspection.type}</h4>
+                                    <h4 className="font-medium">
+                                      {inspection.type}
+                                    </h4>
                                     <p className="text-sm text-muted-foreground">
                                       {inspection.vehicleRegistration}
                                     </p>
                                   </div>
                                   <div>
-                                    <p className="text-sm font-medium">Assigned: {inspection.inspector}</p>
+                                    <p className="text-sm font-medium">
+                                      Assigned: {inspection.inspector}
+                                    </p>
                                     <p className="text-sm text-red-600">
-                                      Due: {new Date(inspection.dueDate).toLocaleDateString()} ({inspection.daysPastDue} days overdue)
+                                      Due:{" "}
+                                      {new Date(
+                                        inspection.dueDate,
+                                      ).toLocaleDateString()}{" "}
+                                      ({inspection.daysPastDue} days overdue)
                                     </p>
                                   </div>
                                 </div>
@@ -1220,24 +1244,36 @@ export default function InspectionsScreen() {
                         <Card>
                           <CardContent className="p-4">
                             <div className="text-center">
-                              <div className="text-2xl font-bold text-green-600">12</div>
-                              <p className="text-sm text-muted-foreground">This Month</p>
+                              <div className="text-2xl font-bold text-green-600">
+                                12
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                This Month
+                              </p>
                             </div>
                           </CardContent>
                         </Card>
                         <Card>
                           <CardContent className="p-4">
                             <div className="text-center">
-                              <div className="text-2xl font-bold text-yellow-600">4</div>
-                              <p className="text-sm text-muted-foreground">Pending</p>
+                              <div className="text-2xl font-bold text-yellow-600">
+                                4
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                Pending
+                              </p>
                             </div>
                           </CardContent>
                         </Card>
                         <Card>
                           <CardContent className="p-4">
                             <div className="text-center">
-                              <div className="text-2xl font-bold text-blue-600">8</div>
-                              <p className="text-sm text-muted-foreground">Completed</p>
+                              <div className="text-2xl font-bold text-blue-600">
+                                8
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                Completed
+                              </p>
                             </div>
                           </CardContent>
                         </Card>
@@ -1259,11 +1295,21 @@ export default function InspectionsScreen() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">All Technicians</SelectItem>
-                            <SelectItem value="john-smith">John Smith</SelectItem>
-                            <SelectItem value="sarah-johnson">Sarah Johnson</SelectItem>
-                            <SelectItem value="mike-wilson">Mike Wilson</SelectItem>
-                            <SelectItem value="david-brown">David Brown</SelectItem>
-                            <SelectItem value="lisa-davis">Lisa Davis</SelectItem>
+                            <SelectItem value="john-smith">
+                              John Smith
+                            </SelectItem>
+                            <SelectItem value="sarah-johnson">
+                              Sarah Johnson
+                            </SelectItem>
+                            <SelectItem value="mike-wilson">
+                              Mike Wilson
+                            </SelectItem>
+                            <SelectItem value="david-brown">
+                              David Brown
+                            </SelectItem>
+                            <SelectItem value="lisa-davis">
+                              Lisa Davis
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
@@ -1274,7 +1320,9 @@ export default function InspectionsScreen() {
                             <SelectItem value="all">All Conditions</SelectItem>
                             <SelectItem value="good">Good Condition</SelectItem>
                             <SelectItem value="damaged">Damaged</SelectItem>
-                            <SelectItem value="stolen">Stolen/Missing</SelectItem>
+                            <SelectItem value="stolen">
+                              Stolen/Missing
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
@@ -1326,7 +1374,7 @@ export default function InspectionsScreen() {
                             status: "Completed",
                             overallScore: 95,
                             toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned"
+                            assignmentStatus: "Assigned",
                           },
                           {
                             id: "TI-002",
@@ -1339,7 +1387,7 @@ export default function InspectionsScreen() {
                             status: "Completed",
                             overallScore: 88,
                             toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned"
+                            assignmentStatus: "Assigned",
                           },
                           {
                             id: "TI-003",
@@ -1352,7 +1400,7 @@ export default function InspectionsScreen() {
                             status: "Attention Required",
                             overallScore: 72,
                             toolCondition: "Damaged",
-                            assignmentStatus: "Assigned"
+                            assignmentStatus: "Assigned",
                           },
                           {
                             id: "TI-004",
@@ -1365,8 +1413,8 @@ export default function InspectionsScreen() {
                             status: "Completed",
                             overallScore: 93,
                             toolCondition: "Good Condition",
-                            assignmentStatus: "Loaned"
-                          }
+                            assignmentStatus: "Loaned",
+                          },
                         ].map((inspection) => (
                           <Card key={inspection.id}>
                             <CardContent className="p-4">
@@ -1374,39 +1422,63 @@ export default function InspectionsScreen() {
                                 <div className="flex-1">
                                   <div className="flex items-center gap-6">
                                     <div>
-                                      <h4 className="font-medium">{inspection.toolType}</h4>
+                                      <h4 className="font-medium">
+                                        {inspection.toolType}
+                                      </h4>
                                       <p className="text-sm text-muted-foreground">
-                                        {inspection.toolId} • {inspection.warehouseNumber}
+                                        {inspection.toolId} •{" "}
+                                        {inspection.warehouseNumber}
                                       </p>
                                     </div>
                                     <div>
-                                      <p className="text-sm font-medium">Assigned To: {inspection.assignedTo}</p>
+                                      <p className="text-sm font-medium">
+                                        Assigned To: {inspection.assignedTo}
+                                      </p>
                                       <p className="text-sm text-muted-foreground">
                                         Status: {inspection.assignmentStatus}
                                       </p>
                                     </div>
                                     <div>
-                                      <p className="text-sm font-medium">Inspector: {inspection.inspector}</p>
+                                      <p className="text-sm font-medium">
+                                        Inspector: {inspection.inspector}
+                                      </p>
                                       <p className="text-sm text-muted-foreground">
-                                        {new Date(inspection.dateCompleted).toLocaleDateString()}
+                                        {new Date(
+                                          inspection.dateCompleted,
+                                        ).toLocaleDateString()}
                                       </p>
                                     </div>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-4">
                                   <div className="text-right">
-                                    <div className="text-lg font-bold">{inspection.overallScore}%</div>
-                                    <p className="text-xs text-muted-foreground">Score</p>
+                                    <div className="text-lg font-bold">
+                                      {inspection.overallScore}%
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                      Score
+                                    </p>
                                   </div>
                                   <div className="flex flex-col gap-1">
                                     <Badge
-                                      variant={inspection.status === 'Completed' ? 'default' : 'destructive'}
+                                      variant={
+                                        inspection.status === "Completed"
+                                          ? "default"
+                                          : "destructive"
+                                      }
                                     >
                                       {inspection.status}
                                     </Badge>
                                     <Badge
-                                      variant={inspection.toolCondition === 'Good Condition' ? 'default' :
-                                             inspection.toolCondition === 'Damaged' ? 'destructive' : 'secondary'}
+                                      variant={
+                                        inspection.toolCondition ===
+                                        "Good Condition"
+                                          ? "default"
+                                          : inspection.toolCondition ===
+                                              "Damaged"
+                                            ? "destructive"
+                                            : "secondary"
+                                      }
                                     >
                                       {inspection.toolCondition}
                                     </Badge>
@@ -1471,10 +1543,18 @@ export default function InspectionsScreen() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">All Technicians</SelectItem>
-                            <SelectItem value="john-smith">John Smith</SelectItem>
-                            <SelectItem value="sarah-johnson">Sarah Johnson</SelectItem>
-                            <SelectItem value="mike-wilson">Mike Wilson</SelectItem>
-                            <SelectItem value="david-brown">David Brown</SelectItem>
+                            <SelectItem value="john-smith">
+                              John Smith
+                            </SelectItem>
+                            <SelectItem value="sarah-johnson">
+                              Sarah Johnson
+                            </SelectItem>
+                            <SelectItem value="mike-wilson">
+                              Mike Wilson
+                            </SelectItem>
+                            <SelectItem value="david-brown">
+                              David Brown
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <Select>
@@ -1536,7 +1616,7 @@ export default function InspectionsScreen() {
                             status: "Completed",
                             overallScore: 92,
                             toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned"
+                            assignmentStatus: "Assigned",
                           },
                           {
                             id: "TI-H002",
@@ -1549,7 +1629,7 @@ export default function InspectionsScreen() {
                             status: "Completed",
                             overallScore: 89,
                             toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned"
+                            assignmentStatus: "Assigned",
                           },
                           {
                             id: "TI-H003",
@@ -1562,7 +1642,7 @@ export default function InspectionsScreen() {
                             status: "Completed",
                             overallScore: 85,
                             toolCondition: "Good Condition",
-                            assignmentStatus: "Loaned"
+                            assignmentStatus: "Loaned",
                           },
                           {
                             id: "TI-H004",
@@ -1575,8 +1655,8 @@ export default function InspectionsScreen() {
                             status: "Completed",
                             overallScore: 94,
                             toolCondition: "Good Condition",
-                            assignmentStatus: "Assigned"
-                          }
+                            assignmentStatus: "Assigned",
+                          },
                         ].map((inspection) => (
                           <Card key={inspection.id}>
                             <CardContent className="p-4">
@@ -1584,29 +1664,42 @@ export default function InspectionsScreen() {
                                 <div className="flex-1">
                                   <div className="flex items-center gap-6">
                                     <div>
-                                      <h4 className="font-medium">{inspection.toolType}</h4>
+                                      <h4 className="font-medium">
+                                        {inspection.toolType}
+                                      </h4>
                                       <p className="text-sm text-muted-foreground">
-                                        {inspection.toolId} • {inspection.warehouseNumber}
+                                        {inspection.toolId} •{" "}
+                                        {inspection.warehouseNumber}
                                       </p>
                                     </div>
                                     <div>
-                                      <p className="text-sm font-medium">Assigned To: {inspection.assignedTo}</p>
+                                      <p className="text-sm font-medium">
+                                        Assigned To: {inspection.assignedTo}
+                                      </p>
                                       <p className="text-sm text-muted-foreground">
                                         Status: {inspection.assignmentStatus}
                                       </p>
                                     </div>
                                     <div>
-                                      <p className="text-sm font-medium">Inspector: {inspection.inspector}</p>
+                                      <p className="text-sm font-medium">
+                                        Inspector: {inspection.inspector}
+                                      </p>
                                       <p className="text-sm text-muted-foreground">
-                                        {new Date(inspection.dateCompleted).toLocaleDateString()}
+                                        {new Date(
+                                          inspection.dateCompleted,
+                                        ).toLocaleDateString()}
                                       </p>
                                     </div>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-4">
                                   <div className="text-right">
-                                    <div className="text-lg font-bold">{inspection.overallScore}%</div>
-                                    <p className="text-xs text-muted-foreground">Score</p>
+                                    <div className="text-lg font-bold">
+                                      {inspection.overallScore}%
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                      Score
+                                    </p>
                                   </div>
                                   <div className="flex flex-col gap-1">
                                     <Badge variant="default">
@@ -1659,62 +1752,77 @@ export default function InspectionsScreen() {
                       <Alert>
                         <AlertTriangle className="h-4 w-4" />
                         <AlertDescription>
-                          <strong>Warning:</strong> 3 tool inspections are overdue and require immediate attention
+                          <strong>Warning:</strong> 3 tool inspections are
+                          overdue and require immediate attention
                         </AlertDescription>
                       </Alert>
 
                       {/* Enhanced Filter and Search for Missed */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                        <Input
-                          placeholder="Search by technician name..."
-                          className="pl-10"
-                        />
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <Input
+                            placeholder="Search by technician name..."
+                            className="pl-10"
+                          />
+                        </div>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Assigned To" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Technicians</SelectItem>
+                            <SelectItem value="john-smith">
+                              John Smith
+                            </SelectItem>
+                            <SelectItem value="sarah-johnson">
+                              Sarah Johnson
+                            </SelectItem>
+                            <SelectItem value="mike-wilson">
+                              Mike Wilson
+                            </SelectItem>
+                            <SelectItem value="david-brown">
+                              David Brown
+                            </SelectItem>
+                            <SelectItem value="lisa-davis">
+                              Lisa Davis
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Tool Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Statuses</SelectItem>
+                            <SelectItem value="overdue">
+                              Overdue Inspection
+                            </SelectItem>
+                            <SelectItem value="damaged">Damaged</SelectItem>
+                            <SelectItem value="stolen">
+                              Stolen/Missing
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Warehouse" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="WH-001">WH-001</SelectItem>
+                            <SelectItem value="WH-002">WH-002</SelectItem>
+                            <SelectItem value="WH-003">WH-003</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button variant="outline">
+                          <Filter className="h-4 w-4 mr-2" />
+                          Filter
+                        </Button>
+                        <Button variant="outline">
+                          <Download className="h-4 w-4 mr-2" />
+                          Print Report
+                        </Button>
                       </div>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Assigned To" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Technicians</SelectItem>
-                          <SelectItem value="john-smith">John Smith</SelectItem>
-                          <SelectItem value="sarah-johnson">Sarah Johnson</SelectItem>
-                          <SelectItem value="mike-wilson">Mike Wilson</SelectItem>
-                          <SelectItem value="david-brown">David Brown</SelectItem>
-                          <SelectItem value="lisa-davis">Lisa Davis</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Tool Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Statuses</SelectItem>
-                          <SelectItem value="overdue">Overdue Inspection</SelectItem>
-                          <SelectItem value="damaged">Damaged</SelectItem>
-                          <SelectItem value="stolen">Stolen/Missing</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Warehouse" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="WH-001">WH-001</SelectItem>
-                          <SelectItem value="WH-002">WH-002</SelectItem>
-                          <SelectItem value="WH-003">WH-003</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button variant="outline">
-                        <Filter className="h-4 w-4 mr-2" />
-                        Filter
-                      </Button>
-                      <Button variant="outline">
-                        <Download className="h-4 w-4 mr-2" />
-                        Print Report
-                      </Button>
-                    </div>
 
                       {/* Missed Tool Inspection List */}
                       <div className="space-y-4">
@@ -1730,7 +1838,7 @@ export default function InspectionsScreen() {
                             daysPastDue: 15,
                             status: "Overdue",
                             toolCondition: "Unknown",
-                            assignmentStatus: "Assigned"
+                            assignmentStatus: "Assigned",
                           },
                           {
                             id: "TI-M002",
@@ -1743,7 +1851,7 @@ export default function InspectionsScreen() {
                             daysPastDue: 18,
                             status: "Critical",
                             toolCondition: "Damaged",
-                            assignmentStatus: "Assigned"
+                            assignmentStatus: "Assigned",
                           },
                           {
                             id: "TI-M003",
@@ -1756,7 +1864,7 @@ export default function InspectionsScreen() {
                             daysPastDue: 26,
                             status: "Critical",
                             toolCondition: "Stolen/Missing",
-                            assignmentStatus: "Missing"
+                            assignmentStatus: "Missing",
                           },
                           {
                             id: "TI-M004",
@@ -1769,34 +1877,50 @@ export default function InspectionsScreen() {
                             daysPastDue: 36,
                             status: "Critical",
                             toolCondition: "Stolen/Missing",
-                            assignmentStatus: "Missing"
-                          }
+                            assignmentStatus: "Missing",
+                          },
                         ].map((inspection) => (
-                          <Card key={inspection.id} className={
-                            inspection.toolCondition === 'Stolen/Missing' ? "border-red-500 bg-red-50" :
-                            inspection.toolCondition === 'Damaged' ? "border-yellow-500 bg-yellow-50" :
-                            "border-red-200"
-                          }>
+                          <Card
+                            key={inspection.id}
+                            className={
+                              inspection.toolCondition === "Stolen/Missing"
+                                ? "border-red-500 bg-red-50"
+                                : inspection.toolCondition === "Damaged"
+                                  ? "border-yellow-500 bg-yellow-50"
+                                  : "border-red-200"
+                            }
+                          >
                             <CardContent className="p-4">
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-6">
                                     <div>
-                                      <h4 className="font-medium">{inspection.toolType}</h4>
+                                      <h4 className="font-medium">
+                                        {inspection.toolType}
+                                      </h4>
                                       <p className="text-sm text-muted-foreground">
-                                        {inspection.toolId} • {inspection.warehouseNumber}
+                                        {inspection.toolId} •{" "}
+                                        {inspection.warehouseNumber}
                                       </p>
                                     </div>
                                     <div>
-                                      <p className="text-sm font-medium">Assigned To: {inspection.assignedTo}</p>
+                                      <p className="text-sm font-medium">
+                                        Assigned To: {inspection.assignedTo}
+                                      </p>
                                       <p className="text-sm text-muted-foreground">
                                         Status: {inspection.assignmentStatus}
                                       </p>
                                     </div>
                                     <div>
-                                      <p className="text-sm font-medium">Inspector: {inspection.inspector}</p>
+                                      <p className="text-sm font-medium">
+                                        Inspector: {inspection.inspector}
+                                      </p>
                                       <p className="text-sm text-red-600">
-                                        Due: {new Date(inspection.dueDate).toLocaleDateString()} ({inspection.daysPastDue} days overdue)
+                                        Due:{" "}
+                                        {new Date(
+                                          inspection.dueDate,
+                                        ).toLocaleDateString()}{" "}
+                                        ({inspection.daysPastDue} days overdue)
                                       </p>
                                     </div>
                                   </div>
@@ -1807,8 +1931,15 @@ export default function InspectionsScreen() {
                                       {inspection.status}
                                     </Badge>
                                     <Badge
-                                      variant={inspection.toolCondition === 'Stolen/Missing' ? 'destructive' :
-                                             inspection.toolCondition === 'Damaged' ? 'destructive' : 'secondary'}
+                                      variant={
+                                        inspection.toolCondition ===
+                                        "Stolen/Missing"
+                                          ? "destructive"
+                                          : inspection.toolCondition ===
+                                              "Damaged"
+                                            ? "destructive"
+                                            : "secondary"
+                                      }
                                     >
                                       {inspection.toolCondition}
                                     </Badge>
@@ -1914,7 +2045,9 @@ export default function InspectionsScreen() {
               )}
 
               <div>
-                <h4 className="font-medium mb-2">Inspection Items ({selectedInspection.items.length} items)</h4>
+                <h4 className="font-medium mb-2">
+                  Inspection Items ({selectedInspection.items.length} items)
+                </h4>
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {selectedInspection.items.map((item) => (
                     <div
@@ -1928,14 +2061,21 @@ export default function InspectionsScreen() {
                         <div>
                           <span className="font-medium">{item.name}</span>
                           {item.notes && (
-                            <p className="text-sm text-muted-foreground mt-1">{item.notes}</p>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {item.notes}
+                            </p>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge
-                          variant={item.status === 'Pass' ? 'default' :
-                                 item.status === 'Fail' ? 'destructive' : 'secondary'}
+                          variant={
+                            item.status === "Pass"
+                              ? "default"
+                              : item.status === "Fail"
+                                ? "destructive"
+                                : "secondary"
+                          }
                         >
                           {item.status}
                         </Badge>
