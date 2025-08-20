@@ -971,72 +971,159 @@ export default function InspectionsScreen() {
           </div>
             </TabsContent>
 
-            <TabsContent value="scheduled" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Scheduled Inspections</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Alert>
-                  <Calendar className="h-4 w-4" />
-                  <AlertDescription>
-                    <strong>Upcoming:</strong> 3 vehicles have inspections due
-                    within the next 7 days
-                  </AlertDescription>
-                </Alert>
+            <TabsContent value="missed" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Missed Vehicle Inspections</CardTitle>
+                  <p className="text-muted-foreground">
+                    Vehicle inspections that are overdue or missed
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <Alert>
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        <strong>Warning:</strong> 4 vehicle inspections are overdue and require immediate attention
+                      </AlertDescription>
+                    </Alert>
 
-                <div className="space-y-3">
-                  {[
-                    {
-                      vehicle: "EL-127-MNO",
-                      type: "Safety Inspection",
-                      due: "2024-01-25",
-                      priority: "high",
-                    },
-                    {
-                      vehicle: "EL-128-PQR",
-                      type: "Monthly Inspection",
-                      due: "2024-01-26",
-                      priority: "medium",
-                    },
-                    {
-                      vehicle: "EL-129-STU",
-                      type: "Pre-Trip Inspection",
-                      due: "2024-01-27",
-                      priority: "low",
-                    },
-                  ].map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div>
-                        <h4 className="font-medium">{item.type}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Vehicle: {item.vehicle} • Due: {item.due}
-                        </p>
+                    {/* Enhanced Filter and Search for Missed */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                        <Input
+                          placeholder="Search by technician name..."
+                          className="pl-10"
+                        />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          className={
-                            item.priority === "high"
-                              ? "bg-red-100 text-red-800"
-                              : item.priority === "medium"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-green-100 text-green-800"
-                          }
-                        >
-                          {item.priority} priority
-                        </Badge>
-                        <Button size="sm">Schedule</Button>
-                      </div>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Vehicle" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Vehicles</SelectItem>
+                          {vehicles.map((vehicle) => (
+                            <SelectItem key={vehicle.id} value={vehicle.id}>
+                              {vehicle.registration}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Overdue Period" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1week">1 Week Overdue</SelectItem>
+                          <SelectItem value="2weeks">2 Weeks Overdue</SelectItem>
+                          <SelectItem value="1month">1 Month Overdue</SelectItem>
+                          <SelectItem value="all">All Overdue</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button variant="outline">
+                        <Filter className="h-4 w-4 mr-2" />
+                        Filter
+                      </Button>
+                      <Button variant="outline">
+                        <Download className="h-4 w-4 mr-2" />
+                        Print Report
+                      </Button>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
+                    {/* Missed Vehicle Inspection List */}
+                    <div className="space-y-4">
+                      {[
+                        {
+                          id: "VI-M001",
+                          inspector: "David Brown",
+                          vehicleRegistration: "EL-127-MNO",
+                          type: "Safety Inspection",
+                          dueDate: "2025-01-01",
+                          daysPastDue: 15,
+                          status: "Overdue"
+                        },
+                        {
+                          id: "VI-M002",
+                          inspector: "Lisa Davis",
+                          vehicleRegistration: "EL-128-PQR",
+                          type: "Monthly Inspection",
+                          dueDate: "2024-12-28",
+                          daysPastDue: 18,
+                          status: "Critical"
+                        },
+                        {
+                          id: "VI-M003",
+                          inspector: "Robert Lee",
+                          vehicleRegistration: "EL-129-STU",
+                          type: "Pre-Trip Inspection",
+                          dueDate: "2024-12-20",
+                          daysPastDue: 26,
+                          status: "Critical"
+                        },
+                        {
+                          id: "VI-M004",
+                          inspector: "Emily Johnson",
+                          vehicleRegistration: "EL-130-VWX",
+                          type: "Maintenance Inspection",
+                          dueDate: "2024-12-15",
+                          daysPastDue: 31,
+                          status: "Critical"
+                        }
+                      ].map((inspection) => (
+                        <Card key={inspection.id} className="border-red-200">
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-4">
+                                  <div>
+                                    <h4 className="font-medium">{inspection.type}</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      {inspection.vehicleRegistration}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-medium">Assigned: {inspection.inspector}</p>
+                                    <p className="text-sm text-red-600">
+                                      Due: {new Date(inspection.dueDate).toLocaleDateString()} ({inspection.daysPastDue} days overdue)
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <Badge variant="destructive">
+                                  {inspection.status}
+                                </Badge>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm">
+                                      <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent>
+                                    <DropdownMenuItem>
+                                      <User className="h-4 w-4 mr-2" />
+                                      Reassign Inspector
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <Calendar className="h-4 w-4 mr-2" />
+                                      Reschedule
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <Download className="h-4 w-4 mr-2" />
+                                      Send Reminder
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </TabsContent>
