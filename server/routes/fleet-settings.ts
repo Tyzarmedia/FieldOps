@@ -62,10 +62,10 @@ let fleetManagerSettings: Record<string, FleetManagerSettings> = {};
 // Get fleet manager settings
 export const getFleetManagerSettings: RequestHandler = (req, res) => {
   try {
-    const employeeId = req.headers.employeeid as string || "FM-001"; // Get from auth
-    
+    const employeeId = (req.headers.employeeid as string) || "FM-001"; // Get from auth
+
     const settings = fleetManagerSettings[employeeId];
-    
+
     if (!settings) {
       // Return default settings if none exist
       const defaultSettings: FleetManagerSettings = {
@@ -81,7 +81,11 @@ export const getFleetManagerSettings: RequestHandler = (req, res) => {
           address: "456 Fleet Division, Johannesburg",
           bio: "Experienced fleet manager overseeing vehicle operations, maintenance, and compliance for the entire fleet.",
           licenseNumber: "FL-123456",
-          certifications: ["Fleet Management Certified", "Safety Inspector", "Logistics Professional"],
+          certifications: [
+            "Fleet Management Certified",
+            "Safety Inspector",
+            "Logistics Professional",
+          ],
         },
         notifications: {
           emailNotifications: true,
@@ -123,7 +127,7 @@ export const getFleetManagerSettings: RequestHandler = (req, res) => {
         updatedAt: new Date().toISOString(),
         updatedBy: employeeId,
       };
-      
+
       return res.json({
         success: true,
         data: defaultSettings,
@@ -146,7 +150,7 @@ export const getFleetManagerSettings: RequestHandler = (req, res) => {
 // Save fleet manager settings
 export const saveFleetManagerSettings: RequestHandler = (req, res) => {
   try {
-    const employeeId = req.headers.employeeid as string || "FM-001"; // Get from auth
+    const employeeId = (req.headers.employeeid as string) || "FM-001"; // Get from auth
     const settingsData = req.body;
 
     const updatedSettings: FleetManagerSettings = {
@@ -161,7 +165,7 @@ export const saveFleetManagerSettings: RequestHandler = (req, res) => {
 
     // Simulate notification service call
     console.log(`Fleet Manager Settings Updated for ${employeeId}`);
-    
+
     res.json({
       success: true,
       data: updatedSettings,
@@ -179,12 +183,12 @@ export const saveFleetManagerSettings: RequestHandler = (req, res) => {
 // Update specific setting category
 export const updateSettingCategory: RequestHandler = (req, res) => {
   try {
-    const employeeId = req.headers.employeeid as string || "FM-001";
+    const employeeId = (req.headers.employeeid as string) || "FM-001";
     const { category } = req.params;
     const updates = req.body;
 
     const currentSettings = fleetManagerSettings[employeeId];
-    
+
     if (!currentSettings) {
       return res.status(404).json({
         success: false,
@@ -193,7 +197,12 @@ export const updateSettingCategory: RequestHandler = (req, res) => {
     }
 
     // Validate category
-    const validCategories = ['profile', 'notifications', 'fleetPreferences', 'systemPreferences'];
+    const validCategories = [
+      "profile",
+      "notifications",
+      "fleetPreferences",
+      "systemPreferences",
+    ];
     if (!validCategories.includes(category)) {
       return res.status(400).json({
         success: false,

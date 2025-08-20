@@ -177,21 +177,26 @@ export default function FleetVehicleManagement() {
       // Update on server first
       console.log("Assigning vehicle:", { selectedVehicle, driverName });
 
-      const response = await makeAuthenticatedRequest(`/api/vehicles/${selectedVehicle.vehicle_id}/assign`, {
-        method: "POST",
-        body: JSON.stringify({
-          assignedTo: driverName,
-          assignedDate: new Date().toISOString(),
-          notes: `Assigned via Fleet Management Dashboard`,
-        }),
-      });
+      const response = await makeAuthenticatedRequest(
+        `/api/vehicles/${selectedVehicle.vehicle_id}/assign`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            assignedTo: driverName,
+            assignedDate: new Date().toISOString(),
+            notes: `Assigned via Fleet Management Dashboard`,
+          }),
+        },
+      );
 
       console.log("Server response:", response.status, response.statusText);
 
       if (!response.ok) {
         const errorData = await response.text();
         console.error("Server error:", errorData);
-        throw new Error(`Server assignment failed: ${response.status} - ${errorData}`);
+        throw new Error(
+          `Server assignment failed: ${response.status} - ${errorData}`,
+        );
       }
 
       const result = await response.json();
@@ -222,7 +227,7 @@ export default function FleetVehicleManagement() {
       console.error("Error assigning driver:", error);
       showNotification.error(
         "Assignment Failed",
-        error instanceof Error ? error.message : "Failed to assign driver"
+        error instanceof Error ? error.message : "Failed to assign driver",
       );
     }
   };
@@ -236,15 +241,20 @@ export default function FleetVehicleManagement() {
     try {
       // Handle loan vehicle differently
       if (status === "Loan Vehicle") {
-        const response = await makeAuthenticatedRequest(`/api/vehicles/${selectedVehicle.vehicle_id}/loan`, {
-          method: "POST",
-          body: JSON.stringify({
-            loanedTo: "Fleet Pool",
-            loanDate: new Date().toISOString(),
-            returnDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
-            notes: "Loaned via Fleet Management Dashboard",
-          }),
-        });
+        const response = await makeAuthenticatedRequest(
+          `/api/vehicles/${selectedVehicle.vehicle_id}/loan`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              loanedTo: "Fleet Pool",
+              loanDate: new Date().toISOString(),
+              returnDate: new Date(
+                Date.now() + 30 * 24 * 60 * 60 * 1000,
+              ).toISOString(), // 30 days
+              notes: "Loaned via Fleet Management Dashboard",
+            }),
+          },
+        );
 
         if (!response.ok) {
           throw new Error("Server loan operation failed");
@@ -256,13 +266,16 @@ export default function FleetVehicleManagement() {
         }
       } else {
         // Regular status update
-        const response = await makeAuthenticatedRequest(`/api/vehicles/${selectedVehicle.vehicle_id}/status`, {
-          method: "PATCH",
-          body: JSON.stringify({
-            status: status,
-            notes: `Status updated via Fleet Management Dashboard`,
-          }),
-        });
+        const response = await makeAuthenticatedRequest(
+          `/api/vehicles/${selectedVehicle.vehicle_id}/status`,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              status: status,
+              notes: `Status updated via Fleet Management Dashboard`,
+            }),
+          },
+        );
 
         if (!response.ok) {
           throw new Error("Server status update failed");
@@ -296,15 +309,24 @@ export default function FleetVehicleManagement() {
       console.error("Error updating vehicle status:", error);
       showNotification.error(
         "Update Failed",
-        error instanceof Error ? error.message : "Failed to update vehicle status",
+        error instanceof Error
+          ? error.message
+          : "Failed to update vehicle status",
       );
     }
   };
 
   const handleAddVehicle = async () => {
     try {
-      if (!newVehicleData.registration || !newVehicleData.make || !newVehicleData.model) {
-        showNotification.error("Validation Error", "Please fill in all required fields");
+      if (
+        !newVehicleData.registration ||
+        !newVehicleData.make ||
+        !newVehicleData.model
+      ) {
+        showNotification.error(
+          "Validation Error",
+          "Please fill in all required fields",
+        );
         return;
       }
 
@@ -324,8 +346,9 @@ export default function FleetVehicleManagement() {
 
       // Add to local state
       const newVehicle = {
-        vehicle_id: Math.max(...vehicles.map(v => v.vehicle_id), 0) + 1,
-        plate_number: newVehicleData.licensePlate || newVehicleData.registration,
+        vehicle_id: Math.max(...vehicles.map((v) => v.vehicle_id), 0) + 1,
+        plate_number:
+          newVehicleData.licensePlate || newVehicleData.registration,
         make: newVehicleData.make,
         model: newVehicleData.model,
         year: newVehicleData.year,
@@ -376,14 +399,17 @@ export default function FleetVehicleManagement() {
   const handleRemoveVehicle = async (vehicle: Vehicle) => {
     try {
       const confirmed = window.confirm(
-        `Are you sure you want to remove ${vehicle.make} ${vehicle.model} (${vehicle.plate_number}) from the fleet?`
+        `Are you sure you want to remove ${vehicle.make} ${vehicle.model} (${vehicle.plate_number}) from the fleet?`,
       );
 
       if (!confirmed) return;
 
-      const response = await makeAuthenticatedRequest(`/api/vehicles/${vehicle.vehicle_id}`, {
-        method: "DELETE",
-      });
+      const response = await makeAuthenticatedRequest(
+        `/api/vehicles/${vehicle.vehicle_id}`,
+        {
+          method: "DELETE",
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Server error while removing vehicle");
@@ -395,7 +421,7 @@ export default function FleetVehicleManagement() {
       }
 
       // Remove from local state
-      setVehicles(vehicles.filter(v => v.vehicle_id !== vehicle.vehicle_id));
+      setVehicles(vehicles.filter((v) => v.vehicle_id !== vehicle.vehicle_id));
 
       showNotification.success(
         "Vehicle Removed",
@@ -790,7 +816,10 @@ export default function FleetVehicleManagement() {
       </Dialog>
 
       {/* Add Vehicle Dialog */}
-      <Dialog open={addVehicleDialogOpen} onOpenChange={setAddVehicleDialogOpen}>
+      <Dialog
+        open={addVehicleDialogOpen}
+        onOpenChange={setAddVehicleDialogOpen}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Add New Vehicle</DialogTitle>
@@ -871,7 +900,8 @@ export default function FleetVehicleManagement() {
                   onChange={(e) =>
                     setNewVehicleData({
                       ...newVehicleData,
-                      year: parseInt(e.target.value) || new Date().getFullYear(),
+                      year:
+                        parseInt(e.target.value) || new Date().getFullYear(),
                     })
                   }
                   min="1990"
@@ -928,7 +958,9 @@ export default function FleetVehicleManagement() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="fuelEfficiency">Fuel Efficiency (L/100km)</Label>
+                <Label htmlFor="fuelEfficiency">
+                  Fuel Efficiency (L/100km)
+                </Label>
                 <Input
                   id="fuelEfficiency"
                   type="number"

@@ -184,11 +184,14 @@ export default function FleetManagerSettings() {
           setHasUnsavedChanges(false);
           showNotification.success(
             "Settings Saved",
-            "Your fleet manager settings have been updated successfully"
+            "Your fleet manager settings have been updated successfully",
           );
 
           // Also save profile image locally for immediate use
-          localStorage.setItem("fleetManagerSettings", JSON.stringify(settingsData));
+          localStorage.setItem(
+            "fleetManagerSettings",
+            JSON.stringify(settingsData),
+          );
 
           navigate("/fleet");
         } else {
@@ -201,7 +204,7 @@ export default function FleetManagerSettings() {
       console.error("Failed to save settings:", error);
       showNotification.error(
         "Save Failed",
-        "Could not save your settings. Please try again."
+        "Could not save your settings. Please try again.",
       );
     } finally {
       setIsLoading(false);
