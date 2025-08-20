@@ -1731,11 +1731,25 @@ export default function InspectionsScreen() {
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Toolbox Inspection History</CardTitle>
-                    <p className="text-muted-foreground">
-                      Historical toolbox inspections by technician from previous
-                      months
-                    </p>
+                    <div
+                      className="flex items-center justify-between cursor-pointer"
+                      onClick={() => toggleSection('toolboxHistory')}
+                    >
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          Toolbox Inspection History
+                          {expandedSections.toolboxHistory ? (
+                            <ChevronUp className="h-5 w-5" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5" />
+                          )}
+                        </CardTitle>
+                        <p className="text-muted-foreground">
+                          Historical toolbox inspections by technician from previous
+                          months
+                        </p>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
