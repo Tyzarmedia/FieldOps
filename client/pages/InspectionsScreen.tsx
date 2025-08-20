@@ -50,6 +50,8 @@ import {
   Download,
   MoreVertical,
   Scan,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import ToolboxInspection from '@/components/ToolboxInspection';
 import type { Toolbox } from '@/components/ToolboxInspection';
