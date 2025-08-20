@@ -230,8 +230,38 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
 
       {/* Main content */}
       <div className="lg:pl-64">
+        {/* Header */}
+        <header className="bg-background border-b border-border px-4 sm:px-6 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="lg:hidden"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              <h1 className="text-lg font-semibold text-foreground">
+                {getPageTitle(location.pathname, userRole)}
+              </h1>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Only show notifications for fleet managers and relevant roles */}
+              {(userRole === "FleetManager" || userRole === "Manager" || userRole === "CEO") && (
+                <NotificationBell
+                  notifications={notifications}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  onClearNotification={handleClearNotification}
+                />
+              )}
+            </div>
+          </div>
+        </header>
+
         {/* Page content */}
-        <main className="p-4 sm:p-6 sm:pt-px">{children}</main>
+        <main className="p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );
