@@ -42,6 +42,11 @@ import {
   removeVehicle,
   updateVehicleStatus,
 } from "./routes/vehicles";
+import {
+  getFleetManagerSettings,
+  saveFleetManagerSettings,
+  updateSettingCategory,
+} from "./routes/fleet-settings";
 
 export function createServer() {
   const app = express();
