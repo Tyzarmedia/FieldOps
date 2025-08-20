@@ -176,6 +176,8 @@ export default function FleetVehicleManagement() {
 
       // Update on server first - convert vehicle_id to server format
       const serverVehicleId = `FL-${String(selectedVehicle.vehicle_id).padStart(3, "0")}`;
+      console.log("Assigning vehicle:", { serverVehicleId, selectedVehicle, driverName });
+
       const response = await makeAuthenticatedRequest(`/api/vehicles/${serverVehicleId}/assign`, {
         method: "POST",
         body: JSON.stringify({
@@ -185,8 +187,12 @@ export default function FleetVehicleManagement() {
         }),
       });
 
+      console.log("Server response:", response.status, response.statusText);
+
       if (!response.ok) {
-        throw new Error("Server assignment failed");
+        const errorData = await response.text();
+        console.error("Server error:", errorData);
+        throw new Error(`Server assignment failed: ${response.status} - ${errorData}`);
       }
 
       const result = await response.json();
