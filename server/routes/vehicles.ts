@@ -59,12 +59,14 @@ export const getAllVehicles: RequestHandler = (req, res) => {
     let filteredVehicles = vehicles;
 
     if (status) {
-      filteredVehicles = filteredVehicles.filter((v) => v.status === status);
+      filteredVehicles = filteredVehicles.filter((v) =>
+        v.status.toLowerCase() === (status as string).toLowerCase()
+      );
     }
 
     if (assignedTo) {
       filteredVehicles = filteredVehicles.filter((v) =>
-        v.assignedTo
+        v.assigned_driver
           ?.toLowerCase()
           .includes((assignedTo as string).toLowerCase()),
       );
