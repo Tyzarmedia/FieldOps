@@ -51,6 +51,8 @@ import {
   MoreVertical,
   Scan,
 } from "lucide-react";
+import ToolboxInspection from '@/components/ToolboxInspection';
+import type { Toolbox } from '@/components/ToolboxInspection';
 
 interface InspectionItem {
   id: string;
