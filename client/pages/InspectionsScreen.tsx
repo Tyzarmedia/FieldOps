@@ -576,53 +576,99 @@ export default function InspectionsScreen() {
               <DialogHeader>
                 <DialogTitle>Start New Inspection</DialogTitle>
                 <DialogDescription>
-                  Select a vehicle to begin a new inspection
+                  Select inspection type, technician, and details to begin a new inspection
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="vehicle">Vehicle</Label>
+                  <Label htmlFor="inspection-category">Inspection Type</Label>
                   <Select
-                    value={selectedVehicle}
-                    onValueChange={setSelectedVehicle}
+                    value={selectedInspectionType}
+                    onValueChange={(value: "vehicle" | "tools") => setSelectedInspectionType(value)}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a vehicle" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {vehicles.map((vehicle) => (
-                        <SelectItem key={vehicle.id} value={vehicle.id}>
-                          {vehicle.registration} ({vehicle.id})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="inspection-type">Inspection Type</Label>
-                  <Select>
                     <SelectTrigger>
                       <SelectValue placeholder="Select inspection type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {inspectionTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
+                      <SelectItem value="vehicle">Vehicle Inspection</SelectItem>
+                      <SelectItem value="tools">Tools Inspection</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="technician">Technician</Label>
+                  <Select
+                    value={selectedTechnician}
+                    onValueChange={setSelectedTechnician}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select technician" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {technicians.map((technician) => (
+                        <SelectItem key={technician.id} value={technician.id}>
+                          {technician.name} - {technician.department}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+
+                {selectedInspectionType === "vehicle" && (
+                  <div>
+                    <Label htmlFor="vehicle">Vehicle</Label>
+                    <Select
+                      value={selectedVehicle}
+                      onValueChange={setSelectedVehicle}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a vehicle" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {vehicles.map((vehicle) => (
+                          <SelectItem key={vehicle.id} value={vehicle.id}>
+                            {vehicle.registration} ({vehicle.id})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {selectedInspectionType && (
+                  <div>
+                    <Label htmlFor="specific-type">Specific Inspection Type</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select specific type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {inspectionTypes[selectedInspectionType].map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
-                    onClick={() => setShowNewInspection(false)}
+                    onClick={() => {
+                      setShowNewInspection(false);
+                      setSelectedInspectionType("");
+                      setSelectedTechnician("");
+                      setSelectedVehicle("");
+                    }}
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={startNewInspection}
-                    disabled={!selectedVehicle}
+                    disabled={!selectedInspectionType || !selectedTechnician || (selectedInspectionType === "vehicle" && !selectedVehicle)}
                   >
                     Start Inspection
                   </Button>
