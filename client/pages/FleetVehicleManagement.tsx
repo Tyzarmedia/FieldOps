@@ -139,28 +139,40 @@ export default function FleetVehicleManagement() {
       return;
     }
 
-    const selectedDriverObj = drivers.find((d) => d.driver_id.toString() === selectedDriver);
-    if (!selectedDriverObj) {
-      showNotification.error("Driver Not Found", "Selected driver could not be found");
-      return;
+    try {
+      const selectedDriverObj = drivers.find((d) => d.driver_id.toString() === selectedDriver);
+      if (!selectedDriverObj) {
+        showNotification.error("Driver Not Found", "Selected driver could not be found");
+        return;
+      }
+
+      const driverName = selectedDriverObj.name;
+
+      const updatedVehicles = vehicles.map((vehicle) =>
+        vehicle.vehicle_id === selectedVehicle.vehicle_id
+          ? { ...vehicle, assigned_driver: driverName }
+          : vehicle,
+      );
+
+      // Update vehicles state
+      setVehicles(updatedVehicles);
+
+      // Clear dialog state immediately
+      setAssignDialogOpen(false);
+      setSelectedDriver("");
+      setSelectedVehicle(null);
+
+      // Show notification after state updates
+      setTimeout(() => {
+        showNotification.success(
+          "Driver Assigned",
+          `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`
+        );
+      }, 100);
+    } catch (error) {
+      console.error("Error assigning driver:", error);
+      showNotification.error("Assignment Failed", "Failed to assign driver");
     }
-
-    const driverName = selectedDriverObj.name;
-
-    const updatedVehicles = vehicles.map((vehicle) =>
-      vehicle.vehicle_id === selectedVehicle.vehicle_id
-        ? { ...vehicle, assigned_driver: driverName }
-        : vehicle,
-    );
-
-    setVehicles(updatedVehicles);
-    showNotification.success(
-      "Driver Assigned",
-      `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`
-    );
-    setAssignDialogOpen(false);
-    setSelectedDriver("");
-    setSelectedVehicle(null);
   };
 
   const handleSetService = (status: string) => {
