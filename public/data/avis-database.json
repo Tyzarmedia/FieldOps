@@ -11,10 +11,10 @@
       "fuel_efficiency": 29.5,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-12-15",
-        "insurance_expiry": "2024-11-30",
-        "roadworthy_expiry": "2024-10-20",
-        "registration_expiry": "2024-09-15"
+        "license_expiry": "2024-11-15",
+        "insurance_expiry": "2024-10-30",
+        "roadworthy_expiry": "2024-09-20",
+        "registration_expiry": "2024-08-15"
       },
       "last_service": "2024-01-10",
       "next_service_due": "2024-04-10"
@@ -30,10 +30,10 @@
       "fuel_efficiency": 27.0,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-08-25",
-        "insurance_expiry": "2024-12-05",
-        "roadworthy_expiry": "2024-11-15",
-        "registration_expiry": "2024-07-30"
+        "license_expiry": "2024-07-25",
+        "insurance_expiry": "2024-09-05",
+        "roadworthy_expiry": "2024-08-15",
+        "registration_expiry": "2024-06-30"
       },
       "last_service": "2024-01-05",
       "next_service_due": "2024-04-05"
@@ -49,10 +49,10 @@
       "fuel_efficiency": 26.2,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-06-10",
-        "insurance_expiry": "2024-10-18",
-        "roadworthy_expiry": "2024-09-05",
-        "registration_expiry": "2024-08-12"
+        "license_expiry": "2025-02-10",
+        "insurance_expiry": "2025-02-18",
+        "roadworthy_expiry": "2025-02-05",
+        "registration_expiry": "2025-02-12"
       },
       "last_service": "2023-12-20",
       "next_service_due": "2024-03-20"
@@ -68,10 +68,10 @@
       "fuel_efficiency": 30.1,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2025-01-20",
-        "insurance_expiry": "2024-12-30",
-        "roadworthy_expiry": "2024-11-25",
-        "registration_expiry": "2024-10-08"
+        "license_expiry": "2026-01-20",
+        "insurance_expiry": "2025-12-30",
+        "roadworthy_expiry": "2025-11-25",
+        "registration_expiry": "2025-10-08"
       },
       "last_service": "2024-01-15",
       "next_service_due": "2024-04-15"
@@ -87,10 +87,10 @@
       "fuel_efficiency": 25.0,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-05-15",
-        "insurance_expiry": "2024-09-22",
-        "roadworthy_expiry": "2024-08-08",
-        "registration_expiry": "2024-07-18"
+        "license_expiry": "2026-05-15",
+        "insurance_expiry": "2025-09-22",
+        "roadworthy_expiry": "2025-08-08",
+        "registration_expiry": "2025-07-18"
       },
       "last_service": "2024-01-18",
       "next_service_due": "2024-04-18"
@@ -106,10 +106,10 @@
       "fuel_efficiency": 22.5,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-11-08",
-        "insurance_expiry": "2024-12-12",
-        "roadworthy_expiry": "2024-10-30",
-        "registration_expiry": "2024-09-25"
+        "license_expiry": "2026-11-08",
+        "insurance_expiry": "2025-12-12",
+        "roadworthy_expiry": "2025-10-30",
+        "registration_expiry": "2025-09-25"
       },
       "last_service": "2024-01-08",
       "next_service_due": "2024-04-08"
@@ -125,10 +125,10 @@
       "fuel_efficiency": 28.4,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-10-15",
-        "insurance_expiry": "2024-11-20",
-        "roadworthy_expiry": "2024-09-18",
-        "registration_expiry": "2024-08-28"
+        "license_expiry": "2026-10-15",
+        "insurance_expiry": "2025-11-20",
+        "roadworthy_expiry": "2025-09-18",
+        "registration_expiry": "2025-08-28"
       },
       "last_service": "2024-01-12",
       "next_service_due": "2024-04-12"
@@ -144,10 +144,10 @@
       "fuel_efficiency": 27.2,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-09-12",
-        "insurance_expiry": "2024-10-25",
-        "roadworthy_expiry": "2024-08-15",
-        "registration_expiry": "2024-07-22"
+        "license_expiry": "2026-09-12",
+        "insurance_expiry": "2025-10-25",
+        "roadworthy_expiry": "2025-08-15",
+        "registration_expiry": "2025-07-22"
       },
       "last_service": "2023-12-28",
       "next_service_due": "2024-03-28"
