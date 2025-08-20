@@ -332,14 +332,22 @@ export default function TechnicianDashboard() {
       const minutes = diffInMinutes % 60;
       setWorkingHours(`${hours}:${minutes.toString().padStart(2, "0")}`);
 
-      // Use real distance tracking if available, otherwise simulate
-      const realDistance = locationTrackingService.getTotalDistanceTraveled();
+      // Use enhanced distance tracking first, then fallback to original service
+      let realDistance = distanceTrackingFix.getTotalDistance();
+
+      // If enhanced tracking has no data, try original service
+      if (realDistance === 0) {
+        realDistance = locationTrackingService.getTotalDistanceTraveled();
+      }
+
       if (realDistance > 0) {
         setDistanceTraveled(realDistance.toFixed(1));
+        console.log(`Distance updated: ${realDistance.toFixed(1)}km`);
       } else {
-        // Fallback to simulation if no real tracking data
+        // Fallback to simulation only if no real tracking data at all
         const distanceKm = (diffInMinutes / 60) * 0.5;
         setDistanceTraveled(distanceKm.toFixed(1));
+        console.log(`Using simulated distance: ${distanceKm.toFixed(1)}km`);
       }
     }
   };
