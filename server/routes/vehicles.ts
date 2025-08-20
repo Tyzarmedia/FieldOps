@@ -172,7 +172,9 @@ export const updateVehicle: RequestHandler = (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
       return res.status(404).json({
