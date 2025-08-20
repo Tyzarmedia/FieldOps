@@ -161,21 +161,51 @@ export default function FleetManagerSettings() {
     }
   };
 
-  const handleSaveSettings = () => {
-    // In a real app, this would save to backend
-    const settingsData = {
-      profile,
-      notifications,
-      fleetPreferences,
-      systemPreferences,
-      profileImage,
-    };
+  const handleSaveSettings = async () => {
+    try {
+      setIsLoading(true);
 
-    localStorage.setItem("fleetManagerSettings", JSON.stringify(settingsData));
+      const settingsData = {
+        profile,
+        notifications,
+        fleetPreferences,
+        systemPreferences,
+        profileImage,
+      };
 
-    // Show success message
-    alert("Settings saved successfully!");
-    navigate("/fleet");
+      const response = await makeAuthenticatedRequest("/api/fleet-settings", {
+        method: "POST",
+        body: JSON.stringify(settingsData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setHasUnsavedChanges(false);
+          showNotification.success(
+            "Settings Saved",
+            "Your fleet manager settings have been updated successfully"
+          );
+
+          // Also save profile image locally for immediate use
+          localStorage.setItem("fleetManagerSettings", JSON.stringify(settingsData));
+
+          navigate("/fleet");
+        } else {
+          throw new Error(data.error || "Failed to save settings");
+        }
+      } else {
+        throw new Error("Server error while saving settings");
+      }
+    } catch (error) {
+      console.error("Failed to save settings:", error);
+      showNotification.error(
+        "Save Failed",
+        "Could not save your settings. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleExportSettings = () => {
