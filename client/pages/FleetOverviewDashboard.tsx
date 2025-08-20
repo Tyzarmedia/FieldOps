@@ -391,58 +391,6 @@ export default function FleetOverviewDashboard() {
         </Card>
       </div>
 
-      {/* AI Insights Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5 text-blue-600" />
-            AI Fleet Insights
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            {aiInsights.map((insight) => (
-              <Alert
-                key={insight.id}
-                className={`border-l-4 ${
-                  insight.impact === "high"
-                    ? "border-l-red-500"
-                    : insight.impact === "medium"
-                      ? "border-l-yellow-500"
-                      : "border-l-green-500"
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  {getInsightIcon(insight.type)}
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="font-semibold text-sm">{insight.title}</h4>
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          className={`text-xs ${getImpactColor(insight.impact)}`}
-                        >
-                          {insight.impact} impact
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {insight.confidence}% confidence
-                        </span>
-                      </div>
-                    </div>
-                    <AlertDescription className="text-sm">
-                      {insight.description}
-                    </AlertDescription>
-                    {insight.actionRequired && (
-                      <Button size="sm" className="mt-2">
-                        Take Action
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </Alert>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Smart Assistant */}
       <Card>
