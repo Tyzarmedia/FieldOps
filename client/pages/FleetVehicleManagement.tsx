@@ -236,8 +236,7 @@ export default function FleetVehicleManagement() {
     try {
       // Handle loan vehicle differently
       if (status === "Loan Vehicle") {
-        const serverVehicleId = `FL-${String(selectedVehicle.vehicle_id).padStart(3, "0")}`;
-        const response = await makeAuthenticatedRequest(`/api/vehicles/${serverVehicleId}/loan`, {
+        const response = await makeAuthenticatedRequest(`/api/vehicles/${selectedVehicle.vehicle_id}/loan`, {
           method: "POST",
           body: JSON.stringify({
             loanedTo: "Fleet Pool",
