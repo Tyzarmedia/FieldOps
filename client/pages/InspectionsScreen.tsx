@@ -293,9 +293,14 @@ export default function InspectionsScreen() {
         ...item,
         status: "pass" as const,
         notes: item.name === "Brake System" ? "Excellent condition" : "",
+        imageUploaded: true, // All images uploaded
+        photos: [`https://images.unsplash.com/photo-${1500000000 + index * 50}?w=500`],
+        inspectionDate: "2025-01-14",
       })),
       overallScore: 95,
-    },
+      imagesUploaded: 10,
+      imagesRequired: 10,
+    } as VehicleInspectionData,
     {
       id: "INS-003",
       vehicleId: "FL-003",
