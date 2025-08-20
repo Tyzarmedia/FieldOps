@@ -317,7 +317,7 @@ export default function IncidentReports() {
               <SelectValue placeholder="Severity" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Severities</SelectItem>
+              <SelectItem value="">All Severities</SelectItem>
               <SelectItem value="critical">Critical</SelectItem>
               <SelectItem value="high">High</SelectItem>
               <SelectItem value="medium">Medium</SelectItem>
@@ -329,7 +329,7 @@ export default function IncidentReports() {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="">All Statuses</SelectItem>
               <SelectItem value="open">Open</SelectItem>
               <SelectItem value="investigating">Investigating</SelectItem>
               <SelectItem value="resolved">Resolved</SelectItem>
