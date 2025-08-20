@@ -133,11 +133,18 @@ export default function FleetVehicleManagement() {
   }, [vehicles, searchTerm, statusFilter]);
 
   const handleAssignDriver = () => {
-    if (!selectedVehicle || !selectedDriver) return;
+    if (!selectedVehicle || !selectedDriver) {
+      showNotification.error("Assignment Failed", "Please select both a vehicle and driver");
+      return;
+    }
 
-    const driverName =
-      drivers.find((d) => d.driver_id.toString() === selectedDriver)?.name ||
-      "";
+    const selectedDriverObj = drivers.find((d) => d.driver_id.toString() === selectedDriver);
+    if (!selectedDriverObj) {
+      showNotification.error("Driver Not Found", "Selected driver could not be found");
+      return;
+    }
+
+    const driverName = selectedDriverObj.name;
 
     const updatedVehicles = vehicles.map((vehicle) =>
       vehicle.vehicle_id === selectedVehicle.vehicle_id
@@ -146,13 +153,20 @@ export default function FleetVehicleManagement() {
     );
 
     setVehicles(updatedVehicles);
+    showNotification.success(
+      "Driver Assigned",
+      `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`
+    );
     setAssignDialogOpen(false);
     setSelectedDriver("");
     setSelectedVehicle(null);
   };
 
   const handleSetService = (status: string) => {
-    if (!selectedVehicle) return;
+    if (!selectedVehicle) {
+      showNotification.error("Service Update Failed", "No vehicle selected");
+      return;
+    }
 
     const updatedVehicles = vehicles.map((vehicle) =>
       vehicle.vehicle_id === selectedVehicle.vehicle_id
@@ -161,6 +175,10 @@ export default function FleetVehicleManagement() {
     );
 
     setVehicles(updatedVehicles);
+    showNotification.success(
+      "Status Updated",
+      `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`
+    );
     setServiceDialogOpen(false);
     setSelectedVehicle(null);
   };
