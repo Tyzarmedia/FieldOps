@@ -1751,6 +1751,7 @@ export default function InspectionsScreen() {
                       </div>
                     </div>
                   </CardHeader>
+                  {expandedSections.toolboxHistory && (
                   <CardContent>
                     <div className="space-y-4">
                       {/* Enhanced Filter and Search for History */}
@@ -1983,6 +1984,7 @@ export default function InspectionsScreen() {
                       </div>
                     </div>
                   </CardContent>
+                  )}
                 </Card>
               </div>
             </TabsContent>
