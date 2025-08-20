@@ -277,6 +277,9 @@ export const assignVehicle: RequestHandler = (req, res) => {
       notes,
     };
 
+    // Save changes to file
+    saveVehicles();
+
     res.json({
       success: true,
       data: vehicles[vehicleIndex],
