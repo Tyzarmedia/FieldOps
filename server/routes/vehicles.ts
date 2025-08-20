@@ -33,11 +33,19 @@ let vehicles: Vehicle[] = [];
 // Initialize vehicles from AVIS database
 function loadVehicles() {
   try {
-    const avisDataPath = path.join(process.cwd(), "public", "data", "avis-database.json");
+    const avisDataPath = path.join(
+      process.cwd(),
+      "public",
+      "data",
+      "avis-database.json",
+    );
     const avisData = JSON.parse(fs.readFileSync(avisDataPath, "utf8"));
     vehicles = avisData.vehicles.map((vehicle: any) => ({
       ...vehicle,
-      assignedTo: vehicle.assigned_driver !== "Not Assigned" ? vehicle.assigned_driver : undefined,
+      assignedTo:
+        vehicle.assigned_driver !== "Not Assigned"
+          ? vehicle.assigned_driver
+          : undefined,
       location: "Fleet Depot", // Default location
     }));
     console.log(`Loaded ${vehicles.length} vehicles from AVIS database`);
@@ -59,8 +67,8 @@ export const getAllVehicles: RequestHandler = (req, res) => {
     let filteredVehicles = vehicles;
 
     if (status) {
-      filteredVehicles = filteredVehicles.filter((v) =>
-        v.status.toLowerCase() === (status as string).toLowerCase()
+      filteredVehicles = filteredVehicles.filter(
+        (v) => v.status.toLowerCase() === (status as string).toLowerCase(),
       );
     }
 
@@ -96,7 +104,9 @@ export const getVehicleById: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
     // Handle both string IDs like "FL-001" and numeric IDs
-    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
     const vehicle = vehicles.find((v) => v.vehicle_id === vehicleId);
 
     if (!vehicle) {
@@ -173,7 +183,9 @@ export const updateVehicle: RequestHandler = (req, res) => {
     const updates = req.body;
 
     // Handle both string IDs like "FL-001" and numeric IDs
-    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
     const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
@@ -209,7 +221,9 @@ export const assignVehicle: RequestHandler = (req, res) => {
     const { assignedTo, assignedDate, notes } = req.body;
 
     // Handle both string IDs like "FL-001" and numeric IDs
-    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
     const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
@@ -248,7 +262,9 @@ export const loanVehicle: RequestHandler = (req, res) => {
     const { loanedTo, loanDate, returnDate, notes } = req.body;
 
     // Handle both string IDs like "FL-001" and numeric IDs
-    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
     const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
@@ -288,7 +304,9 @@ export const removeVehicle: RequestHandler = (req, res) => {
     const { id } = req.params;
 
     // Handle both string IDs like "FL-001" and numeric IDs
-    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
     const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
@@ -320,7 +338,9 @@ export const updateVehicleStatus: RequestHandler = (req, res) => {
     const { status, notes } = req.body;
 
     // Handle both string IDs like "FL-001" and numeric IDs
-    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
     const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
