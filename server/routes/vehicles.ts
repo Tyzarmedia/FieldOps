@@ -260,13 +260,13 @@ export const loanVehicle: RequestHandler = (req, res) => {
 
     vehicles[vehicleIndex] = {
       ...vehicles[vehicleIndex],
-      status: "assigned",
+      status: "Loan Vehicle",
+      assigned_driver: loanedTo,
       assignedTo: loanedTo,
       assignedDate: loanDate || new Date().toISOString(),
       notes: notes
         ? `Loan until ${returnDate}. ${notes}`
         : `Loan until ${returnDate}`,
-      updatedAt: new Date().toISOString(),
     };
 
     res.json({
