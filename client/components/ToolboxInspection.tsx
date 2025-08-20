@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Eye, AlertTriangle, User, Download, CheckCircle } from 'lucide-react';
-import ToolInspectionBox, { Tool } from './ToolInspectionBox';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  MoreVertical,
+  Eye,
+  AlertTriangle,
+  User,
+  Download,
+  CheckCircle,
+} from "lucide-react";
+import ToolInspectionBox, { Tool } from "./ToolInspectionBox";
 
 export interface Toolbox {
   technicianId: string;
@@ -36,7 +48,7 @@ export const ToolboxInspection: React.FC<ToolboxInspectionProps> = ({
   onViewDetails,
   onReportIssues,
   onReassignTools,
-  onExportReport
+  onExportReport,
 }) => {
   const [expandedTools, setExpandedTools] = useState<Set<string>>(new Set());
 
@@ -52,13 +64,14 @@ export const ToolboxInspection: React.FC<ToolboxInspectionProps> = ({
 
   const handleToolImageClick = (tool: Tool) => {
     // Additional logic for when tool image is clicked can be added here
-    console.log('Tool image clicked:', tool);
+    console.log("Tool image clicked:", tool);
   };
 
   // Calculate image upload stats
-  const imageUploadProgress = toolbox.imagesRequired > 0 
-    ? Math.round((toolbox.imagesUploaded / toolbox.imagesRequired) * 100)
-    : 100;
+  const imageUploadProgress =
+    toolbox.imagesRequired > 0
+      ? Math.round((toolbox.imagesUploaded / toolbox.imagesRequired) * 100)
+      : 100;
 
   const getImageUploadBadgeVariant = () => {
     if (toolbox.imagesUploaded === toolbox.imagesRequired) return "default";
@@ -80,9 +93,7 @@ export const ToolboxInspection: React.FC<ToolboxInspectionProps> = ({
             </p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold">
-              {toolbox.overallScore}%
-            </div>
+            <div className="text-2xl font-bold">{toolbox.overallScore}%</div>
             <p className="text-xs text-muted-foreground">Overall Score</p>
           </div>
         </div>
@@ -119,9 +130,12 @@ export const ToolboxInspection: React.FC<ToolboxInspectionProps> = ({
         {showImageUploadStatus && (
           <div className="flex items-center justify-between mt-4 p-3 bg-muted/50 rounded-lg">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Image Upload Progress:</span>
+              <span className="text-sm font-medium">
+                Image Upload Progress:
+              </span>
               <Badge variant={getImageUploadBadgeVariant()}>
-                {toolbox.imagesUploaded}/{toolbox.imagesRequired} uploaded ({imageUploadProgress}%)
+                {toolbox.imagesUploaded}/{toolbox.imagesRequired} uploaded (
+                {imageUploadProgress}%)
               </Badge>
             </div>
             {toolbox.imagesUploaded === toolbox.imagesRequired && (
@@ -150,30 +164,29 @@ export const ToolboxInspection: React.FC<ToolboxInspectionProps> = ({
         <div className="flex justify-between items-center pt-4 border-t">
           <div className="flex gap-2 flex-wrap">
             {toolbox.missing > 0 && (
-              <Badge variant="destructive">
-                {toolbox.missing} Missing
-              </Badge>
+              <Badge variant="destructive">{toolbox.missing} Missing</Badge>
             )}
             {toolbox.damaged > 0 && (
-              <Badge variant="destructive">
-                {toolbox.damaged} Damaged
-              </Badge>
+              <Badge variant="destructive">{toolbox.damaged} Damaged</Badge>
             )}
-            {showImageUploadStatus && toolbox.imagesUploaded < toolbox.imagesRequired && (
-              <Badge variant="secondary">
-                {toolbox.imagesRequired - toolbox.imagesUploaded} Images Pending
-              </Badge>
-            )}
+            {showImageUploadStatus &&
+              toolbox.imagesUploaded < toolbox.imagesRequired && (
+                <Badge variant="secondary">
+                  {toolbox.imagesRequired - toolbox.imagesUploaded} Images
+                  Pending
+                </Badge>
+              )}
             {toolbox.missing === 0 && toolbox.damaged === 0 && (
               <>
                 <Badge variant="default">Complete Toolbox</Badge>
-                {showImageUploadStatus && toolbox.imagesUploaded === toolbox.imagesRequired && (
-                  <Badge variant="default">All Images Uploaded</Badge>
-                )}
+                {showImageUploadStatus &&
+                  toolbox.imagesUploaded === toolbox.imagesRequired && (
+                    <Badge variant="default">All Images Uploaded</Badge>
+                  )}
               </>
             )}
           </div>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm">

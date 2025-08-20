@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, CheckCircle, AlertTriangle, X, Upload, Image as ImageIcon } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { cn } from '@/lib/utils';
+import React, { useState } from "react";
+import {
+  ChevronDown,
+  ChevronUp,
+  CheckCircle,
+  AlertTriangle,
+  X,
+  Upload,
+  Image as ImageIcon,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 export interface Tool {
   id: string;
   name: string;
-  condition: 'Good' | 'Damaged';
-  status: 'Present' | 'Missing';
+  condition: "Good" | "Damaged";
+  status: "Present" | "Missing";
   imageUploaded: boolean;
   imageUrl?: string;
   inspectionDate?: string;
@@ -32,19 +45,19 @@ export const ToolInspectionBox: React.FC<ToolBoxProps> = ({
   onToggle,
   onImageClick,
   showImageUploadStatus = true,
-  isClickable = true
+  isClickable = true,
 }) => {
   const [showImageOverlay, setShowImageOverlay] = useState(false);
 
   const getStatusColor = () => {
-    if (tool.status === 'Missing') return 'border-yellow-300 bg-yellow-50';
-    if (tool.condition === 'Damaged') return 'border-red-300 bg-red-50';
-    return 'border-green-300 bg-green-50';
+    if (tool.status === "Missing") return "border-yellow-300 bg-yellow-50";
+    if (tool.condition === "Damaged") return "border-red-300 bg-red-50";
+    return "border-green-300 bg-green-50";
   };
 
   const getUploadStatusColor = () => {
-    if (!showImageUploadStatus) return '';
-    return tool.imageUploaded ? 'border-l-green-500' : 'border-l-orange-500';
+    if (!showImageUploadStatus) return "";
+    return tool.imageUploaded ? "border-l-green-500" : "border-l-orange-500";
   };
 
   const handleImageClick = () => {
@@ -56,22 +69,24 @@ export const ToolInspectionBox: React.FC<ToolBoxProps> = ({
 
   return (
     <>
-      <Card className={cn(
-        'transition-all duration-200 border-l-4',
-        getStatusColor(),
-        getUploadStatusColor(),
-        isClickable && 'cursor-pointer hover:shadow-md'
-      )}>
+      <Card
+        className={cn(
+          "transition-all duration-200 border-l-4",
+          getStatusColor(),
+          getUploadStatusColor(),
+          isClickable && "cursor-pointer hover:shadow-md",
+        )}
+      >
         <CardContent className="p-3">
           {/* Tool Header - Always Visible */}
-          <div 
+          <div
             className="flex items-center justify-between"
             onClick={isClickable ? onToggle : undefined}
           >
             <div className="flex items-center gap-2">
               <h5 className="font-medium text-sm">{tool.name}</h5>
               <div className="flex items-center gap-1">
-                {tool.status === 'Present' ? (
+                {tool.status === "Present" ? (
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 ) : (
                   <AlertTriangle className="h-4 w-4 text-yellow-600" />
@@ -83,20 +98,19 @@ export const ToolInspectionBox: React.FC<ToolBoxProps> = ({
             </div>
             <div className="flex items-center gap-2">
               {showImageUploadStatus && (
-                <Badge 
+                <Badge
                   variant={tool.imageUploaded ? "default" : "secondary"}
                   className="text-xs"
                 >
                   {tool.imageUploaded ? "Uploaded" : "No Image"}
                 </Badge>
               )}
-              {isClickable && (
-                isExpanded ? (
+              {isClickable &&
+                (isExpanded ? (
                   <ChevronUp className="h-4 w-4 text-muted-foreground" />
                 ) : (
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                )
-              )}
+                ))}
             </div>
           </div>
 
@@ -106,16 +120,20 @@ export const ToolInspectionBox: React.FC<ToolBoxProps> = ({
               <p className="text-xs text-muted-foreground">
                 Tool ID: {tool.id}
               </p>
-              
+
               <div className="flex flex-wrap gap-1">
                 <Badge
-                  variant={tool.status === 'Present' ? "default" : "destructive"}
+                  variant={
+                    tool.status === "Present" ? "default" : "destructive"
+                  }
                   className="text-xs"
                 >
                   {tool.status}
                 </Badge>
                 <Badge
-                  variant={tool.condition === 'Good' ? "default" : "destructive"}
+                  variant={
+                    tool.condition === "Good" ? "default" : "destructive"
+                  }
                   className="text-xs"
                 >
                   {tool.condition}
@@ -124,7 +142,8 @@ export const ToolInspectionBox: React.FC<ToolBoxProps> = ({
 
               {tool.inspectionDate && (
                 <p className="text-xs text-muted-foreground">
-                  Last inspected: {new Date(tool.inspectionDate).toLocaleDateString()}
+                  Last inspected:{" "}
+                  {new Date(tool.inspectionDate).toLocaleDateString()}
                 </p>
               )}
 
@@ -188,7 +207,10 @@ export const ToolInspectionBox: React.FC<ToolBoxProps> = ({
                   <p>Tool: {tool.name}</p>
                   <p>ID: {tool.id}</p>
                   {tool.inspectionDate && (
-                    <p>Inspected: {new Date(tool.inspectionDate).toLocaleDateString()}</p>
+                    <p>
+                      Inspected:{" "}
+                      {new Date(tool.inspectionDate).toLocaleDateString()}
+                    </p>
                   )}
                 </div>
               </div>

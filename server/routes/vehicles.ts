@@ -46,7 +46,7 @@ let vehicles: Vehicle[] = [
     registrationExpiry: "2025-11-30",
     createdAt: "2024-01-15T08:00:00Z",
     updatedAt: "2025-01-15T10:30:00Z",
-    createdBy: "fleet-admin"
+    createdBy: "fleet-admin",
   },
   {
     id: "FL-002",
@@ -66,7 +66,7 @@ let vehicles: Vehicle[] = [
     registrationExpiry: "2025-11-30",
     createdAt: "2024-02-20T08:00:00Z",
     updatedAt: "2025-01-12T14:20:00Z",
-    createdBy: "fleet-admin"
+    createdBy: "fleet-admin",
   },
   {
     id: "FL-003",
@@ -86,38 +86,44 @@ let vehicles: Vehicle[] = [
     registrationExpiry: "2025-11-30",
     createdAt: "2023-05-10T08:00:00Z",
     updatedAt: "2025-01-08T09:15:00Z",
-    createdBy: "fleet-admin"
-  }
+    createdBy: "fleet-admin",
+  },
 ];
 
 // Get all vehicles
 export const getAllVehicles: RequestHandler = (req, res) => {
   try {
     const { status, assignedTo, location } = req.query;
-    
+
     let filteredVehicles = vehicles;
-    
+
     if (status) {
-      filteredVehicles = filteredVehicles.filter(v => v.status === status);
+      filteredVehicles = filteredVehicles.filter((v) => v.status === status);
     }
-    
+
     if (assignedTo) {
-      filteredVehicles = filteredVehicles.filter(v => v.assignedTo?.toLowerCase().includes((assignedTo as string).toLowerCase()));
+      filteredVehicles = filteredVehicles.filter((v) =>
+        v.assignedTo
+          ?.toLowerCase()
+          .includes((assignedTo as string).toLowerCase()),
+      );
     }
-    
+
     if (location) {
-      filteredVehicles = filteredVehicles.filter(v => v.location?.toLowerCase().includes((location as string).toLowerCase()));
+      filteredVehicles = filteredVehicles.filter((v) =>
+        v.location?.toLowerCase().includes((location as string).toLowerCase()),
+      );
     }
-    
+
     res.json({
       success: true,
       data: filteredVehicles,
-      total: filteredVehicles.length
+      total: filteredVehicles.length,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: "Failed to fetch vehicles"
+      error: "Failed to fetch vehicles",
     });
   }
 };
@@ -126,23 +132,23 @@ export const getAllVehicles: RequestHandler = (req, res) => {
 export const getVehicleById: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
-    const vehicle = vehicles.find(v => v.id === id);
-    
+    const vehicle = vehicles.find((v) => v.id === id);
+
     if (!vehicle) {
       return res.status(404).json({
         success: false,
-        error: "Vehicle not found"
+        error: "Vehicle not found",
       });
     }
-    
+
     res.json({
       success: true,
-      data: vehicle
+      data: vehicle,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: "Failed to fetch vehicle"
+      error: "Failed to fetch vehicle",
     });
   }
 };
@@ -151,15 +157,15 @@ export const getVehicleById: RequestHandler = (req, res) => {
 export const addVehicle: RequestHandler = (req, res) => {
   try {
     const vehicleData = req.body;
-    
+
     // Generate new ID
     const maxId = vehicles.reduce((max, vehicle) => {
-      const num = parseInt(vehicle.id.split('-')[1]);
+      const num = parseInt(vehicle.id.split("-")[1]);
       return num > max ? num : max;
     }, 0);
-    
+
     const newVehicle: Vehicle = {
-      id: `FL-${String(maxId + 1).padStart(3, '0')}`,
+      id: `FL-${String(maxId + 1).padStart(3, "0")}`,
       registration: vehicleData.registration,
       make: vehicleData.make,
       model: vehicleData.model,
@@ -175,20 +181,20 @@ export const addVehicle: RequestHandler = (req, res) => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       createdBy: "fleet-manager", // In real app, get from auth
-      notes: vehicleData.notes
+      notes: vehicleData.notes,
     };
-    
+
     vehicles.push(newVehicle);
-    
+
     res.status(201).json({
       success: true,
       data: newVehicle,
-      message: "Vehicle added successfully"
+      message: "Vehicle added successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: "Failed to add vehicle"
+      error: "Failed to add vehicle",
     });
   }
 };
@@ -198,31 +204,31 @@ export const updateVehicle: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
-    
-    const vehicleIndex = vehicles.findIndex(v => v.id === id);
-    
+
+    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+
     if (vehicleIndex === -1) {
       return res.status(404).json({
         success: false,
-        error: "Vehicle not found"
+        error: "Vehicle not found",
       });
     }
-    
+
     vehicles[vehicleIndex] = {
       ...vehicles[vehicleIndex],
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
-    
+
     res.json({
       success: true,
       data: vehicles[vehicleIndex],
-      message: "Vehicle updated successfully"
+      message: "Vehicle updated successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: "Failed to update vehicle"
+      error: "Failed to update vehicle",
     });
   }
 };
@@ -232,34 +238,34 @@ export const assignVehicle: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
     const { assignedTo, assignedDate, notes } = req.body;
-    
-    const vehicleIndex = vehicles.findIndex(v => v.id === id);
-    
+
+    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+
     if (vehicleIndex === -1) {
       return res.status(404).json({
         success: false,
-        error: "Vehicle not found"
+        error: "Vehicle not found",
       });
     }
-    
+
     vehicles[vehicleIndex] = {
       ...vehicles[vehicleIndex],
       status: "assigned",
       assignedTo,
       assignedDate: assignedDate || new Date().toISOString(),
       notes,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
-    
+
     res.json({
       success: true,
       data: vehicles[vehicleIndex],
-      message: "Vehicle assigned successfully"
+      message: "Vehicle assigned successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: "Failed to assign vehicle"
+      error: "Failed to assign vehicle",
     });
   }
 };
@@ -269,34 +275,36 @@ export const loanVehicle: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
     const { loanedTo, loanDate, returnDate, notes } = req.body;
-    
-    const vehicleIndex = vehicles.findIndex(v => v.id === id);
-    
+
+    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+
     if (vehicleIndex === -1) {
       return res.status(404).json({
         success: false,
-        error: "Vehicle not found"
+        error: "Vehicle not found",
       });
     }
-    
+
     vehicles[vehicleIndex] = {
       ...vehicles[vehicleIndex],
       status: "assigned",
       assignedTo: loanedTo,
       assignedDate: loanDate || new Date().toISOString(),
-      notes: notes ? `Loan until ${returnDate}. ${notes}` : `Loan until ${returnDate}`,
-      updatedAt: new Date().toISOString()
+      notes: notes
+        ? `Loan until ${returnDate}. ${notes}`
+        : `Loan until ${returnDate}`,
+      updatedAt: new Date().toISOString(),
     };
-    
+
     res.json({
       success: true,
       data: vehicles[vehicleIndex],
-      message: "Vehicle loaned successfully"
+      message: "Vehicle loaned successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: "Failed to loan vehicle"
+      error: "Failed to loan vehicle",
     });
   }
 };
@@ -305,27 +313,27 @@ export const loanVehicle: RequestHandler = (req, res) => {
 export const removeVehicle: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
-    
-    const vehicleIndex = vehicles.findIndex(v => v.id === id);
-    
+
+    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+
     if (vehicleIndex === -1) {
       return res.status(404).json({
         success: false,
-        error: "Vehicle not found"
+        error: "Vehicle not found",
       });
     }
-    
+
     const removedVehicle = vehicles.splice(vehicleIndex, 1)[0];
-    
+
     res.json({
       success: true,
       data: removedVehicle,
-      message: "Vehicle removed successfully"
+      message: "Vehicle removed successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: "Failed to remove vehicle"
+      error: "Failed to remove vehicle",
     });
   }
 };
@@ -335,16 +343,16 @@ export const updateVehicleStatus: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
     const { status, notes } = req.body;
-    
-    const vehicleIndex = vehicles.findIndex(v => v.id === id);
-    
+
+    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+
     if (vehicleIndex === -1) {
       return res.status(404).json({
         success: false,
-        error: "Vehicle not found"
+        error: "Vehicle not found",
       });
     }
-    
+
     // If setting to available, clear assignment
     if (status === "available") {
       vehicles[vehicleIndex] = {
@@ -353,26 +361,26 @@ export const updateVehicleStatus: RequestHandler = (req, res) => {
         assignedTo: undefined,
         assignedDate: undefined,
         notes,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
     } else {
       vehicles[vehicleIndex] = {
         ...vehicles[vehicleIndex],
         status,
         notes,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
     }
-    
+
     res.json({
       success: true,
       data: vehicles[vehicleIndex],
-      message: "Vehicle status updated successfully"
+      message: "Vehicle status updated successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: "Failed to update vehicle status"
+      error: "Failed to update vehicle status",
     });
   }
 };

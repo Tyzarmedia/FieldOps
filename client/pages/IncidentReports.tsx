@@ -4,15 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  AlertTriangle, 
-  Search, 
-  Filter, 
-  Download, 
-  Eye, 
+import {
+  AlertTriangle,
+  Search,
+  Filter,
+  Download,
+  Eye,
   MoreVertical,
   Clock,
   User,
@@ -20,7 +31,7 @@ import {
   FileText,
   Calendar,
   CheckCircle,
-  XCircle
+  XCircle,
 } from "lucide-react";
 
 interface IncidentReport {
@@ -50,7 +61,8 @@ export default function IncidentReports() {
     {
       id: "INC-2025-001",
       title: "Vehicle Engine Overheating",
-      description: "Vehicle EL-123-ABC experienced engine overheating during route inspection. Temperature gauge showed critical levels.",
+      description:
+        "Vehicle EL-123-ABC experienced engine overheating during route inspection. Temperature gauge showed critical levels.",
       severity: "high",
       status: "investigating",
       reportedBy: "John Smith",
@@ -60,12 +72,13 @@ export default function IncidentReports() {
       category: "vehicle",
       vehicleId: "EL-123-ABC",
       attachments: ["engine_photo.jpg", "temperature_reading.pdf"],
-      priority: 1
+      priority: 1,
     },
     {
       id: "INC-2025-002",
       title: "Safety Equipment Missing",
-      description: "First aid kit missing from toolbox during routine inspection. Kit was last seen during previous shift.",
+      description:
+        "First aid kit missing from toolbox during routine inspection. Kit was last seen during previous shift.",
       severity: "medium",
       status: "open",
       reportedBy: "Sarah Johnson",
@@ -73,12 +86,13 @@ export default function IncidentReports() {
       location: "Equipment Storage, Site B",
       category: "safety",
       attachments: ["empty_compartment.jpg"],
-      priority: 2
+      priority: 2,
     },
     {
       id: "INC-2025-003",
       title: "Fiber Optic Cable Damage",
-      description: "Accidental damage to fiber optic cable during excavation work. Service interruption reported in sector 7.",
+      description:
+        "Accidental damage to fiber optic cable during excavation work. Service interruption reported in sector 7.",
       severity: "critical",
       status: "resolved",
       reportedBy: "David Brown",
@@ -87,12 +101,13 @@ export default function IncidentReports() {
       location: "Sector 7, Pretoria",
       category: "equipment",
       attachments: ["cable_damage.jpg", "repair_report.pdf"],
-      priority: 1
+      priority: 1,
     },
     {
       id: "INC-2025-004",
       title: "Minor Vehicle Collision",
-      description: "Vehicle EL-124-DEF had minor collision with stationary object while reversing. No injuries reported.",
+      description:
+        "Vehicle EL-124-DEF had minor collision with stationary object while reversing. No injuries reported.",
       severity: "low",
       status: "closed",
       reportedBy: "Mike Wilson",
@@ -102,12 +117,13 @@ export default function IncidentReports() {
       category: "vehicle",
       vehicleId: "EL-124-DEF",
       attachments: ["collision_photo.jpg", "insurance_form.pdf"],
-      priority: 3
+      priority: 3,
     },
     {
       id: "INC-2025-005",
       title: "Unauthorized Site Access",
-      description: "Unknown personnel observed near equipment storage area during off-hours. Security footage available.",
+      description:
+        "Unknown personnel observed near equipment storage area during off-hours. Security footage available.",
       severity: "medium",
       status: "investigating",
       reportedBy: "Security Team",
@@ -116,69 +132,108 @@ export default function IncidentReports() {
       location: "Main Facility, Durban",
       category: "security",
       attachments: ["security_footage.mp4"],
-      priority: 2
-    }
+      priority: 2,
+    },
   ];
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "critical": return "bg-red-500";
-      case "high": return "bg-orange-500";
-      case "medium": return "bg-yellow-500";
-      case "low": return "bg-green-500";
-      default: return "bg-gray-500";
+      case "critical":
+        return "bg-red-500";
+      case "high":
+        return "bg-orange-500";
+      case "medium":
+        return "bg-yellow-500";
+      case "low":
+        return "bg-green-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "open": return "destructive";
-      case "investigating": return "secondary";
-      case "resolved": return "default";
-      case "closed": return "outline";
-      default: return "outline";
+      case "open":
+        return "destructive";
+      case "investigating":
+        return "secondary";
+      case "resolved":
+        return "default";
+      case "closed":
+        return "outline";
+      default:
+        return "outline";
     }
   };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case "vehicle": return "🚗";
-      case "equipment": return "⚙️";
-      case "safety": return "🦺";
-      case "environmental": return "🌍";
-      case "security": return "🔒";
-      default: return "📋";
+      case "vehicle":
+        return "🚗";
+      case "equipment":
+        return "⚙️";
+      case "safety":
+        return "🦺";
+      case "environmental":
+        return "🌍";
+      case "security":
+        return "🔒";
+      default:
+        return "📋";
     }
   };
 
-  const filteredReports = incidentReports.filter(report => {
-    const matchesSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         report.reportedBy.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSeverity = !selectedSeverity || selectedSeverity === 'all' || report.severity === selectedSeverity;
-    const matchesStatus = !selectedStatus || selectedStatus === 'all' || report.status === selectedStatus;
-    const matchesTab = selectedTab === "all" || 
-                      (selectedTab === "open" && ["open", "investigating"].includes(report.status)) ||
-                      (selectedTab === "resolved" && ["resolved", "closed"].includes(report.status)) ||
-                      (selectedTab === "high-priority" && ["critical", "high"].includes(report.severity));
-    
+  const filteredReports = incidentReports.filter((report) => {
+    const matchesSearch =
+      report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.reportedBy.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSeverity =
+      !selectedSeverity ||
+      selectedSeverity === "all" ||
+      report.severity === selectedSeverity;
+    const matchesStatus =
+      !selectedStatus ||
+      selectedStatus === "all" ||
+      report.status === selectedStatus;
+    const matchesTab =
+      selectedTab === "all" ||
+      (selectedTab === "open" &&
+        ["open", "investigating"].includes(report.status)) ||
+      (selectedTab === "resolved" &&
+        ["resolved", "closed"].includes(report.status)) ||
+      (selectedTab === "high-priority" &&
+        ["critical", "high"].includes(report.severity));
+
     return matchesSearch && matchesSeverity && matchesStatus && matchesTab;
   });
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString() + " " + new Date(dateString).toLocaleTimeString();
+    return (
+      new Date(dateString).toLocaleDateString() +
+      " " +
+      new Date(dateString).toLocaleTimeString()
+    );
   };
 
-  const openCount = incidentReports.filter(r => ["open", "investigating"].includes(r.status)).length;
-  const resolvedCount = incidentReports.filter(r => ["resolved", "closed"].includes(r.status)).length;
-  const highPriorityCount = incidentReports.filter(r => ["critical", "high"].includes(r.severity)).length;
+  const openCount = incidentReports.filter((r) =>
+    ["open", "investigating"].includes(r.status),
+  ).length;
+  const resolvedCount = incidentReports.filter((r) =>
+    ["resolved", "closed"].includes(r.status),
+  ).length;
+  const highPriorityCount = incidentReports.filter((r) =>
+    ["critical", "high"].includes(r.severity),
+  ).length;
 
   return (
     <div className="p-6 space-y-6 bg-background min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Incident Reports</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            Incident Reports
+          </h1>
           <p className="text-muted-foreground">
             Monitor and manage all incident reports submitted by technicians
           </p>
@@ -208,7 +263,9 @@ export default function IncidentReports() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Open/Investigating</p>
+                <p className="text-sm text-muted-foreground">
+                  Open/Investigating
+                </p>
                 <p className="text-2xl font-bold text-red-600">{openCount}</p>
               </div>
               <AlertTriangle className="h-8 w-8 text-red-600" />
@@ -220,7 +277,9 @@ export default function IncidentReports() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Resolved/Closed</p>
-                <p className="text-2xl font-bold text-green-600">{resolvedCount}</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {resolvedCount}
+                </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
@@ -231,7 +290,9 @@ export default function IncidentReports() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">High Priority</p>
-                <p className="text-2xl font-bold text-orange-600">{highPriorityCount}</p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {highPriorityCount}
+                </p>
               </div>
               <XCircle className="h-8 w-8 text-orange-600" />
             </div>
@@ -283,10 +344,16 @@ export default function IncidentReports() {
 
         <Tabs value={selectedTab} onValueChange={setSelectedTab}>
           <TabsList>
-            <TabsTrigger value="all">All Reports ({incidentReports.length})</TabsTrigger>
+            <TabsTrigger value="all">
+              All Reports ({incidentReports.length})
+            </TabsTrigger>
             <TabsTrigger value="open">Open ({openCount})</TabsTrigger>
-            <TabsTrigger value="resolved">Resolved ({resolvedCount})</TabsTrigger>
-            <TabsTrigger value="high-priority">High Priority ({highPriorityCount})</TabsTrigger>
+            <TabsTrigger value="resolved">
+              Resolved ({resolvedCount})
+            </TabsTrigger>
+            <TabsTrigger value="high-priority">
+              High Priority ({highPriorityCount})
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value={selectedTab} className="space-y-4">
@@ -294,28 +361,56 @@ export default function IncidentReports() {
               <Card>
                 <CardContent className="p-8 text-center">
                   <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-muted-foreground">No incident reports found</p>
+                  <p className="text-muted-foreground">
+                    No incident reports found
+                  </p>
                 </CardContent>
               </Card>
             ) : (
               <div className="space-y-4">
                 {filteredReports.map((report) => (
-                  <Card key={report.id} className="border-l-4" style={{borderLeftColor: getSeverityColor(report.severity) === "bg-red-500" ? "#ef4444" : getSeverityColor(report.severity) === "bg-orange-500" ? "#f97316" : getSeverityColor(report.severity) === "bg-yellow-500" ? "#eab308" : "#22c55e"}}>
+                  <Card
+                    key={report.id}
+                    className="border-l-4"
+                    style={{
+                      borderLeftColor:
+                        getSeverityColor(report.severity) === "bg-red-500"
+                          ? "#ef4444"
+                          : getSeverityColor(report.severity) ===
+                              "bg-orange-500"
+                            ? "#f97316"
+                            : getSeverityColor(report.severity) ===
+                                "bg-yellow-500"
+                              ? "#eab308"
+                              : "#22c55e",
+                    }}
+                  >
                     <CardContent className="p-6">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <span className="text-lg">{getCategoryIcon(report.category)}</span>
-                            <h3 className="text-lg font-semibold">{report.title}</h3>
+                            <span className="text-lg">
+                              {getCategoryIcon(report.category)}
+                            </span>
+                            <h3 className="text-lg font-semibold">
+                              {report.title}
+                            </h3>
                             <Badge variant={getStatusColor(report.status)}>
                               {report.status}
                             </Badge>
-                            <Badge className={getSeverityColor(report.severity) + " text-white"}>
+                            <Badge
+                              className={
+                                getSeverityColor(report.severity) +
+                                " text-white"
+                              }
+                            >
                               {report.severity}
                             </Badge>
                           </div>
-                          <p className="text-muted-foreground mb-4">{report.description}</p>
-                          
+                          <p className="text-muted-foreground mb-4">
+                            {report.description}
+                          </p>
+
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                             <div className="flex items-center gap-2">
                               <User className="h-4 w-4 text-muted-foreground" />
@@ -336,10 +431,12 @@ export default function IncidentReports() {
                               </div>
                             )}
                           </div>
-                          
+
                           {report.attachments.length > 0 && (
                             <div className="mt-4">
-                              <p className="text-sm font-medium mb-2">Attachments:</p>
+                              <p className="text-sm font-medium mb-2">
+                                Attachments:
+                              </p>
                               <div className="flex gap-2">
                                 {report.attachments.map((attachment, index) => (
                                   <Badge key={index} variant="outline">
@@ -350,7 +447,7 @@ export default function IncidentReports() {
                             </div>
                           )}
                         </div>
-                        
+
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">

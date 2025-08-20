@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, CheckCircle, AlertTriangle, XCircle, X, Upload, Image as ImageIcon, Eye } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { cn } from '@/lib/utils';
+import React, { useState } from "react";
+import {
+  ChevronDown,
+  ChevronUp,
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  X,
+  Upload,
+  Image as ImageIcon,
+  Eye,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 export interface VehicleInspectionItem {
   id: string;
   name: string;
   category: string;
-  status: 'pass' | 'fail' | 'attention' | 'not_checked';
+  status: "pass" | "fail" | "attention" | "not_checked";
   notes: string;
   photos: string[];
   required: boolean;
@@ -33,36 +48,36 @@ export const VehicleInspectionBox: React.FC<VehicleInspectionBoxProps> = ({
   onToggle,
   onImageClick,
   showImageUploadStatus = true,
-  isClickable = true
+  isClickable = true,
 }) => {
   const [showImageOverlay, setShowImageOverlay] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const getStatusColor = () => {
     switch (item.status) {
-      case 'pass':
-        return 'border-green-300 bg-green-50';
-      case 'fail':
-        return 'border-red-300 bg-red-50';
-      case 'attention':
-        return 'border-yellow-300 bg-yellow-50';
+      case "pass":
+        return "border-green-300 bg-green-50";
+      case "fail":
+        return "border-red-300 bg-red-50";
+      case "attention":
+        return "border-yellow-300 bg-yellow-50";
       default:
-        return 'border-gray-300 bg-gray-50';
+        return "border-gray-300 bg-gray-50";
     }
   };
 
   const getUploadStatusColor = () => {
-    if (!showImageUploadStatus) return '';
-    return item.imageUploaded ? 'border-l-green-500' : 'border-l-orange-500';
+    if (!showImageUploadStatus) return "";
+    return item.imageUploaded ? "border-l-green-500" : "border-l-orange-500";
   };
 
   const getStatusIcon = () => {
     switch (item.status) {
-      case 'pass':
+      case "pass":
         return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'fail':
+      case "fail":
         return <XCircle className="h-4 w-4 text-red-600" />;
-      case 'attention':
+      case "attention":
         return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
       default:
         return <AlertTriangle className="h-4 w-4 text-gray-400" />;
@@ -71,14 +86,14 @@ export const VehicleInspectionBox: React.FC<VehicleInspectionBoxProps> = ({
 
   const getStatusBadgeVariant = () => {
     switch (item.status) {
-      case 'pass':
-        return 'default';
-      case 'fail':
-        return 'destructive';
-      case 'attention':
-        return 'secondary';
+      case "pass":
+        return "default";
+      case "fail":
+        return "destructive";
+      case "attention":
+        return "secondary";
       default:
-        return 'outline';
+        return "outline";
     }
   };
 
@@ -92,15 +107,17 @@ export const VehicleInspectionBox: React.FC<VehicleInspectionBoxProps> = ({
 
   return (
     <>
-      <Card className={cn(
-        'transition-all duration-200 border-l-4',
-        getStatusColor(),
-        getUploadStatusColor(),
-        isClickable && 'cursor-pointer hover:shadow-md'
-      )}>
+      <Card
+        className={cn(
+          "transition-all duration-200 border-l-4",
+          getStatusColor(),
+          getUploadStatusColor(),
+          isClickable && "cursor-pointer hover:shadow-md",
+        )}
+      >
         <CardContent className="p-3">
           {/* Item Header - Always Visible */}
-          <div 
+          <div
             className="flex items-center justify-between"
             onClick={isClickable ? onToggle : undefined}
           >
@@ -119,27 +136,25 @@ export const VehicleInspectionBox: React.FC<VehicleInspectionBoxProps> = ({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge 
-                variant={getStatusBadgeVariant()}
-                className="text-xs"
-              >
-                {item.status === 'not_checked' ? 'Not Checked' : item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+              <Badge variant={getStatusBadgeVariant()} className="text-xs">
+                {item.status === "not_checked"
+                  ? "Not Checked"
+                  : item.status.charAt(0).toUpperCase() + item.status.slice(1)}
               </Badge>
               {showImageUploadStatus && (
-                <Badge 
+                <Badge
                   variant={item.imageUploaded ? "default" : "secondary"}
                   className="text-xs"
                 >
                   {item.imageUploaded ? "Uploaded" : "No Image"}
                 </Badge>
               )}
-              {isClickable && (
-                isExpanded ? (
+              {isClickable &&
+                (isExpanded ? (
                   <ChevronUp className="h-4 w-4 text-muted-foreground" />
                 ) : (
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                )
-              )}
+                ))}
             </div>
           </div>
 
@@ -149,16 +164,19 @@ export const VehicleInspectionBox: React.FC<VehicleInspectionBoxProps> = ({
               <p className="text-xs text-muted-foreground">
                 Category: {item.category} • ID: {item.id}
               </p>
-              
+
               {item.inspectionDate && (
                 <p className="text-xs text-muted-foreground">
-                  Last inspected: {new Date(item.inspectionDate).toLocaleDateString()}
+                  Last inspected:{" "}
+                  {new Date(item.inspectionDate).toLocaleDateString()}
                 </p>
               )}
 
               {item.notes && (
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1">Notes:</p>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">
+                    Notes:
+                  </p>
                   <p className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
                     {item.notes}
                   </p>
@@ -168,7 +186,9 @@ export const VehicleInspectionBox: React.FC<VehicleInspectionBoxProps> = ({
               {/* Image Section */}
               {showImageUploadStatus && (
                 <div className="flex items-center gap-2">
-                  {item.imageUploaded && item.photos && item.photos.length > 0 ? (
+                  {item.imageUploaded &&
+                  item.photos &&
+                  item.photos.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {item.photos.map((photo, index) => (
                         <Button
@@ -225,7 +245,9 @@ export const VehicleInspectionBox: React.FC<VehicleInspectionBoxProps> = ({
                     {item.photos.map((_, index) => (
                       <Button
                         key={index}
-                        variant={index === selectedImageIndex ? "default" : "outline"}
+                        variant={
+                          index === selectedImageIndex ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setSelectedImageIndex(index)}
                         className="text-xs"
@@ -240,7 +262,10 @@ export const VehicleInspectionBox: React.FC<VehicleInspectionBoxProps> = ({
                   <p>Category: {item.category}</p>
                   <p>Status: {item.status}</p>
                   {item.inspectionDate && (
-                    <p>Inspected: {new Date(item.inspectionDate).toLocaleDateString()}</p>
+                    <p>
+                      Inspected:{" "}
+                      {new Date(item.inspectionDate).toLocaleDateString()}
+                    </p>
                   )}
                 </div>
               </div>

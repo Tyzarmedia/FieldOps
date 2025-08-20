@@ -60,8 +60,8 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
       data: {
         technicianName: "John Smith",
         vehicleRegistration: "EL-123-ABC",
-        inspectionType: "Pre-Trip Inspection"
-      }
+        inspectionType: "Pre-Trip Inspection",
+      },
     },
     {
       id: "2",
@@ -73,8 +73,8 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
       priority: "high",
       data: {
         technicianName: "Sarah Johnson",
-        incidentId: "INC-2025-003"
-      }
+        incidentId: "INC-2025-003",
+      },
     },
     {
       id: "3",
@@ -86,9 +86,9 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
       priority: "low",
       data: {
         technicianName: "Mike Wilson",
-        vehicleRegistration: "EL-124-DEF"
-      }
-    }
+        vehicleRegistration: "EL-124-DEF",
+      },
+    },
   ]);
 
   const handleLogout = () => {
@@ -98,24 +98,22 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
   };
 
   const handleMarkAsRead = (id: string) => {
-    setNotifications(prev =>
-      prev.map(notification =>
-        notification.id === id
-          ? { ...notification, read: true }
-          : notification
-      )
+    setNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === id ? { ...notification, read: true } : notification,
+      ),
     );
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications(prev =>
-      prev.map(notification => ({ ...notification, read: true }))
+    setNotifications((prev) =>
+      prev.map((notification) => ({ ...notification, read: true })),
     );
   };
 
   const handleClearNotification = (id: string) => {
-    setNotifications(prev =>
-      prev.filter(notification => notification.id !== id)
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id),
     );
   };
 
@@ -248,7 +246,9 @@ export function Layout({ children, userRole = "Technician" }: LayoutProps) {
             </div>
             <div className="flex items-center gap-2">
               {/* Only show notifications for fleet managers and relevant roles */}
-              {(userRole === "FleetManager" || userRole === "Manager" || userRole === "CEO") && (
+              {(userRole === "FleetManager" ||
+                userRole === "Manager" ||
+                userRole === "CEO") && (
                 <NotificationBell
                   notifications={notifications}
                   onMarkAsRead={handleMarkAsRead}
