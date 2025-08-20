@@ -46,6 +46,9 @@ import {
 export default function FleetManagerSettings() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { show: showNotification } = useNotification();
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profile, setProfile] = useState({
