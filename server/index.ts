@@ -106,6 +106,16 @@ export function createServer() {
   app.get("/api/assistants/assignments/:technicianId", getCurrentAssignment);
   app.post("/api/assistants/assignments/:technicianId/end", endAssignment);
 
+  // Fleet Vehicle Management API
+  app.get("/api/vehicles", getAllVehicles);
+  app.get("/api/vehicles/:id", getVehicleById);
+  app.post("/api/vehicles", addVehicle);
+  app.put("/api/vehicles/:id", updateVehicle);
+  app.post("/api/vehicles/:id/assign", assignVehicle);
+  app.post("/api/vehicles/:id/loan", loanVehicle);
+  app.delete("/api/vehicles/:id", removeVehicle);
+  app.patch("/api/vehicles/:id/status", updateVehicleStatus);
+
   // Job Management API
   app.get("/api/jobs", getJobs);
   app.get("/api/jobs/technician/:technicianId", getJobsByTechnician);
