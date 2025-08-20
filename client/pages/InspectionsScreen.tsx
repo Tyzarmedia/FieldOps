@@ -111,6 +111,8 @@ export default function InspectionsScreen() {
   // Collapsible section states
   const [expandedSections, setExpandedSections] = useState({
     weeklyInspections: true,
+    vehicleHistory: false,
+    missedVehicleInspections: false,
     toolboxInspections: true,
     toolboxHistory: false,
     overdueToolboxes: false
