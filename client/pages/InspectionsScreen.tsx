@@ -1772,11 +1772,15 @@ export default function InspectionsScreen() {
                             assignmentStatus: "Missing"
                           }
                         ].map((inspection) => (
-                          <Card key={inspection.id} className="border-red-200">
+                          <Card key={inspection.id} className={
+                            inspection.toolCondition === 'Stolen/Missing' ? "border-red-500 bg-red-50" :
+                            inspection.toolCondition === 'Damaged' ? "border-yellow-500 bg-yellow-50" :
+                            "border-red-200"
+                          }>
                             <CardContent className="p-4">
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
-                                  <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-6">
                                     <div>
                                       <h4 className="font-medium">{inspection.toolType}</h4>
                                       <p className="text-sm text-muted-foreground">
@@ -1784,7 +1788,13 @@ export default function InspectionsScreen() {
                                       </p>
                                     </div>
                                     <div>
-                                      <p className="text-sm font-medium">Assigned: {inspection.inspector}</p>
+                                      <p className="text-sm font-medium">Assigned To: {inspection.assignedTo}</p>
+                                      <p className="text-sm text-muted-foreground">
+                                        Status: {inspection.assignmentStatus}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium">Inspector: {inspection.inspector}</p>
                                       <p className="text-sm text-red-600">
                                         Due: {new Date(inspection.dueDate).toLocaleDateString()} ({inspection.daysPastDue} days overdue)
                                       </p>
@@ -1792,9 +1802,17 @@ export default function InspectionsScreen() {
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-4">
-                                  <Badge variant="destructive">
-                                    {inspection.status}
-                                  </Badge>
+                                  <div className="flex flex-col gap-1">
+                                    <Badge variant="destructive">
+                                      {inspection.status}
+                                    </Badge>
+                                    <Badge
+                                      variant={inspection.toolCondition === 'Stolen/Missing' ? 'destructive' :
+                                             inspection.toolCondition === 'Damaged' ? 'destructive' : 'secondary'}
+                                    >
+                                      {inspection.toolCondition}
+                                    </Badge>
+                                  </div>
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button variant="ghost" size="sm">
@@ -1804,11 +1822,15 @@ export default function InspectionsScreen() {
                                     <DropdownMenuContent>
                                       <DropdownMenuItem>
                                         <User className="h-4 w-4 mr-2" />
-                                        Reassign Inspector
+                                        Reassign Tool
                                       </DropdownMenuItem>
                                       <DropdownMenuItem>
                                         <Calendar className="h-4 w-4 mr-2" />
-                                        Reschedule
+                                        Reschedule Inspection
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <AlertTriangle className="h-4 w-4 mr-2" />
+                                        Report Missing/Stolen
                                       </DropdownMenuItem>
                                       <DropdownMenuItem>
                                         <Download className="h-4 w-4 mr-2" />
