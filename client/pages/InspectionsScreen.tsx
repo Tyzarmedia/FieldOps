@@ -170,6 +170,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "windshield",
@@ -179,6 +180,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "engine",
@@ -188,6 +190,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "fluids",
@@ -197,6 +200,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "battery",
@@ -206,6 +210,7 @@ export default function InspectionsScreen() {
       notes: "",
       photos: [],
       required: true,
+      imageUploaded: false,
     },
     {
       id: "safety_equipment",
