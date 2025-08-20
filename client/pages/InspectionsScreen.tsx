@@ -1664,44 +1664,57 @@ export default function InspectionsScreen() {
                       </Alert>
 
                       {/* Enhanced Filter and Search for Missed */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                          <Input
-                            placeholder="Search by technician name..."
-                            className="pl-10"
-                          />
-                        </div>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Warehouse" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="WH-001">WH-001</SelectItem>
-                            <SelectItem value="WH-002">WH-002</SelectItem>
-                            <SelectItem value="WH-003">WH-003</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Overdue Period" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="1week">1 Week Overdue</SelectItem>
-                            <SelectItem value="2weeks">2 Weeks Overdue</SelectItem>
-                            <SelectItem value="1month">1 Month Overdue</SelectItem>
-                            <SelectItem value="all">All Overdue</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button variant="outline">
-                          <Filter className="h-4 w-4 mr-2" />
-                          Filter
-                        </Button>
-                        <Button variant="outline">
-                          <Download className="h-4 w-4 mr-2" />
-                          Print Report
-                        </Button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                        <Input
+                          placeholder="Search by technician name..."
+                          className="pl-10"
+                        />
                       </div>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Assigned To" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Technicians</SelectItem>
+                          <SelectItem value="john-smith">John Smith</SelectItem>
+                          <SelectItem value="sarah-johnson">Sarah Johnson</SelectItem>
+                          <SelectItem value="mike-wilson">Mike Wilson</SelectItem>
+                          <SelectItem value="david-brown">David Brown</SelectItem>
+                          <SelectItem value="lisa-davis">Lisa Davis</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Tool Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Statuses</SelectItem>
+                          <SelectItem value="overdue">Overdue Inspection</SelectItem>
+                          <SelectItem value="damaged">Damaged</SelectItem>
+                          <SelectItem value="stolen">Stolen/Missing</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Warehouse" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="WH-001">WH-001</SelectItem>
+                          <SelectItem value="WH-002">WH-002</SelectItem>
+                          <SelectItem value="WH-003">WH-003</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button variant="outline">
+                        <Filter className="h-4 w-4 mr-2" />
+                        Filter
+                      </Button>
+                      <Button variant="outline">
+                        <Download className="h-4 w-4 mr-2" />
+                        Print Report
+                      </Button>
+                    </div>
 
                       {/* Missed Tool Inspection List */}
                       <div className="space-y-4">
