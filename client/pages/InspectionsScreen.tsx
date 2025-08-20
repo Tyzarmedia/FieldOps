@@ -1007,177 +1007,504 @@ export default function InspectionsScreen() {
         </TabsContent>
 
         <TabsContent value="tool" className="space-y-6">
-          {/* Tool Inspection Content */}
-          <div className="grid gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Tool Inspection</CardTitle>
-                <p className="text-muted-foreground">
-                  Manage and track tool inspections by technicians
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-green-600">24</div>
-                          <p className="text-sm text-muted-foreground">Tools Inspected</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-yellow-600">6</div>
-                          <p className="text-sm text-muted-foreground">Pending Inspection</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-red-600">2</div>
-                          <p className="text-sm text-muted-foreground">Overdue</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+          {/* Tool Inspections Sub-tabs */}
+          <Tabs value={selectedToolTab} onValueChange={setSelectedToolTab}>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="current">Current Inspections</TabsTrigger>
+              <TabsTrigger value="history">History Inspections</TabsTrigger>
+              <TabsTrigger value="missed">Missed Inspections</TabsTrigger>
+            </TabsList>
 
-                  {/* Filter and Search */}
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                      <Input
-                        placeholder="Search by technician name, tool ID, or warehouse..."
-                        className="pl-10"
-                      />
-                    </div>
-                    <Select defaultValue="weekly">
-                      <SelectTrigger className="w-full sm:w-48">
-                        <SelectValue placeholder="Filter by period" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="weekly">This Week</SelectItem>
-                        <SelectItem value="monthly">This Month</SelectItem>
-                        <SelectItem value="yearly">This Year</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button variant="outline">
-                      <Filter className="h-4 w-4 mr-2" />
-                      Filter
-                    </Button>
-                    <Button variant="outline">
-                      <Download className="h-4 w-4 mr-2" />
-                      Print Report
-                    </Button>
-                  </div>
+            <TabsContent value="current" className="space-y-6">
+              <div className="grid gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Current Tool Inspections</CardTitle>
+                    <p className="text-muted-foreground">
+                      Tool inspections for this month only
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Card>
+                          <CardContent className="p-4">
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-green-600">12</div>
+                              <p className="text-sm text-muted-foreground">This Month</p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                        <Card>
+                          <CardContent className="p-4">
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-yellow-600">4</div>
+                              <p className="text-sm text-muted-foreground">Pending</p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                        <Card>
+                          <CardContent className="p-4">
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-blue-600">8</div>
+                              <p className="text-sm text-muted-foreground">Completed</p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
 
-                  {/* Tool Inspection List */}
-                  <div className="space-y-4">
-                    {[
-                      {
-                        id: "TI-001",
-                        technicianName: "John Smith",
-                        warehouseNumber: "WH-001",
-                        toolType: "Power Drill",
-                        toolId: "PD-2024-001",
-                        dateCompleted: "2025-01-15",
-                        status: "Completed",
-                        overallScore: 95
-                      },
-                      {
-                        id: "TI-002",
-                        technicianName: "Sarah Johnson",
-                        warehouseNumber: "WH-002",
-                        toolType: "Multimeter",
-                        toolId: "MM-2024-005",
-                        dateCompleted: "2025-01-14",
-                        status: "Completed",
-                        overallScore: 88
-                      },
-                      {
-                        id: "TI-003",
-                        technicianName: "Mike Wilson",
-                        warehouseNumber: "WH-001",
-                        toolType: "Cable Tester",
-                        toolId: "CT-2024-012",
-                        dateCompleted: "2025-01-13",
-                        status: "Attention Required",
-                        overallScore: 72
-                      },
-                      {
-                        id: "TI-004",
-                        technicianName: "David Brown",
-                        warehouseNumber: "WH-003",
-                        toolType: "Impact Driver",
-                        toolId: "ID-2024-008",
-                        dateCompleted: null,
-                        status: "Missed",
-                        overallScore: null
-                      }
-                    ].map((inspection) => (
-                      <Card key={inspection.id}>
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-4">
-                                <div>
-                                  <h4 className="font-medium">{inspection.toolType}</h4>
-                                  <p className="text-sm text-muted-foreground">
-                                    {inspection.toolId} • {inspection.warehouseNumber}
-                                  </p>
+                      {/* Enhanced Filter and Search */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <Input
+                            placeholder="Search by technician name..."
+                            className="pl-10"
+                          />
+                        </div>
+                        <Input type="date" placeholder="Select date" />
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="01">January</SelectItem>
+                            <SelectItem value="02">February</SelectItem>
+                            <SelectItem value="03">March</SelectItem>
+                            <SelectItem value="04">April</SelectItem>
+                            <SelectItem value="05">May</SelectItem>
+                            <SelectItem value="06">June</SelectItem>
+                            <SelectItem value="07">July</SelectItem>
+                            <SelectItem value="08">August</SelectItem>
+                            <SelectItem value="09">September</SelectItem>
+                            <SelectItem value="10">October</SelectItem>
+                            <SelectItem value="11">November</SelectItem>
+                            <SelectItem value="12">December</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="2025">2025</SelectItem>
+                            <SelectItem value="2024">2024</SelectItem>
+                            <SelectItem value="2023">2023</SelectItem>
+                            <SelectItem value="2022">2022</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Warehouse" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="WH-001">WH-001</SelectItem>
+                            <SelectItem value="WH-002">WH-002</SelectItem>
+                            <SelectItem value="WH-003">WH-003</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button variant="outline">
+                          <Download className="h-4 w-4 mr-2" />
+                          Export
+                        </Button>
+                      </div>
+
+                      {/* Current Tool Inspection List */}
+                      <div className="space-y-4">
+                        {[
+                          {
+                            id: "TI-001",
+                            inspector: "John Smith",
+                            warehouseNumber: "WH-001",
+                            toolType: "Power Drill",
+                            toolId: "PD-2025-001",
+                            dateCompleted: "2025-01-15",
+                            status: "Completed",
+                            overallScore: 95
+                          },
+                          {
+                            id: "TI-002",
+                            inspector: "Sarah Johnson",
+                            warehouseNumber: "WH-002",
+                            toolType: "Multimeter",
+                            toolId: "MM-2025-005",
+                            dateCompleted: "2025-01-14",
+                            status: "Completed",
+                            overallScore: 88
+                          },
+                          {
+                            id: "TI-003",
+                            inspector: "Mike Wilson",
+                            warehouseNumber: "WH-001",
+                            toolType: "Cable Tester",
+                            toolId: "CT-2025-012",
+                            dateCompleted: "2025-01-13",
+                            status: "Attention Required",
+                            overallScore: 72
+                          }
+                        ].map((inspection) => (
+                          <Card key={inspection.id}>
+                            <CardContent className="p-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-4">
+                                    <div>
+                                      <h4 className="font-medium">{inspection.toolType}</h4>
+                                      <p className="text-sm text-muted-foreground">
+                                        {inspection.toolId} • {inspection.warehouseNumber}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium">Inspector: {inspection.inspector}</p>
+                                      <p className="text-sm text-muted-foreground">
+                                        {new Date(inspection.dateCompleted).toLocaleDateString()}
+                                      </p>
+                                    </div>
+                                  </div>
                                 </div>
-                                <div>
-                                  <p className="text-sm font-medium">{inspection.technicianName}</p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {inspection.dateCompleted ? new Date(inspection.dateCompleted).toLocaleDateString() : 'Not completed'}
-                                  </p>
+                                <div className="flex items-center gap-4">
+                                  <div className="text-right">
+                                    <div className="text-lg font-bold">{inspection.overallScore}%</div>
+                                    <p className="text-xs text-muted-foreground">Score</p>
+                                  </div>
+                                  <Badge
+                                    variant={inspection.status === 'Completed' ? 'default' : 'destructive'}
+                                  >
+                                    {inspection.status}
+                                  </Badge>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="sm">
+                                        <MoreVertical className="h-4 w-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                      <DropdownMenuItem>
+                                        <Eye className="h-4 w-4 mr-2" />
+                                        View Details
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Download className="h-4 w-4 mr-2" />
+                                        Export Report
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
                                 </div>
                               </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                              {inspection.overallScore && (
-                                <div className="text-right">
-                                  <div className="text-lg font-bold">{inspection.overallScore}%</div>
-                                  <p className="text-xs text-muted-foreground">Score</p>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="history" className="space-y-6">
+              <div className="grid gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Tool Inspection History</CardTitle>
+                    <p className="text-muted-foreground">
+                      All tool inspections from previous month to 3 years back
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {/* Enhanced Filter and Search for History */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <Input
+                            placeholder="Search by technician name..."
+                            className="pl-10"
+                          />
+                        </div>
+                        <Input type="date" placeholder="Select date" />
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="01">January</SelectItem>
+                            <SelectItem value="02">February</SelectItem>
+                            <SelectItem value="03">March</SelectItem>
+                            <SelectItem value="04">April</SelectItem>
+                            <SelectItem value="05">May</SelectItem>
+                            <SelectItem value="06">June</SelectItem>
+                            <SelectItem value="07">July</SelectItem>
+                            <SelectItem value="08">August</SelectItem>
+                            <SelectItem value="09">September</SelectItem>
+                            <SelectItem value="10">October</SelectItem>
+                            <SelectItem value="11">November</SelectItem>
+                            <SelectItem value="12">December</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="2024">2024</SelectItem>
+                            <SelectItem value="2023">2023</SelectItem>
+                            <SelectItem value="2022">2022</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Warehouse" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="WH-001">WH-001</SelectItem>
+                            <SelectItem value="WH-002">WH-002</SelectItem>
+                            <SelectItem value="WH-003">WH-003</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button variant="outline">
+                          <Download className="h-4 w-4 mr-2" />
+                          Export
+                        </Button>
+                      </div>
+
+                      {/* Historical Tool Inspection List */}
+                      <div className="space-y-4">
+                        {[
+                          {
+                            id: "TI-H001",
+                            inspector: "John Smith",
+                            warehouseNumber: "WH-001",
+                            toolType: "Power Drill",
+                            toolId: "PD-2024-001",
+                            dateCompleted: "2024-12-15",
+                            status: "Completed",
+                            overallScore: 92
+                          },
+                          {
+                            id: "TI-H002",
+                            inspector: "Sarah Johnson",
+                            warehouseNumber: "WH-002",
+                            toolType: "Oscilloscope",
+                            toolId: "OS-2024-003",
+                            dateCompleted: "2024-11-28",
+                            status: "Completed",
+                            overallScore: 89
+                          },
+                          {
+                            id: "TI-H003",
+                            inspector: "Mike Wilson",
+                            warehouseNumber: "WH-001",
+                            toolType: "Cable Tester",
+                            toolId: "CT-2024-008",
+                            dateCompleted: "2024-10-22",
+                            status: "Completed",
+                            overallScore: 85
+                          }
+                        ].map((inspection) => (
+                          <Card key={inspection.id}>
+                            <CardContent className="p-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-4">
+                                    <div>
+                                      <h4 className="font-medium">{inspection.toolType}</h4>
+                                      <p className="text-sm text-muted-foreground">
+                                        {inspection.toolId} • {inspection.warehouseNumber}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium">Inspector: {inspection.inspector}</p>
+                                      <p className="text-sm text-muted-foreground">
+                                        {new Date(inspection.dateCompleted).toLocaleDateString()}
+                                      </p>
+                                    </div>
+                                  </div>
                                 </div>
-                              )}
-                              <Badge
-                                variant={inspection.status === 'Completed' ? 'default' :
-                                       inspection.status === 'Attention Required' ? 'destructive' :
-                                       'secondary'}
-                              >
-                                {inspection.status}
-                              </Badge>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="sm">
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                  <DropdownMenuItem>
-                                    <Eye className="h-4 w-4 mr-2" />
-                                    View Details
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Download className="h-4 w-4 mr-2" />
-                                    Export Report
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                                <div className="flex items-center gap-4">
+                                  <div className="text-right">
+                                    <div className="text-lg font-bold">{inspection.overallScore}%</div>
+                                    <p className="text-xs text-muted-foreground">Score</p>
+                                  </div>
+                                  <Badge variant="default">
+                                    {inspection.status}
+                                  </Badge>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="sm">
+                                        <MoreVertical className="h-4 w-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                      <DropdownMenuItem>
+                                        <Eye className="h-4 w-4 mr-2" />
+                                        View Details
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Download className="h-4 w-4 mr-2" />
+                                        Export Report
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="missed" className="space-y-6">
+              <div className="grid gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Missed Tool Inspections</CardTitle>
+                    <p className="text-muted-foreground">
+                      Tool inspections that are overdue or missed
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <Alert>
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription>
+                          <strong>Warning:</strong> 3 tool inspections are overdue and require immediate attention
+                        </AlertDescription>
+                      </Alert>
+
+                      {/* Enhanced Filter and Search for Missed */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <Input
+                            placeholder="Search by technician name..."
+                            className="pl-10"
+                          />
+                        </div>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Warehouse" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="WH-001">WH-001</SelectItem>
+                            <SelectItem value="WH-002">WH-002</SelectItem>
+                            <SelectItem value="WH-003">WH-003</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Overdue Period" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1week">1 Week Overdue</SelectItem>
+                            <SelectItem value="2weeks">2 Weeks Overdue</SelectItem>
+                            <SelectItem value="1month">1 Month Overdue</SelectItem>
+                            <SelectItem value="all">All Overdue</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button variant="outline">
+                          <Filter className="h-4 w-4 mr-2" />
+                          Filter
+                        </Button>
+                        <Button variant="outline">
+                          <Download className="h-4 w-4 mr-2" />
+                          Print Report
+                        </Button>
+                      </div>
+
+                      {/* Missed Tool Inspection List */}
+                      <div className="space-y-4">
+                        {[
+                          {
+                            id: "TI-M001",
+                            inspector: "David Brown",
+                            warehouseNumber: "WH-003",
+                            toolType: "Impact Driver",
+                            toolId: "ID-2024-008",
+                            dueDate: "2025-01-01",
+                            daysPastDue: 15,
+                            status: "Overdue"
+                          },
+                          {
+                            id: "TI-M002",
+                            inspector: "Lisa Davis",
+                            warehouseNumber: "WH-001",
+                            toolType: "Torque Wrench",
+                            toolId: "TW-2024-015",
+                            dueDate: "2024-12-28",
+                            daysPastDue: 18,
+                            status: "Critical"
+                          },
+                          {
+                            id: "TI-M003",
+                            inspector: "Robert Lee",
+                            warehouseNumber: "WH-002",
+                            toolType: "Digital Caliper",
+                            toolId: "DC-2024-022",
+                            dueDate: "2024-12-20",
+                            daysPastDue: 26,
+                            status: "Critical"
+                          }
+                        ].map((inspection) => (
+                          <Card key={inspection.id} className="border-red-200">
+                            <CardContent className="p-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-4">
+                                    <div>
+                                      <h4 className="font-medium">{inspection.toolType}</h4>
+                                      <p className="text-sm text-muted-foreground">
+                                        {inspection.toolId} • {inspection.warehouseNumber}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium">Assigned: {inspection.inspector}</p>
+                                      <p className="text-sm text-red-600">
+                                        Due: {new Date(inspection.dueDate).toLocaleDateString()} ({inspection.daysPastDue} days overdue)
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <Badge variant="destructive">
+                                    {inspection.status}
+                                  </Badge>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="sm">
+                                        <MoreVertical className="h-4 w-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                      <DropdownMenuItem>
+                                        <User className="h-4 w-4 mr-2" />
+                                        Reassign Inspector
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Calendar className="h-4 w-4 mr-2" />
+                                        Reschedule
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Download className="h-4 w-4 mr-2" />
+                                        Send Reminder
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
         </TabsContent>
       </Tabs>
 
