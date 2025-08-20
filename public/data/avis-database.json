@@ -149,8 +149,8 @@
         "roadworthy_expiry": "2025-08-15",
         "registration_expiry": "2025-07-22"
       },
-      "last_service": "2023-12-28",
-      "next_service_due": "2024-03-28"
+      "last_service": "2024-11-28",
+      "next_service_due": "2025-05-28"
     },
     {
       "vehicle_id": 9,
@@ -163,13 +163,13 @@
       "fuel_efficiency": 29.9,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2025-02-10",
-        "insurance_expiry": "2024-12-18",
-        "roadworthy_expiry": "2024-11-28",
-        "registration_expiry": "2024-10-05"
+        "license_expiry": "2026-02-10",
+        "insurance_expiry": "2025-12-18",
+        "roadworthy_expiry": "2025-11-28",
+        "registration_expiry": "2025-10-05"
       },
-      "last_service": "2024-01-20",
-      "next_service_due": "2024-04-20"
+      "last_service": "2024-10-20",
+      "next_service_due": "2025-04-20"
     },
     {
       "vehicle_id": 10,
@@ -182,13 +182,13 @@
       "fuel_efficiency": 24.8,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-07-08",
-        "insurance_expiry": "2024-09-15",
-        "roadworthy_expiry": "2024-08-20",
-        "registration_expiry": "2024-06-30"
+        "license_expiry": "2026-07-08",
+        "insurance_expiry": "2025-09-15",
+        "roadworthy_expiry": "2025-08-20",
+        "registration_expiry": "2025-06-30"
       },
-      "last_service": "2024-01-03",
-      "next_service_due": "2024-04-03"
+      "last_service": "2024-10-03",
+      "next_service_due": "2025-04-03"
     },
     {
       "vehicle_id": 11,
@@ -201,13 +201,13 @@
       "fuel_efficiency": 23.0,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-08-18",
-        "insurance_expiry": "2024-10-12",
-        "roadworthy_expiry": "2024-09-08",
-        "registration_expiry": "2024-07-25"
+        "license_expiry": "2026-08-18",
+        "insurance_expiry": "2025-10-12",
+        "roadworthy_expiry": "2025-09-08",
+        "registration_expiry": "2025-07-25"
       },
-      "last_service": "2024-01-25",
-      "next_service_due": "2024-04-25"
+      "last_service": "2024-09-25",
+      "next_service_due": "2025-03-25"
     },
     {
       "vehicle_id": 12,
@@ -220,13 +220,13 @@
       "fuel_efficiency": 27.8,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-12-05",
-        "insurance_expiry": "2024-11-18",
-        "roadworthy_expiry": "2024-10-22",
-        "registration_expiry": "2024-09-12"
+        "license_expiry": "2026-12-05",
+        "insurance_expiry": "2025-11-18",
+        "roadworthy_expiry": "2025-10-22",
+        "registration_expiry": "2025-09-12"
       },
-      "last_service": "2024-01-22",
-      "next_service_due": "2024-04-22"
+      "last_service": "2024-08-22",
+      "next_service_due": "2025-02-22"
     },
     {
       "vehicle_id": 13,
@@ -239,13 +239,13 @@
       "fuel_efficiency": 26.9,
       "assigned_driver": "Not Assigned",
       "compliance": {
-        "license_expiry": "2024-10-28",
-        "insurance_expiry": "2024-12-08",
-        "roadworthy_expiry": "2024-11-12",
-        "registration_expiry": "2024-08-30"
+        "license_expiry": "2026-10-28",
+        "insurance_expiry": "2025-12-08",
+        "roadworthy_expiry": "2025-11-12",
+        "registration_expiry": "2025-08-30"
       },
-      "last_service": "2024-01-14",
-      "next_service_due": "2024-04-14"
+      "last_service": "2024-11-14",
+      "next_service_due": "2025-05-14"
     },
     {
       "vehicle_id": 14,
