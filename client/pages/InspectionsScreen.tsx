@@ -255,13 +255,18 @@ export default function InspectionsScreen() {
       inspector: "John Smith",
       dateScheduled: "2025-01-15",
       dateCompleted: "2025-01-15",
-      items: defaultChecklist.map((item) => ({
+      items: defaultChecklist.map((item, index) => ({
         ...item,
         status: "pass" as const,
         notes:
           item.name === "Tire Pressure" ? "All tires at optimal pressure" : "",
+        imageUploaded: index < 8, // Most items have images uploaded
+        photos: index < 8 ? [`https://images.unsplash.com/photo-${1500000000 + index * 100}?w=500`] : [],
+        inspectionDate: "2025-01-15",
       })),
       overallScore: 98,
+      imagesUploaded: 8,
+      imagesRequired: 10,
       aiAnalysis: {
         detected: [
           "Good tire condition",
@@ -274,7 +279,7 @@ export default function InspectionsScreen() {
           "Check tire pressure weekly",
         ],
       },
-    },
+    } as VehicleInspectionData,
     {
       id: "INS-002",
       vehicleId: "FL-002",
