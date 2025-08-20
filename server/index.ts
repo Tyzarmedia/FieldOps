@@ -32,6 +32,16 @@ import {
   getCurrentAssignment,
   endAssignment,
 } from "./routes/assistants";
+import {
+  getAllVehicles,
+  getVehicleById,
+  addVehicle,
+  updateVehicle,
+  assignVehicle,
+  loanVehicle,
+  removeVehicle,
+  updateVehicleStatus,
+} from "./routes/vehicles";
 
 export function createServer() {
   const app = express();
