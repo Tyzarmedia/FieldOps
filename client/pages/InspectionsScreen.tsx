@@ -1023,10 +1023,24 @@ export default function InspectionsScreen() {
             <TabsContent value="history" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Vehicle Inspection History</CardTitle>
-                  <p className="text-muted-foreground">
-                    All vehicle inspections from previous month to 3 years back
-                  </p>
+                  <div
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => toggleSection('vehicleHistory')}
+                  >
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        Vehicle Inspection History
+                        {expandedSections.vehicleHistory ? (
+                          <ChevronUp className="h-5 w-5" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5" />
+                        )}
+                      </CardTitle>
+                      <p className="text-muted-foreground">
+                        All vehicle inspections from previous month to 3 years back
+                      </p>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
