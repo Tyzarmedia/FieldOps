@@ -95,7 +95,9 @@ export const getAllVehicles: RequestHandler = (req, res) => {
 export const getVehicleById: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
-    const vehicle = vehicles.find((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-") ? parseInt(id.split("-")[1]) : parseInt(id);
+    const vehicle = vehicles.find((v) => v.vehicle_id === vehicleId);
 
     if (!vehicle) {
       return res.status(404).json({
