@@ -1372,11 +1372,17 @@ export default function InspectionsScreen() {
                             <CardContent className="p-4">
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
-                                  <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-6">
                                     <div>
                                       <h4 className="font-medium">{inspection.toolType}</h4>
                                       <p className="text-sm text-muted-foreground">
                                         {inspection.toolId} • {inspection.warehouseNumber}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium">Assigned To: {inspection.assignedTo}</p>
+                                      <p className="text-sm text-muted-foreground">
+                                        Status: {inspection.assignmentStatus}
                                       </p>
                                     </div>
                                     <div>
@@ -1392,11 +1398,19 @@ export default function InspectionsScreen() {
                                     <div className="text-lg font-bold">{inspection.overallScore}%</div>
                                     <p className="text-xs text-muted-foreground">Score</p>
                                   </div>
-                                  <Badge
-                                    variant={inspection.status === 'Completed' ? 'default' : 'destructive'}
-                                  >
-                                    {inspection.status}
-                                  </Badge>
+                                  <div className="flex flex-col gap-1">
+                                    <Badge
+                                      variant={inspection.status === 'Completed' ? 'default' : 'destructive'}
+                                    >
+                                      {inspection.status}
+                                    </Badge>
+                                    <Badge
+                                      variant={inspection.toolCondition === 'Good Condition' ? 'default' :
+                                             inspection.toolCondition === 'Damaged' ? 'destructive' : 'secondary'}
+                                    >
+                                      {inspection.toolCondition}
+                                    </Badge>
+                                  </div>
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button variant="ghost" size="sm">
@@ -1407,6 +1421,10 @@ export default function InspectionsScreen() {
                                       <DropdownMenuItem>
                                         <Eye className="h-4 w-4 mr-2" />
                                         View Details
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <User className="h-4 w-4 mr-2" />
+                                        Reassign Tool
                                       </DropdownMenuItem>
                                       <DropdownMenuItem>
                                         <Download className="h-4 w-4 mr-2" />
