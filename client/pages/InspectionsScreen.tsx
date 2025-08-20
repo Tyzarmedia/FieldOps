@@ -106,6 +106,21 @@ export default function InspectionsScreen() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
+  // Collapsible section states
+  const [expandedSections, setExpandedSections] = useState({
+    weeklyInspections: true,
+    toolboxInspections: true,
+    toolboxHistory: false,
+    overdueToolboxes: false
+  });
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
   // Mock data
   const vehicles = [
     { id: "FL-001", registration: "EL-123-ABC" },
