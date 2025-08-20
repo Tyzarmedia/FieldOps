@@ -381,8 +381,7 @@ export default function FleetVehicleManagement() {
 
       if (!confirmed) return;
 
-      const serverVehicleId = `FL-${String(vehicle.vehicle_id).padStart(3, "0")}`;
-      const response = await makeAuthenticatedRequest(`/api/vehicles/${serverVehicleId}`, {
+      const response = await makeAuthenticatedRequest(`/api/vehicles/${vehicle.vehicle_id}`, {
         method: "DELETE",
       });
 
