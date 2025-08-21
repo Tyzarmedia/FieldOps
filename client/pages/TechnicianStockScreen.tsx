@@ -71,6 +71,9 @@ export default function TechnicianStockScreen() {
   const { success, error } = useNotification();
   const [stockItems, setStockItems] = useState<TechnicianStock[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("toolbox");
+  const [technicianTools, setTechnicianTools] = useState<any>(null);
+  const [loadingTools, setLoadingTools] = useState(false);
 
   // Define fallback data first
   const [fallbackStockItems] = useState<TechnicianStock[]>([
