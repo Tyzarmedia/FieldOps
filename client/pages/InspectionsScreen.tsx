@@ -611,6 +611,67 @@ export default function InspectionsScreen() {
 
   const [inspections, setInspections] = useState(mockInspections);
 
+  // Fetch tools assigned to technician
+  const fetchTechnicianTools = async (technicianId: string) => {
+    setLoadingTools(true);
+    try {
+      const response = await fetch(`/api/stock-management/tools/technician/${technicianId}`);
+      const data = await response.json();
+      if (data.success) {
+        setTechnicianTools(data.data);
+      } else {
+        console.error('Failed to fetch technician tools:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching technician tools:', error);
+    } finally {
+      setLoadingTools(false);
+    }
+  };
+
+  // Handle tool inspection update
+  const handleToolInspection = async (toolId: string, inspectionData: any) => {
+    try {
+      const response = await fetch(`/api/stock-management/tools/${toolId}/inspect`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...inspectionData,
+          technicianId: selectedTechnician,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Refresh technician tools data
+        if (selectedTechnician) {
+          await fetchTechnicianTools(selectedTechnician);
+        }
+        alert('Tool inspection updated successfully!');
+      } else {
+        alert('Failed to update tool inspection: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error updating tool inspection:', error);
+      alert('Error updating tool inspection');
+    }
+  };
+
+  // Start tool inspection mode
+  const startToolInspection = () => {
+    if (!selectedTechnician) {
+      alert('Please select a technician first');
+      return;
+    }
+
+    fetchTechnicianTools(selectedTechnician);
+    setToolInspectionMode(true);
+    setShowNewInspection(false);
+    setSelectedTab("current");
+  };
+
   const startNewInspection = () => {
     if (!selectedVehicle) return;
 
