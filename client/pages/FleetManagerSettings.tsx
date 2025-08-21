@@ -407,12 +407,18 @@ export default function FleetManagerSettings() {
     }
   };
 
-  const handleResetToDefaults = () => {
+  const handleResetToDefaults = async () => {
     if (
-      window.confirm("Are you sure you want to reset all settings to defaults?")
+      !window.confirm("Are you sure you want to reset all settings to defaults? This action cannot be undone.")
     ) {
-      // Reset to default values
-      setNotifications({
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Default values
+      const defaultNotifications = {
         emailNotifications: true,
         pushNotifications: true,
         smsNotifications: false,
@@ -423,9 +429,9 @@ export default function FleetManagerSettings() {
         dailyReports: true,
         weeklyReports: false,
         inspectionReminders: true,
-      });
+      };
 
-      setFleetPreferences({
+      const defaultFleetPreferences = {
         defaultDashboard: "overview",
         autoRefreshInterval: "30",
         mapProvider: "google",
@@ -437,9 +443,59 @@ export default function FleetManagerSettings() {
         enableVoiceAlerts: false,
         maintenanceReminderDays: "7",
         inspectionReminderDays: "14",
+      };
+
+      const defaultSystemPreferences = {
+        theme: "light",
+        language: "en",
+        timezone: "Africa/Johannesburg",
+        dateFormat: "DD/MM/YYYY",
+        timeFormat: "24h",
+        currency: "ZAR",
+        autoLogout: "60",
+        sessionTimeout: "480",
+        twoFactorAuth: false,
+        biometricLogin: false,
+      };
+
+      // Reset all settings on server
+      const settingsData = {
+        profile,
+        notifications: defaultNotifications,
+        fleetPreferences: defaultFleetPreferences,
+        systemPreferences: defaultSystemPreferences,
+        profileImage,
+      };
+
+      const response = await makeAuthenticatedRequest("/api/fleet-settings", {
+        method: "POST",
+        body: JSON.stringify(settingsData),
       });
 
-      alert("Settings reset to defaults!");
+      if (response.ok) {
+        // Update local state
+        setNotifications(defaultNotifications);
+        setFleetPreferences(defaultFleetPreferences);
+        setSystemPreferences(defaultSystemPreferences);
+
+        // Apply theme change immediately
+        document.documentElement.className = '';
+
+        showNotification.success(
+          "Settings Reset",
+          "All settings have been reset to default values successfully"
+        );
+      } else {
+        throw new Error("Failed to reset settings on server");
+      }
+    } catch (error) {
+      console.error("Failed to reset settings:", error);
+      showNotification.error(
+        "Reset Failed",
+        "Could not reset settings to defaults. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
