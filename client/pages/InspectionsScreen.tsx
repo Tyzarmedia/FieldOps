@@ -614,12 +614,14 @@ export default function InspectionsScreen() {
       id: `INS-${Date.now()}`,
       vehicleId: selectedVehicle,
       vehicleRegistration: vehicle?.registration || "",
-      type: "Pre-Trip Inspection",
+      type: "Comprehensive Vehicle Inspection",
       status: "in_progress",
       inspector: "Current User",
       dateScheduled: new Date().toISOString().split("T")[0],
       items: defaultChecklist.map((item) => ({ ...item })),
       overallScore: 0,
+      imagesUploaded: 0,
+      imagesRequired: defaultChecklist.filter(item => item.required).length,
     };
 
     setCurrentInspection(newInspection);
