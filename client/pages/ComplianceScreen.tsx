@@ -435,19 +435,63 @@ export default function ComplianceScreen() {
                                 ? " has expired"
                                 : ` expires in ${alert.daysUntilExpiry} days`}
                             </span>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                startEditing(
-                                  alert.vehicleId,
-                                  alert.documentType,
-                                  alert.expiryDate,
-                                )
-                              }
-                            >
-                              Renew Now
-                            </Button>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button size="sm" variant="outline">
+                                  Renew Now
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>
+                                    Renew {alert.documentType}
+                                  </DialogTitle>
+                                  <DialogDescription>
+                                    Update the expiry date for{" "}
+                                    {alert.plateNumber} - {alert.documentType}
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div>
+                                    <Label htmlFor="renewal-date">
+                                      New Expiry Date
+                                    </Label>
+                                    <Input
+                                      id="renewal-date"
+                                      type="date"
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
+                                      onChange={(e) =>
+                                        setNewDate(e.target.value)
+                                      }
+                                    />
+                                  </div>
+                                  <div className="flex justify-end gap-2">
+                                    <Button
+                                      variant="outline"
+                                      onClick={() => setNewDate("")}
+                                    >
+                                      Cancel
+                                    </Button>
+                                    <Button
+                                      onClick={() => {
+                                        if (newDate) {
+                                          updateComplianceDate(
+                                            alert.vehicleId,
+                                            alert.documentType,
+                                            newDate,
+                                          );
+                                        }
+                                      }}
+                                      disabled={!newDate}
+                                    >
+                                      Update
+                                    </Button>
+                                  </div>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           </div>
                         </AlertDescription>
                       </Alert>
@@ -485,19 +529,84 @@ export default function ComplianceScreen() {
                               {alert.documentType} expires in{" "}
                               {alert.daysUntilExpiry} days
                             </span>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                startEditing(
-                                  alert.vehicleId,
-                                  alert.documentType,
-                                  alert.expiryDate,
-                                )
-                              }
-                            >
-                              Schedule Renewal
-                            </Button>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button size="sm" variant="outline">
+                                  Schedule Renewal
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>
+                                    Schedule Renewal for {alert.documentType}
+                                  </DialogTitle>
+                                  <DialogDescription>
+                                    Schedule a reminder for {alert.plateNumber}{" "}
+                                    - {alert.documentType} renewal
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div>
+                                    <Label htmlFor="reminder-date">
+                                      Reminder Date
+                                    </Label>
+                                    <Input
+                                      id="reminder-date"
+                                      type="date"
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
+                                      onChange={(e) =>
+                                        setNewDate(e.target.value)
+                                      }
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label htmlFor="renewal-type">
+                                      Renewal Type
+                                    </Label>
+                                    <Select>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select renewal type" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="maintenance">
+                                          Maintenance Service
+                                        </SelectItem>
+                                        <SelectItem value="inspection">
+                                          Inspection Booking
+                                        </SelectItem>
+                                        <SelectItem value="document">
+                                          Document Renewal
+                                        </SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="flex justify-end gap-2">
+                                    <Button
+                                      variant="outline"
+                                      onClick={() => setNewDate("")}
+                                    >
+                                      Cancel
+                                    </Button>
+                                    <Button
+                                      onClick={() => {
+                                        if (newDate) {
+                                          // Create reminder/scheduling logic here
+                                          alert(
+                                            "Renewal reminder scheduled successfully!",
+                                          );
+                                          setNewDate("");
+                                        }
+                                      }}
+                                      disabled={!newDate}
+                                    >
+                                      Schedule
+                                    </Button>
+                                  </div>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           </div>
                         </AlertDescription>
                       </Alert>

@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -17,6 +19,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   AlertTriangle,
@@ -55,6 +64,17 @@ export default function IncidentReports() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedReport, setSelectedReport] = useState<IncidentReport | null>(
+    null,
+  );
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [showStatusDialog, setShowStatusDialog] = useState(false);
+  const [assigningToReport, setAssigningToReport] = useState<string | null>(
+    null,
+  );
+  const [updatingStatusReport, setUpdatingStatusReport] = useState<
+    string | null
+  >(null);
 
   // Mock incident reports data
   const incidentReports: IncidentReport[] = [
@@ -216,6 +236,44 @@ export default function IncidentReports() {
     );
   };
 
+  const handleAssignInvestigator = (reportId: string) => {
+    setAssigningToReport(reportId);
+    setShowAssignDialog(true);
+  };
+
+  const handleUpdateStatus = (reportId: string, currentStatus: string) => {
+    setUpdatingStatusReport(reportId);
+    setShowStatusDialog(true);
+  };
+
+  const handleExportReport = (reportId: string) => {
+    const report = incidentReports.find((r) => r.id === reportId);
+    if (report) {
+      // Create a simple text export
+      const exportData = `
+Incident Report: ${report.id}
+Title: ${report.title}
+Description: ${report.description}
+Severity: ${report.severity}
+Status: ${report.status}
+Reported By: ${report.reportedBy}
+Date: ${formatDate(report.reportedDate)}
+Location: ${report.location}
+Assigned To: ${report.assignedTo || "Unassigned"}
+`;
+
+      const blob = new Blob([exportData], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `incident_report_${report.id}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
+
   const openCount = incidentReports.filter((r) =>
     ["open", "investigating"].includes(r.status),
   ).length;
@@ -239,7 +297,30 @@ export default function IncidentReports() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const exportData = filteredReports
+                .map(
+                  (report) =>
+                    `${report.id},${report.title},${report.severity},${report.status},${report.reportedBy},${formatDate(report.reportedDate)},${report.location}`,
+                )
+                .join("\n");
+              const csvContent =
+                "ID,Title,Severity,Status,Reported By,Date,Location\n" +
+                exportData;
+              const blob = new Blob([csvContent], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "incident_reports.csv";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
+          >
             <Download className="h-4 w-4 mr-2" />
             Export Reports
           </Button>
@@ -455,19 +536,31 @@ export default function IncidentReports() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => setSelectedReport(report)}
+                            >
                               <Eye className="h-4 w-4 mr-2" />
                               View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleAssignInvestigator(report.id)
+                              }
+                            >
                               <User className="h-4 w-4 mr-2" />
                               Assign Investigator
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateStatus(report.id, report.status)
+                              }
+                            >
                               <Calendar className="h-4 w-4 mr-2" />
                               Update Status
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleExportReport(report.id)}
+                            >
                               <Download className="h-4 w-4 mr-2" />
                               Export Report
                             </DropdownMenuItem>
@@ -482,6 +575,198 @@ export default function IncidentReports() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* View Details Dialog */}
+      <Dialog
+        open={!!selectedReport}
+        onOpenChange={() => setSelectedReport(null)}
+      >
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>
+              Incident Report Details - {selectedReport?.id}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedReport && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-2">Basic Information</h4>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <strong>Title:</strong> {selectedReport.title}
+                    </div>
+                    <div>
+                      <strong>Category:</strong> {selectedReport.category}
+                    </div>
+                    <div>
+                      <strong>Severity:</strong>{" "}
+                      <Badge
+                        className={
+                          getSeverityColor(selectedReport.severity) +
+                          " text-white"
+                        }
+                      >
+                        {selectedReport.severity}
+                      </Badge>
+                    </div>
+                    <div>
+                      <strong>Status:</strong>{" "}
+                      <Badge variant={getStatusColor(selectedReport.status)}>
+                        {selectedReport.status}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Assignment & Timing</h4>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <strong>Reported By:</strong> {selectedReport.reportedBy}
+                    </div>
+                    <div>
+                      <strong>Reported Date:</strong>{" "}
+                      {formatDate(selectedReport.reportedDate)}
+                    </div>
+                    <div>
+                      <strong>Assigned To:</strong>{" "}
+                      {selectedReport.assignedTo || "Unassigned"}
+                    </div>
+                    <div>
+                      <strong>Location:</strong> {selectedReport.location}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Description</h4>
+                <p className="text-sm bg-muted p-3 rounded">
+                  {selectedReport.description}
+                </p>
+              </div>
+              {selectedReport.attachments.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2">Attachments</h4>
+                  <div className="flex gap-2">
+                    {selectedReport.attachments.map((attachment, index) => (
+                      <Badge key={index} variant="outline">
+                        📎 {attachment}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Assign Investigator Dialog */}
+      <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Assign Investigator</DialogTitle>
+            <DialogDescription>
+              Select an investigator for incident report {assigningToReport}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="investigator">Available Investigators</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select investigator" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="mike-wilson">Mike Wilson</SelectItem>
+                  <SelectItem value="lisa-chen">Lisa Chen</SelectItem>
+                  <SelectItem value="robert-garcia">Robert Garcia</SelectItem>
+                  <SelectItem value="nancy-dube">Nancy Dube</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="priority">Priority Level</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Set priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="high">High Priority</SelectItem>
+                  <SelectItem value="medium">Medium Priority</SelectItem>
+                  <SelectItem value="low">Low Priority</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowAssignDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  alert("Investigator assigned successfully!");
+                  setShowAssignDialog(false);
+                  setAssigningToReport(null);
+                }}
+              >
+                Assign
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Status Dialog */}
+      <Dialog open={showStatusDialog} onOpenChange={setShowStatusDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Status</DialogTitle>
+            <DialogDescription>
+              Update the status for incident report {updatingStatusReport}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="status">New Status</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select new status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="open">Open</SelectItem>
+                  <SelectItem value="investigating">Investigating</SelectItem>
+                  <SelectItem value="resolved">Resolved</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="notes">Status Notes</Label>
+              <Textarea placeholder="Add notes about this status change..." />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowStatusDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  alert("Status updated successfully!");
+                  setShowStatusDialog(false);
+                  setUpdatingStatusReport(null);
+                }}
+              >
+                Update Status
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

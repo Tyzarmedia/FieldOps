@@ -110,6 +110,11 @@ export default function InspectionsScreen() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
+  // Tool inspection states
+  const [technicianTools, setTechnicianTools] = useState<any>(null);
+  const [loadingTools, setLoadingTools] = useState(false);
+  const [toolInspectionMode, setToolInspectionMode] = useState(false);
+
   // Collapsible section states
   const [expandedSections, setExpandedSections] = useState({
     weeklyInspections: true,
@@ -163,9 +168,20 @@ export default function InspectionsScreen() {
   };
 
   const defaultChecklist: InspectionItem[] = [
+    // External Inspection
+    {
+      id: "exterior_body",
+      name: "Body Condition & Paint",
+      category: "External",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
     {
       id: "tires",
-      name: "Tire Condition",
+      name: "Tire Condition & Tread Depth",
       category: "External",
       status: "not_checked",
       notes: "",
@@ -175,7 +191,7 @@ export default function InspectionsScreen() {
     },
     {
       id: "tire_pressure",
-      name: "Tire Pressure",
+      name: "Tire Pressure (All Wheels)",
       category: "External",
       status: "not_checked",
       notes: "",
@@ -184,9 +200,9 @@ export default function InspectionsScreen() {
       imageUploaded: false,
     },
     {
-      id: "brakes",
-      name: "Brake System",
-      category: "Mechanical",
+      id: "lights_headlights",
+      name: "Headlights & High Beams",
+      category: "External",
       status: "not_checked",
       notes: "",
       photos: [],
@@ -194,9 +210,19 @@ export default function InspectionsScreen() {
       imageUploaded: false,
     },
     {
-      id: "lights",
-      name: "Lights & Indicators",
-      category: "Electrical",
+      id: "lights_indicators",
+      name: "Turn Indicators & Hazard Lights",
+      category: "External",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "lights_brake",
+      name: "Brake Lights & Reverse Lights",
+      category: "External",
       status: "not_checked",
       notes: "",
       photos: [],
@@ -205,7 +231,7 @@ export default function InspectionsScreen() {
     },
     {
       id: "mirrors",
-      name: "Mirrors",
+      name: "Side Mirrors & Rear View Mirror",
       category: "External",
       status: "not_checked",
       notes: "",
@@ -214,8 +240,8 @@ export default function InspectionsScreen() {
       imageUploaded: false,
     },
     {
-      id: "windshield",
-      name: "Windshield & Wipers",
+      id: "windshield_windows",
+      name: "Windshield & All Windows",
       category: "External",
       status: "not_checked",
       notes: "",
@@ -224,8 +250,80 @@ export default function InspectionsScreen() {
       imageUploaded: false,
     },
     {
-      id: "engine",
-      name: "Engine Condition",
+      id: "wipers",
+      name: "Windshield Wipers & Washers",
+      category: "External",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "license_plate",
+      name: "License Plate & Registration",
+      category: "External",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    // Interior Inspection
+    {
+      id: "interior_cleanliness",
+      name: "Interior Cleanliness & Condition",
+      category: "Interior",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "seats_belts",
+      name: "Seats & Seat Belts",
+      category: "Interior",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "dashboard_instruments",
+      name: "Dashboard & Instrument Panel",
+      category: "Interior",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "air_conditioning",
+      name: "Air Conditioning & Heating",
+      category: "Interior",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "radio_electronics",
+      name: "Radio & Electronic Systems",
+      category: "Interior",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    // Mechanical Inspection
+    {
+      id: "engine_condition",
+      name: "Engine Condition & Performance",
       category: "Mechanical",
       status: "not_checked",
       notes: "",
@@ -234,8 +332,8 @@ export default function InspectionsScreen() {
       imageUploaded: false,
     },
     {
-      id: "fluids",
-      name: "Fluid Levels",
+      id: "oil_level",
+      name: "Engine Oil Level & Condition",
       category: "Mechanical",
       status: "not_checked",
       notes: "",
@@ -244,8 +342,49 @@ export default function InspectionsScreen() {
       imageUploaded: false,
     },
     {
-      id: "battery",
-      name: "Battery",
+      id: "water_coolant",
+      name: "Water/Coolant Level",
+      category: "Mechanical",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "brake_system",
+      name: "Brake System & Brake Fluid",
+      category: "Mechanical",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "transmission",
+      name: "Transmission & Clutch",
+      category: "Mechanical",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "suspension_steering",
+      name: "Suspension & Steering",
+      category: "Mechanical",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    // Electrical Systems
+    {
+      id: "battery_terminals",
+      name: "Battery & Terminals",
       category: "Electrical",
       status: "not_checked",
       notes: "",
@@ -254,8 +393,19 @@ export default function InspectionsScreen() {
       imageUploaded: false,
     },
     {
+      id: "alternator_charging",
+      name: "Alternator & Charging System",
+      category: "Electrical",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    // Safety Equipment
+    {
       id: "safety_equipment",
-      name: "Safety Equipment",
+      name: "Safety Equipment & Tools",
       category: "Safety",
       status: "not_checked",
       notes: "",
@@ -264,19 +414,50 @@ export default function InspectionsScreen() {
       imageUploaded: false,
     },
     {
-      id: "first_aid",
+      id: "first_aid_kit",
       name: "First Aid Kit",
       category: "Safety",
       status: "not_checked",
       notes: "",
       photos: [],
-      required: false,
+      required: true,
       imageUploaded: false,
     },
     {
       id: "fire_extinguisher",
       name: "Fire Extinguisher",
       category: "Safety",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "emergency_triangle",
+      name: "Emergency Triangle & Warning Signs",
+      category: "Safety",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    // Service History & Documentation
+    {
+      id: "service_stamp",
+      name: "Last Service Stamp & Documentation",
+      category: "Documentation",
+      status: "not_checked",
+      notes: "",
+      photos: [],
+      required: true,
+      imageUploaded: false,
+    },
+    {
+      id: "maintenance_schedule",
+      name: "Maintenance Schedule Compliance",
+      category: "Documentation",
       status: "not_checked",
       notes: "",
       photos: [],
@@ -430,6 +611,72 @@ export default function InspectionsScreen() {
 
   const [inspections, setInspections] = useState(mockInspections);
 
+  // Fetch tools assigned to technician
+  const fetchTechnicianTools = async (technicianId: string) => {
+    setLoadingTools(true);
+    try {
+      const response = await fetch(
+        `/api/stock-management/tools/technician/${technicianId}`,
+      );
+      const data = await response.json();
+      if (data.success) {
+        setTechnicianTools(data.data);
+      } else {
+        console.error("Failed to fetch technician tools:", data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching technician tools:", error);
+    } finally {
+      setLoadingTools(false);
+    }
+  };
+
+  // Handle tool inspection update
+  const handleToolInspection = async (toolId: string, inspectionData: any) => {
+    try {
+      const response = await fetch(
+        `/api/stock-management/tools/${toolId}/inspect`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...inspectionData,
+            technicianId: selectedTechnician,
+          }),
+        },
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        // Refresh technician tools data
+        if (selectedTechnician) {
+          await fetchTechnicianTools(selectedTechnician);
+        }
+        alert("Tool inspection updated successfully!");
+      } else {
+        alert("Failed to update tool inspection: " + data.error);
+      }
+    } catch (error) {
+      console.error("Error updating tool inspection:", error);
+      alert("Error updating tool inspection");
+    }
+  };
+
+  // Start tool inspection mode
+  const startToolInspection = () => {
+    if (!selectedTechnician) {
+      alert("Please select a technician first");
+      return;
+    }
+
+    fetchTechnicianTools(selectedTechnician);
+    setToolInspectionMode(true);
+    setShowNewInspection(false);
+    setSelectedTab("current");
+  };
+
   const startNewInspection = () => {
     if (!selectedVehicle) return;
 
@@ -438,12 +685,14 @@ export default function InspectionsScreen() {
       id: `INS-${Date.now()}`,
       vehicleId: selectedVehicle,
       vehicleRegistration: vehicle?.registration || "",
-      type: "Pre-Trip Inspection",
+      type: "Comprehensive Vehicle Inspection",
       status: "in_progress",
       inspector: "Current User",
       dateScheduled: new Date().toISOString().split("T")[0],
       items: defaultChecklist.map((item) => ({ ...item })),
       overallScore: 0,
+      imagesUploaded: 0,
+      imagesRequired: defaultChecklist.filter((item) => item.required).length,
     };
 
     setCurrentInspection(newInspection);
@@ -669,26 +918,6 @@ export default function InspectionsScreen() {
                   </div>
                 )}
 
-                {selectedInspectionType && (
-                  <div>
-                    <Label htmlFor="specific-type">
-                      Specific Inspection Type
-                    </Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select specific type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {inspectionTypes[selectedInspectionType].map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
@@ -702,7 +931,13 @@ export default function InspectionsScreen() {
                     Cancel
                   </Button>
                   <Button
-                    onClick={startNewInspection}
+                    onClick={() => {
+                      if (selectedInspectionType === "vehicle") {
+                        startNewInspection();
+                      } else if (selectedInspectionType === "tools") {
+                        startToolInspection();
+                      }
+                    }}
                     disabled={
                       !selectedInspectionType ||
                       !selectedTechnician ||
@@ -835,176 +1070,181 @@ export default function InspectionsScreen() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-6">
-                        {["External", "Mechanical", "Electrical", "Safety"].map(
-                          (category) => (
-                            <div key={category}>
-                              <h3 className="font-semibold mb-4">{category}</h3>
-                              <div className="space-y-4">
-                                {currentInspection.items
-                                  .filter((item) => item.category === category)
-                                  .map((item) => (
-                                    <div
-                                      key={item.id}
-                                      className="border rounded-lg p-4"
-                                    >
-                                      <div className="flex items-center justify-between mb-3">
-                                        <div className="flex items-center space-x-3">
-                                          <div
-                                            className={getItemStatusColor(
-                                              item.status,
-                                            )}
-                                          >
-                                            {getItemStatusIcon(item.status)}
-                                          </div>
-                                          <div>
-                                            <h4 className="font-medium">
-                                              {item.name}
-                                            </h4>
-                                            {item.required && (
-                                              <Badge
-                                                variant="outline"
-                                                className="text-xs"
-                                              >
-                                                Required
-                                              </Badge>
-                                            )}
-                                          </div>
+                        {[
+                          "External",
+                          "Interior",
+                          "Mechanical",
+                          "Electrical",
+                          "Safety",
+                          "Documentation",
+                        ].map((category) => (
+                          <div key={category}>
+                            <h3 className="font-semibold mb-4">{category}</h3>
+                            <div className="space-y-4">
+                              {currentInspection.items
+                                .filter((item) => item.category === category)
+                                .map((item) => (
+                                  <div
+                                    key={item.id}
+                                    className="border rounded-lg p-4"
+                                  >
+                                    <div className="flex items-center justify-between mb-3">
+                                      <div className="flex items-center space-x-3">
+                                        <div
+                                          className={getItemStatusColor(
+                                            item.status,
+                                          )}
+                                        >
+                                          {getItemStatusIcon(item.status)}
                                         </div>
-                                        <div className="flex items-center space-x-2">
-                                          <Button
-                                            size="sm"
-                                            variant={
-                                              item.status === "pass"
-                                                ? "default"
-                                                : "outline"
-                                            }
-                                            onClick={() =>
-                                              updateInspectionItem(item.id, {
-                                                status: "pass",
-                                              })
-                                            }
-                                          >
-                                            Pass
-                                          </Button>
-                                          <Button
-                                            size="sm"
-                                            variant={
-                                              item.status === "attention"
-                                                ? "default"
-                                                : "outline"
-                                            }
-                                            onClick={() =>
-                                              updateInspectionItem(item.id, {
-                                                status: "attention",
-                                              })
-                                            }
-                                          >
-                                            Attention
-                                          </Button>
-                                          <Button
-                                            size="sm"
-                                            variant={
-                                              item.status === "fail"
-                                                ? "destructive"
-                                                : "outline"
-                                            }
-                                            onClick={() =>
-                                              updateInspectionItem(item.id, {
-                                                status: "fail",
-                                              })
-                                            }
-                                          >
-                                            Fail
-                                          </Button>
+                                        <div>
+                                          <h4 className="font-medium">
+                                            {item.name}
+                                          </h4>
+                                          {item.required && (
+                                            <Badge
+                                              variant="outline"
+                                              className="text-xs"
+                                            >
+                                              Required
+                                            </Badge>
+                                          )}
                                         </div>
                                       </div>
-
-                                      {/* Notes */}
-                                      <Textarea
-                                        placeholder="Add notes..."
-                                        value={item.notes}
-                                        onChange={(e) =>
-                                          updateInspectionItem(item.id, {
-                                            notes: e.target.value,
-                                          })
-                                        }
-                                        className="mb-3"
-                                      />
-
-                                      {/* Photo/Video Upload */}
-                                      <div className="flex items-center space-x-2 mb-3">
-                                        <input
-                                          ref={fileInputRef}
-                                          type="file"
-                                          accept="image/*"
-                                          multiple
-                                          className="hidden"
-                                          onChange={(e) =>
-                                            e.target.files &&
-                                            handlePhotoUpload(
-                                              item.id,
-                                              e.target.files,
-                                            )
-                                          }
-                                        />
-                                        <input
-                                          ref={videoInputRef}
-                                          type="file"
-                                          accept="video/*"
-                                          className="hidden"
-                                          onChange={(e) =>
-                                            e.target.files &&
-                                            handlePhotoUpload(
-                                              item.id,
-                                              e.target.files,
-                                            )
-                                          }
-                                        />
+                                      <div className="flex items-center space-x-2">
                                         <Button
                                           size="sm"
-                                          variant="outline"
-                                          onClick={() =>
-                                            fileInputRef.current?.click()
+                                          variant={
+                                            item.status === "pass"
+                                              ? "default"
+                                              : "outline"
                                           }
-                                          disabled={uploadingMedia}
+                                          onClick={() =>
+                                            updateInspectionItem(item.id, {
+                                              status: "pass",
+                                            })
+                                          }
                                         >
-                                          <Camera className="h-4 w-4 mr-2" />
-                                          {uploadingMedia
-                                            ? "Uploading..."
-                                            : "Photo"}
+                                          Pass
                                         </Button>
                                         <Button
                                           size="sm"
-                                          variant="outline"
-                                          onClick={() =>
-                                            videoInputRef.current?.click()
+                                          variant={
+                                            item.status === "attention"
+                                              ? "default"
+                                              : "outline"
                                           }
-                                          disabled={uploadingMedia}
+                                          onClick={() =>
+                                            updateInspectionItem(item.id, {
+                                              status: "attention",
+                                            })
+                                          }
                                         >
-                                          <Video className="h-4 w-4 mr-2" />
-                                          Video
+                                          Attention
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant={
+                                            item.status === "fail"
+                                              ? "destructive"
+                                              : "outline"
+                                          }
+                                          onClick={() =>
+                                            updateInspectionItem(item.id, {
+                                              status: "fail",
+                                            })
+                                          }
+                                        >
+                                          Fail
                                         </Button>
                                       </div>
-
-                                      {/* Photo Gallery */}
-                                      {item.photos.length > 0 && (
-                                        <div className="flex space-x-2">
-                                          {item.photos.map((photo, index) => (
-                                            <img
-                                              key={index}
-                                              src={photo}
-                                              alt={`${item.name} photo ${index + 1}`}
-                                              className="h-16 w-16 object-cover rounded border"
-                                            />
-                                          ))}
-                                        </div>
-                                      )}
                                     </div>
-                                  ))}
-                              </div>
+
+                                    {/* Notes */}
+                                    <Textarea
+                                      placeholder="Add notes..."
+                                      value={item.notes}
+                                      onChange={(e) =>
+                                        updateInspectionItem(item.id, {
+                                          notes: e.target.value,
+                                        })
+                                      }
+                                      className="mb-3"
+                                    />
+
+                                    {/* Photo/Video Upload */}
+                                    <div className="flex items-center space-x-2 mb-3">
+                                      <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        className="hidden"
+                                        onChange={(e) =>
+                                          e.target.files &&
+                                          handlePhotoUpload(
+                                            item.id,
+                                            e.target.files,
+                                          )
+                                        }
+                                      />
+                                      <input
+                                        ref={videoInputRef}
+                                        type="file"
+                                        accept="video/*"
+                                        className="hidden"
+                                        onChange={(e) =>
+                                          e.target.files &&
+                                          handlePhotoUpload(
+                                            item.id,
+                                            e.target.files,
+                                          )
+                                        }
+                                      />
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() =>
+                                          fileInputRef.current?.click()
+                                        }
+                                        disabled={uploadingMedia}
+                                      >
+                                        <Camera className="h-4 w-4 mr-2" />
+                                        {uploadingMedia
+                                          ? "Uploading..."
+                                          : "Photo"}
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() =>
+                                          videoInputRef.current?.click()
+                                        }
+                                        disabled={uploadingMedia}
+                                      >
+                                        <Video className="h-4 w-4 mr-2" />
+                                        Video
+                                      </Button>
+                                    </div>
+
+                                    {/* Photo Gallery */}
+                                    {item.photos.length > 0 && (
+                                      <div className="flex space-x-2">
+                                        {item.photos.map((photo, index) => (
+                                          <img
+                                            key={index}
+                                            src={photo}
+                                            alt={`${item.name} photo ${index + 1}`}
+                                            className="h-16 w-16 object-cover rounded border"
+                                          />
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
                             </div>
-                          ),
-                        )}
+                          </div>
+                        ))}
                       </div>
 
                       <div className="mt-6 flex justify-end space-x-2">
@@ -1332,6 +1572,265 @@ export default function InspectionsScreen() {
             </TabsList>
 
             <TabsContent value="current" className="space-y-6">
+              {toolInspectionMode && technicianTools ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <span>
+                        Tool Inspection - {technicianTools.technicianName}
+                      </span>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setToolInspectionMode(false);
+                          setTechnicianTools(null);
+                        }}
+                      >
+                        <X className="h-4 w-4 mr-2" />
+                        Exit Inspection
+                      </Button>
+                    </CardTitle>
+                    <p className="text-muted-foreground">
+                      Inspect all tools assigned to this technician. Each tool
+                      must be checked and documented.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      {technicianTools.tools.map((tool: any) => (
+                        <Card key={tool.id} className="border-2">
+                          <CardContent className="p-6">
+                            <div className="flex items-start gap-6">
+                              <div className="w-32 h-32 flex-shrink-0">
+                                <img
+                                  src={tool.imageUrl}
+                                  alt={tool.name}
+                                  className="w-full h-full object-cover rounded-lg border"
+                                />
+                              </div>
+                              <div className="flex-1 space-y-4">
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <h3 className="text-lg font-semibold">
+                                      {tool.name}
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                      Serial: {tool.serialNumber} | Category:{" "}
+                                      {tool.category}
+                                    </p>
+                                    <div className="flex gap-2 mt-2">
+                                      <Badge
+                                        variant={
+                                          tool.condition === "Excellent"
+                                            ? "default"
+                                            : tool.condition === "Good"
+                                              ? "secondary"
+                                              : "destructive"
+                                        }
+                                      >
+                                        {tool.condition}
+                                      </Badge>
+                                      <Badge variant="outline">
+                                        Last inspected:{" "}
+                                        {tool.lastInspectionDate}
+                                      </Badge>
+                                      <Badge
+                                        variant={
+                                          new Date(tool.nextInspectionDue) <
+                                          new Date()
+                                            ? "destructive"
+                                            : "outline"
+                                        }
+                                      >
+                                        Due: {tool.nextInspectionDue}
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <Label htmlFor={`condition-${tool.id}`}>
+                                      Condition Assessment
+                                    </Label>
+                                    <Select defaultValue={tool.condition}>
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="Excellent">
+                                          Excellent
+                                        </SelectItem>
+                                        <SelectItem value="Good">
+                                          Good
+                                        </SelectItem>
+                                        <SelectItem value="Fair">
+                                          Fair
+                                        </SelectItem>
+                                        <SelectItem value="Poor">
+                                          Poor
+                                        </SelectItem>
+                                        <SelectItem value="Needs Repair">
+                                          Needs Repair
+                                        </SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div>
+                                    <Label htmlFor={`next-due-${tool.id}`}>
+                                      Next Inspection Due
+                                    </Label>
+                                    <Input
+                                      id={`next-due-${tool.id}`}
+                                      type="date"
+                                      defaultValue={tool.nextInspectionDue}
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
+                                    />
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <Label htmlFor={`notes-${tool.id}`}>
+                                    Inspection Notes
+                                  </Label>
+                                  <Textarea
+                                    id={`notes-${tool.id}`}
+                                    placeholder="Add any observations, issues, or maintenance notes..."
+                                    defaultValue={tool.inspectionNotes || ""}
+                                  />
+                                </div>
+
+                                <div className="flex justify-between items-center">
+                                  <div className="flex gap-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        const fileInput =
+                                          document.createElement("input");
+                                        fileInput.type = "file";
+                                        fileInput.accept = "image/*";
+                                        fileInput.multiple = true;
+                                        fileInput.onchange = (e) => {
+                                          // Handle image upload for tool
+                                          console.log(
+                                            "Tool images uploaded for",
+                                            tool.id,
+                                          );
+                                        };
+                                        fileInput.click();
+                                      }}
+                                    >
+                                      <Camera className="h-4 w-4 mr-2" />
+                                      Add Photos
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        const videoInput =
+                                          document.createElement("input");
+                                        videoInput.type = "file";
+                                        videoInput.accept = "video/*";
+                                        videoInput.onchange = (e) => {
+                                          // Handle video upload for tool
+                                          console.log(
+                                            "Tool video uploaded for",
+                                            tool.id,
+                                          );
+                                        };
+                                        videoInput.click();
+                                      }}
+                                    >
+                                      <Video className="h-4 w-4 mr-2" />
+                                      Add Video
+                                    </Button>
+                                  </div>
+
+                                  <Button
+                                    onClick={() => {
+                                      const conditionSelect =
+                                        document.querySelector(
+                                          `[id="condition-${tool.id}"] + [role="combobox"]`,
+                                        ) as HTMLElement;
+                                      const nextDueInput =
+                                        document.getElementById(
+                                          `next-due-${tool.id}`,
+                                        ) as HTMLInputElement;
+                                      const notesTextarea =
+                                        document.getElementById(
+                                          `notes-${tool.id}`,
+                                        ) as HTMLTextAreaElement;
+
+                                      const inspectionData = {
+                                        condition: tool.condition, // Would get from select in real implementation
+                                        nextInspectionDue:
+                                          nextDueInput?.value ||
+                                          tool.nextInspectionDue,
+                                        notes: notesTextarea?.value || "",
+                                        inspectionDate: new Date()
+                                          .toISOString()
+                                          .split("T")[0],
+                                      };
+
+                                      handleToolInspection(
+                                        tool.id,
+                                        inspectionData,
+                                      );
+                                    }}
+                                  >
+                                    Update Inspection
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+
+                      <div className="flex justify-end gap-2 pt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setToolInspectionMode(false);
+                            setTechnicianTools(null);
+                          }}
+                        >
+                          Save Draft
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            alert("All tools inspected successfully!");
+                            setToolInspectionMode(false);
+                            setTechnicianTools(null);
+                          }}
+                        >
+                          Complete Tool Inspection
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="p-12 text-center">
+                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium mb-2">
+                      No Active Tool Inspection
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      Start a new tool inspection to inspect all tools assigned
+                      to a technician
+                    </p>
+                    <Button onClick={() => setShowNewInspection(true)}>
+                      Start Tool Inspection
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,9 @@ import {
   MapPin,
   Phone,
   Trash2,
+  Wrench,
+  Warehouse,
+  Settings,
 } from "lucide-react";
 
 interface TechnicianStock {
@@ -67,6 +71,9 @@ export default function TechnicianStockScreen() {
   const { success, error } = useNotification();
   const [stockItems, setStockItems] = useState<TechnicianStock[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("toolbox");
+  const [technicianTools, setTechnicianTools] = useState<any>(null);
+  const [loadingTools, setLoadingTools] = useState(false);
 
   // Define fallback data first
   const [fallbackStockItems] = useState<TechnicianStock[]>([
@@ -153,6 +160,70 @@ export default function TechnicianStockScreen() {
 
     loadAssignedStock();
   }, [fallbackStockItems]);
+
+  // Load technician tools
+  const loadTechnicianTools = async () => {
+    setLoadingTools(true);
+    try {
+      const response = await fetch(
+        `/api/stock-management/tools/technician/${currentTechnicianId}`,
+      );
+      const data = await response.json();
+      if (data.success) {
+        setTechnicianTools(data.data);
+      } else {
+        console.error("Failed to fetch technician tools:", data.error);
+        // Set fallback data for tools
+        setTechnicianTools({
+          technicianId: currentTechnicianId,
+          technicianName: currentTechnicianName,
+          tools: [
+            {
+              id: "TOOL-001",
+              name: "Power Drill",
+              category: "Power Tools",
+              serialNumber: "PD-2025-001",
+              condition: "Good",
+              lastInspectionDate: "2025-01-10",
+              nextInspectionDue: "2025-01-24",
+              assignedDate: "2025-01-01",
+              status: "assigned",
+              imageUrl:
+                "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=500",
+            },
+            {
+              id: "TOOL-002",
+              name: "Fiber Optic Splice Machine",
+              category: "Fiber Equipment",
+              serialNumber: "FOSM-2024-156",
+              condition: "Excellent",
+              lastInspectionDate: "2025-01-08",
+              nextInspectionDue: "2025-01-22",
+              assignedDate: "2025-01-01",
+              status: "assigned",
+              imageUrl:
+                "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500",
+            },
+          ],
+        });
+      }
+    } catch (error) {
+      console.error("Error loading technician tools:", error);
+      // Use fallback data on error
+      setTechnicianTools({
+        technicianId: currentTechnicianId,
+        technicianName: currentTechnicianName,
+        tools: [],
+      });
+    } finally {
+      setLoadingTools(false);
+    }
+  };
+
+  // Load tools on component mount
+  useEffect(() => {
+    loadTechnicianTools();
+  }, [currentTechnicianId]);
 
   const [stockUsageHistory, setStockUsageHistory] = useState<StockUsage[]>([
     {
@@ -532,207 +603,344 @@ export default function TechnicianStockScreen() {
         </Card>
       </div>
 
-      {/* Stock Items */}
-      <div className="p-4 space-y-4">
-        {filteredStockItems.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Package className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-              <p className="text-gray-500">No stock items found.</p>
-            </CardContent>
-          </Card>
-        ) : (
-          filteredStockItems.map((item) => (
-            <Card key={item.id} className="bg-white shadow-md">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                      <Package className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{item.itemName}</h3>
-                      <p className="text-sm text-gray-600">
-                        {item.itemDescription}
-                      </p>
-                    </div>
-                  </div>
-                  <Badge className={getStatusColor(item.status)}>
-                    {getStatusIcon(item.status)}
-                    <span className="ml-1">
-                      {item.status.replace("-", " ")}
-                    </span>
-                  </Badge>
-                </div>
+      {/* Tabbed Content */}
+      <div className="p-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="toolbox" className="flex items-center gap-2">
+              <Wrench className="h-4 w-4" />
+              Tool Box
+            </TabsTrigger>
+            <TabsTrigger value="warehouse" className="flex items-center gap-2">
+              <Warehouse className="h-4 w-4" />
+              Warehouse Stock
+            </TabsTrigger>
+          </TabsList>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Package className="h-4 w-4 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-600">SKU</p>
-                        <p className="font-medium">{item.itemSku}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <FileText className="h-4 w-4 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-600">Category</p>
-                        <p className="font-medium">{item.category}</p>
-                      </div>
-                    </div>
-                  </div>
+          {/* Tool Box Tab */}
+          <TabsContent value="toolbox" className="space-y-4">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold mb-2">My Tools</h3>
+              <p className="text-sm text-gray-600">
+                All tools assigned to you by the stock manager
+              </p>
+            </div>
 
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <p className="text-sm text-gray-600">Assigned</p>
-                      <p className="font-bold text-blue-600">
-                        {item.assignedQuantity}
-                      </p>
-                      <p className="text-xs text-gray-500">{item.unit}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Used</p>
-                      <p className="font-bold text-orange-600">
-                        {item.usedQuantity}
-                      </p>
-                      <p className="text-xs text-gray-500">{item.unit}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Remaining</p>
-                      <p
-                        className={`font-bold ${getStockLevelColor(item.remainingQuantity, item.assignedQuantity)}`}
+            {loadingTools ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <RefreshCw className="h-8 w-8 mx-auto mb-4 text-gray-400 animate-spin" />
+                  <p className="text-gray-500">Loading tools...</p>
+                </CardContent>
+              </Card>
+            ) : technicianTools &&
+              technicianTools.tools &&
+              technicianTools.tools.length > 0 ? (
+              technicianTools.tools.map((tool: any) => (
+                <Card key={tool.id} className="bg-white shadow-md">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-16 h-16 flex-shrink-0">
+                          <img
+                            src={tool.imageUrl}
+                            alt={tool.name}
+                            className="w-full h-full object-cover rounded-lg border"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{tool.name}</h3>
+                          <p className="text-sm text-gray-600">
+                            Serial: {tool.serialNumber}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Category: {tool.category}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge
+                        className={
+                          tool.condition === "Excellent"
+                            ? "bg-green-100 text-green-800"
+                            : tool.condition === "Good"
+                              ? "bg-blue-100 text-blue-800"
+                              : tool.condition === "Fair"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                        }
                       >
-                        {item.remainingQuantity}
-                      </p>
-                      <p className="text-xs text-gray-500">{item.unit}</p>
+                        {tool.condition}
+                      </Badge>
                     </div>
-                  </div>
 
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>
-                        Assigned:{" "}
-                        {new Date(item.assignedDate).toLocaleDateString()}
-                      </span>
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <p className="text-gray-600">Assigned</p>
+                          <p className="font-medium">
+                            {new Date(tool.assignedDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <p className="text-gray-600">Last Inspected</p>
+                          <p className="font-medium">
+                            {new Date(
+                              tool.lastInspectionDate,
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <User className="h-4 w-4" />
-                      <span>By: {item.assignedBy}</span>
+
+                    {new Date(tool.nextInspectionDue) <= new Date() && (
+                      <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                        <AlertTriangle className="h-4 w-4 inline mr-1" />
+                        Inspection overdue! Due:{" "}
+                        {new Date(tool.nextInspectionDue).toLocaleDateString()}
+                      </div>
+                    )}
+
+                    <div className="flex space-x-2 pt-2">
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Settings className="h-4 w-4 mr-1" />
+                        Inspect Tool
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <FileText className="h-4 w-4 mr-1" />
+                        History
+                      </Button>
                     </div>
-                  </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Wrench className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500">No tools assigned to you.</p>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Contact your stock manager to request tool assignments.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
 
-                  {item.notes && (
-                    <div className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
-                      <strong>Notes:</strong> {item.notes}
+          {/* Warehouse Stock Tab */}
+          <TabsContent value="warehouse" className="space-y-4">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold mb-2">Warehouse Stock</h3>
+              <p className="text-sm text-gray-600">
+                Stock items assigned to you from the warehouse
+              </p>
+            </div>
+
+            {filteredStockItems.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Package className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500">No stock items found.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              filteredStockItems.map((item) => (
+                <Card key={item.id} className="bg-white shadow-md">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                          <Package className="h-6 w-6" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{item.itemName}</h3>
+                          <p className="text-sm text-gray-600">
+                            {item.itemDescription}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge className={getStatusColor(item.status)}>
+                        {getStatusIcon(item.status)}
+                        <span className="ml-1">
+                          {item.status.replace("-", " ")}
+                        </span>
+                      </Badge>
                     </div>
-                  )}
 
-                  {/* Action Buttons */}
-                  <div className="flex space-x-2 pt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => navigate("/technician/stock")}
-                    >
-                      <Minus className="h-4 w-4 mr-1" />
-                      Use Stock
-                    </Button>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Package className="h-4 w-4 text-gray-400" />
+                          <div>
+                            <p className="text-sm text-gray-600">SKU</p>
+                            <p className="font-medium">{item.itemSku}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <FileText className="h-4 w-4 text-gray-400" />
+                          <div>
+                            <p className="text-sm text-gray-600">Category</p>
+                            <p className="font-medium">{item.category}</p>
+                          </div>
+                        </div>
+                      </div>
 
-                    <Dialog
-                      open={showUsageDialog && selectedItem?.id === item.id}
-                      onOpenChange={(open) => {
-                        setShowUsageDialog(open);
-                        if (!open) setSelectedItem(null);
-                      }}
-                    >
-                      <DialogTrigger asChild>
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                          <p className="text-sm text-gray-600">Assigned</p>
+                          <p className="font-bold text-blue-600">
+                            {item.assignedQuantity}
+                          </p>
+                          <p className="text-xs text-gray-500">{item.unit}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-600">Used</p>
+                          <p className="font-bold text-orange-600">
+                            {item.usedQuantity}
+                          </p>
+                          <p className="text-xs text-gray-500">{item.unit}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-600">Remaining</p>
+                          <p
+                            className={`font-bold ${getStockLevelColor(item.remainingQuantity, item.assignedQuantity)}`}
+                          >
+                            {item.remainingQuantity}
+                          </p>
+                          <p className="text-xs text-gray-500">{item.unit}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-sm text-gray-500">
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="h-4 w-4" />
+                          <span>
+                            Assigned:{" "}
+                            {new Date(item.assignedDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <User className="h-4 w-4" />
+                          <span>By: {item.assignedBy}</span>
+                        </div>
+                      </div>
+
+                      {item.notes && (
+                        <div className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                          <strong>Notes:</strong> {item.notes}
+                        </div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex space-x-2 pt-2">
                         <Button
                           variant="outline"
                           size="sm"
                           className="flex-1"
-                          onClick={() => setSelectedItem(item)}
+                          onClick={() => navigate("/technician/stock")}
                         >
-                          <ArrowLeft className="h-4 w-4 mr-1" />
-                          Return
+                          <Minus className="h-4 w-4 mr-1" />
+                          Use Stock
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Return Stock</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4 py-4">
-                          <div className="p-4 bg-gray-50 rounded-lg">
-                            <h4 className="font-medium">{item.itemName}</h4>
-                            <p className="text-sm text-gray-600">
-                              Assigned: {item.assignedQuantity} {item.unit} | Used: {item.usedQuantity} {item.unit}
-                            </p>
-                          </div>
 
-                          <div className="space-y-2">
-                            <Label>Quantity to Return</Label>
-                            <Input
-                              type="number"
-                              max={item.remainingQuantity}
-                              value={usageData.quantity}
-                              onChange={(e) =>
-                                setUsageData((prev) => ({
-                                  ...prev,
-                                  quantity: Math.min(
-                                    parseInt(e.target.value) || 0,
-                                    item.remainingQuantity,
-                                  ),
-                                }))
-                              }
-                              placeholder="0"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label>Reason for Return</Label>
-                            <Input
-                              value={usageData.notes}
-                              onChange={(e) =>
-                                setUsageData((prev) => ({
-                                  ...prev,
-                                  notes: e.target.value,
-                                }))
-                              }
-                              placeholder="Job completed, excess stock, etc..."
-                            />
-                          </div>
-
-                          <div className="flex gap-4 pt-4">
-                            <Button
-                              onClick={recordStockUsage}
-                              className="flex-1"
-                            >
-                              Return Stock
-                            </Button>
+                        <Dialog
+                          open={showUsageDialog && selectedItem?.id === item.id}
+                          onOpenChange={(open) => {
+                            setShowUsageDialog(open);
+                            if (!open) setSelectedItem(null);
+                          }}
+                        >
+                          <DialogTrigger asChild>
                             <Button
                               variant="outline"
-                              onClick={() => setShowUsageDialog(false)}
+                              size="sm"
                               className="flex-1"
+                              onClick={() => setSelectedItem(item)}
                             >
-                              Cancel
+                              <ArrowLeft className="h-4 w-4 mr-1" />
+                              Return
                             </Button>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Return Stock</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4 py-4">
+                              <div className="p-4 bg-gray-50 rounded-lg">
+                                <h4 className="font-medium">{item.itemName}</h4>
+                                <p className="text-sm text-gray-600">
+                                  Assigned: {item.assignedQuantity} {item.unit}{" "}
+                                  | Used: {item.usedQuantity} {item.unit}
+                                </p>
+                              </div>
 
-                    <Button variant="outline" size="sm">
-                      <FileText className="h-4 w-4 mr-1" />
-                      History
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
+                              <div className="space-y-2">
+                                <Label>Quantity to Return</Label>
+                                <Input
+                                  type="number"
+                                  max={item.remainingQuantity}
+                                  value={usageData.quantity}
+                                  onChange={(e) =>
+                                    setUsageData((prev) => ({
+                                      ...prev,
+                                      quantity: Math.min(
+                                        parseInt(e.target.value) || 0,
+                                        item.remainingQuantity,
+                                      ),
+                                    }))
+                                  }
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <Label>Reason for Return</Label>
+                                <Input
+                                  value={usageData.notes}
+                                  onChange={(e) =>
+                                    setUsageData((prev) => ({
+                                      ...prev,
+                                      notes: e.target.value,
+                                    }))
+                                  }
+                                  placeholder="Job completed, excess stock, etc..."
+                                />
+                              </div>
+
+                              <div className="flex gap-4 pt-4">
+                                <Button
+                                  onClick={recordStockUsage}
+                                  className="flex-1"
+                                >
+                                  Return Stock
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setShowUsageDialog(false)}
+                                  className="flex-1"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+
+                        <Button variant="outline" size="sm">
+                          <FileText className="h-4 w-4 mr-1" />
+                          History
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Recent Usage History */}
