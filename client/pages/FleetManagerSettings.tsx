@@ -523,13 +523,13 @@ export default function FleetManagerSettings() {
             </div>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={handleExportSettings}>
+            <Button variant="outline" onClick={handleExportSettings} disabled={isLoading}>
               <Download className="h-4 w-4 mr-2" />
-              Export
+              {isLoading ? "Exporting..." : "Export"}
             </Button>
-            <Button variant="outline" onClick={handleResetToDefaults}>
+            <Button variant="outline" onClick={handleResetToDefaults} disabled={isLoading}>
               <RefreshCw className="h-4 w-4 mr-2" />
-              Reset
+              {isLoading ? "Resetting..." : "Reset"}
             </Button>
             <Button onClick={handleSaveSettings} disabled={isLoading}>
               <Save className="h-4 w-4 mr-2" />
