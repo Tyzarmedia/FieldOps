@@ -55,6 +55,11 @@ export default function IncidentReports() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedReport, setSelectedReport] = useState<IncidentReport | null>(null);
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [showStatusDialog, setShowStatusDialog] = useState(false);
+  const [assigningToReport, setAssigningToReport] = useState<string | null>(null);
+  const [updatingStatusReport, setUpdatingStatusReport] = useState<string | null>(null);
 
   // Mock incident reports data
   const incidentReports: IncidentReport[] = [
