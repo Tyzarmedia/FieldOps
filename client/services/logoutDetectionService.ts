@@ -524,7 +524,11 @@ class LogoutDetectionService {
           });
         },
         (error) => {
-          console.warn("Could not get location:", error);
+          console.warn("Could not get location:", {
+            code: error.code,
+            message: error.message,
+            timestamp: new Date().toISOString(),
+          });
           resolve(undefined);
         },
         {
