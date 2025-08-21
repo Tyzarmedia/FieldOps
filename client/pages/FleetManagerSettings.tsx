@@ -1123,10 +1123,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={systemPreferences.twoFactorAuth}
                       onCheckedChange={(checked) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          twoFactorAuth: checked,
-                        })
+                        updateSystemPreference("twoFactorAuth", checked)
                       }
                     />
                   </div>
@@ -1141,10 +1138,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={systemPreferences.biometricLogin}
                       onCheckedChange={(checked) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          biometricLogin: checked,
-                        })
+                        updateSystemPreference("biometricLogin", checked)
                       }
                     />
                   </div>
@@ -1168,10 +1162,7 @@ export default function FleetManagerSettings() {
                       type="number"
                       value={systemPreferences.autoLogout}
                       onChange={(e) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          autoLogout: e.target.value,
-                        })
+                        updateSystemPreference("autoLogout", e.target.value)
                       }
                     />
                   </div>
@@ -1182,10 +1173,7 @@ export default function FleetManagerSettings() {
                       type="number"
                       value={systemPreferences.sessionTimeout}
                       onChange={(e) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          sessionTimeout: e.target.value,
-                        })
+                        updateSystemPreference("sessionTimeout", e.target.value)
                       }
                     />
                   </div>
