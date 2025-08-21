@@ -153,10 +153,10 @@ export default function PayrollDashboard() {
   const handleCardAction = (cardId: string) => {
     switch (cardId) {
       case "payroll-processing":
-        alert("Opening Payroll Processing...");
+        navigate("/payroll-processing");
         break;
       case "overtime":
-        alert("Opening Overtime Management...");
+        navigate("/overtime-approval");
         break;
       case "bonuses":
         alert("Opening Bonuses & Deductions...");
@@ -165,7 +165,7 @@ export default function PayrollDashboard() {
         alert("Opening Payslip Generation...");
         break;
       case "approvals":
-        alert("Opening Pending Approvals...");
+        navigate("/overtime-approval");
         break;
       case "employees":
         alert("Opening Employee Management...");
