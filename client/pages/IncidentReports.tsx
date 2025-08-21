@@ -221,6 +221,44 @@ export default function IncidentReports() {
     );
   };
 
+  const handleAssignInvestigator = (reportId: string) => {
+    setAssigningToReport(reportId);
+    setShowAssignDialog(true);
+  };
+
+  const handleUpdateStatus = (reportId: string, currentStatus: string) => {
+    setUpdatingStatusReport(reportId);
+    setShowStatusDialog(true);
+  };
+
+  const handleExportReport = (reportId: string) => {
+    const report = incidentReports.find(r => r.id === reportId);
+    if (report) {
+      // Create a simple text export
+      const exportData = `
+Incident Report: ${report.id}
+Title: ${report.title}
+Description: ${report.description}
+Severity: ${report.severity}
+Status: ${report.status}
+Reported By: ${report.reportedBy}
+Date: ${formatDate(report.reportedDate)}
+Location: ${report.location}
+Assigned To: ${report.assignedTo || 'Unassigned'}
+`;
+
+      const blob = new Blob([exportData], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `incident_report_${report.id}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
+
   const openCount = incidentReports.filter((r) =>
     ["open", "investigating"].includes(r.status),
   ).length;
