@@ -1,5 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "@/hooks/useNotification";
+import { makeAuthenticatedRequest } from "@/utils/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +46,111 @@ import {
 export default function FleetManagerSettings() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { show: showNotification } = useNotification();
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Real-time update functions for different setting categories
+  const updateNotificationSetting = async (key: string, value: boolean) => {
+    try {
+      const updatedNotifications = { ...notifications, [key]: value };
+      setNotifications(updatedNotifications);
+
+      const response = await makeAuthenticatedRequest(
+        "/api/fleet-settings/notifications",
+        {
+          method: "PATCH",
+          body: JSON.stringify(updatedNotifications),
+        },
+      );
+
+      if (response.ok) {
+        showNotification.success(
+          "Setting Updated",
+          `${key.replace(/([A-Z])/g, " $1").toLowerCase()} updated successfully`,
+        );
+      } else {
+        throw new Error("Failed to update setting");
+      }
+    } catch (error) {
+      console.error("Failed to update notification setting:", error);
+      showNotification.error(
+        "Update Failed",
+        "Could not update notification setting",
+      );
+      // Revert the change
+      setNotifications(notifications);
+    }
+  };
+
+  const updateFleetPreference = async (key: string, value: any) => {
+    try {
+      const updatedPreferences = { ...fleetPreferences, [key]: value };
+      setFleetPreferences(updatedPreferences);
+
+      const response = await makeAuthenticatedRequest(
+        "/api/fleet-settings/fleetPreferences",
+        {
+          method: "PATCH",
+          body: JSON.stringify(updatedPreferences),
+        },
+      );
+
+      if (response.ok) {
+        showNotification.success(
+          "Preference Updated",
+          `${key.replace(/([A-Z])/g, " $1").toLowerCase()} updated successfully`,
+        );
+      } else {
+        throw new Error("Failed to update preference");
+      }
+    } catch (error) {
+      console.error("Failed to update fleet preference:", error);
+      showNotification.error(
+        "Update Failed",
+        "Could not update fleet preference",
+      );
+      // Revert the change
+      setFleetPreferences(fleetPreferences);
+    }
+  };
+
+  const updateSystemPreference = async (key: string, value: any) => {
+    try {
+      const updatedPreferences = { ...systemPreferences, [key]: value };
+      setSystemPreferences(updatedPreferences);
+
+      const response = await makeAuthenticatedRequest(
+        "/api/fleet-settings/systemPreferences",
+        {
+          method: "PATCH",
+          body: JSON.stringify(updatedPreferences),
+        },
+      );
+
+      if (response.ok) {
+        showNotification.success(
+          "System Setting Updated",
+          `${key.replace(/([A-Z])/g, " $1").toLowerCase()} updated successfully`,
+        );
+
+        // Apply immediate changes to the app
+        if (key === "theme") {
+          document.documentElement.className = value === "dark" ? "dark" : "";
+        }
+      } else {
+        throw new Error("Failed to update system preference");
+      }
+    } catch (error) {
+      console.error("Failed to update system preference:", error);
+      showNotification.error(
+        "Update Failed",
+        "Could not update system preference",
+      );
+      // Revert the change
+      setSystemPreferences(systemPreferences);
+    }
+  };
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profile, setProfile] = useState({
@@ -105,6 +212,34 @@ export default function FleetManagerSettings() {
     biometricLogin: false,
   });
 
+  // Load settings from server on component mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        setIsLoading(true);
+        const response = await makeAuthenticatedRequest("/api/fleet-settings");
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data) {
+            const settings = data.data;
+            setProfile(settings.profile);
+            setNotifications(settings.notifications);
+            setFleetPreferences(settings.fleetPreferences);
+            setSystemPreferences(settings.systemPreferences);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load settings:", error);
+        showNotification.error("Load Failed", "Could not load your settings");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSettings();
+  }, [showNotification]);
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -128,47 +263,207 @@ export default function FleetManagerSettings() {
     }
   };
 
-  const handleSaveSettings = () => {
-    // In a real app, this would save to backend
-    const settingsData = {
-      profile,
-      notifications,
-      fleetPreferences,
-      systemPreferences,
-      profileImage,
-    };
+  const handleSaveSettings = async () => {
+    try {
+      setIsLoading(true);
 
-    localStorage.setItem("fleetManagerSettings", JSON.stringify(settingsData));
+      const settingsData = {
+        profile,
+        notifications,
+        fleetPreferences,
+        systemPreferences,
+        profileImage,
+      };
 
-    // Show success message
-    alert("Settings saved successfully!");
-    navigate("/fleet");
+      const response = await makeAuthenticatedRequest("/api/fleet-settings", {
+        method: "POST",
+        body: JSON.stringify(settingsData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setHasUnsavedChanges(false);
+          showNotification.success(
+            "Settings Saved",
+            "Your fleet manager settings have been updated successfully",
+          );
+
+          // Also save profile image locally for immediate use
+          localStorage.setItem(
+            "fleetManagerSettings",
+            JSON.stringify(settingsData),
+          );
+
+          navigate("/fleet");
+        } else {
+          throw new Error(data.error || "Failed to save settings");
+        }
+      } else {
+        throw new Error("Server error while saving settings");
+      }
+    } catch (error) {
+      console.error("Failed to save settings:", error);
+      showNotification.error(
+        "Save Failed",
+        "Could not save your settings. Please try again.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleExportSettings = () => {
-    const settingsData = {
-      profile,
-      notifications,
-      fleetPreferences,
-      systemPreferences,
-    };
-    const blob = new Blob([JSON.stringify(settingsData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "fleet-manager-settings.json";
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleExportSettings = async () => {
+    try {
+      setIsLoading(true);
+
+      // Get comprehensive fleet manager data
+      const settingsData = {
+        profile,
+        notifications,
+        fleetPreferences,
+        systemPreferences,
+        profileImage,
+        exportDate: new Date().toISOString(),
+        exportedBy: profile.employeeId,
+      };
+
+      // Get vehicle data from server
+      let vehicleData = [];
+      try {
+        const response = await makeAuthenticatedRequest("/api/vehicles");
+        if (response.ok) {
+          const result = await response.json();
+          vehicleData = result.data || [];
+        }
+      } catch (error) {
+        console.warn("Could not fetch vehicle data for export:", error);
+      }
+
+      // Prepare comprehensive export data
+      const exportData = {
+        exportInfo: {
+          type: "Fleet Manager Complete Report",
+          exportDate: new Date().toISOString(),
+          exportedBy: `${profile.firstName} ${profile.lastName} (${profile.employeeId})`,
+          totalVehicles: vehicleData.length,
+        },
+        fleetManagerSettings: settingsData,
+        vehicleFleet: vehicleData,
+        fleetStatistics: {
+          totalVehicles: vehicleData.length,
+          activeVehicles: vehicleData.filter((v) => v.status === "Active")
+            .length,
+          assignedVehicles: vehicleData.filter(
+            (v) => v.assigned_driver !== "Not Assigned",
+          ).length,
+          maintenanceVehicles: vehicleData.filter(
+            (v) => v.status === "In Maintenance",
+          ).length,
+          avgFuelEfficiency:
+            vehicleData.length > 0
+              ? (
+                  vehicleData.reduce(
+                    (sum, v) => sum + (v.fuel_efficiency || 0),
+                    0,
+                  ) / vehicleData.length
+                ).toFixed(2)
+              : 0,
+        },
+      };
+
+      // Create and download JSON export
+      const jsonBlob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: "application/json",
+      });
+      const jsonUrl = URL.createObjectURL(jsonBlob);
+      const jsonLink = document.createElement("a");
+      jsonLink.href = jsonUrl;
+      jsonLink.download = `fleet-manager-report-${new Date().toISOString().split("T")[0]}.json`;
+      jsonLink.click();
+      URL.revokeObjectURL(jsonUrl);
+
+      // Create and download CSV export for vehicles
+      if (vehicleData.length > 0) {
+        const csvHeaders = [
+          "Vehicle ID",
+          "Plate Number",
+          "Make",
+          "Model",
+          "Year",
+          "Status",
+          "Assigned Driver",
+          "Mileage",
+          "Fuel Efficiency",
+          "Last Service",
+          "Next Service Due",
+        ];
+
+        const csvData = vehicleData.map((vehicle) => [
+          vehicle.vehicle_id,
+          vehicle.plate_number,
+          vehicle.make,
+          vehicle.model,
+          vehicle.year,
+          vehicle.status,
+          vehicle.assigned_driver,
+          vehicle.mileage,
+          vehicle.fuel_efficiency,
+          vehicle.last_service,
+          vehicle.next_service_due,
+        ]);
+
+        const csvContent = [
+          csvHeaders.join(","),
+          ...csvData.map((row) =>
+            row
+              .map((cell) =>
+                typeof cell === "string" && cell.includes(",")
+                  ? `"${cell}"`
+                  : cell,
+              )
+              .join(","),
+          ),
+        ].join("\n");
+
+        const csvBlob = new Blob([csvContent], { type: "text/csv" });
+        const csvUrl = URL.createObjectURL(csvBlob);
+        const csvLink = document.createElement("a");
+        csvLink.href = csvUrl;
+        csvLink.download = `fleet-vehicles-${new Date().toISOString().split("T")[0]}.csv`;
+        csvLink.click();
+        URL.revokeObjectURL(csvUrl);
+      }
+
+      showNotification.success(
+        "Export Complete",
+        "Fleet manager report exported successfully (JSON + CSV files downloaded)",
+      );
+    } catch (error) {
+      console.error("Export failed:", error);
+      showNotification.error(
+        "Export Failed",
+        "Could not export fleet manager data. Please try again.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResetToDefaults = () => {
+  const handleResetToDefaults = async () => {
     if (
-      window.confirm("Are you sure you want to reset all settings to defaults?")
+      !window.confirm(
+        "Are you sure you want to reset all settings to defaults? This action cannot be undone.",
+      )
     ) {
-      // Reset to default values
-      setNotifications({
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Default values
+      const defaultNotifications = {
         emailNotifications: true,
         pushNotifications: true,
         smsNotifications: false,
@@ -179,9 +474,9 @@ export default function FleetManagerSettings() {
         dailyReports: true,
         weeklyReports: false,
         inspectionReminders: true,
-      });
+      };
 
-      setFleetPreferences({
+      const defaultFleetPreferences = {
         defaultDashboard: "overview",
         autoRefreshInterval: "30",
         mapProvider: "google",
@@ -193,9 +488,59 @@ export default function FleetManagerSettings() {
         enableVoiceAlerts: false,
         maintenanceReminderDays: "7",
         inspectionReminderDays: "14",
+      };
+
+      const defaultSystemPreferences = {
+        theme: "light",
+        language: "en",
+        timezone: "Africa/Johannesburg",
+        dateFormat: "DD/MM/YYYY",
+        timeFormat: "24h",
+        currency: "ZAR",
+        autoLogout: "60",
+        sessionTimeout: "480",
+        twoFactorAuth: false,
+        biometricLogin: false,
+      };
+
+      // Reset all settings on server
+      const settingsData = {
+        profile,
+        notifications: defaultNotifications,
+        fleetPreferences: defaultFleetPreferences,
+        systemPreferences: defaultSystemPreferences,
+        profileImage,
+      };
+
+      const response = await makeAuthenticatedRequest("/api/fleet-settings", {
+        method: "POST",
+        body: JSON.stringify(settingsData),
       });
 
-      alert("Settings reset to defaults!");
+      if (response.ok) {
+        // Update local state
+        setNotifications(defaultNotifications);
+        setFleetPreferences(defaultFleetPreferences);
+        setSystemPreferences(defaultSystemPreferences);
+
+        // Apply theme change immediately
+        document.documentElement.className = "";
+
+        showNotification.success(
+          "Settings Reset",
+          "All settings have been reset to default values successfully",
+        );
+      } else {
+        throw new Error("Failed to reset settings on server");
+      }
+    } catch (error) {
+      console.error("Failed to reset settings:", error);
+      showNotification.error(
+        "Reset Failed",
+        "Could not reset settings to defaults. Please try again.",
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -223,17 +568,33 @@ export default function FleetManagerSettings() {
             </div>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={handleExportSettings}>
+            <Button
+              variant="outline"
+              onClick={handleExportSettings}
+              disabled={isLoading}
+            >
               <Download className="h-4 w-4 mr-2" />
-              Export
+              {isLoading ? "Exporting..." : "Export"}
             </Button>
-            <Button variant="outline" onClick={handleResetToDefaults}>
+            <Button
+              variant="outline"
+              onClick={handleResetToDefaults}
+              disabled={isLoading}
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
-              Reset
+              {isLoading ? "Resetting..." : "Reset"}
             </Button>
-            <Button onClick={handleSaveSettings}>
+            <Button
+              onClick={handleSaveSettings}
+              disabled={isLoading}
+              variant={hasUnsavedChanges ? "default" : "outline"}
+            >
               <Save className="h-4 w-4 mr-2" />
-              Save Changes
+              {isLoading
+                ? "Saving..."
+                : hasUnsavedChanges
+                  ? "Save Changes"
+                  : "All Saved"}
             </Button>
           </div>
         </div>
@@ -325,9 +686,10 @@ export default function FleetManagerSettings() {
                       <Input
                         id="firstName"
                         value={profile.firstName}
-                        onChange={(e) =>
-                          setProfile({ ...profile, firstName: e.target.value })
-                        }
+                        onChange={(e) => {
+                          setProfile({ ...profile, firstName: e.target.value });
+                          setHasUnsavedChanges(true);
+                        }}
                       />
                     </div>
                     <div>
@@ -335,9 +697,10 @@ export default function FleetManagerSettings() {
                       <Input
                         id="lastName"
                         value={profile.lastName}
-                        onChange={(e) =>
-                          setProfile({ ...profile, lastName: e.target.value })
-                        }
+                        onChange={(e) => {
+                          setProfile({ ...profile, lastName: e.target.value });
+                          setHasUnsavedChanges(true);
+                        }}
                       />
                     </div>
                   </div>
@@ -351,9 +714,10 @@ export default function FleetManagerSettings() {
                           id="email"
                           type="email"
                           value={profile.email}
-                          onChange={(e) =>
-                            setProfile({ ...profile, email: e.target.value })
-                          }
+                          onChange={(e) => {
+                            setProfile({ ...profile, email: e.target.value });
+                            setHasUnsavedChanges(true);
+                          }}
                           className="pl-10"
                         />
                       </div>
@@ -365,9 +729,10 @@ export default function FleetManagerSettings() {
                         <Input
                           id="phone"
                           value={profile.phone}
-                          onChange={(e) =>
-                            setProfile({ ...profile, phone: e.target.value })
-                          }
+                          onChange={(e) => {
+                            setProfile({ ...profile, phone: e.target.value });
+                            setHasUnsavedChanges(true);
+                          }}
                           className="pl-10"
                         />
                       </div>
@@ -382,9 +747,13 @@ export default function FleetManagerSettings() {
                         <Input
                           id="position"
                           value={profile.position}
-                          onChange={(e) =>
-                            setProfile({ ...profile, position: e.target.value })
-                          }
+                          onChange={(e) => {
+                            setProfile({
+                              ...profile,
+                              position: e.target.value,
+                            });
+                            setHasUnsavedChanges(true);
+                          }}
                           className="pl-10"
                         />
                       </div>
@@ -464,10 +833,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.emailNotifications}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          emailNotifications: checked,
-                        })
+                        updateNotificationSetting("emailNotifications", checked)
                       }
                     />
                   </div>
@@ -482,10 +848,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.pushNotifications}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          pushNotifications: checked,
-                        })
+                        updateNotificationSetting("pushNotifications", checked)
                       }
                     />
                   </div>
@@ -500,10 +863,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.smsNotifications}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          smsNotifications: checked,
-                        })
+                        updateNotificationSetting("smsNotifications", checked)
                       }
                     />
                   </div>
@@ -525,10 +885,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.vehicleAlerts}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          vehicleAlerts: checked,
-                        })
+                        updateNotificationSetting("vehicleAlerts", checked)
                       }
                     />
                   </div>
@@ -543,10 +900,10 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.maintenanceReminders}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          maintenanceReminders: checked,
-                        })
+                        updateNotificationSetting(
+                          "maintenanceReminders",
+                          checked,
+                        )
                       }
                     />
                   </div>
@@ -561,10 +918,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.complianceAlerts}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          complianceAlerts: checked,
-                        })
+                        updateNotificationSetting("complianceAlerts", checked)
                       }
                     />
                   </div>
@@ -579,10 +933,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.emergencyAlerts}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          emergencyAlerts: checked,
-                        })
+                        updateNotificationSetting("emergencyAlerts", checked)
                       }
                     />
                   </div>
@@ -604,10 +955,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.defaultDashboard}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          defaultDashboard: value,
-                        })
+                        updateFleetPreference("defaultDashboard", value)
                       }
                     >
                       <SelectTrigger>
@@ -633,10 +981,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.autoRefreshInterval}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          autoRefreshInterval: value,
-                        })
+                        updateFleetPreference("autoRefreshInterval", value)
                       }
                     >
                       <SelectTrigger>
@@ -656,10 +1001,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.mapProvider}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          mapProvider: value,
-                        })
+                        updateFleetPreference("mapProvider", value)
                       }
                     >
                       <SelectTrigger>
@@ -687,10 +1029,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.distanceUnit}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          distanceUnit: value,
-                        })
+                        updateFleetPreference("distanceUnit", value)
                       }
                     >
                       <SelectTrigger>
@@ -708,10 +1047,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.fuelUnit}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          fuelUnit: value,
-                        })
+                        updateFleetPreference("fuelUnit", value)
                       }
                     >
                       <SelectTrigger>
@@ -734,10 +1070,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={fleetPreferences.showVehiclePhotos}
                       onCheckedChange={(checked) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          showVehiclePhotos: checked,
-                        })
+                        updateFleetPreference("showVehiclePhotos", checked)
                       }
                     />
                   </div>
@@ -752,10 +1085,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={fleetPreferences.compactVehicleView}
                       onCheckedChange={(checked) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          compactVehicleView: checked,
-                        })
+                        updateFleetPreference("compactVehicleView", checked)
                       }
                     />
                   </div>
@@ -777,10 +1107,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.theme}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          theme: value,
-                        })
+                        updateSystemPreference("theme", value)
                       }
                     >
                       <SelectTrigger>
@@ -799,10 +1126,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.language}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          language: value,
-                        })
+                        updateSystemPreference("language", value)
                       }
                     >
                       <SelectTrigger>
@@ -822,10 +1146,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.currency}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          currency: value,
-                        })
+                        updateSystemPreference("currency", value)
                       }
                     >
                       <SelectTrigger>
@@ -853,10 +1174,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.timezone}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          timezone: value,
-                        })
+                        updateSystemPreference("timezone", value)
                       }
                     >
                       <SelectTrigger>
@@ -879,10 +1197,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.dateFormat}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          dateFormat: value,
-                        })
+                        updateSystemPreference("dateFormat", value)
                       }
                     >
                       <SelectTrigger>
@@ -901,10 +1216,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.timeFormat}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          timeFormat: value,
-                        })
+                        updateSystemPreference("timeFormat", value)
                       }
                     >
                       <SelectTrigger>
@@ -939,10 +1251,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={systemPreferences.twoFactorAuth}
                       onCheckedChange={(checked) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          twoFactorAuth: checked,
-                        })
+                        updateSystemPreference("twoFactorAuth", checked)
                       }
                     />
                   </div>
@@ -957,10 +1266,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={systemPreferences.biometricLogin}
                       onCheckedChange={(checked) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          biometricLogin: checked,
-                        })
+                        updateSystemPreference("biometricLogin", checked)
                       }
                     />
                   </div>
@@ -984,10 +1290,7 @@ export default function FleetManagerSettings() {
                       type="number"
                       value={systemPreferences.autoLogout}
                       onChange={(e) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          autoLogout: e.target.value,
-                        })
+                        updateSystemPreference("autoLogout", e.target.value)
                       }
                     />
                   </div>
@@ -998,10 +1301,7 @@ export default function FleetManagerSettings() {
                       type="number"
                       value={systemPreferences.sessionTimeout}
                       onChange={(e) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          sessionTimeout: e.target.value,
-                        })
+                        updateSystemPreference("sessionTimeout", e.target.value)
                       }
                     />
                   </div>

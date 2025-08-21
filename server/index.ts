@@ -32,6 +32,21 @@ import {
   getCurrentAssignment,
   endAssignment,
 } from "./routes/assistants";
+import {
+  getAllVehicles,
+  getVehicleById,
+  addVehicle,
+  updateVehicle,
+  assignVehicle,
+  loanVehicle,
+  removeVehicle,
+  updateVehicleStatus,
+} from "./routes/vehicles";
+import {
+  getFleetManagerSettings,
+  saveFleetManagerSettings,
+  updateSettingCategory,
+} from "./routes/fleet-settings";
 
 export function createServer() {
   const app = express();
@@ -95,6 +110,21 @@ export function createServer() {
   app.post("/api/assistants/assignments", createTechnicianAssistantAssignment);
   app.get("/api/assistants/assignments/:technicianId", getCurrentAssignment);
   app.post("/api/assistants/assignments/:technicianId/end", endAssignment);
+
+  // Fleet Vehicle Management API
+  app.get("/api/vehicles", getAllVehicles);
+  app.get("/api/vehicles/:id", getVehicleById);
+  app.post("/api/vehicles", addVehicle);
+  app.put("/api/vehicles/:id", updateVehicle);
+  app.post("/api/vehicles/:id/assign", assignVehicle);
+  app.post("/api/vehicles/:id/loan", loanVehicle);
+  app.delete("/api/vehicles/:id", removeVehicle);
+  app.patch("/api/vehicles/:id/status", updateVehicleStatus);
+
+  // Fleet Manager Settings API
+  app.get("/api/fleet-settings", getFleetManagerSettings);
+  app.post("/api/fleet-settings", saveFleetManagerSettings);
+  app.patch("/api/fleet-settings/:category", updateSettingCategory);
 
   // Job Management API
   app.get("/api/jobs", getJobs);

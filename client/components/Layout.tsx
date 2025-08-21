@@ -327,7 +327,6 @@ function getNavigationForRole(role: string) {
 
     case "FleetManager":
       return [
-        ...baseNavigation,
         { name: "Fleet Overview", href: "/fleet", icon: Truck },
         { name: "Vehicle Management", href: "/fleet/vehicles", icon: Truck },
         {

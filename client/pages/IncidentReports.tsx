@@ -53,8 +53,8 @@ interface IncidentReport {
 export default function IncidentReports() {
   const [selectedTab, setSelectedTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSeverity, setSelectedSeverity] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedSeverity, setSelectedSeverity] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   // Mock incident reports data
   const incidentReports: IncidentReport[] = [

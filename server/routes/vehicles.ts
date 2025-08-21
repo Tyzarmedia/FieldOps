@@ -1,94 +1,98 @@
 import { RequestHandler } from "express";
+import * as fs from "fs";
+import * as path from "path";
 
 export interface Vehicle {
-  id: string;
-  registration: string;
+  vehicle_id: number;
+  plate_number: string;
   make: string;
   model: string;
   year: number;
-  vin: string;
-  status: "active" | "maintenance" | "inactive" | "assigned" | "available";
+  status: string;
+  mileage: number;
+  fuel_efficiency: number;
+  assigned_driver: string;
+  compliance: {
+    license_expiry: string;
+    insurance_expiry: string;
+    roadworthy_expiry: string;
+    registration_expiry: string;
+  };
+  last_service: string;
+  next_service_due: string;
+  vin?: string;
+  location?: string;
   assignedTo?: string;
   assignedDate?: string;
-  location?: string;
-  mileage: number;
-  lastInspection?: string;
-  nextInspection?: string;
-  fuelEfficiency?: number;
-  licensePlate: string;
-  insuranceExpiry?: string;
-  registrationExpiry?: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
   notes?: string;
 }
 
-// In-memory storage (in production, this would be a database)
-let vehicles: Vehicle[] = [
-  {
-    id: "FL-001",
-    registration: "EL-123-ABC",
-    make: "Ford",
-    model: "Transit",
-    year: 2022,
-    vin: "1FTBR1C89PKA12345",
-    status: "active",
-    assignedTo: "John Smith",
-    assignedDate: "2025-01-15",
-    location: "Johannesburg Depot",
-    mileage: 45230,
-    lastInspection: "2025-01-10",
-    nextInspection: "2025-02-10",
-    fuelEfficiency: 28.5,
-    licensePlate: "EL-123-ABC",
-    insuranceExpiry: "2025-12-31",
-    registrationExpiry: "2025-11-30",
-    createdAt: "2024-01-15T08:00:00Z",
-    updatedAt: "2025-01-15T10:30:00Z",
-    createdBy: "fleet-admin",
-  },
-  {
-    id: "FL-002",
-    registration: "EL-124-DEF",
-    make: "Mercedes",
-    model: "Sprinter",
-    year: 2023,
-    vin: "2FTBR1C89PKA12346",
-    status: "available",
-    location: "Cape Town Depot",
-    mileage: 23100,
-    lastInspection: "2025-01-12",
-    nextInspection: "2025-02-12",
-    fuelEfficiency: 32.1,
-    licensePlate: "EL-124-DEF",
-    insuranceExpiry: "2025-12-31",
-    registrationExpiry: "2025-11-30",
-    createdAt: "2024-02-20T08:00:00Z",
-    updatedAt: "2025-01-12T14:20:00Z",
-    createdBy: "fleet-admin",
-  },
-  {
-    id: "FL-003",
-    registration: "EL-125-GHI",
-    make: "Iveco",
-    model: "Daily",
-    year: 2021,
-    vin: "3FTBR1C89PKA12347",
-    status: "maintenance",
-    location: "Pretoria Service Center",
-    mileage: 67890,
-    lastInspection: "2024-12-20",
-    nextInspection: "2025-01-20",
-    fuelEfficiency: 26.8,
-    licensePlate: "EL-125-GHI",
-    insuranceExpiry: "2025-12-31",
-    registrationExpiry: "2025-11-30",
-    createdAt: "2023-05-10T08:00:00Z",
-    updatedAt: "2025-01-08T09:15:00Z",
-    createdBy: "fleet-admin",
-  },
-];
+// Load vehicles from AVIS database file
+let vehicles: Vehicle[] = [];
+let vehiclesLoaded = false;
+
+const avisDataPath = path.join(
+  process.cwd(),
+  "public",
+  "data",
+  "avis-database.json",
+);
+
+// Initialize vehicles from AVIS database
+function loadVehicles() {
+  if (vehiclesLoaded) return; // Only load once
+
+  try {
+    const avisData = JSON.parse(fs.readFileSync(avisDataPath, "utf8"));
+    vehicles = avisData.vehicles.map((vehicle: any) => ({
+      ...vehicle,
+      assignedTo:
+        vehicle.assigned_driver !== "Not Assigned"
+          ? vehicle.assigned_driver
+          : undefined,
+      location: "Fleet Depot", // Default location
+    }));
+    vehiclesLoaded = true;
+    console.log(`Loaded ${vehicles.length} vehicles from AVIS database`);
+  } catch (error) {
+    console.error("Failed to load AVIS database:", error);
+    // Fallback to empty array
+    vehicles = [];
+    vehiclesLoaded = true;
+  }
+}
+
+// Save vehicles back to AVIS database file
+function saveVehicles() {
+  try {
+    const avisData = JSON.parse(fs.readFileSync(avisDataPath, "utf8"));
+
+    // Update the vehicles array in the JSON structure
+    avisData.vehicles = vehicles.map((vehicle: Vehicle) => ({
+      vehicle_id: vehicle.vehicle_id,
+      plate_number: vehicle.plate_number,
+      make: vehicle.make,
+      model: vehicle.model,
+      year: vehicle.year,
+      status: vehicle.status,
+      mileage: vehicle.mileage,
+      fuel_efficiency: vehicle.fuel_efficiency,
+      assigned_driver: vehicle.assigned_driver,
+      compliance: vehicle.compliance,
+      last_service: vehicle.last_service,
+      next_service_due: vehicle.next_service_due,
+    }));
+
+    // Write back to file
+    fs.writeFileSync(avisDataPath, JSON.stringify(avisData, null, 2), "utf8");
+    console.log(`Saved ${vehicles.length} vehicles to AVIS database`);
+  } catch (error) {
+    console.error("Failed to save AVIS database:", error);
+  }
+}
+
+// Load vehicles on startup
+loadVehicles();
 
 // Get all vehicles
 export const getAllVehicles: RequestHandler = (req, res) => {
@@ -98,12 +102,14 @@ export const getAllVehicles: RequestHandler = (req, res) => {
     let filteredVehicles = vehicles;
 
     if (status) {
-      filteredVehicles = filteredVehicles.filter((v) => v.status === status);
+      filteredVehicles = filteredVehicles.filter(
+        (v) => v.status.toLowerCase() === (status as string).toLowerCase(),
+      );
     }
 
     if (assignedTo) {
       filteredVehicles = filteredVehicles.filter((v) =>
-        v.assignedTo
+        v.assigned_driver
           ?.toLowerCase()
           .includes((assignedTo as string).toLowerCase()),
       );
@@ -132,7 +138,11 @@ export const getAllVehicles: RequestHandler = (req, res) => {
 export const getVehicleById: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
-    const vehicle = vehicles.find((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
+    const vehicle = vehicles.find((v) => v.vehicle_id === vehicleId);
 
     if (!vehicle) {
       return res.status(404).json({
@@ -160,31 +170,36 @@ export const addVehicle: RequestHandler = (req, res) => {
 
     // Generate new ID
     const maxId = vehicles.reduce((max, vehicle) => {
-      const num = parseInt(vehicle.id.split("-")[1]);
-      return num > max ? num : max;
+      return vehicle.vehicle_id > max ? vehicle.vehicle_id : max;
     }, 0);
 
     const newVehicle: Vehicle = {
-      id: `FL-${String(maxId + 1).padStart(3, "0")}`,
-      registration: vehicleData.registration,
+      vehicle_id: maxId + 1,
+      plate_number: vehicleData.licensePlate || vehicleData.registration,
       make: vehicleData.make,
       model: vehicleData.model,
       year: vehicleData.year,
-      vin: vehicleData.vin,
-      status: vehicleData.status || "available",
-      location: vehicleData.location,
+      status: vehicleData.status || "Active",
       mileage: vehicleData.mileage || 0,
-      fuelEfficiency: vehicleData.fuelEfficiency,
-      licensePlate: vehicleData.licensePlate,
-      insuranceExpiry: vehicleData.insuranceExpiry,
-      registrationExpiry: vehicleData.registrationExpiry,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      createdBy: "fleet-manager", // In real app, get from auth
+      fuel_efficiency: vehicleData.fuelEfficiency || 0,
+      assigned_driver: "Not Assigned",
+      compliance: {
+        license_expiry: "",
+        insurance_expiry: vehicleData.insuranceExpiry || "",
+        roadworthy_expiry: "",
+        registration_expiry: vehicleData.registrationExpiry || "",
+      },
+      last_service: "",
+      next_service_due: "",
+      vin: vehicleData.vin,
+      location: vehicleData.location,
       notes: vehicleData.notes,
     };
 
     vehicles.push(newVehicle);
+
+    // Save changes to file
+    saveVehicles();
 
     res.status(201).json({
       success: true,
@@ -205,7 +220,11 @@ export const updateVehicle: RequestHandler = (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
+    const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
       return res.status(404).json({
@@ -219,6 +238,9 @@ export const updateVehicle: RequestHandler = (req, res) => {
       ...updates,
       updatedAt: new Date().toISOString(),
     };
+
+    // Save changes to file
+    saveVehicles();
 
     res.json({
       success: true,
@@ -239,7 +261,11 @@ export const assignVehicle: RequestHandler = (req, res) => {
     const { id } = req.params;
     const { assignedTo, assignedDate, notes } = req.body;
 
-    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
+    const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
       return res.status(404).json({
@@ -250,12 +276,15 @@ export const assignVehicle: RequestHandler = (req, res) => {
 
     vehicles[vehicleIndex] = {
       ...vehicles[vehicleIndex],
-      status: "assigned",
+      status: "Active", // Keep as Active when assigned
+      assigned_driver: assignedTo,
       assignedTo,
       assignedDate: assignedDate || new Date().toISOString(),
       notes,
-      updatedAt: new Date().toISOString(),
     };
+
+    // Save changes to file
+    saveVehicles();
 
     res.json({
       success: true,
@@ -276,7 +305,11 @@ export const loanVehicle: RequestHandler = (req, res) => {
     const { id } = req.params;
     const { loanedTo, loanDate, returnDate, notes } = req.body;
 
-    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
+    const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
       return res.status(404).json({
@@ -287,14 +320,17 @@ export const loanVehicle: RequestHandler = (req, res) => {
 
     vehicles[vehicleIndex] = {
       ...vehicles[vehicleIndex],
-      status: "assigned",
+      status: "Loan Vehicle",
+      assigned_driver: loanedTo,
       assignedTo: loanedTo,
       assignedDate: loanDate || new Date().toISOString(),
       notes: notes
         ? `Loan until ${returnDate}. ${notes}`
         : `Loan until ${returnDate}`,
-      updatedAt: new Date().toISOString(),
     };
+
+    // Save changes to file
+    saveVehicles();
 
     res.json({
       success: true,
@@ -314,7 +350,11 @@ export const removeVehicle: RequestHandler = (req, res) => {
   try {
     const { id } = req.params;
 
-    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
+    const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
       return res.status(404).json({
@@ -324,6 +364,9 @@ export const removeVehicle: RequestHandler = (req, res) => {
     }
 
     const removedVehicle = vehicles.splice(vehicleIndex, 1)[0];
+
+    // Save changes to file
+    saveVehicles();
 
     res.json({
       success: true,
@@ -344,7 +387,11 @@ export const updateVehicleStatus: RequestHandler = (req, res) => {
     const { id } = req.params;
     const { status, notes } = req.body;
 
-    const vehicleIndex = vehicles.findIndex((v) => v.id === id);
+    // Handle both string IDs like "FL-001" and numeric IDs
+    const vehicleId = id.startsWith("FL-")
+      ? parseInt(id.split("-")[1])
+      : parseInt(id);
+    const vehicleIndex = vehicles.findIndex((v) => v.vehicle_id === vehicleId);
 
     if (vehicleIndex === -1) {
       return res.status(404).json({
@@ -354,23 +401,25 @@ export const updateVehicleStatus: RequestHandler = (req, res) => {
     }
 
     // If setting to available, clear assignment
-    if (status === "available") {
+    if (status === "Active" || status === "available") {
       vehicles[vehicleIndex] = {
         ...vehicles[vehicleIndex],
-        status,
+        status: "Active",
+        assigned_driver: "Not Assigned",
         assignedTo: undefined,
         assignedDate: undefined,
         notes,
-        updatedAt: new Date().toISOString(),
       };
     } else {
       vehicles[vehicleIndex] = {
         ...vehicles[vehicleIndex],
         status,
         notes,
-        updatedAt: new Date().toISOString(),
       };
     }
+
+    // Save changes to file
+    saveVehicles();
 
     res.json({
       success: true,

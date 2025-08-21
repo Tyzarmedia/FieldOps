@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "@/hooks/useNotification";
+import { makeAuthenticatedRequest } from "@/utils/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -91,6 +93,21 @@ export default function FleetVehicleManagement() {
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const [addVehicleDialogOpen, setAddVehicleDialogOpen] = useState(false);
+  const [newVehicleData, setNewVehicleData] = useState({
+    registration: "",
+    make: "",
+    model: "",
+    year: new Date().getFullYear(),
+    vin: "",
+    licensePlate: "",
+    location: "",
+    mileage: 0,
+    fuelEfficiency: 0,
+    insuranceExpiry: "",
+    registrationExpiry: "",
+    notes: "",
+  });
 
   // Load AVIS database
   useEffect(() => {
@@ -134,7 +151,7 @@ export default function FleetVehicleManagement() {
     setFilteredVehicles(filtered);
   }, [vehicles, searchTerm, statusFilter]);
 
-  const handleAssignDriver = () => {
+  const handleAssignDriver = async () => {
     if (!selectedVehicle || !selectedDriver) {
       showNotification.error(
         "Assignment Failed",
@@ -157,13 +174,40 @@ export default function FleetVehicleManagement() {
 
       const driverName = selectedDriverObj.name;
 
+      // Update on server first
+
+      const response = await makeAuthenticatedRequest(
+        `/api/vehicles/${selectedVehicle.vehicle_id}/assign`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            assignedTo: driverName,
+            assignedDate: new Date().toISOString(),
+            notes: `Assigned via Fleet Management Dashboard`,
+          }),
+        },
+      );
+
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(
+          `Server assignment failed: ${response.status} - ${errorData}`,
+        );
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || "Assignment failed");
+      }
+
+      // Update local state only after successful server update
       const updatedVehicles = vehicles.map((vehicle) =>
         vehicle.vehicle_id === selectedVehicle.vehicle_id
           ? { ...vehicle, assigned_driver: driverName }
           : vehicle,
       );
 
-      // Update vehicles state
       setVehicles(updatedVehicles);
 
       // Clear dialog state immediately
@@ -171,51 +215,220 @@ export default function FleetVehicleManagement() {
       setSelectedDriver("");
       setSelectedVehicle(null);
 
-      // Show notification after state updates
-      setTimeout(() => {
-        showNotification.success(
-          "Driver Assigned",
-          `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`,
-        );
-      }, 100);
+      // Show success notification
+      showNotification.success(
+        "Driver Assigned",
+        `${driverName} has been assigned to ${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number})`,
+      );
     } catch (error) {
       console.error("Error assigning driver:", error);
-      showNotification.error("Assignment Failed", "Failed to assign driver");
+      showNotification.error(
+        "Assignment Failed",
+        error instanceof Error ? error.message : "Failed to assign driver",
+      );
     }
   };
 
-  const handleSetService = (status: string) => {
+  const handleSetService = async (status: string) => {
     if (!selectedVehicle) {
       showNotification.error("Service Update Failed", "No vehicle selected");
       return;
     }
 
     try {
+      // Handle loan vehicle differently
+      if (status === "Loan Vehicle") {
+        const response = await makeAuthenticatedRequest(
+          `/api/vehicles/${selectedVehicle.vehicle_id}/loan`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              loanedTo: "Fleet Pool",
+              loanDate: new Date().toISOString(),
+              returnDate: new Date(
+                Date.now() + 30 * 24 * 60 * 60 * 1000,
+              ).toISOString(), // 30 days
+              notes: "Loaned via Fleet Management Dashboard",
+            }),
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Server loan operation failed");
+        }
+
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.error || "Loan operation failed");
+        }
+      } else {
+        // Regular status update
+        const response = await makeAuthenticatedRequest(
+          `/api/vehicles/${selectedVehicle.vehicle_id}/status`,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              status: status,
+              notes: `Status updated via Fleet Management Dashboard`,
+            }),
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Server status update failed");
+        }
+
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.error || "Status update failed");
+        }
+      }
+
+      // Update local state only after successful server update
       const updatedVehicles = vehicles.map((vehicle) =>
         vehicle.vehicle_id === selectedVehicle.vehicle_id
           ? { ...vehicle, status: status }
           : vehicle,
       );
 
-      // Update vehicles state
       setVehicles(updatedVehicles);
 
       // Clear dialog state immediately
       setServiceDialogOpen(false);
       setSelectedVehicle(null);
 
-      // Show notification after state updates
-      setTimeout(() => {
-        showNotification.success(
-          "Status Updated",
-          `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`,
-        );
-      }, 100);
+      // Show success notification
+      showNotification.success(
+        "Status Updated",
+        `${selectedVehicle.make} ${selectedVehicle.model} (${selectedVehicle.plate_number}) status changed to ${status}`,
+      );
     } catch (error) {
       console.error("Error updating vehicle status:", error);
       showNotification.error(
         "Update Failed",
-        "Failed to update vehicle status",
+        error instanceof Error
+          ? error.message
+          : "Failed to update vehicle status",
+      );
+    }
+  };
+
+  const handleAddVehicle = async () => {
+    try {
+      if (
+        !newVehicleData.registration ||
+        !newVehicleData.make ||
+        !newVehicleData.model
+      ) {
+        showNotification.error(
+          "Validation Error",
+          "Please fill in all required fields",
+        );
+        return;
+      }
+
+      const response = await makeAuthenticatedRequest("/api/vehicles", {
+        method: "POST",
+        body: JSON.stringify(newVehicleData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Server error while adding vehicle");
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || "Failed to add vehicle");
+      }
+
+      // Add to local state
+      const newVehicle = {
+        vehicle_id: Math.max(...vehicles.map((v) => v.vehicle_id), 0) + 1,
+        plate_number:
+          newVehicleData.licensePlate || newVehicleData.registration,
+        make: newVehicleData.make,
+        model: newVehicleData.model,
+        year: newVehicleData.year,
+        status: "Active",
+        mileage: newVehicleData.mileage,
+        fuel_efficiency: newVehicleData.fuelEfficiency,
+        assigned_driver: "Not Assigned",
+        compliance: {
+          license_expiry: "",
+          insurance_expiry: newVehicleData.insuranceExpiry || "",
+          roadworthy_expiry: "",
+          registration_expiry: newVehicleData.registrationExpiry || "",
+        },
+        last_service: "",
+        next_service_due: "",
+      };
+
+      setVehicles([...vehicles, newVehicle]);
+      setAddVehicleDialogOpen(false);
+      setNewVehicleData({
+        registration: "",
+        make: "",
+        model: "",
+        year: new Date().getFullYear(),
+        vin: "",
+        licensePlate: "",
+        location: "",
+        mileage: 0,
+        fuelEfficiency: 0,
+        insuranceExpiry: "",
+        registrationExpiry: "",
+        notes: "",
+      });
+
+      showNotification.success(
+        "Vehicle Added",
+        `${newVehicleData.make} ${newVehicleData.model} has been added to the fleet`,
+      );
+    } catch (error) {
+      console.error("Error adding vehicle:", error);
+      showNotification.error(
+        "Add Failed",
+        error instanceof Error ? error.message : "Failed to add vehicle",
+      );
+    }
+  };
+
+  const handleRemoveVehicle = async (vehicle: Vehicle) => {
+    try {
+      const confirmed = window.confirm(
+        `Are you sure you want to remove ${vehicle.make} ${vehicle.model} (${vehicle.plate_number}) from the fleet?`,
+      );
+
+      if (!confirmed) return;
+
+      const response = await makeAuthenticatedRequest(
+        `/api/vehicles/${vehicle.vehicle_id}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Server error while removing vehicle");
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || "Failed to remove vehicle");
+      }
+
+      // Remove from local state
+      setVehicles(vehicles.filter((v) => v.vehicle_id !== vehicle.vehicle_id));
+
+      showNotification.success(
+        "Vehicle Removed",
+        `${vehicle.make} ${vehicle.model} (${vehicle.plate_number}) has been removed from the fleet`,
+      );
+    } catch (error) {
+      console.error("Error removing vehicle:", error);
+      showNotification.error(
+        "Remove Failed",
+        error instanceof Error ? error.message : "Failed to remove vehicle",
       );
     }
   };
@@ -280,6 +493,10 @@ export default function FleetVehicleManagement() {
             Manage vehicle assignments and maintenance status
           </p>
         </div>
+        <Button onClick={() => setAddVehicleDialogOpen(true)}>
+          <Truck className="h-4 w-4 mr-2" />
+          Add Vehicle
+        </Button>
       </div>
 
       {/* Fleet Statistics */}
@@ -487,6 +704,13 @@ export default function FleetVehicleManagement() {
                           <Wrench className="h-4 w-4 mr-2" />
                           Set Service Status
                         </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleRemoveVehicle(vehicle)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <AlertTriangle className="h-4 w-4 mr-2" />
+                          Remove Vehicle
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -583,6 +807,230 @@ export default function FleetVehicleManagement() {
               className="w-full"
             >
               Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Vehicle Dialog */}
+      <Dialog
+        open={addVehicleDialogOpen}
+        onOpenChange={setAddVehicleDialogOpen}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add New Vehicle</DialogTitle>
+            <DialogDescription>
+              Add a new vehicle to the fleet management system
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="registration">Registration *</Label>
+                <Input
+                  id="registration"
+                  value={newVehicleData.registration}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      registration: e.target.value,
+                    })
+                  }
+                  placeholder="EL-123-ABC"
+                />
+              </div>
+              <div>
+                <Label htmlFor="licensePlate">License Plate</Label>
+                <Input
+                  id="licensePlate"
+                  value={newVehicleData.licensePlate}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      licensePlate: e.target.value,
+                    })
+                  }
+                  placeholder="EL-123-ABC"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="make">Make *</Label>
+                <Input
+                  id="make"
+                  value={newVehicleData.make}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      make: e.target.value,
+                    })
+                  }
+                  placeholder="Ford"
+                />
+              </div>
+              <div>
+                <Label htmlFor="model">Model *</Label>
+                <Input
+                  id="model"
+                  value={newVehicleData.model}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      model: e.target.value,
+                    })
+                  }
+                  placeholder="Transit"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="year">Year</Label>
+                <Input
+                  id="year"
+                  type="number"
+                  value={newVehicleData.year}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      year:
+                        parseInt(e.target.value) || new Date().getFullYear(),
+                    })
+                  }
+                  min="1990"
+                  max={new Date().getFullYear() + 1}
+                />
+              </div>
+              <div>
+                <Label htmlFor="vin">VIN</Label>
+                <Input
+                  id="vin"
+                  value={newVehicleData.vin}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      vin: e.target.value,
+                    })
+                  }
+                  placeholder="1FTBR1C89PKA12345"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  value={newVehicleData.location}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      location: e.target.value,
+                    })
+                  }
+                  placeholder="Johannesburg Depot"
+                />
+              </div>
+              <div>
+                <Label htmlFor="mileage">Mileage (km)</Label>
+                <Input
+                  id="mileage"
+                  type="number"
+                  value={newVehicleData.mileage}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      mileage: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  min="0"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="fuelEfficiency">
+                  Fuel Efficiency (L/100km)
+                </Label>
+                <Input
+                  id="fuelEfficiency"
+                  type="number"
+                  step="0.1"
+                  value={newVehicleData.fuelEfficiency}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      fuelEfficiency: parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  min="0"
+                />
+              </div>
+              <div>
+                <Label htmlFor="insuranceExpiry">Insurance Expiry</Label>
+                <Input
+                  id="insuranceExpiry"
+                  type="date"
+                  value={newVehicleData.insuranceExpiry}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      insuranceExpiry: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="registrationExpiry">Registration Expiry</Label>
+                <Input
+                  id="registrationExpiry"
+                  type="date"
+                  value={newVehicleData.registrationExpiry}
+                  onChange={(e) =>
+                    setNewVehicleData({
+                      ...newVehicleData,
+                      registrationExpiry: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea
+                id="notes"
+                value={newVehicleData.notes}
+                onChange={(e) =>
+                  setNewVehicleData({
+                    ...newVehicleData,
+                    notes: e.target.value,
+                  })
+                }
+                placeholder="Additional notes about the vehicle..."
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setAddVehicleDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleAddVehicle}>
+              <Truck className="h-4 w-4 mr-2" />
+              Add Vehicle
             </Button>
           </div>
         </DialogContent>
