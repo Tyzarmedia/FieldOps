@@ -625,9 +625,10 @@ export default function FleetManagerSettings() {
                       <Input
                         id="firstName"
                         value={profile.firstName}
-                        onChange={(e) =>
-                          setProfile({ ...profile, firstName: e.target.value })
-                        }
+                        onChange={(e) => {
+                          setProfile({ ...profile, firstName: e.target.value });
+                          setHasUnsavedChanges(true);
+                        }}
                       />
                     </div>
                     <div>
