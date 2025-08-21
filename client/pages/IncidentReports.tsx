@@ -291,7 +291,21 @@ Assigned To: ${report.assignedTo || 'Unassigned'}
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => {
+            const exportData = filteredReports.map(report =>
+              `${report.id},${report.title},${report.severity},${report.status},${report.reportedBy},${formatDate(report.reportedDate)},${report.location}`
+            ).join('\n');
+            const csvContent = 'ID,Title,Severity,Status,Reported By,Date,Location\n' + exportData;
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'incident_reports.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }}>
             <Download className="h-4 w-4 mr-2" />
             Export Reports
           </Button>
