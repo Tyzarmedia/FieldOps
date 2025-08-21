@@ -455,19 +455,19 @@ export default function IncidentReports() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setSelectedReport(report)}>
                               <Eye className="h-4 w-4 mr-2" />
                               View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleAssignInvestigator(report.id)}>
                               <User className="h-4 w-4 mr-2" />
                               Assign Investigator
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleUpdateStatus(report.id, report.status)}>
                               <Calendar className="h-4 w-4 mr-2" />
                               Update Status
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExportReport(report.id)}>
                               <Download className="h-4 w-4 mr-2" />
                               Export Report
                             </DropdownMenuItem>
