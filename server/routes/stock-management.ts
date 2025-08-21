@@ -14,6 +14,142 @@ router.get("/debug", (req, res) => {
   });
 });
 
+// Tool assignments for technicians (separate from general stock)
+let technicianToolAssignments: any[] = [
+  {
+    id: "TA-001",
+    technicianId: "T001",
+    technicianName: "John Smith",
+    assignedDate: "2025-01-01",
+    tools: [
+      {
+        id: "TOOL-001",
+        name: "Power Drill",
+        category: "Power Tools",
+        serialNumber: "PD-2025-001",
+        condition: "Good",
+        lastInspectionDate: "2025-01-10",
+        nextInspectionDue: "2025-01-24",
+        assignedDate: "2025-01-01",
+        status: "assigned",
+        imageUrl: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=500"
+      },
+      {
+        id: "TOOL-002",
+        name: "Fiber Optic Splice Machine",
+        category: "Fiber Equipment",
+        serialNumber: "FOSM-2024-156",
+        condition: "Excellent",
+        lastInspectionDate: "2025-01-08",
+        nextInspectionDue: "2025-01-22",
+        assignedDate: "2025-01-01",
+        status: "assigned",
+        imageUrl: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500"
+      },
+      {
+        id: "TOOL-003",
+        name: "OTDR Tester",
+        category: "Testing Equipment",
+        serialNumber: "OTDR-2024-089",
+        condition: "Good",
+        lastInspectionDate: "2025-01-05",
+        nextInspectionDue: "2025-01-19",
+        assignedDate: "2025-01-01",
+        status: "assigned",
+        imageUrl: "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=500"
+      },
+      {
+        id: "TOOL-004",
+        name: "Digital Multimeter",
+        category: "Testing Equipment",
+        serialNumber: "DMM-2024-203",
+        condition: "Fair",
+        lastInspectionDate: "2025-01-03",
+        nextInspectionDue: "2025-01-17",
+        assignedDate: "2025-01-01",
+        status: "assigned",
+        imageUrl: "https://images.unsplash.com/photo-1609094627627-8b9ca5b2a7b4?w=500"
+      }
+    ]
+  },
+  {
+    id: "TA-002",
+    technicianId: "T002",
+    technicianName: "Sarah Johnson",
+    assignedDate: "2025-01-01",
+    tools: [
+      {
+        id: "TOOL-005",
+        name: "Cable Puller",
+        category: "Installation Tools",
+        serialNumber: "CP-2024-178",
+        condition: "Good",
+        lastInspectionDate: "2025-01-12",
+        nextInspectionDue: "2025-01-26",
+        assignedDate: "2025-01-01",
+        status: "assigned",
+        imageUrl: "https://images.unsplash.com/photo-1609098725950-d0e4ca0b617d?w=500"
+      },
+      {
+        id: "TOOL-006",
+        name: "Impact Driver",
+        category: "Power Tools",
+        serialNumber: "ID-2024-299",
+        condition: "Excellent",
+        lastInspectionDate: "2025-01-11",
+        nextInspectionDue: "2025-01-25",
+        assignedDate: "2025-01-01",
+        status: "assigned",
+        imageUrl: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=500"
+      },
+      {
+        id: "TOOL-007",
+        name: "Fiber Cleaver",
+        category: "Fiber Equipment",
+        serialNumber: "FC-2024-334",
+        condition: "Good",
+        lastInspectionDate: "2025-01-09",
+        nextInspectionDue: "2025-01-23",
+        assignedDate: "2025-01-01",
+        status: "assigned",
+        imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=500"
+      }
+    ]
+  },
+  {
+    id: "TA-003",
+    technicianId: "T003",
+    technicianName: "Mike Wilson",
+    assignedDate: "2025-01-01",
+    tools: [
+      {
+        id: "TOOL-008",
+        name: "Angle Grinder",
+        category: "Power Tools",
+        serialNumber: "AG-2024-401",
+        condition: "Fair",
+        lastInspectionDate: "2025-01-07",
+        nextInspectionDue: "2025-01-21",
+        assignedDate: "2025-01-01",
+        status: "assigned",
+        imageUrl: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500"
+      },
+      {
+        id: "TOOL-009",
+        name: "Crimping Tool",
+        category: "Hand Tools",
+        serialNumber: "CT-2024-512",
+        condition: "Good",
+        lastInspectionDate: "2025-01-06",
+        nextInspectionDue: "2025-01-20",
+        assignedDate: "2025-01-01",
+        status: "assigned",
+        imageUrl: "https://images.unsplash.com/photo-1609093153864-a71a52e9b8c4?w=500"
+      }
+    ]
+  }
+];
+
 // Real fiber optic inventory data from client specifications
 let stockItems: any[] = [
   // Bolts and Anchors
