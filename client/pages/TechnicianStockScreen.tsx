@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,9 @@ import {
   MapPin,
   Phone,
   Trash2,
+  Wrench,
+  Warehouse,
+  Settings,
 } from "lucide-react";
 
 interface TechnicianStock {
