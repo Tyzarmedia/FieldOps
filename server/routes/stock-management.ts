@@ -1176,4 +1176,142 @@ router.get("/alerts/low-stock", (req, res) => {
   }
 });
 
+// Get all tools assigned to a specific technician
+router.get("/tools/technician/:technicianId", (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const technicianTools = technicianToolAssignments.find(
+      (assignment) => assignment.technicianId === technicianId
+    );
+
+    if (!technicianTools) {
+      return res.json({
+        success: true,
+        data: { technicianId, technicianName: 'Unknown', tools: [] },
+        message: "No tools assigned to this technician"
+      });
+    }
+
+    res.json({
+      success: true,
+      data: technicianTools
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch technician tools",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get all tool assignments (for stock managers)
+router.get("/tools/assignments", (req, res) => {
+  try {
+    res.json({
+      success: true,
+      data: technicianToolAssignments
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch tool assignments",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Update tool inspection status
+router.post("/tools/:toolId/inspect", (req, res) => {
+  try {
+    const { toolId } = req.params;
+    const { condition, notes, inspectionDate, nextInspectionDue, technicianId } = req.body;
+
+    // Find the technician and tool
+    const technicianAssignment = technicianToolAssignments.find(
+      (assignment) => assignment.technicianId === technicianId
+    );
+
+    if (!technicianAssignment) {
+      return res.status(404).json({
+        success: false,
+        error: "Technician assignment not found"
+      });
+    }
+
+    const toolIndex = technicianAssignment.tools.findIndex(
+      (tool: any) => tool.id === toolId
+    );
+
+    if (toolIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: "Tool not found in technician's assignment"
+      });
+    }
+
+    // Update tool inspection data
+    technicianAssignment.tools[toolIndex] = {
+      ...technicianAssignment.tools[toolIndex],
+      condition,
+      lastInspectionDate: inspectionDate || new Date().toISOString().split('T')[0],
+      nextInspectionDue,
+      inspectionNotes: notes
+    };
+
+    res.json({
+      success: true,
+      data: technicianAssignment.tools[toolIndex],
+      message: "Tool inspection updated successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to update tool inspection",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+// Get tools that need inspection (overdue or due soon)
+router.get("/tools/inspection-due", (req, res) => {
+  try {
+    const today = new Date();
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(today.getDate() + 3);
+
+    const toolsDue: any[] = [];
+
+    technicianToolAssignments.forEach((assignment) => {
+      assignment.tools.forEach((tool: any) => {
+        const dueDate = new Date(tool.nextInspectionDue);
+        if (dueDate <= threeDaysFromNow) {
+          toolsDue.push({
+            ...tool,
+            technicianId: assignment.technicianId,
+            technicianName: assignment.technicianName,
+            daysUntilDue: Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+          });
+        }
+      });
+    });
+
+    // Sort by days until due (overdue first)
+    toolsDue.sort((a, b) => a.daysUntilDue - b.daysUntilDue);
+
+    res.json({
+      success: true,
+      data: toolsDue
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch tools due for inspection",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 export default router;
