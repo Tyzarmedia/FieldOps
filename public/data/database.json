@@ -1592,6 +1592,35 @@
       "createdAt": "2025-08-21T18:51:08.926Z",
       "updatedAt": "2025-08-21T18:51:13.029Z",
       "endTime": "2025-08-21T18:51:12.581Z"
+    },
+    {
+      "id": "OT-1755802496333",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-21T15:00:59.124Z",
+      "totalHours": 3.89984,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 584.976,
+      "createdAt": "2025-08-21T18:54:57.313Z",
+      "updatedAt": "2025-08-21T18:54:58.976Z",
+      "endTime": "2025-08-21T18:54:58.548Z"
+    },
+    {
+      "id": "OT-1755802559892",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-21T15:00:44.695Z",
+      "totalHours": 0,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 0,
+      "createdAt": "2025-08-21T18:56:00.430Z",
+      "updatedAt": "2025-08-21T18:56:00.430Z"
     }
   ]
 }
