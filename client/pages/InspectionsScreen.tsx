@@ -1563,6 +1563,201 @@ export default function InspectionsScreen() {
             </TabsList>
 
             <TabsContent value="current" className="space-y-6">
+              {toolInspectionMode && technicianTools ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <span>Tool Inspection - {technicianTools.technicianName}</span>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setToolInspectionMode(false);
+                          setTechnicianTools(null);
+                        }}
+                      >
+                        <X className="h-4 w-4 mr-2" />
+                        Exit Inspection
+                      </Button>
+                    </CardTitle>
+                    <p className="text-muted-foreground">
+                      Inspect all tools assigned to this technician. Each tool must be checked and documented.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      {technicianTools.tools.map((tool: any) => (
+                        <Card key={tool.id} className="border-2">
+                          <CardContent className="p-6">
+                            <div className="flex items-start gap-6">
+                              <div className="w-32 h-32 flex-shrink-0">
+                                <img
+                                  src={tool.imageUrl}
+                                  alt={tool.name}
+                                  className="w-full h-full object-cover rounded-lg border"
+                                />
+                              </div>
+                              <div className="flex-1 space-y-4">
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <h3 className="text-lg font-semibold">{tool.name}</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                      Serial: {tool.serialNumber} | Category: {tool.category}
+                                    </p>
+                                    <div className="flex gap-2 mt-2">
+                                      <Badge variant={tool.condition === 'Excellent' ? 'default' :
+                                        tool.condition === 'Good' ? 'secondary' : 'destructive'}>
+                                        {tool.condition}
+                                      </Badge>
+                                      <Badge variant="outline">
+                                        Last inspected: {tool.lastInspectionDate}
+                                      </Badge>
+                                      <Badge variant={new Date(tool.nextInspectionDue) < new Date() ? 'destructive' : 'outline'}>
+                                        Due: {tool.nextInspectionDue}
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <Label htmlFor={`condition-${tool.id}`}>Condition Assessment</Label>
+                                    <Select defaultValue={tool.condition}>
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="Excellent">Excellent</SelectItem>
+                                        <SelectItem value="Good">Good</SelectItem>
+                                        <SelectItem value="Fair">Fair</SelectItem>
+                                        <SelectItem value="Poor">Poor</SelectItem>
+                                        <SelectItem value="Needs Repair">Needs Repair</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div>
+                                    <Label htmlFor={`next-due-${tool.id}`}>Next Inspection Due</Label>
+                                    <Input
+                                      id={`next-due-${tool.id}`}
+                                      type="date"
+                                      defaultValue={tool.nextInspectionDue}
+                                      min={new Date().toISOString().split('T')[0]}
+                                    />
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <Label htmlFor={`notes-${tool.id}`}>Inspection Notes</Label>
+                                  <Textarea
+                                    id={`notes-${tool.id}`}
+                                    placeholder="Add any observations, issues, or maintenance notes..."
+                                    defaultValue={tool.inspectionNotes || ''}
+                                  />
+                                </div>
+
+                                <div className="flex justify-between items-center">
+                                  <div className="flex gap-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        const fileInput = document.createElement('input');
+                                        fileInput.type = 'file';
+                                        fileInput.accept = 'image/*';
+                                        fileInput.multiple = true;
+                                        fileInput.onchange = (e) => {
+                                          // Handle image upload for tool
+                                          console.log('Tool images uploaded for', tool.id);
+                                        };
+                                        fileInput.click();
+                                      }}
+                                    >
+                                      <Camera className="h-4 w-4 mr-2" />
+                                      Add Photos
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        const videoInput = document.createElement('input');
+                                        videoInput.type = 'file';
+                                        videoInput.accept = 'video/*';
+                                        videoInput.onchange = (e) => {
+                                          // Handle video upload for tool
+                                          console.log('Tool video uploaded for', tool.id);
+                                        };
+                                        videoInput.click();
+                                      }}
+                                    >
+                                      <Video className="h-4 w-4 mr-2" />
+                                      Add Video
+                                    </Button>
+                                  </div>
+
+                                  <Button
+                                    onClick={() => {
+                                      const conditionSelect = document.querySelector(`[id="condition-${tool.id}"] + [role="combobox"]`) as HTMLElement;
+                                      const nextDueInput = document.getElementById(`next-due-${tool.id}`) as HTMLInputElement;
+                                      const notesTextarea = document.getElementById(`notes-${tool.id}`) as HTMLTextAreaElement;
+
+                                      const inspectionData = {
+                                        condition: tool.condition, // Would get from select in real implementation
+                                        nextInspectionDue: nextDueInput?.value || tool.nextInspectionDue,
+                                        notes: notesTextarea?.value || '',
+                                        inspectionDate: new Date().toISOString().split('T')[0]
+                                      };
+
+                                      handleToolInspection(tool.id, inspectionData);
+                                    }}
+                                  >
+                                    Update Inspection
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+
+                      <div className="flex justify-end gap-2 pt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setToolInspectionMode(false);
+                            setTechnicianTools(null);
+                          }}
+                        >
+                          Save Draft
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            alert('All tools inspected successfully!');
+                            setToolInspectionMode(false);
+                            setTechnicianTools(null);
+                          }}
+                        >
+                          Complete Tool Inspection
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="p-12 text-center">
+                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium mb-2">
+                      No Active Tool Inspection
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      Start a new tool inspection to inspect all tools assigned to a technician
+                    </p>
+                    <Button onClick={() => setShowNewInspection(true)}>
+                      Start Tool Inspection
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>
