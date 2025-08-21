@@ -32,7 +32,8 @@ let technicianToolAssignments: any[] = [
         nextInspectionDue: "2025-01-24",
         assignedDate: "2025-01-01",
         status: "assigned",
-        imageUrl: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=500"
+        imageUrl:
+          "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=500",
       },
       {
         id: "TOOL-002",
@@ -44,7 +45,8 @@ let technicianToolAssignments: any[] = [
         nextInspectionDue: "2025-01-22",
         assignedDate: "2025-01-01",
         status: "assigned",
-        imageUrl: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500"
+        imageUrl:
+          "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500",
       },
       {
         id: "TOOL-003",
@@ -56,7 +58,8 @@ let technicianToolAssignments: any[] = [
         nextInspectionDue: "2025-01-19",
         assignedDate: "2025-01-01",
         status: "assigned",
-        imageUrl: "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=500"
+        imageUrl:
+          "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=500",
       },
       {
         id: "TOOL-004",
@@ -68,9 +71,10 @@ let technicianToolAssignments: any[] = [
         nextInspectionDue: "2025-01-17",
         assignedDate: "2025-01-01",
         status: "assigned",
-        imageUrl: "https://images.unsplash.com/photo-1609094627627-8b9ca5b2a7b4?w=500"
-      }
-    ]
+        imageUrl:
+          "https://images.unsplash.com/photo-1609094627627-8b9ca5b2a7b4?w=500",
+      },
+    ],
   },
   {
     id: "TA-002",
@@ -88,7 +92,8 @@ let technicianToolAssignments: any[] = [
         nextInspectionDue: "2025-01-26",
         assignedDate: "2025-01-01",
         status: "assigned",
-        imageUrl: "https://images.unsplash.com/photo-1609098725950-d0e4ca0b617d?w=500"
+        imageUrl:
+          "https://images.unsplash.com/photo-1609098725950-d0e4ca0b617d?w=500",
       },
       {
         id: "TOOL-006",
@@ -100,7 +105,8 @@ let technicianToolAssignments: any[] = [
         nextInspectionDue: "2025-01-25",
         assignedDate: "2025-01-01",
         status: "assigned",
-        imageUrl: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=500"
+        imageUrl:
+          "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=500",
       },
       {
         id: "TOOL-007",
@@ -112,9 +118,10 @@ let technicianToolAssignments: any[] = [
         nextInspectionDue: "2025-01-23",
         assignedDate: "2025-01-01",
         status: "assigned",
-        imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=500"
-      }
-    ]
+        imageUrl:
+          "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=500",
+      },
+    ],
   },
   {
     id: "TA-003",
@@ -132,7 +139,8 @@ let technicianToolAssignments: any[] = [
         nextInspectionDue: "2025-01-21",
         assignedDate: "2025-01-01",
         status: "assigned",
-        imageUrl: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500"
+        imageUrl:
+          "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500",
       },
       {
         id: "TOOL-009",
@@ -144,10 +152,11 @@ let technicianToolAssignments: any[] = [
         nextInspectionDue: "2025-01-20",
         assignedDate: "2025-01-01",
         status: "assigned",
-        imageUrl: "https://images.unsplash.com/photo-1609093153864-a71a52e9b8c4?w=500"
-      }
-    ]
-  }
+        imageUrl:
+          "https://images.unsplash.com/photo-1609093153864-a71a52e9b8c4?w=500",
+      },
+    ],
+  },
 ];
 
 // Real fiber optic inventory data from client specifications
@@ -800,13 +809,13 @@ router.post("/assignments", (req, res) => {
     try {
       createNotification({
         technicianId,
-        type: 'stock_assigned',
-        title: 'Stock Assigned',
+        type: "stock_assigned",
+        title: "Stock Assigned",
         message: `${item.name} (${quantity} ${item.unit}) has been assigned to your inventory`,
-        priority: 'medium'
+        priority: "medium",
       });
     } catch (error) {
-      console.warn('Error creating stock assignment notification:', error);
+      console.warn("Error creating stock assignment notification:", error);
     }
     stockItems[itemIndex].status =
       stockItems[itemIndex].quantity > stockItems[itemIndex].minimumQuantity
@@ -1026,13 +1035,13 @@ router.get("/stats", (req, res) => {
 router.put("/items/:itemId/minimum-level", (req, res) => {
   try {
     const { itemId } = req.params;
-    const { minimumQuantity, updatedBy = 'stock-manager' } = req.body;
+    const { minimumQuantity, updatedBy = "stock-manager" } = req.body;
 
-    const itemIndex = stockItems.findIndex(item => item.id === itemId);
+    const itemIndex = stockItems.findIndex((item) => item.id === itemId);
     if (itemIndex === -1) {
       return res.status(404).json({
         success: false,
-        error: "Item not found"
+        error: "Item not found",
       });
     }
 
@@ -1050,24 +1059,27 @@ router.put("/items/:itemId/minimum-level", (req, res) => {
     }
 
     // Log the change for audit purposes
-    console.log(`Minimum stock level updated for ${stockItems[itemIndex].name}:`, {
-      itemId,
-      oldMinimum,
-      newMinimum: minimumQuantity,
-      updatedBy,
-      timestamp: new Date().toISOString()
-    });
+    console.log(
+      `Minimum stock level updated for ${stockItems[itemIndex].name}:`,
+      {
+        itemId,
+        oldMinimum,
+        newMinimum: minimumQuantity,
+        updatedBy,
+        timestamp: new Date().toISOString(),
+      },
+    );
 
     res.json({
       success: true,
       data: stockItems[itemIndex],
-      message: "Minimum stock level updated successfully"
+      message: "Minimum stock level updated successfully",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: "Failed to update minimum stock level",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
@@ -1075,12 +1087,14 @@ router.put("/items/:itemId/minimum-level", (req, res) => {
 // Bulk update minimum stock levels
 router.put("/items/bulk-minimum-levels", (req, res) => {
   try {
-    const { updates, updatedBy = 'stock-manager' } = req.body;
+    const { updates, updatedBy = "stock-manager" } = req.body;
     const results = [];
     const errors = [];
 
     for (const update of updates) {
-      const itemIndex = stockItems.findIndex(item => item.id === update.itemId);
+      const itemIndex = stockItems.findIndex(
+        (item) => item.id === update.itemId,
+      );
       if (itemIndex === -1) {
         errors.push(`Item ${update.itemId} not found`);
         continue;
@@ -1104,7 +1118,7 @@ router.put("/items/bulk-minimum-levels", (req, res) => {
         itemName: stockItems[itemIndex].name,
         oldMinimum,
         newMinimum: update.minimumQuantity,
-        newStatus: stockItems[itemIndex].status
+        newStatus: stockItems[itemIndex].status,
       });
     }
 
@@ -1112,15 +1126,15 @@ router.put("/items/bulk-minimum-levels", (req, res) => {
       success: true,
       data: {
         updated: results,
-        errors: errors
+        errors: errors,
       },
-      message: `Updated ${results.length} items successfully`
+      message: `Updated ${results.length} items successfully`,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: "Failed to bulk update minimum stock levels",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
@@ -1128,14 +1142,14 @@ router.put("/items/bulk-minimum-levels", (req, res) => {
 // Get low stock alerts
 router.get("/alerts/low-stock", (req, res) => {
   try {
-    const lowStockItems = stockItems.filter(item =>
-      item.quantity <= item.minimumQuantity && item.quantity > 0
+    const lowStockItems = stockItems.filter(
+      (item) => item.quantity <= item.minimumQuantity && item.quantity > 0,
     );
 
-    const outOfStockItems = stockItems.filter(item => item.quantity === 0);
+    const outOfStockItems = stockItems.filter((item) => item.quantity === 0);
 
     const alerts = {
-      lowStock: lowStockItems.map(item => ({
+      lowStock: lowStockItems.map((item) => ({
         itemId: item.id,
         itemName: item.name,
         currentQuantity: item.quantity,
@@ -1143,16 +1157,17 @@ router.get("/alerts/low-stock", (req, res) => {
         shortage: item.minimumQuantity - item.quantity,
         category: item.category,
         unitPrice: item.unitPrice,
-        estimatedRestockCost: (item.minimumQuantity - item.quantity) * item.unitPrice
+        estimatedRestockCost:
+          (item.minimumQuantity - item.quantity) * item.unitPrice,
       })),
-      outOfStock: outOfStockItems.map(item => ({
+      outOfStock: outOfStockItems.map((item) => ({
         itemId: item.id,
         itemName: item.name,
         minimumQuantity: item.minimumQuantity,
         category: item.category,
         unitPrice: item.unitPrice,
-        estimatedRestockCost: item.minimumQuantity * item.unitPrice
-      }))
+        estimatedRestockCost: item.minimumQuantity * item.unitPrice,
+      })),
     };
 
     res.json({
@@ -1161,17 +1176,23 @@ router.get("/alerts/low-stock", (req, res) => {
       summary: {
         totalLowStock: lowStockItems.length,
         totalOutOfStock: outOfStockItems.length,
-        totalRestockCost: [...lowStockItems, ...outOfStockItems].reduce((sum, item) => {
-          const shortage = item.quantity === 0 ? item.minimumQuantity : (item.minimumQuantity - item.quantity);
-          return sum + (shortage * item.unitPrice);
-        }, 0)
-      }
+        totalRestockCost: [...lowStockItems, ...outOfStockItems].reduce(
+          (sum, item) => {
+            const shortage =
+              item.quantity === 0
+                ? item.minimumQuantity
+                : item.minimumQuantity - item.quantity;
+            return sum + shortage * item.unitPrice;
+          },
+          0,
+        ),
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: "Failed to fetch stock alerts",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 });
@@ -1181,20 +1202,20 @@ router.get("/tools/technician/:technicianId", (req, res) => {
   try {
     const { technicianId } = req.params;
     const technicianTools = technicianToolAssignments.find(
-      (assignment) => assignment.technicianId === technicianId
+      (assignment) => assignment.technicianId === technicianId,
     );
 
     if (!technicianTools) {
       return res.json({
         success: true,
-        data: { technicianId, technicianName: 'Unknown', tools: [] },
-        message: "No tools assigned to this technician"
+        data: { technicianId, technicianName: "Unknown", tools: [] },
+        message: "No tools assigned to this technician",
       });
     }
 
     res.json({
       success: true,
-      data: technicianTools
+      data: technicianTools,
     });
   } catch (error) {
     res.status(500).json({
@@ -1210,7 +1231,7 @@ router.get("/tools/assignments", (req, res) => {
   try {
     res.json({
       success: true,
-      data: technicianToolAssignments
+      data: technicianToolAssignments,
     });
   } catch (error) {
     res.status(500).json({
@@ -1225,28 +1246,34 @@ router.get("/tools/assignments", (req, res) => {
 router.post("/tools/:toolId/inspect", (req, res) => {
   try {
     const { toolId } = req.params;
-    const { condition, notes, inspectionDate, nextInspectionDue, technicianId } = req.body;
+    const {
+      condition,
+      notes,
+      inspectionDate,
+      nextInspectionDue,
+      technicianId,
+    } = req.body;
 
     // Find the technician and tool
     const technicianAssignment = technicianToolAssignments.find(
-      (assignment) => assignment.technicianId === technicianId
+      (assignment) => assignment.technicianId === technicianId,
     );
 
     if (!technicianAssignment) {
       return res.status(404).json({
         success: false,
-        error: "Technician assignment not found"
+        error: "Technician assignment not found",
       });
     }
 
     const toolIndex = technicianAssignment.tools.findIndex(
-      (tool: any) => tool.id === toolId
+      (tool: any) => tool.id === toolId,
     );
 
     if (toolIndex === -1) {
       return res.status(404).json({
         success: false,
-        error: "Tool not found in technician's assignment"
+        error: "Tool not found in technician's assignment",
       });
     }
 
@@ -1254,17 +1281,17 @@ router.post("/tools/:toolId/inspect", (req, res) => {
     technicianAssignment.tools[toolIndex] = {
       ...technicianAssignment.tools[toolIndex],
       condition,
-      lastInspectionDate: inspectionDate || new Date().toISOString().split('T')[0],
+      lastInspectionDate:
+        inspectionDate || new Date().toISOString().split("T")[0],
       nextInspectionDue,
-      inspectionNotes: notes
+      inspectionNotes: notes,
     };
 
     res.json({
       success: true,
       data: technicianAssignment.tools[toolIndex],
-      message: "Tool inspection updated successfully"
+      message: "Tool inspection updated successfully",
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -1291,7 +1318,9 @@ router.get("/tools/inspection-due", (req, res) => {
             ...tool,
             technicianId: assignment.technicianId,
             technicianName: assignment.technicianName,
-            daysUntilDue: Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+            daysUntilDue: Math.ceil(
+              (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+            ),
           });
         }
       });
@@ -1302,9 +1331,8 @@ router.get("/tools/inspection-due", (req, res) => {
 
     res.json({
       success: true,
-      data: toolsDue
+      data: toolsDue,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,

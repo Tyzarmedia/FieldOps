@@ -443,29 +443,45 @@ export default function ComplianceScreen() {
                               </DialogTrigger>
                               <DialogContent>
                                 <DialogHeader>
-                                  <DialogTitle>Renew {alert.documentType}</DialogTitle>
+                                  <DialogTitle>
+                                    Renew {alert.documentType}
+                                  </DialogTitle>
                                   <DialogDescription>
-                                    Update the expiry date for {alert.plateNumber} - {alert.documentType}
+                                    Update the expiry date for{" "}
+                                    {alert.plateNumber} - {alert.documentType}
                                   </DialogDescription>
                                 </DialogHeader>
                                 <div className="space-y-4">
                                   <div>
-                                    <Label htmlFor="renewal-date">New Expiry Date</Label>
+                                    <Label htmlFor="renewal-date">
+                                      New Expiry Date
+                                    </Label>
                                     <Input
                                       id="renewal-date"
                                       type="date"
-                                      min={new Date().toISOString().split('T')[0]}
-                                      onChange={(e) => setNewDate(e.target.value)}
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
+                                      onChange={(e) =>
+                                        setNewDate(e.target.value)
+                                      }
                                     />
                                   </div>
                                   <div className="flex justify-end gap-2">
-                                    <Button variant="outline" onClick={() => setNewDate("")}>
+                                    <Button
+                                      variant="outline"
+                                      onClick={() => setNewDate("")}
+                                    >
                                       Cancel
                                     </Button>
                                     <Button
                                       onClick={() => {
                                         if (newDate) {
-                                          updateComplianceDate(alert.vehicleId, alert.documentType, newDate);
+                                          updateComplianceDate(
+                                            alert.vehicleId,
+                                            alert.documentType,
+                                            newDate,
+                                          );
                                         }
                                       }}
                                       disabled={!newDate}
@@ -521,43 +537,65 @@ export default function ComplianceScreen() {
                               </DialogTrigger>
                               <DialogContent>
                                 <DialogHeader>
-                                  <DialogTitle>Schedule Renewal for {alert.documentType}</DialogTitle>
+                                  <DialogTitle>
+                                    Schedule Renewal for {alert.documentType}
+                                  </DialogTitle>
                                   <DialogDescription>
-                                    Schedule a reminder for {alert.plateNumber} - {alert.documentType} renewal
+                                    Schedule a reminder for {alert.plateNumber}{" "}
+                                    - {alert.documentType} renewal
                                   </DialogDescription>
                                 </DialogHeader>
                                 <div className="space-y-4">
                                   <div>
-                                    <Label htmlFor="reminder-date">Reminder Date</Label>
+                                    <Label htmlFor="reminder-date">
+                                      Reminder Date
+                                    </Label>
                                     <Input
                                       id="reminder-date"
                                       type="date"
-                                      min={new Date().toISOString().split('T')[0]}
-                                      onChange={(e) => setNewDate(e.target.value)}
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
+                                      onChange={(e) =>
+                                        setNewDate(e.target.value)
+                                      }
                                     />
                                   </div>
                                   <div>
-                                    <Label htmlFor="renewal-type">Renewal Type</Label>
+                                    <Label htmlFor="renewal-type">
+                                      Renewal Type
+                                    </Label>
                                     <Select>
                                       <SelectTrigger>
                                         <SelectValue placeholder="Select renewal type" />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="maintenance">Maintenance Service</SelectItem>
-                                        <SelectItem value="inspection">Inspection Booking</SelectItem>
-                                        <SelectItem value="document">Document Renewal</SelectItem>
+                                        <SelectItem value="maintenance">
+                                          Maintenance Service
+                                        </SelectItem>
+                                        <SelectItem value="inspection">
+                                          Inspection Booking
+                                        </SelectItem>
+                                        <SelectItem value="document">
+                                          Document Renewal
+                                        </SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </div>
                                   <div className="flex justify-end gap-2">
-                                    <Button variant="outline" onClick={() => setNewDate("")}>
+                                    <Button
+                                      variant="outline"
+                                      onClick={() => setNewDate("")}
+                                    >
                                       Cancel
                                     </Button>
                                     <Button
                                       onClick={() => {
                                         if (newDate) {
                                           // Create reminder/scheduling logic here
-                                          alert("Renewal reminder scheduled successfully!");
+                                          alert(
+                                            "Renewal reminder scheduled successfully!",
+                                          );
                                           setNewDate("");
                                         }
                                       }}

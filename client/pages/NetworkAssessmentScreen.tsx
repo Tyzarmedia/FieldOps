@@ -60,20 +60,20 @@ export default function NetworkAssessmentScreen() {
     coordinates: "",
     networkType: "fiber",
     connectedDevices: 5,
-    
+
     // Conditional form fields for Reach + Active Ethernet
     ethernetPortType: "",
     switchConfiguration: "",
     vlanConfig: "",
     bandwidthAllocation: "",
     redundancySetup: "",
-    
+
     // Conditional form fields for Core + DWDM
     wavelengthChannels: "",
     fiberType: "",
     amplifierConfig: "",
     dispersionCompensation: "",
-    
+
     // Conditional form fields for Reach + GPON
     ontCount: "",
     splitterRatio: "",
@@ -111,7 +111,8 @@ export default function NetworkAssessmentScreen() {
   const getConditionalFormType = () => {
     const isReach = assessmentData.networkAreaType === "Reach";
     const isCore = assessmentData.networkAreaType === "Core";
-    const isActiveEthernet = assessmentData.reachOptions.includes("Active Ethernet");
+    const isActiveEthernet =
+      assessmentData.reachOptions.includes("Active Ethernet");
     const isGPON = assessmentData.reachOptions.includes("GPON");
     const isDWDM = assessmentData.coreOptions.includes("DWDM");
 
@@ -185,10 +186,10 @@ export default function NetworkAssessmentScreen() {
         context.drawImage(video, 0, 0);
         const imageDataUrl = canvas.toDataURL("image/jpeg", 0.8);
         setCapturedImages([...capturedImages, imageDataUrl]);
-        
+
         // Stop camera
         if (currentStream) {
-          currentStream.getTracks().forEach(track => track.stop());
+          currentStream.getTracks().forEach((track) => track.stop());
           setCurrentStream(null);
         }
         setShowCamera(false);
@@ -406,7 +407,10 @@ export default function NetworkAssessmentScreen() {
                 <Select
                   value={assessmentData.reachOptions}
                   onValueChange={(value) =>
-                    setAssessmentData({ ...assessmentData, reachOptions: value })
+                    setAssessmentData({
+                      ...assessmentData,
+                      reachOptions: value,
+                    })
                   }
                 >
                   <SelectTrigger>
@@ -477,7 +481,10 @@ export default function NetworkAssessmentScreen() {
                 <Select
                   value={assessmentData.ethernetPortType}
                   onValueChange={(value) =>
-                    setAssessmentData({ ...assessmentData, ethernetPortType: value })
+                    setAssessmentData({
+                      ...assessmentData,
+                      ethernetPortType: value,
+                    })
                   }
                 >
                   <SelectTrigger>
@@ -540,7 +547,10 @@ export default function NetworkAssessmentScreen() {
                 <Select
                   value={assessmentData.redundancySetup}
                   onValueChange={(value) =>
-                    setAssessmentData({ ...assessmentData, redundancySetup: value })
+                    setAssessmentData({
+                      ...assessmentData,
+                      redundancySetup: value,
+                    })
                   }
                 >
                   <SelectTrigger>
@@ -587,7 +597,10 @@ export default function NetworkAssessmentScreen() {
                 <Select
                   value={assessmentData.splitterRatio}
                   onValueChange={(value) =>
-                    setAssessmentData({ ...assessmentData, splitterRatio: value })
+                    setAssessmentData({
+                      ...assessmentData,
+                      splitterRatio: value,
+                    })
                   }
                 >
                   <SelectTrigger>
@@ -669,8 +682,12 @@ export default function NetworkAssessmentScreen() {
                     <SelectValue placeholder="Select fiber type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="SMF-28">SMF-28 (Standard Single Mode)</SelectItem>
-                    <SelectItem value="NZDSF">Non-Zero Dispersion Shifted</SelectItem>
+                    <SelectItem value="SMF-28">
+                      SMF-28 (Standard Single Mode)
+                    </SelectItem>
+                    <SelectItem value="NZDSF">
+                      Non-Zero Dispersion Shifted
+                    </SelectItem>
                     <SelectItem value="DSF">Dispersion Shifted</SelectItem>
                     <SelectItem value="LEAF">Large Effective Area</SelectItem>
                   </SelectContent>
@@ -696,16 +713,23 @@ export default function NetworkAssessmentScreen() {
                 <Select
                   value={assessmentData.dispersionCompensation}
                   onValueChange={(value) =>
-                    setAssessmentData({ ...assessmentData, dispersionCompensation: value })
+                    setAssessmentData({
+                      ...assessmentData,
+                      dispersionCompensation: value,
+                    })
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select compensation method" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="DCF">Dispersion Compensating Fiber</SelectItem>
+                    <SelectItem value="DCF">
+                      Dispersion Compensating Fiber
+                    </SelectItem>
                     <SelectItem value="FBG">Fiber Bragg Grating</SelectItem>
-                    <SelectItem value="EDC">Electronic Dispersion Compensation</SelectItem>
+                    <SelectItem value="EDC">
+                      Electronic Dispersion Compensation
+                    </SelectItem>
                     <SelectItem value="None">No Compensation</SelectItem>
                   </SelectContent>
                 </Select>
@@ -795,7 +819,9 @@ export default function NetworkAssessmentScreen() {
                     variant="outline"
                     onClick={() => {
                       if (currentStream) {
-                        currentStream.getTracks().forEach(track => track.stop());
+                        currentStream
+                          .getTracks()
+                          .forEach((track) => track.stop());
                         setCurrentStream(null);
                       }
                       setShowCamera(false);

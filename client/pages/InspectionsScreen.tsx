@@ -615,15 +615,17 @@ export default function InspectionsScreen() {
   const fetchTechnicianTools = async (technicianId: string) => {
     setLoadingTools(true);
     try {
-      const response = await fetch(`/api/stock-management/tools/technician/${technicianId}`);
+      const response = await fetch(
+        `/api/stock-management/tools/technician/${technicianId}`,
+      );
       const data = await response.json();
       if (data.success) {
         setTechnicianTools(data.data);
       } else {
-        console.error('Failed to fetch technician tools:', data.error);
+        console.error("Failed to fetch technician tools:", data.error);
       }
     } catch (error) {
-      console.error('Error fetching technician tools:', error);
+      console.error("Error fetching technician tools:", error);
     } finally {
       setLoadingTools(false);
     }
@@ -632,16 +634,19 @@ export default function InspectionsScreen() {
   // Handle tool inspection update
   const handleToolInspection = async (toolId: string, inspectionData: any) => {
     try {
-      const response = await fetch(`/api/stock-management/tools/${toolId}/inspect`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `/api/stock-management/tools/${toolId}/inspect`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...inspectionData,
+            technicianId: selectedTechnician,
+          }),
         },
-        body: JSON.stringify({
-          ...inspectionData,
-          technicianId: selectedTechnician,
-        }),
-      });
+      );
 
       const data = await response.json();
       if (data.success) {
@@ -649,20 +654,20 @@ export default function InspectionsScreen() {
         if (selectedTechnician) {
           await fetchTechnicianTools(selectedTechnician);
         }
-        alert('Tool inspection updated successfully!');
+        alert("Tool inspection updated successfully!");
       } else {
-        alert('Failed to update tool inspection: ' + data.error);
+        alert("Failed to update tool inspection: " + data.error);
       }
     } catch (error) {
-      console.error('Error updating tool inspection:', error);
-      alert('Error updating tool inspection');
+      console.error("Error updating tool inspection:", error);
+      alert("Error updating tool inspection");
     }
   };
 
   // Start tool inspection mode
   const startToolInspection = () => {
     if (!selectedTechnician) {
-      alert('Please select a technician first');
+      alert("Please select a technician first");
       return;
     }
 
@@ -687,7 +692,7 @@ export default function InspectionsScreen() {
       items: defaultChecklist.map((item) => ({ ...item })),
       overallScore: 0,
       imagesUploaded: 0,
-      imagesRequired: defaultChecklist.filter(item => item.required).length,
+      imagesRequired: defaultChecklist.filter((item) => item.required).length,
     };
 
     setCurrentInspection(newInspection);
@@ -913,7 +918,6 @@ export default function InspectionsScreen() {
                   </div>
                 )}
 
-
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
@@ -1066,176 +1070,181 @@ export default function InspectionsScreen() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-6">
-                        {["External", "Interior", "Mechanical", "Electrical", "Safety", "Documentation"].map(
-                          (category) => (
-                            <div key={category}>
-                              <h3 className="font-semibold mb-4">{category}</h3>
-                              <div className="space-y-4">
-                                {currentInspection.items
-                                  .filter((item) => item.category === category)
-                                  .map((item) => (
-                                    <div
-                                      key={item.id}
-                                      className="border rounded-lg p-4"
-                                    >
-                                      <div className="flex items-center justify-between mb-3">
-                                        <div className="flex items-center space-x-3">
-                                          <div
-                                            className={getItemStatusColor(
-                                              item.status,
-                                            )}
-                                          >
-                                            {getItemStatusIcon(item.status)}
-                                          </div>
-                                          <div>
-                                            <h4 className="font-medium">
-                                              {item.name}
-                                            </h4>
-                                            {item.required && (
-                                              <Badge
-                                                variant="outline"
-                                                className="text-xs"
-                                              >
-                                                Required
-                                              </Badge>
-                                            )}
-                                          </div>
+                        {[
+                          "External",
+                          "Interior",
+                          "Mechanical",
+                          "Electrical",
+                          "Safety",
+                          "Documentation",
+                        ].map((category) => (
+                          <div key={category}>
+                            <h3 className="font-semibold mb-4">{category}</h3>
+                            <div className="space-y-4">
+                              {currentInspection.items
+                                .filter((item) => item.category === category)
+                                .map((item) => (
+                                  <div
+                                    key={item.id}
+                                    className="border rounded-lg p-4"
+                                  >
+                                    <div className="flex items-center justify-between mb-3">
+                                      <div className="flex items-center space-x-3">
+                                        <div
+                                          className={getItemStatusColor(
+                                            item.status,
+                                          )}
+                                        >
+                                          {getItemStatusIcon(item.status)}
                                         </div>
-                                        <div className="flex items-center space-x-2">
-                                          <Button
-                                            size="sm"
-                                            variant={
-                                              item.status === "pass"
-                                                ? "default"
-                                                : "outline"
-                                            }
-                                            onClick={() =>
-                                              updateInspectionItem(item.id, {
-                                                status: "pass",
-                                              })
-                                            }
-                                          >
-                                            Pass
-                                          </Button>
-                                          <Button
-                                            size="sm"
-                                            variant={
-                                              item.status === "attention"
-                                                ? "default"
-                                                : "outline"
-                                            }
-                                            onClick={() =>
-                                              updateInspectionItem(item.id, {
-                                                status: "attention",
-                                              })
-                                            }
-                                          >
-                                            Attention
-                                          </Button>
-                                          <Button
-                                            size="sm"
-                                            variant={
-                                              item.status === "fail"
-                                                ? "destructive"
-                                                : "outline"
-                                            }
-                                            onClick={() =>
-                                              updateInspectionItem(item.id, {
-                                                status: "fail",
-                                              })
-                                            }
-                                          >
-                                            Fail
-                                          </Button>
+                                        <div>
+                                          <h4 className="font-medium">
+                                            {item.name}
+                                          </h4>
+                                          {item.required && (
+                                            <Badge
+                                              variant="outline"
+                                              className="text-xs"
+                                            >
+                                              Required
+                                            </Badge>
+                                          )}
                                         </div>
                                       </div>
-
-                                      {/* Notes */}
-                                      <Textarea
-                                        placeholder="Add notes..."
-                                        value={item.notes}
-                                        onChange={(e) =>
-                                          updateInspectionItem(item.id, {
-                                            notes: e.target.value,
-                                          })
-                                        }
-                                        className="mb-3"
-                                      />
-
-                                      {/* Photo/Video Upload */}
-                                      <div className="flex items-center space-x-2 mb-3">
-                                        <input
-                                          ref={fileInputRef}
-                                          type="file"
-                                          accept="image/*"
-                                          multiple
-                                          className="hidden"
-                                          onChange={(e) =>
-                                            e.target.files &&
-                                            handlePhotoUpload(
-                                              item.id,
-                                              e.target.files,
-                                            )
-                                          }
-                                        />
-                                        <input
-                                          ref={videoInputRef}
-                                          type="file"
-                                          accept="video/*"
-                                          className="hidden"
-                                          onChange={(e) =>
-                                            e.target.files &&
-                                            handlePhotoUpload(
-                                              item.id,
-                                              e.target.files,
-                                            )
-                                          }
-                                        />
+                                      <div className="flex items-center space-x-2">
                                         <Button
                                           size="sm"
-                                          variant="outline"
-                                          onClick={() =>
-                                            fileInputRef.current?.click()
+                                          variant={
+                                            item.status === "pass"
+                                              ? "default"
+                                              : "outline"
                                           }
-                                          disabled={uploadingMedia}
+                                          onClick={() =>
+                                            updateInspectionItem(item.id, {
+                                              status: "pass",
+                                            })
+                                          }
                                         >
-                                          <Camera className="h-4 w-4 mr-2" />
-                                          {uploadingMedia
-                                            ? "Uploading..."
-                                            : "Photo"}
+                                          Pass
                                         </Button>
                                         <Button
                                           size="sm"
-                                          variant="outline"
-                                          onClick={() =>
-                                            videoInputRef.current?.click()
+                                          variant={
+                                            item.status === "attention"
+                                              ? "default"
+                                              : "outline"
                                           }
-                                          disabled={uploadingMedia}
+                                          onClick={() =>
+                                            updateInspectionItem(item.id, {
+                                              status: "attention",
+                                            })
+                                          }
                                         >
-                                          <Video className="h-4 w-4 mr-2" />
-                                          Video
+                                          Attention
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant={
+                                            item.status === "fail"
+                                              ? "destructive"
+                                              : "outline"
+                                          }
+                                          onClick={() =>
+                                            updateInspectionItem(item.id, {
+                                              status: "fail",
+                                            })
+                                          }
+                                        >
+                                          Fail
                                         </Button>
                                       </div>
-
-                                      {/* Photo Gallery */}
-                                      {item.photos.length > 0 && (
-                                        <div className="flex space-x-2">
-                                          {item.photos.map((photo, index) => (
-                                            <img
-                                              key={index}
-                                              src={photo}
-                                              alt={`${item.name} photo ${index + 1}`}
-                                              className="h-16 w-16 object-cover rounded border"
-                                            />
-                                          ))}
-                                        </div>
-                                      )}
                                     </div>
-                                  ))}
-                              </div>
+
+                                    {/* Notes */}
+                                    <Textarea
+                                      placeholder="Add notes..."
+                                      value={item.notes}
+                                      onChange={(e) =>
+                                        updateInspectionItem(item.id, {
+                                          notes: e.target.value,
+                                        })
+                                      }
+                                      className="mb-3"
+                                    />
+
+                                    {/* Photo/Video Upload */}
+                                    <div className="flex items-center space-x-2 mb-3">
+                                      <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        className="hidden"
+                                        onChange={(e) =>
+                                          e.target.files &&
+                                          handlePhotoUpload(
+                                            item.id,
+                                            e.target.files,
+                                          )
+                                        }
+                                      />
+                                      <input
+                                        ref={videoInputRef}
+                                        type="file"
+                                        accept="video/*"
+                                        className="hidden"
+                                        onChange={(e) =>
+                                          e.target.files &&
+                                          handlePhotoUpload(
+                                            item.id,
+                                            e.target.files,
+                                          )
+                                        }
+                                      />
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() =>
+                                          fileInputRef.current?.click()
+                                        }
+                                        disabled={uploadingMedia}
+                                      >
+                                        <Camera className="h-4 w-4 mr-2" />
+                                        {uploadingMedia
+                                          ? "Uploading..."
+                                          : "Photo"}
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() =>
+                                          videoInputRef.current?.click()
+                                        }
+                                        disabled={uploadingMedia}
+                                      >
+                                        <Video className="h-4 w-4 mr-2" />
+                                        Video
+                                      </Button>
+                                    </div>
+
+                                    {/* Photo Gallery */}
+                                    {item.photos.length > 0 && (
+                                      <div className="flex space-x-2">
+                                        {item.photos.map((photo, index) => (
+                                          <img
+                                            key={index}
+                                            src={photo}
+                                            alt={`${item.name} photo ${index + 1}`}
+                                            className="h-16 w-16 object-cover rounded border"
+                                          />
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
                             </div>
-                          ),
-                        )}
+                          </div>
+                        ))}
                       </div>
 
                       <div className="mt-6 flex justify-end space-x-2">
@@ -1567,7 +1576,9 @@ export default function InspectionsScreen() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
-                      <span>Tool Inspection - {technicianTools.technicianName}</span>
+                      <span>
+                        Tool Inspection - {technicianTools.technicianName}
+                      </span>
                       <Button
                         variant="outline"
                         onClick={() => {
@@ -1580,7 +1591,8 @@ export default function InspectionsScreen() {
                       </Button>
                     </CardTitle>
                     <p className="text-muted-foreground">
-                      Inspect all tools assigned to this technician. Each tool must be checked and documented.
+                      Inspect all tools assigned to this technician. Each tool
+                      must be checked and documented.
                     </p>
                   </CardHeader>
                   <CardContent>
@@ -1599,19 +1611,37 @@ export default function InspectionsScreen() {
                               <div className="flex-1 space-y-4">
                                 <div className="flex justify-between items-start">
                                   <div>
-                                    <h3 className="text-lg font-semibold">{tool.name}</h3>
+                                    <h3 className="text-lg font-semibold">
+                                      {tool.name}
+                                    </h3>
                                     <p className="text-sm text-muted-foreground">
-                                      Serial: {tool.serialNumber} | Category: {tool.category}
+                                      Serial: {tool.serialNumber} | Category:{" "}
+                                      {tool.category}
                                     </p>
                                     <div className="flex gap-2 mt-2">
-                                      <Badge variant={tool.condition === 'Excellent' ? 'default' :
-                                        tool.condition === 'Good' ? 'secondary' : 'destructive'}>
+                                      <Badge
+                                        variant={
+                                          tool.condition === "Excellent"
+                                            ? "default"
+                                            : tool.condition === "Good"
+                                              ? "secondary"
+                                              : "destructive"
+                                        }
+                                      >
                                         {tool.condition}
                                       </Badge>
                                       <Badge variant="outline">
-                                        Last inspected: {tool.lastInspectionDate}
+                                        Last inspected:{" "}
+                                        {tool.lastInspectionDate}
                                       </Badge>
-                                      <Badge variant={new Date(tool.nextInspectionDue) < new Date() ? 'destructive' : 'outline'}>
+                                      <Badge
+                                        variant={
+                                          new Date(tool.nextInspectionDue) <
+                                          new Date()
+                                            ? "destructive"
+                                            : "outline"
+                                        }
+                                      >
                                         Due: {tool.nextInspectionDue}
                                       </Badge>
                                     </div>
@@ -1620,37 +1650,55 @@ export default function InspectionsScreen() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <Label htmlFor={`condition-${tool.id}`}>Condition Assessment</Label>
+                                    <Label htmlFor={`condition-${tool.id}`}>
+                                      Condition Assessment
+                                    </Label>
                                     <Select defaultValue={tool.condition}>
                                       <SelectTrigger>
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="Excellent">Excellent</SelectItem>
-                                        <SelectItem value="Good">Good</SelectItem>
-                                        <SelectItem value="Fair">Fair</SelectItem>
-                                        <SelectItem value="Poor">Poor</SelectItem>
-                                        <SelectItem value="Needs Repair">Needs Repair</SelectItem>
+                                        <SelectItem value="Excellent">
+                                          Excellent
+                                        </SelectItem>
+                                        <SelectItem value="Good">
+                                          Good
+                                        </SelectItem>
+                                        <SelectItem value="Fair">
+                                          Fair
+                                        </SelectItem>
+                                        <SelectItem value="Poor">
+                                          Poor
+                                        </SelectItem>
+                                        <SelectItem value="Needs Repair">
+                                          Needs Repair
+                                        </SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </div>
                                   <div>
-                                    <Label htmlFor={`next-due-${tool.id}`}>Next Inspection Due</Label>
+                                    <Label htmlFor={`next-due-${tool.id}`}>
+                                      Next Inspection Due
+                                    </Label>
                                     <Input
                                       id={`next-due-${tool.id}`}
                                       type="date"
                                       defaultValue={tool.nextInspectionDue}
-                                      min={new Date().toISOString().split('T')[0]}
+                                      min={
+                                        new Date().toISOString().split("T")[0]
+                                      }
                                     />
                                   </div>
                                 </div>
 
                                 <div>
-                                  <Label htmlFor={`notes-${tool.id}`}>Inspection Notes</Label>
+                                  <Label htmlFor={`notes-${tool.id}`}>
+                                    Inspection Notes
+                                  </Label>
                                   <Textarea
                                     id={`notes-${tool.id}`}
                                     placeholder="Add any observations, issues, or maintenance notes..."
-                                    defaultValue={tool.inspectionNotes || ''}
+                                    defaultValue={tool.inspectionNotes || ""}
                                   />
                                 </div>
 
@@ -1660,13 +1708,17 @@ export default function InspectionsScreen() {
                                       size="sm"
                                       variant="outline"
                                       onClick={() => {
-                                        const fileInput = document.createElement('input');
-                                        fileInput.type = 'file';
-                                        fileInput.accept = 'image/*';
+                                        const fileInput =
+                                          document.createElement("input");
+                                        fileInput.type = "file";
+                                        fileInput.accept = "image/*";
                                         fileInput.multiple = true;
                                         fileInput.onchange = (e) => {
                                           // Handle image upload for tool
-                                          console.log('Tool images uploaded for', tool.id);
+                                          console.log(
+                                            "Tool images uploaded for",
+                                            tool.id,
+                                          );
                                         };
                                         fileInput.click();
                                       }}
@@ -1678,12 +1730,16 @@ export default function InspectionsScreen() {
                                       size="sm"
                                       variant="outline"
                                       onClick={() => {
-                                        const videoInput = document.createElement('input');
-                                        videoInput.type = 'file';
-                                        videoInput.accept = 'video/*';
+                                        const videoInput =
+                                          document.createElement("input");
+                                        videoInput.type = "file";
+                                        videoInput.accept = "video/*";
                                         videoInput.onchange = (e) => {
                                           // Handle video upload for tool
-                                          console.log('Tool video uploaded for', tool.id);
+                                          console.log(
+                                            "Tool video uploaded for",
+                                            tool.id,
+                                          );
                                         };
                                         videoInput.click();
                                       }}
@@ -1695,18 +1751,34 @@ export default function InspectionsScreen() {
 
                                   <Button
                                     onClick={() => {
-                                      const conditionSelect = document.querySelector(`[id="condition-${tool.id}"] + [role="combobox"]`) as HTMLElement;
-                                      const nextDueInput = document.getElementById(`next-due-${tool.id}`) as HTMLInputElement;
-                                      const notesTextarea = document.getElementById(`notes-${tool.id}`) as HTMLTextAreaElement;
+                                      const conditionSelect =
+                                        document.querySelector(
+                                          `[id="condition-${tool.id}"] + [role="combobox"]`,
+                                        ) as HTMLElement;
+                                      const nextDueInput =
+                                        document.getElementById(
+                                          `next-due-${tool.id}`,
+                                        ) as HTMLInputElement;
+                                      const notesTextarea =
+                                        document.getElementById(
+                                          `notes-${tool.id}`,
+                                        ) as HTMLTextAreaElement;
 
                                       const inspectionData = {
                                         condition: tool.condition, // Would get from select in real implementation
-                                        nextInspectionDue: nextDueInput?.value || tool.nextInspectionDue,
-                                        notes: notesTextarea?.value || '',
-                                        inspectionDate: new Date().toISOString().split('T')[0]
+                                        nextInspectionDue:
+                                          nextDueInput?.value ||
+                                          tool.nextInspectionDue,
+                                        notes: notesTextarea?.value || "",
+                                        inspectionDate: new Date()
+                                          .toISOString()
+                                          .split("T")[0],
                                       };
 
-                                      handleToolInspection(tool.id, inspectionData);
+                                      handleToolInspection(
+                                        tool.id,
+                                        inspectionData,
+                                      );
                                     }}
                                   >
                                     Update Inspection
@@ -1730,7 +1802,7 @@ export default function InspectionsScreen() {
                         </Button>
                         <Button
                           onClick={() => {
-                            alert('All tools inspected successfully!');
+                            alert("All tools inspected successfully!");
                             setToolInspectionMode(false);
                             setTechnicianTools(null);
                           }}
@@ -1749,7 +1821,8 @@ export default function InspectionsScreen() {
                       No Active Tool Inspection
                     </h3>
                     <p className="text-muted-foreground mb-4">
-                      Start a new tool inspection to inspect all tools assigned to a technician
+                      Start a new tool inspection to inspect all tools assigned
+                      to a technician
                     </p>
                     <Button onClick={() => setShowNewInspection(true)}>
                       Start Tool Inspection

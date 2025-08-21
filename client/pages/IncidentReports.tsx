@@ -64,11 +64,17 @@ export default function IncidentReports() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedReport, setSelectedReport] = useState<IncidentReport | null>(null);
+  const [selectedReport, setSelectedReport] = useState<IncidentReport | null>(
+    null,
+  );
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [showStatusDialog, setShowStatusDialog] = useState(false);
-  const [assigningToReport, setAssigningToReport] = useState<string | null>(null);
-  const [updatingStatusReport, setUpdatingStatusReport] = useState<string | null>(null);
+  const [assigningToReport, setAssigningToReport] = useState<string | null>(
+    null,
+  );
+  const [updatingStatusReport, setUpdatingStatusReport] = useState<
+    string | null
+  >(null);
 
   // Mock incident reports data
   const incidentReports: IncidentReport[] = [
@@ -241,7 +247,7 @@ export default function IncidentReports() {
   };
 
   const handleExportReport = (reportId: string) => {
-    const report = incidentReports.find(r => r.id === reportId);
+    const report = incidentReports.find((r) => r.id === reportId);
     if (report) {
       // Create a simple text export
       const exportData = `
@@ -253,12 +259,12 @@ Status: ${report.status}
 Reported By: ${report.reportedBy}
 Date: ${formatDate(report.reportedDate)}
 Location: ${report.location}
-Assigned To: ${report.assignedTo || 'Unassigned'}
+Assigned To: ${report.assignedTo || "Unassigned"}
 `;
 
-      const blob = new Blob([exportData], { type: 'text/plain' });
+      const blob = new Blob([exportData], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `incident_report_${report.id}.txt`;
       document.body.appendChild(a);
@@ -291,21 +297,30 @@ Assigned To: ${report.assignedTo || 'Unassigned'}
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => {
-            const exportData = filteredReports.map(report =>
-              `${report.id},${report.title},${report.severity},${report.status},${report.reportedBy},${formatDate(report.reportedDate)},${report.location}`
-            ).join('\n');
-            const csvContent = 'ID,Title,Severity,Status,Reported By,Date,Location\n' + exportData;
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'incident_reports.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          }}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const exportData = filteredReports
+                .map(
+                  (report) =>
+                    `${report.id},${report.title},${report.severity},${report.status},${report.reportedBy},${formatDate(report.reportedDate)},${report.location}`,
+                )
+                .join("\n");
+              const csvContent =
+                "ID,Title,Severity,Status,Reported By,Date,Location\n" +
+                exportData;
+              const blob = new Blob([csvContent], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "incident_reports.csv";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
+          >
             <Download className="h-4 w-4 mr-2" />
             Export Reports
           </Button>
@@ -521,19 +536,31 @@ Assigned To: ${report.assignedTo || 'Unassigned'}
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
-                            <DropdownMenuItem onClick={() => setSelectedReport(report)}>
+                            <DropdownMenuItem
+                              onClick={() => setSelectedReport(report)}
+                            >
                               <Eye className="h-4 w-4 mr-2" />
                               View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleAssignInvestigator(report.id)}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleAssignInvestigator(report.id)
+                              }
+                            >
                               <User className="h-4 w-4 mr-2" />
                               Assign Investigator
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleUpdateStatus(report.id, report.status)}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateStatus(report.id, report.status)
+                              }
+                            >
                               <Calendar className="h-4 w-4 mr-2" />
                               Update Status
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleExportReport(report.id)}>
+                            <DropdownMenuItem
+                              onClick={() => handleExportReport(report.id)}
+                            >
                               <Download className="h-4 w-4 mr-2" />
                               Export Report
                             </DropdownMenuItem>
@@ -550,10 +577,15 @@ Assigned To: ${report.assignedTo || 'Unassigned'}
       </div>
 
       {/* View Details Dialog */}
-      <Dialog open={!!selectedReport} onOpenChange={() => setSelectedReport(null)}>
+      <Dialog
+        open={!!selectedReport}
+        onOpenChange={() => setSelectedReport(null)}
+      >
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Incident Report Details - {selectedReport?.id}</DialogTitle>
+            <DialogTitle>
+              Incident Report Details - {selectedReport?.id}
+            </DialogTitle>
           </DialogHeader>
           {selectedReport && (
             <div className="space-y-6">
@@ -561,32 +593,65 @@ Assigned To: ${report.assignedTo || 'Unassigned'}
                 <div>
                   <h4 className="font-semibold mb-2">Basic Information</h4>
                   <div className="space-y-2 text-sm">
-                    <div><strong>Title:</strong> {selectedReport.title}</div>
-                    <div><strong>Category:</strong> {selectedReport.category}</div>
-                    <div><strong>Severity:</strong> <Badge className={getSeverityColor(selectedReport.severity) + " text-white"}>{selectedReport.severity}</Badge></div>
-                    <div><strong>Status:</strong> <Badge variant={getStatusColor(selectedReport.status)}>{selectedReport.status}</Badge></div>
+                    <div>
+                      <strong>Title:</strong> {selectedReport.title}
+                    </div>
+                    <div>
+                      <strong>Category:</strong> {selectedReport.category}
+                    </div>
+                    <div>
+                      <strong>Severity:</strong>{" "}
+                      <Badge
+                        className={
+                          getSeverityColor(selectedReport.severity) +
+                          " text-white"
+                        }
+                      >
+                        {selectedReport.severity}
+                      </Badge>
+                    </div>
+                    <div>
+                      <strong>Status:</strong>{" "}
+                      <Badge variant={getStatusColor(selectedReport.status)}>
+                        {selectedReport.status}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
                 <div>
                   <h4 className="font-semibold mb-2">Assignment & Timing</h4>
                   <div className="space-y-2 text-sm">
-                    <div><strong>Reported By:</strong> {selectedReport.reportedBy}</div>
-                    <div><strong>Reported Date:</strong> {formatDate(selectedReport.reportedDate)}</div>
-                    <div><strong>Assigned To:</strong> {selectedReport.assignedTo || 'Unassigned'}</div>
-                    <div><strong>Location:</strong> {selectedReport.location}</div>
+                    <div>
+                      <strong>Reported By:</strong> {selectedReport.reportedBy}
+                    </div>
+                    <div>
+                      <strong>Reported Date:</strong>{" "}
+                      {formatDate(selectedReport.reportedDate)}
+                    </div>
+                    <div>
+                      <strong>Assigned To:</strong>{" "}
+                      {selectedReport.assignedTo || "Unassigned"}
+                    </div>
+                    <div>
+                      <strong>Location:</strong> {selectedReport.location}
+                    </div>
                   </div>
                 </div>
               </div>
               <div>
                 <h4 className="font-semibold mb-2">Description</h4>
-                <p className="text-sm bg-muted p-3 rounded">{selectedReport.description}</p>
+                <p className="text-sm bg-muted p-3 rounded">
+                  {selectedReport.description}
+                </p>
               </div>
               {selectedReport.attachments.length > 0 && (
                 <div>
                   <h4 className="font-semibold mb-2">Attachments</h4>
                   <div className="flex gap-2">
                     {selectedReport.attachments.map((attachment, index) => (
-                      <Badge key={index} variant="outline">📎 {attachment}</Badge>
+                      <Badge key={index} variant="outline">
+                        📎 {attachment}
+                      </Badge>
                     ))}
                   </div>
                 </div>
@@ -634,14 +699,19 @@ Assigned To: ${report.assignedTo || 'Unassigned'}
               </Select>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowAssignDialog(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowAssignDialog(false)}
+              >
                 Cancel
               </Button>
-              <Button onClick={() => {
-                alert("Investigator assigned successfully!");
-                setShowAssignDialog(false);
-                setAssigningToReport(null);
-              }}>
+              <Button
+                onClick={() => {
+                  alert("Investigator assigned successfully!");
+                  setShowAssignDialog(false);
+                  setAssigningToReport(null);
+                }}
+              >
                 Assign
               </Button>
             </div>
@@ -678,14 +748,19 @@ Assigned To: ${report.assignedTo || 'Unassigned'}
               <Textarea placeholder="Add notes about this status change..." />
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowStatusDialog(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowStatusDialog(false)}
+              >
                 Cancel
               </Button>
-              <Button onClick={() => {
-                alert("Status updated successfully!");
-                setShowStatusDialog(false);
-                setUpdatingStatusReport(null);
-              }}>
+              <Button
+                onClick={() => {
+                  alert("Status updated successfully!");
+                  setShowStatusDialog(false);
+                  setUpdatingStatusReport(null);
+                }}
+              >
                 Update Status
               </Button>
             </div>
