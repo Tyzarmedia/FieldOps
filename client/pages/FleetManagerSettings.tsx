@@ -56,22 +56,28 @@ export default function FleetManagerSettings() {
       const updatedNotifications = { ...notifications, [key]: value };
       setNotifications(updatedNotifications);
 
-      const response = await makeAuthenticatedRequest("/api/fleet-settings/notifications", {
-        method: "PATCH",
-        body: JSON.stringify(updatedNotifications),
-      });
+      const response = await makeAuthenticatedRequest(
+        "/api/fleet-settings/notifications",
+        {
+          method: "PATCH",
+          body: JSON.stringify(updatedNotifications),
+        },
+      );
 
       if (response.ok) {
         showNotification.success(
           "Setting Updated",
-          `${key.replace(/([A-Z])/g, ' $1').toLowerCase()} updated successfully`
+          `${key.replace(/([A-Z])/g, " $1").toLowerCase()} updated successfully`,
         );
       } else {
         throw new Error("Failed to update setting");
       }
     } catch (error) {
       console.error("Failed to update notification setting:", error);
-      showNotification.error("Update Failed", "Could not update notification setting");
+      showNotification.error(
+        "Update Failed",
+        "Could not update notification setting",
+      );
       // Revert the change
       setNotifications(notifications);
     }
@@ -82,22 +88,28 @@ export default function FleetManagerSettings() {
       const updatedPreferences = { ...fleetPreferences, [key]: value };
       setFleetPreferences(updatedPreferences);
 
-      const response = await makeAuthenticatedRequest("/api/fleet-settings/fleetPreferences", {
-        method: "PATCH",
-        body: JSON.stringify(updatedPreferences),
-      });
+      const response = await makeAuthenticatedRequest(
+        "/api/fleet-settings/fleetPreferences",
+        {
+          method: "PATCH",
+          body: JSON.stringify(updatedPreferences),
+        },
+      );
 
       if (response.ok) {
         showNotification.success(
           "Preference Updated",
-          `${key.replace(/([A-Z])/g, ' $1').toLowerCase()} updated successfully`
+          `${key.replace(/([A-Z])/g, " $1").toLowerCase()} updated successfully`,
         );
       } else {
         throw new Error("Failed to update preference");
       }
     } catch (error) {
       console.error("Failed to update fleet preference:", error);
-      showNotification.error("Update Failed", "Could not update fleet preference");
+      showNotification.error(
+        "Update Failed",
+        "Could not update fleet preference",
+      );
       // Revert the change
       setFleetPreferences(fleetPreferences);
     }
@@ -108,27 +120,33 @@ export default function FleetManagerSettings() {
       const updatedPreferences = { ...systemPreferences, [key]: value };
       setSystemPreferences(updatedPreferences);
 
-      const response = await makeAuthenticatedRequest("/api/fleet-settings/systemPreferences", {
-        method: "PATCH",
-        body: JSON.stringify(updatedPreferences),
-      });
+      const response = await makeAuthenticatedRequest(
+        "/api/fleet-settings/systemPreferences",
+        {
+          method: "PATCH",
+          body: JSON.stringify(updatedPreferences),
+        },
+      );
 
       if (response.ok) {
         showNotification.success(
           "System Setting Updated",
-          `${key.replace(/([A-Z])/g, ' $1').toLowerCase()} updated successfully`
+          `${key.replace(/([A-Z])/g, " $1").toLowerCase()} updated successfully`,
         );
 
         // Apply immediate changes to the app
-        if (key === 'theme') {
-          document.documentElement.className = value === 'dark' ? 'dark' : '';
+        if (key === "theme") {
+          document.documentElement.className = value === "dark" ? "dark" : "";
         }
       } else {
         throw new Error("Failed to update system preference");
       }
     } catch (error) {
       console.error("Failed to update system preference:", error);
-      showNotification.error("Update Failed", "Could not update system preference");
+      showNotification.error(
+        "Update Failed",
+        "Could not update system preference",
+      );
       // Revert the change
       setSystemPreferences(systemPreferences);
     }
@@ -334,12 +352,23 @@ export default function FleetManagerSettings() {
         vehicleFleet: vehicleData,
         fleetStatistics: {
           totalVehicles: vehicleData.length,
-          activeVehicles: vehicleData.filter(v => v.status === "Active").length,
-          assignedVehicles: vehicleData.filter(v => v.assigned_driver !== "Not Assigned").length,
-          maintenanceVehicles: vehicleData.filter(v => v.status === "In Maintenance").length,
-          avgFuelEfficiency: vehicleData.length > 0
-            ? (vehicleData.reduce((sum, v) => sum + (v.fuel_efficiency || 0), 0) / vehicleData.length).toFixed(2)
-            : 0,
+          activeVehicles: vehicleData.filter((v) => v.status === "Active")
+            .length,
+          assignedVehicles: vehicleData.filter(
+            (v) => v.assigned_driver !== "Not Assigned",
+          ).length,
+          maintenanceVehicles: vehicleData.filter(
+            (v) => v.status === "In Maintenance",
+          ).length,
+          avgFuelEfficiency:
+            vehicleData.length > 0
+              ? (
+                  vehicleData.reduce(
+                    (sum, v) => sum + (v.fuel_efficiency || 0),
+                    0,
+                  ) / vehicleData.length
+                ).toFixed(2)
+              : 0,
         },
       };
 
@@ -350,19 +379,27 @@ export default function FleetManagerSettings() {
       const jsonUrl = URL.createObjectURL(jsonBlob);
       const jsonLink = document.createElement("a");
       jsonLink.href = jsonUrl;
-      jsonLink.download = `fleet-manager-report-${new Date().toISOString().split('T')[0]}.json`;
+      jsonLink.download = `fleet-manager-report-${new Date().toISOString().split("T")[0]}.json`;
       jsonLink.click();
       URL.revokeObjectURL(jsonUrl);
 
       // Create and download CSV export for vehicles
       if (vehicleData.length > 0) {
         const csvHeaders = [
-          "Vehicle ID", "Plate Number", "Make", "Model", "Year",
-          "Status", "Assigned Driver", "Mileage", "Fuel Efficiency",
-          "Last Service", "Next Service Due"
+          "Vehicle ID",
+          "Plate Number",
+          "Make",
+          "Model",
+          "Year",
+          "Status",
+          "Assigned Driver",
+          "Mileage",
+          "Fuel Efficiency",
+          "Last Service",
+          "Next Service Due",
         ];
 
-        const csvData = vehicleData.map(vehicle => [
+        const csvData = vehicleData.map((vehicle) => [
           vehicle.vehicle_id,
           vehicle.plate_number,
           vehicle.make,
@@ -378,29 +415,35 @@ export default function FleetManagerSettings() {
 
         const csvContent = [
           csvHeaders.join(","),
-          ...csvData.map(row => row.map(cell =>
-            typeof cell === 'string' && cell.includes(',') ? `"${cell}"` : cell
-          ).join(","))
+          ...csvData.map((row) =>
+            row
+              .map((cell) =>
+                typeof cell === "string" && cell.includes(",")
+                  ? `"${cell}"`
+                  : cell,
+              )
+              .join(","),
+          ),
         ].join("\n");
 
         const csvBlob = new Blob([csvContent], { type: "text/csv" });
         const csvUrl = URL.createObjectURL(csvBlob);
         const csvLink = document.createElement("a");
         csvLink.href = csvUrl;
-        csvLink.download = `fleet-vehicles-${new Date().toISOString().split('T')[0]}.csv`;
+        csvLink.download = `fleet-vehicles-${new Date().toISOString().split("T")[0]}.csv`;
         csvLink.click();
         URL.revokeObjectURL(csvUrl);
       }
 
       showNotification.success(
         "Export Complete",
-        "Fleet manager report exported successfully (JSON + CSV files downloaded)"
+        "Fleet manager report exported successfully (JSON + CSV files downloaded)",
       );
     } catch (error) {
       console.error("Export failed:", error);
       showNotification.error(
         "Export Failed",
-        "Could not export fleet manager data. Please try again."
+        "Could not export fleet manager data. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -409,7 +452,9 @@ export default function FleetManagerSettings() {
 
   const handleResetToDefaults = async () => {
     if (
-      !window.confirm("Are you sure you want to reset all settings to defaults? This action cannot be undone.")
+      !window.confirm(
+        "Are you sure you want to reset all settings to defaults? This action cannot be undone.",
+      )
     ) {
       return;
     }
@@ -479,11 +524,11 @@ export default function FleetManagerSettings() {
         setSystemPreferences(defaultSystemPreferences);
 
         // Apply theme change immediately
-        document.documentElement.className = '';
+        document.documentElement.className = "";
 
         showNotification.success(
           "Settings Reset",
-          "All settings have been reset to default values successfully"
+          "All settings have been reset to default values successfully",
         );
       } else {
         throw new Error("Failed to reset settings on server");
@@ -492,7 +537,7 @@ export default function FleetManagerSettings() {
       console.error("Failed to reset settings:", error);
       showNotification.error(
         "Reset Failed",
-        "Could not reset settings to defaults. Please try again."
+        "Could not reset settings to defaults. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -523,11 +568,19 @@ export default function FleetManagerSettings() {
             </div>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={handleExportSettings} disabled={isLoading}>
+            <Button
+              variant="outline"
+              onClick={handleExportSettings}
+              disabled={isLoading}
+            >
               <Download className="h-4 w-4 mr-2" />
               {isLoading ? "Exporting..." : "Export"}
             </Button>
-            <Button variant="outline" onClick={handleResetToDefaults} disabled={isLoading}>
+            <Button
+              variant="outline"
+              onClick={handleResetToDefaults}
+              disabled={isLoading}
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
               {isLoading ? "Resetting..." : "Reset"}
             </Button>
@@ -537,7 +590,11 @@ export default function FleetManagerSettings() {
               variant={hasUnsavedChanges ? "default" : "outline"}
             >
               <Save className="h-4 w-4 mr-2" />
-              {isLoading ? "Saving..." : hasUnsavedChanges ? "Save Changes" : "All Saved"}
+              {isLoading
+                ? "Saving..."
+                : hasUnsavedChanges
+                  ? "Save Changes"
+                  : "All Saved"}
             </Button>
           </div>
         </div>
@@ -691,7 +748,10 @@ export default function FleetManagerSettings() {
                           id="position"
                           value={profile.position}
                           onChange={(e) => {
-                            setProfile({ ...profile, position: e.target.value });
+                            setProfile({
+                              ...profile,
+                              position: e.target.value,
+                            });
                             setHasUnsavedChanges(true);
                           }}
                           className="pl-10"
@@ -840,7 +900,10 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.maintenanceReminders}
                       onCheckedChange={(checked) =>
-                        updateNotificationSetting("maintenanceReminders", checked)
+                        updateNotificationSetting(
+                          "maintenanceReminders",
+                          checked,
+                        )
                       }
                     />
                   </div>

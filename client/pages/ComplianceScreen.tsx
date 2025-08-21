@@ -442,7 +442,7 @@ export default function ComplianceScreen() {
                                 startEditing(
                                   alert.vehicleId,
                                   alert.documentType,
-                                  alert.expiryDate
+                                  alert.expiryDate,
                                 )
                               }
                             >
@@ -492,7 +492,7 @@ export default function ComplianceScreen() {
                                 startEditing(
                                   alert.vehicleId,
                                   alert.documentType,
-                                  alert.expiryDate
+                                  alert.expiryDate,
                                 )
                               }
                             >
