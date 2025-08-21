@@ -23,6 +23,22 @@ import technicianStatusRouter from "./routes/technician-status";
 import networkAssessmentsRouter from "./routes/network-assessments";
 import overtimeRouter from "./routes/overtime";
 import { getOvertimeRate } from "./routes/payroll";
+import {
+  getPayrollPeriods,
+  createPayrollPeriod,
+  calculatePayroll,
+  getPayrollCalculations,
+  finalizePayroll,
+} from "./routes/payroll-processing";
+import {
+  submitOvertimeRequest,
+  getEmployeeOvertimeRequests,
+  getTeamOvertimeRequests,
+  reviewOvertimeRequest,
+  cancelOvertimeRequest,
+  getOvertimeRequestDetails,
+  getOvertimeAnalytics,
+} from "./routes/overtime-requests";
 import warehouseStockRouter from "./routes/warehouse-stock";
 import authRouter from "./routes/auth";
 import securityRouter from "./routes/security";
