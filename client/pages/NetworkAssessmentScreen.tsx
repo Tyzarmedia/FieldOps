@@ -234,7 +234,11 @@ export default function NetworkAssessmentScreen() {
             });
           },
           (error) => {
-            console.warn("Geolocation error:", error);
+            console.warn("Geolocation error:", {
+              code: error.code,
+              message: error.message,
+              timestamp: new Date().toISOString(),
+            });
             resolve(null);
           },
         );
