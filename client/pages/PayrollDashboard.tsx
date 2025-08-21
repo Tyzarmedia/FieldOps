@@ -22,6 +22,7 @@ import {
 
 export default function PayrollDashboard() {
   const [systemData, setSystemData] = useState<any>(null);
+  const navigate = useNavigate();
 
   const payrollStats = {
     totalPayroll: 487500,
