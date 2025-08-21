@@ -183,17 +183,7 @@ export const ToolInspectionBox: React.FC<ToolBoxProps> = ({
       <Dialog open={showImageOverlay} onOpenChange={setShowImageOverlay}>
         <DialogContent className="max-w-4xl max-h-[90vh] p-0">
           <DialogHeader className="p-6 pb-2">
-            <div className="flex items-center justify-between">
-              <DialogTitle>{tool.name} - Inspection Image</DialogTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowImageOverlay(false)}
-                className="h-6 w-6 p-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+            <DialogTitle>{tool.name} - Inspection Image</DialogTitle>
           </DialogHeader>
           <div className="p-6 pt-2">
             {tool.imageUrl ? (
