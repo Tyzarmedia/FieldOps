@@ -992,7 +992,7 @@ export default function InspectionsScreen() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-6">
-                        {["External", "Mechanical", "Electrical", "Safety"].map(
+                        {["External", "Interior", "Mechanical", "Electrical", "Safety", "Documentation"].map(
                           (category) => (
                             <div key={category}>
                               <h3 className="font-semibold mb-4">{category}</h3>
