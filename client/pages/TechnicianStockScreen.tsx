@@ -161,6 +161,9 @@ export default function TechnicianStockScreen() {
     loadAssignedStock();
   }, [fallbackStockItems]);
 
+  const currentTechnicianId = "tech001"; // In real app, this would come from auth
+  const currentTechnicianName = "Dyondzani Clement Masinge";
+
   // Load technician tools
   const loadTechnicianTools = async () => {
     setLoadingTools(true);
