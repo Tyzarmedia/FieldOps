@@ -14,7 +14,7 @@ import {
   Info,
   Settings,
   Eye,
-  MarkAsRead,
+  Check,
 } from "lucide-react";
 
 interface Notification {
