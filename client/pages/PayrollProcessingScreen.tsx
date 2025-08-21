@@ -29,6 +29,9 @@ import {
   Send,
   Lock,
   Unlock,
+  X,
+  Plus,
+  Minus,
 } from "lucide-react";
 
 interface PayrollPeriod {
