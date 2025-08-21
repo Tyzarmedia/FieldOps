@@ -1503,6 +1503,65 @@
       "createdAt": "2025-08-20T05:11:49.977Z",
       "updatedAt": "2025-08-20T05:11:59.588Z",
       "endTime": "2025-08-20T05:11:58.796Z"
+    },
+    {
+      "id": "OT-1755802174061",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-21T15:00:25.167Z",
+      "totalHours": 3.820307777777778,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 573.0461666666666,
+      "createdAt": "2025-08-21T18:49:35.038Z",
+      "updatedAt": "2025-08-21T18:49:38.708Z",
+      "endTime": "2025-08-21T18:49:38.275Z"
+    },
+    {
+      "id": "OT-1755802186883",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-21T15:00:25.167Z",
+      "totalHours": 3.823956111111111,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 573.5934166666666,
+      "createdAt": "2025-08-21T18:49:47.844Z",
+      "updatedAt": "2025-08-21T18:49:51.844Z",
+      "endTime": "2025-08-21T18:49:51.409Z"
+    },
+    {
+      "id": "OT-1755802195456",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-21T15:00:25.167Z",
+      "totalHours": 3.8266666666666667,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 574,
+      "createdAt": "2025-08-21T18:49:56.421Z",
+      "updatedAt": "2025-08-21T18:50:01.585Z",
+      "endTime": "2025-08-21T18:50:01.167Z"
+    },
+    {
+      "id": "OT-1755802226919",
+      "technicianId": "EMP001",
+      "startTime": "2025-08-21T15:00:25.167Z",
+      "totalHours": 0,
+      "isAutoDetected": true,
+      "workOrderNumbers": [],
+      "reason": "Late work after 17:00",
+      "status": "pending",
+      "rate": 150,
+      "totalAmount": 0,
+      "createdAt": "2025-08-21T18:50:27.789Z",
+      "updatedAt": "2025-08-21T18:50:27.789Z"
     }
   ]
 }
