@@ -266,9 +266,6 @@ export default function TechnicianStockScreen() {
   const [selectedJobForBulk, setSelectedJobForBulk] = useState("");
   const navigate = useNavigate();
 
-  const currentTechnicianId = "tech001"; // In real app, this would come from auth
-  const currentTechnicianName = "Dyondzani Clement Masinge";
-
   const filteredStockItems = stockItems.filter(
     (item) =>
       item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
