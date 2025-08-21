@@ -525,6 +525,150 @@ Assigned To: ${report.assignedTo || 'Unassigned'}
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* View Details Dialog */}
+      <Dialog open={!!selectedReport} onOpenChange={() => setSelectedReport(null)}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Incident Report Details - {selectedReport?.id}</DialogTitle>
+          </DialogHeader>
+          {selectedReport && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-2">Basic Information</h4>
+                  <div className="space-y-2 text-sm">
+                    <div><strong>Title:</strong> {selectedReport.title}</div>
+                    <div><strong>Category:</strong> {selectedReport.category}</div>
+                    <div><strong>Severity:</strong> <Badge className={getSeverityColor(selectedReport.severity) + " text-white"}>{selectedReport.severity}</Badge></div>
+                    <div><strong>Status:</strong> <Badge variant={getStatusColor(selectedReport.status)}>{selectedReport.status}</Badge></div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Assignment & Timing</h4>
+                  <div className="space-y-2 text-sm">
+                    <div><strong>Reported By:</strong> {selectedReport.reportedBy}</div>
+                    <div><strong>Reported Date:</strong> {formatDate(selectedReport.reportedDate)}</div>
+                    <div><strong>Assigned To:</strong> {selectedReport.assignedTo || 'Unassigned'}</div>
+                    <div><strong>Location:</strong> {selectedReport.location}</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Description</h4>
+                <p className="text-sm bg-muted p-3 rounded">{selectedReport.description}</p>
+              </div>
+              {selectedReport.attachments.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2">Attachments</h4>
+                  <div className="flex gap-2">
+                    {selectedReport.attachments.map((attachment, index) => (
+                      <Badge key={index} variant="outline">📎 {attachment}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Assign Investigator Dialog */}
+      <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Assign Investigator</DialogTitle>
+            <DialogDescription>
+              Select an investigator for incident report {assigningToReport}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="investigator">Available Investigators</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select investigator" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="mike-wilson">Mike Wilson</SelectItem>
+                  <SelectItem value="lisa-chen">Lisa Chen</SelectItem>
+                  <SelectItem value="robert-garcia">Robert Garcia</SelectItem>
+                  <SelectItem value="nancy-dube">Nancy Dube</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="priority">Priority Level</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Set priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="high">High Priority</SelectItem>
+                  <SelectItem value="medium">Medium Priority</SelectItem>
+                  <SelectItem value="low">Low Priority</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowAssignDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={() => {
+                alert("Investigator assigned successfully!");
+                setShowAssignDialog(false);
+                setAssigningToReport(null);
+              }}>
+                Assign
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Status Dialog */}
+      <Dialog open={showStatusDialog} onOpenChange={setShowStatusDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Status</DialogTitle>
+            <DialogDescription>
+              Update the status for incident report {updatingStatusReport}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="status">New Status</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select new status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="open">Open</SelectItem>
+                  <SelectItem value="investigating">Investigating</SelectItem>
+                  <SelectItem value="resolved">Resolved</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="notes">Status Notes</Label>
+              <Textarea placeholder="Add notes about this status change..." />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowStatusDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={() => {
+                alert("Status updated successfully!");
+                setShowStatusDialog(false);
+                setUpdatingStatusReport(null);
+              }}>
+                Update Status
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
