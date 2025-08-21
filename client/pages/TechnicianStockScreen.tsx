@@ -599,17 +599,127 @@ export default function TechnicianStockScreen() {
         </Card>
       </div>
 
-      {/* Stock Items */}
-      <div className="p-4 space-y-4">
-        {filteredStockItems.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Package className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-              <p className="text-gray-500">No stock items found.</p>
-            </CardContent>
-          </Card>
-        ) : (
-          filteredStockItems.map((item) => (
+      {/* Tabbed Content */}
+      <div className="p-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="toolbox" className="flex items-center gap-2">
+              <Wrench className="h-4 w-4" />
+              Tool Box
+            </TabsTrigger>
+            <TabsTrigger value="warehouse" className="flex items-center gap-2">
+              <Warehouse className="h-4 w-4" />
+              Warehouse Stock
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Tool Box Tab */}
+          <TabsContent value="toolbox" className="space-y-4">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold mb-2">My Tools</h3>
+              <p className="text-sm text-gray-600">All tools assigned to you by the stock manager</p>
+            </div>
+
+            {loadingTools ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <RefreshCw className="h-8 w-8 mx-auto mb-4 text-gray-400 animate-spin" />
+                  <p className="text-gray-500">Loading tools...</p>
+                </CardContent>
+              </Card>
+            ) : technicianTools && technicianTools.tools && technicianTools.tools.length > 0 ? (
+              technicianTools.tools.map((tool: any) => (
+                <Card key={tool.id} className="bg-white shadow-md">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-16 h-16 flex-shrink-0">
+                          <img
+                            src={tool.imageUrl}
+                            alt={tool.name}
+                            className="w-full h-full object-cover rounded-lg border"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{tool.name}</h3>
+                          <p className="text-sm text-gray-600">Serial: {tool.serialNumber}</p>
+                          <p className="text-sm text-gray-600">Category: {tool.category}</p>
+                        </div>
+                      </div>
+                      <Badge className={
+                        tool.condition === 'Excellent' ? 'bg-green-100 text-green-800' :
+                        tool.condition === 'Good' ? 'bg-blue-100 text-blue-800' :
+                        tool.condition === 'Fair' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }>
+                        {tool.condition}
+                      </Badge>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <p className="text-gray-600">Assigned</p>
+                          <p className="font-medium">{new Date(tool.assignedDate).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <p className="text-gray-600">Last Inspected</p>
+                          <p className="font-medium">{new Date(tool.lastInspectionDate).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {new Date(tool.nextInspectionDue) <= new Date() && (
+                      <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                        <AlertTriangle className="h-4 w-4 inline mr-1" />
+                        Inspection overdue! Due: {new Date(tool.nextInspectionDue).toLocaleDateString()}
+                      </div>
+                    )}
+
+                    <div className="flex space-x-2 pt-2">
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Settings className="h-4 w-4 mr-1" />
+                        Inspect Tool
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <FileText className="h-4 w-4 mr-1" />
+                        History
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Wrench className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500">No tools assigned to you.</p>
+                  <p className="text-sm text-gray-400 mt-2">Contact your stock manager to request tool assignments.</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Warehouse Stock Tab */}
+          <TabsContent value="warehouse" className="space-y-4">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold mb-2">Warehouse Stock</h3>
+              <p className="text-sm text-gray-600">Stock items assigned to you from the warehouse</p>
+            </div>
+
+            {filteredStockItems.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Package className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500">No stock items found.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              filteredStockItems.map((item) => (
             <Card key={item.id} className="bg-white shadow-md">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-3">
@@ -798,8 +908,10 @@ export default function TechnicianStockScreen() {
                 </div>
               </CardContent>
             </Card>
-          ))
-        )}
+              ))
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Recent Usage History */}
