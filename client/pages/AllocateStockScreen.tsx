@@ -210,10 +210,10 @@ export default function AllocateStockScreen() {
 
   const filteredAssignments = assignments.filter(
     (assignment) =>
-      assignment.technicianName
+      (assignment.technicianName || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      assignment.itemName.toLowerCase().includes(searchTerm.toLowerCase()),
+      (assignment.itemName || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
