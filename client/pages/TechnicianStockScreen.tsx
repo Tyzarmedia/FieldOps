@@ -268,9 +268,9 @@ export default function TechnicianStockScreen() {
 
   const filteredStockItems = stockItems.filter(
     (item) =>
-      item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.itemSku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchTerm.toLowerCase()),
+      (item.itemName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.itemSku || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.category || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const getStatusColor = (status: string) => {
