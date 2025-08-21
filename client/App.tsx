@@ -667,10 +667,34 @@ export default function App() {
                 }
               />
               <Route
+                path="/payroll-processing"
+                element={
+                  <ProtectedRoute>
+                    <PayrollProcessingScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/overtime"
                 element={
                   <ProtectedRoute>
                     <PayrollDashboardWithTab defaultTab="overtime" />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/overtime-requests"
+                element={
+                  <ProtectedRoute>
+                    <OvertimeRequestScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/overtime-approval"
+                element={
+                  <ProtectedRoute>
+                    <OvertimeApprovalScreen />
                   </ProtectedRoute>
                 }
               />
