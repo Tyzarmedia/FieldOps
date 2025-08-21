@@ -306,10 +306,89 @@ export default function PayrollProcessingScreen() {
 
   const exportPayslips = async () => {
     try {
-      // Generate and download payslips
-      alert("Payslips exported successfully!");
+      const exportService = PayrollExportService.getInstance();
+      const payslipsBlob = await exportService.generateAllPayslips(employees, currentPeriod);
+      exportService.downloadFile(payslipsBlob, `payslips-${currentPeriod.id}.html`);
     } catch (error) {
       console.error("Error exporting payslips:", error);
+      alert("Error exporting payslips: " + error);
+    }
+  };
+
+  const exportPayrollRegister = async () => {
+    try {
+      const exportService = PayrollExportService.getInstance();
+      const registerBlob = await exportService.generatePayrollRegister(employees, currentPeriod);
+      exportService.downloadFile(registerBlob, `payroll-register-${currentPeriod.id}.csv`);
+    } catch (error) {
+      console.error("Error exporting payroll register:", error);
+      alert("Error exporting payroll register: " + error);
+    }
+  };
+
+  const generateTaxReports = async () => {
+    try {
+      const exportService = PayrollExportService.getInstance();
+      const complianceData = await exportService.generateComplianceReport(employees, currentPeriod);
+
+      // Generate PAYE report
+      const payeBlob = await exportService.generatePAYEReport(complianceData);
+      exportService.downloadFile(payeBlob, `paye-report-${currentPeriod.id}.csv`);
+
+      // Generate UIF report
+      const uifBlob = await exportService.generateUIFReport(complianceData);
+      exportService.downloadFile(uifBlob, `uif-report-${currentPeriod.id}.csv`);
+
+      alert("Tax reports generated successfully!");
+    } catch (error) {
+      console.error("Error generating tax reports:", error);
+      alert("Error generating tax reports: " + error);
+    }
+  };
+
+  const generateEFTFile = async () => {
+    try {
+      const exportService = PayrollExportService.getInstance();
+      const eftBlob = await exportService.generateEFTFile(employees, currentPeriod);
+      exportService.downloadFile(eftBlob, `eft-payments-${currentPeriod.id}.txt`);
+      alert("EFT file generated successfully!");
+    } catch (error) {
+      console.error("Error generating EFT file:", error);
+      alert("Error generating EFT file: " + error);
+    }
+  };
+
+  const generateIndividualPayslip = async (employee: EmployeePayroll) => {
+    try {
+      const exportService = PayrollExportService.getInstance();
+      const payslipData = {
+        employee: {
+          fullName: employee.fullName,
+          employeeNumber: employee.employeeNumber,
+          department: employee.department,
+          email: '', // Would come from employee data
+        },
+        period: {
+          startDate: currentPeriod.startDate,
+          endDate: currentPeriod.endDate,
+          description: currentPeriod.description,
+        },
+        earnings: {
+          basicSalary: employee.basicSalary,
+          allowances: employee.allowances,
+          overtime: employee.overtime,
+          grossPay: employee.grossPay,
+        },
+        deductions: employee.deductions,
+        totalDeductions: employee.totalDeductions,
+        netPay: employee.netPay,
+      };
+
+      const payslipBlob = await exportService.generatePayslip(payslipData);
+      exportService.downloadFile(payslipBlob, `payslip-${employee.employeeNumber}-${currentPeriod.id}.html`);
+    } catch (error) {
+      console.error("Error generating individual payslip:", error);
+      alert("Error generating payslip: " + error);
     }
   };
 
