@@ -118,6 +118,22 @@ export function createServer() {
   // Payroll API
   app.get("/api/payroll/overtime-rate/:technicianId", getOvertimeRate);
 
+  // Payroll Processing API
+  app.get("/api/payroll/periods", getPayrollPeriods);
+  app.post("/api/payroll/periods", createPayrollPeriod);
+  app.post("/api/payroll/periods/:periodId/calculate", calculatePayroll);
+  app.get("/api/payroll/periods/:periodId/calculations", getPayrollCalculations);
+  app.post("/api/payroll/periods/:periodId/finalize", finalizePayroll);
+
+  // Overtime Request Management API
+  app.post("/api/overtime/requests", submitOvertimeRequest);
+  app.get("/api/overtime/requests/:employeeId", getEmployeeOvertimeRequests);
+  app.get("/api/overtime/requests/team/:supervisorId", getTeamOvertimeRequests);
+  app.put("/api/overtime/requests/:requestId/review", reviewOvertimeRequest);
+  app.put("/api/overtime/requests/:requestId/cancel", cancelOvertimeRequest);
+  app.get("/api/overtime/requests/details/:requestId", getOvertimeRequestDetails);
+  app.get("/api/overtime/analytics", getOvertimeAnalytics);
+
   // Warehouse Stock API
   app.use("/api/warehouse-stock", warehouseStockRouter);
 
