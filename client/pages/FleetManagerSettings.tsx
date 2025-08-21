@@ -50,6 +50,90 @@ export default function FleetManagerSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
+  // Real-time update functions for different setting categories
+  const updateNotificationSetting = async (key: string, value: boolean) => {
+    try {
+      const updatedNotifications = { ...notifications, [key]: value };
+      setNotifications(updatedNotifications);
+
+      const response = await makeAuthenticatedRequest("/api/fleet-settings/notifications", {
+        method: "PATCH",
+        body: JSON.stringify(updatedNotifications),
+      });
+
+      if (response.ok) {
+        showNotification.success(
+          "Setting Updated",
+          `${key.replace(/([A-Z])/g, ' $1').toLowerCase()} updated successfully`
+        );
+      } else {
+        throw new Error("Failed to update setting");
+      }
+    } catch (error) {
+      console.error("Failed to update notification setting:", error);
+      showNotification.error("Update Failed", "Could not update notification setting");
+      // Revert the change
+      setNotifications(notifications);
+    }
+  };
+
+  const updateFleetPreference = async (key: string, value: any) => {
+    try {
+      const updatedPreferences = { ...fleetPreferences, [key]: value };
+      setFleetPreferences(updatedPreferences);
+
+      const response = await makeAuthenticatedRequest("/api/fleet-settings/fleetPreferences", {
+        method: "PATCH",
+        body: JSON.stringify(updatedPreferences),
+      });
+
+      if (response.ok) {
+        showNotification.success(
+          "Preference Updated",
+          `${key.replace(/([A-Z])/g, ' $1').toLowerCase()} updated successfully`
+        );
+      } else {
+        throw new Error("Failed to update preference");
+      }
+    } catch (error) {
+      console.error("Failed to update fleet preference:", error);
+      showNotification.error("Update Failed", "Could not update fleet preference");
+      // Revert the change
+      setFleetPreferences(fleetPreferences);
+    }
+  };
+
+  const updateSystemPreference = async (key: string, value: any) => {
+    try {
+      const updatedPreferences = { ...systemPreferences, [key]: value };
+      setSystemPreferences(updatedPreferences);
+
+      const response = await makeAuthenticatedRequest("/api/fleet-settings/systemPreferences", {
+        method: "PATCH",
+        body: JSON.stringify(updatedPreferences),
+      });
+
+      if (response.ok) {
+        showNotification.success(
+          "System Setting Updated",
+          `${key.replace(/([A-Z])/g, ' $1').toLowerCase()} updated successfully`
+        );
+
+        // Apply immediate changes to the app
+        if (key === 'theme') {
+          document.documentElement.className = value === 'dark' ? 'dark' : '';
+        }
+      } else {
+        throw new Error("Failed to update system preference");
+      }
+    } catch (error) {
+      console.error("Failed to update system preference:", error);
+      showNotification.error("Update Failed", "Could not update system preference");
+      // Revert the change
+      setSystemPreferences(systemPreferences);
+    }
+  };
+
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profile, setProfile] = useState({
     firstName: "Nancy",
