@@ -927,7 +927,13 @@ export default function InspectionsScreen() {
                     Cancel
                   </Button>
                   <Button
-                    onClick={startNewInspection}
+                    onClick={() => {
+                      if (selectedInspectionType === "vehicle") {
+                        startNewInspection();
+                      } else if (selectedInspectionType === "tools") {
+                        startToolInspection();
+                      }
+                    }}
                     disabled={
                       !selectedInspectionType ||
                       !selectedTechnician ||
