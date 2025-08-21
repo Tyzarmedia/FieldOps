@@ -760,10 +760,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.vehicleAlerts}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          vehicleAlerts: checked,
-                        })
+                        updateNotificationSetting("vehicleAlerts", checked)
                       }
                     />
                   </div>
@@ -778,10 +775,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.maintenanceReminders}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          maintenanceReminders: checked,
-                        })
+                        updateNotificationSetting("maintenanceReminders", checked)
                       }
                     />
                   </div>
@@ -796,10 +790,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.complianceAlerts}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          complianceAlerts: checked,
-                        })
+                        updateNotificationSetting("complianceAlerts", checked)
                       }
                     />
                   </div>
@@ -814,10 +805,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.emergencyAlerts}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          emergencyAlerts: checked,
-                        })
+                        updateNotificationSetting("emergencyAlerts", checked)
                       }
                     />
                   </div>
