@@ -723,10 +723,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.pushNotifications}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          pushNotifications: checked,
-                        })
+                        updateNotificationSetting("pushNotifications", checked)
                       }
                     />
                   </div>
@@ -741,10 +738,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.smsNotifications}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          smsNotifications: checked,
-                        })
+                        updateNotificationSetting("smsNotifications", checked)
                       }
                     />
                   </div>
