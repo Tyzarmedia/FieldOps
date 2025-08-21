@@ -531,9 +531,13 @@ export default function FleetManagerSettings() {
               <RefreshCw className="h-4 w-4 mr-2" />
               {isLoading ? "Resetting..." : "Reset"}
             </Button>
-            <Button onClick={handleSaveSettings} disabled={isLoading}>
+            <Button
+              onClick={handleSaveSettings}
+              disabled={isLoading}
+              variant={hasUnsavedChanges ? "default" : "outline"}
+            >
               <Save className="h-4 w-4 mr-2" />
-              {isLoading ? "Saving..." : "Save Changes"}
+              {isLoading ? "Saving..." : hasUnsavedChanges ? "Save Changes" : "All Saved"}
             </Button>
           </div>
         </div>
