@@ -9,7 +9,7 @@
       "status": "Active",
       "mileage": 15230,
       "fuel_efficiency": 29.5,
-      "assigned_driver": "Not Assigned",
+      "assigned_driver": "Dyondzani Clement Masinge",
       "compliance": {
         "license_expiry": "2024-11-15",
         "insurance_expiry": "2024-10-30",
@@ -27,7 +27,7 @@
       "year": 2020,
       "status": "Active",
       "mileage": 19800,
-      "fuel_efficiency": 27.0,
+      "fuel_efficiency": 27,
       "assigned_driver": "Not Assigned",
       "compliance": {
         "license_expiry": "2024-07-25",
@@ -84,7 +84,7 @@
       "year": 2018,
       "status": "In Maintenance",
       "mileage": 40120,
-      "fuel_efficiency": 25.0,
+      "fuel_efficiency": 25,
       "assigned_driver": "Not Assigned",
       "compliance": {
         "license_expiry": "2026-05-15",
@@ -198,7 +198,7 @@
       "year": 2019,
       "status": "In Maintenance",
       "mileage": 53000,
-      "fuel_efficiency": 23.0,
+      "fuel_efficiency": 23,
       "assigned_driver": "Not Assigned",
       "compliance": {
         "license_expiry": "2026-08-18",
@@ -255,7 +255,7 @@
       "year": 2022,
       "status": "Active",
       "mileage": 8900,
-      "fuel_efficiency": 32.0,
+      "fuel_efficiency": 32,
       "assigned_driver": "Not Assigned",
       "compliance": {
         "license_expiry": "2025-01-15",
@@ -274,7 +274,7 @@
       "year": 2019,
       "status": "Active",
       "mileage": 27400,
-      "fuel_efficiency": 29.0,
+      "fuel_efficiency": 29,
       "assigned_driver": "Not Assigned",
       "compliance": {
         "license_expiry": "2024-09-20",
