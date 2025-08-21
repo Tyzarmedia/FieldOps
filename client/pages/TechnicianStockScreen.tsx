@@ -161,6 +161,66 @@ export default function TechnicianStockScreen() {
     loadAssignedStock();
   }, [fallbackStockItems]);
 
+  // Load technician tools
+  const loadTechnicianTools = async () => {
+    setLoadingTools(true);
+    try {
+      const response = await fetch(`/api/stock-management/tools/technician/${currentTechnicianId}`);
+      const data = await response.json();
+      if (data.success) {
+        setTechnicianTools(data.data);
+      } else {
+        console.error('Failed to fetch technician tools:', data.error);
+        // Set fallback data for tools
+        setTechnicianTools({
+          technicianId: currentTechnicianId,
+          technicianName: currentTechnicianName,
+          tools: [
+            {
+              id: "TOOL-001",
+              name: "Power Drill",
+              category: "Power Tools",
+              serialNumber: "PD-2025-001",
+              condition: "Good",
+              lastInspectionDate: "2025-01-10",
+              nextInspectionDue: "2025-01-24",
+              assignedDate: "2025-01-01",
+              status: "assigned",
+              imageUrl: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=500"
+            },
+            {
+              id: "TOOL-002",
+              name: "Fiber Optic Splice Machine",
+              category: "Fiber Equipment",
+              serialNumber: "FOSM-2024-156",
+              condition: "Excellent",
+              lastInspectionDate: "2025-01-08",
+              nextInspectionDue: "2025-01-22",
+              assignedDate: "2025-01-01",
+              status: "assigned",
+              imageUrl: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500"
+            }
+          ]
+        });
+      }
+    } catch (error) {
+      console.error('Error loading technician tools:', error);
+      // Use fallback data on error
+      setTechnicianTools({
+        technicianId: currentTechnicianId,
+        technicianName: currentTechnicianName,
+        tools: []
+      });
+    } finally {
+      setLoadingTools(false);
+    }
+  };
+
+  // Load tools on component mount
+  useEffect(() => {
+    loadTechnicianTools();
+  }, [currentTechnicianId]);
+
   const [stockUsageHistory, setStockUsageHistory] = useState<StockUsage[]>([
     {
       id: "su1",
