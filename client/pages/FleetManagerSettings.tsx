@@ -636,9 +636,10 @@ export default function FleetManagerSettings() {
                       <Input
                         id="lastName"
                         value={profile.lastName}
-                        onChange={(e) =>
-                          setProfile({ ...profile, lastName: e.target.value })
-                        }
+                        onChange={(e) => {
+                          setProfile({ ...profile, lastName: e.target.value });
+                          setHasUnsavedChanges(true);
+                        }}
                       />
                     </div>
                   </div>
@@ -652,9 +653,10 @@ export default function FleetManagerSettings() {
                           id="email"
                           type="email"
                           value={profile.email}
-                          onChange={(e) =>
-                            setProfile({ ...profile, email: e.target.value })
-                          }
+                          onChange={(e) => {
+                            setProfile({ ...profile, email: e.target.value });
+                            setHasUnsavedChanges(true);
+                          }}
                           className="pl-10"
                         />
                       </div>
@@ -666,9 +668,10 @@ export default function FleetManagerSettings() {
                         <Input
                           id="phone"
                           value={profile.phone}
-                          onChange={(e) =>
-                            setProfile({ ...profile, phone: e.target.value })
-                          }
+                          onChange={(e) => {
+                            setProfile({ ...profile, phone: e.target.value });
+                            setHasUnsavedChanges(true);
+                          }}
                           className="pl-10"
                         />
                       </div>
@@ -683,9 +686,10 @@ export default function FleetManagerSettings() {
                         <Input
                           id="position"
                           value={profile.position}
-                          onChange={(e) =>
-                            setProfile({ ...profile, position: e.target.value })
-                          }
+                          onChange={(e) => {
+                            setProfile({ ...profile, position: e.target.value });
+                            setHasUnsavedChanges(true);
+                          }}
                           className="pl-10"
                         />
                       </div>
