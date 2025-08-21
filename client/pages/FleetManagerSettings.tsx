@@ -708,10 +708,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={notifications.emailNotifications}
                       onCheckedChange={(checked) =>
-                        setNotifications({
-                          ...notifications,
-                          emailNotifications: checked,
-                        })
+                        updateNotificationSetting("emailNotifications", checked)
                       }
                     />
                   </div>
