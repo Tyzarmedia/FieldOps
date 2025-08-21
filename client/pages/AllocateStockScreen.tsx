@@ -213,7 +213,9 @@ export default function AllocateStockScreen() {
       (assignment.technicianName || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      (assignment.itemName || "").toLowerCase().includes(searchTerm.toLowerCase()),
+      (assignment.itemName || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()),
   );
 
   return (
