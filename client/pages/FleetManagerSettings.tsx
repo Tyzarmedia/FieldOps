@@ -979,10 +979,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.theme}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          theme: value,
-                        })
+                        updateSystemPreference("theme", value)
                       }
                     >
                       <SelectTrigger>
@@ -1001,10 +998,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.language}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          language: value,
-                        })
+                        updateSystemPreference("language", value)
                       }
                     >
                       <SelectTrigger>
@@ -1024,10 +1018,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.currency}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          currency: value,
-                        })
+                        updateSystemPreference("currency", value)
                       }
                     >
                       <SelectTrigger>
@@ -1055,10 +1046,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.timezone}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          timezone: value,
-                        })
+                        updateSystemPreference("timezone", value)
                       }
                     >
                       <SelectTrigger>
@@ -1081,10 +1069,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.dateFormat}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          dateFormat: value,
-                        })
+                        updateSystemPreference("dateFormat", value)
                       }
                     >
                       <SelectTrigger>
@@ -1103,10 +1088,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={systemPreferences.timeFormat}
                       onValueChange={(value) =>
-                        setSystemPreferences({
-                          ...systemPreferences,
-                          timeFormat: value,
-                        })
+                        updateSystemPreference("timeFormat", value)
                       }
                     >
                       <SelectTrigger>
