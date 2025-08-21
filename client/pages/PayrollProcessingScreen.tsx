@@ -641,15 +641,15 @@ export default function PayrollProcessingScreen() {
                   <Download className="w-4 h-4 mr-2" />
                   Download Payslips (PDF)
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" onClick={exportPayrollRegister} className="w-full justify-start">
                   <FileText className="w-4 h-4 mr-2" />
                   Export Payroll Register (CSV)
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" onClick={generateTaxReports} className="w-full justify-start">
                   <Calculator className="w-4 h-4 mr-2" />
                   Generate Tax Reports
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" onClick={generateEFTFile} className="w-full justify-start">
                   <Send className="w-4 h-4 mr-2" />
                   Generate EFT File
                 </Button>
