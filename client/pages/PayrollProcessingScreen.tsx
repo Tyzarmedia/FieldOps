@@ -603,7 +603,203 @@ export default function PayrollProcessingScreen() {
         </TabsContent>
       </Tabs>
 
-      {/* Employee Detail Modal would go here */}
+      {/* Employee Detail Modal */}
+      <Dialog open={!!selectedEmployee} onOpenChange={() => setSelectedEmployee(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <div>
+                <div className="text-xl font-bold">{selectedEmployee?.fullName}</div>
+                <div className="text-sm text-gray-600">{selectedEmployee?.employeeNumber} • {selectedEmployee?.department}</div>
+              </div>
+              <Badge className={selectedEmployee ? getStatusColor(selectedEmployee.status) : ""}>
+                {selectedEmployee?.status}
+              </Badge>
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedEmployee && (
+            <div className="space-y-6">
+              {/* Calculation Breakdown */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calculator className="w-5 h-5" />
+                    Payroll Calculation Breakdown
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Basic Salary */}
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="font-medium">Basic Salary</span>
+                    <span className="text-lg font-bold">{formatCurrency(selectedEmployee.basicSalary)}</span>
+                  </div>
+
+                  {/* Allowances */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-green-700 font-medium">
+                      <Plus className="w-4 h-4" />
+                      Allowances
+                    </div>
+                    <div className="pl-6 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Housing Allowance (10%)</span>
+                        <span>{formatCurrency(selectedEmployee.allowances.housing)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Transport Allowance</span>
+                        <span>{formatCurrency(selectedEmployee.allowances.transport)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Bonus</span>
+                        <span>{formatCurrency(selectedEmployee.allowances.bonus)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Other Allowances</span>
+                        <span>{formatCurrency(selectedEmployee.allowances.other)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Overtime */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-blue-700 font-medium">
+                      <Clock className="w-4 h-4" />
+                      Overtime
+                    </div>
+                    <div className="pl-6 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Overtime Hours</span>
+                        <span>{selectedEmployee.overtime.hours.toFixed(1)}h</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Overtime Rate</span>
+                        <span>{formatCurrency(selectedEmployee.overtime.rate)}/hour</span>
+                      </div>
+                      <div className="flex justify-between font-medium">
+                        <span>Overtime Pay</span>
+                        <span>{formatCurrency(selectedEmployee.overtime.amount)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Gross Pay */}
+                  <div className="flex justify-between items-center py-2 border-t border-b bg-green-50 px-2 rounded">
+                    <span className="font-bold text-green-700">Gross Pay</span>
+                    <span className="text-xl font-bold text-green-700">{formatCurrency(selectedEmployee.grossPay)}</span>
+                  </div>
+
+                  {/* Deductions */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-red-700 font-medium">
+                      <Minus className="w-4 h-4" />
+                      Deductions
+                    </div>
+                    <div className="pl-6 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Income Tax (PAYE)</span>
+                        <span>{formatCurrency(selectedEmployee.deductions.tax)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>UIF (1%)</span>
+                        <span>{formatCurrency(selectedEmployee.deductions.uif)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Medical Aid</span>
+                        <span>{formatCurrency(selectedEmployee.deductions.medical)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Pension Fund (7.5%)</span>
+                        <span>{formatCurrency(selectedEmployee.deductions.pension)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Loans</span>
+                        <span>{formatCurrency(selectedEmployee.deductions.loans)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Other Deductions</span>
+                        <span>{formatCurrency(selectedEmployee.deductions.other)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Total Deductions */}
+                  <div className="flex justify-between items-center py-2 border-t bg-red-50 px-2 rounded">
+                    <span className="font-bold text-red-700">Total Deductions</span>
+                    <span className="text-lg font-bold text-red-700">{formatCurrency(selectedEmployee.totalDeductions)}</span>
+                  </div>
+
+                  {/* Net Pay */}
+                  <div className="flex justify-between items-center py-3 border-t-2 border-b-2 bg-blue-50 px-2 rounded">
+                    <span className="text-xl font-bold text-blue-700">Net Pay</span>
+                    <span className="text-2xl font-bold text-blue-700">{formatCurrency(selectedEmployee.netPay)}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Errors and Warnings */}
+              {(selectedEmployee.errors.length > 0 || selectedEmployee.warnings.length > 0) && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                      Issues & Warnings
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {selectedEmployee.errors.length > 0 && (
+                      <div>
+                        <h4 className="font-medium text-red-700 mb-2">Errors</h4>
+                        <div className="space-y-1">
+                          {selectedEmployee.errors.map((error, index) => (
+                            <Alert key={index} className="border-red-200">
+                              <AlertTriangle className="h-4 w-4 text-red-600" />
+                              <AlertDescription className="text-red-800">{error}</AlertDescription>
+                            </Alert>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedEmployee.warnings.length > 0 && (
+                      <div>
+                        <h4 className="font-medium text-yellow-700 mb-2">Warnings</h4>
+                        <div className="space-y-1">
+                          {selectedEmployee.warnings.map((warning, index) => (
+                            <Alert key={index} className="border-yellow-200">
+                              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                              <AlertDescription className="text-yellow-800">{warning}</AlertDescription>
+                            </Alert>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                <Button variant="outline" className="flex-1">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Generate Payslip
+                </Button>
+                <Button variant="outline" className="flex-1">
+                  <Send className="w-4 h-4 mr-2" />
+                  Send to Employee
+                </Button>
+                <Button
+                  onClick={() => setSelectedEmployee(null)}
+                  variant="ghost"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
