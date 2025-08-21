@@ -110,6 +110,11 @@ export default function InspectionsScreen() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
+  // Tool inspection states
+  const [technicianTools, setTechnicianTools] = useState<any>(null);
+  const [loadingTools, setLoadingTools] = useState(false);
+  const [toolInspectionMode, setToolInspectionMode] = useState(false);
+
   // Collapsible section states
   const [expandedSections, setExpandedSections] = useState({
     weeklyInspections: true,
