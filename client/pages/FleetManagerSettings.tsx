@@ -901,10 +901,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.distanceUnit}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          distanceUnit: value,
-                        })
+                        updateFleetPreference("distanceUnit", value)
                       }
                     >
                       <SelectTrigger>
@@ -922,10 +919,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.fuelUnit}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          fuelUnit: value,
-                        })
+                        updateFleetPreference("fuelUnit", value)
                       }
                     >
                       <SelectTrigger>
@@ -948,10 +942,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={fleetPreferences.showVehiclePhotos}
                       onCheckedChange={(checked) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          showVehiclePhotos: checked,
-                        })
+                        updateFleetPreference("showVehiclePhotos", checked)
                       }
                     />
                   </div>
@@ -966,10 +957,7 @@ export default function FleetManagerSettings() {
                     <Switch
                       checked={fleetPreferences.compactVehicleView}
                       onCheckedChange={(checked) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          compactVehicleView: checked,
-                        })
+                        updateFleetPreference("compactVehicleView", checked)
                       }
                     />
                   </div>
