@@ -211,22 +211,116 @@ export default function FleetManagerSettings() {
     }
   };
 
-  const handleExportSettings = () => {
-    const settingsData = {
-      profile,
-      notifications,
-      fleetPreferences,
-      systemPreferences,
-    };
-    const blob = new Blob([JSON.stringify(settingsData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "fleet-manager-settings.json";
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleExportSettings = async () => {
+    try {
+      setIsLoading(true);
+
+      // Get comprehensive fleet manager data
+      const settingsData = {
+        profile,
+        notifications,
+        fleetPreferences,
+        systemPreferences,
+        profileImage,
+        exportDate: new Date().toISOString(),
+        exportedBy: profile.employeeId,
+      };
+
+      // Get vehicle data from server
+      let vehicleData = [];
+      try {
+        const response = await makeAuthenticatedRequest("/api/vehicles");
+        if (response.ok) {
+          const result = await response.json();
+          vehicleData = result.data || [];
+        }
+      } catch (error) {
+        console.warn("Could not fetch vehicle data for export:", error);
+      }
+
+      // Prepare comprehensive export data
+      const exportData = {
+        exportInfo: {
+          type: "Fleet Manager Complete Report",
+          exportDate: new Date().toISOString(),
+          exportedBy: `${profile.firstName} ${profile.lastName} (${profile.employeeId})`,
+          totalVehicles: vehicleData.length,
+        },
+        fleetManagerSettings: settingsData,
+        vehicleFleet: vehicleData,
+        fleetStatistics: {
+          totalVehicles: vehicleData.length,
+          activeVehicles: vehicleData.filter(v => v.status === "Active").length,
+          assignedVehicles: vehicleData.filter(v => v.assigned_driver !== "Not Assigned").length,
+          maintenanceVehicles: vehicleData.filter(v => v.status === "In Maintenance").length,
+          avgFuelEfficiency: vehicleData.length > 0
+            ? (vehicleData.reduce((sum, v) => sum + (v.fuel_efficiency || 0), 0) / vehicleData.length).toFixed(2)
+            : 0,
+        },
+      };
+
+      // Create and download JSON export
+      const jsonBlob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: "application/json",
+      });
+      const jsonUrl = URL.createObjectURL(jsonBlob);
+      const jsonLink = document.createElement("a");
+      jsonLink.href = jsonUrl;
+      jsonLink.download = `fleet-manager-report-${new Date().toISOString().split('T')[0]}.json`;
+      jsonLink.click();
+      URL.revokeObjectURL(jsonUrl);
+
+      // Create and download CSV export for vehicles
+      if (vehicleData.length > 0) {
+        const csvHeaders = [
+          "Vehicle ID", "Plate Number", "Make", "Model", "Year",
+          "Status", "Assigned Driver", "Mileage", "Fuel Efficiency",
+          "Last Service", "Next Service Due"
+        ];
+
+        const csvData = vehicleData.map(vehicle => [
+          vehicle.vehicle_id,
+          vehicle.plate_number,
+          vehicle.make,
+          vehicle.model,
+          vehicle.year,
+          vehicle.status,
+          vehicle.assigned_driver,
+          vehicle.mileage,
+          vehicle.fuel_efficiency,
+          vehicle.last_service,
+          vehicle.next_service_due,
+        ]);
+
+        const csvContent = [
+          csvHeaders.join(","),
+          ...csvData.map(row => row.map(cell =>
+            typeof cell === 'string' && cell.includes(',') ? `"${cell}"` : cell
+          ).join(","))
+        ].join("\n");
+
+        const csvBlob = new Blob([csvContent], { type: "text/csv" });
+        const csvUrl = URL.createObjectURL(csvBlob);
+        const csvLink = document.createElement("a");
+        csvLink.href = csvUrl;
+        csvLink.download = `fleet-vehicles-${new Date().toISOString().split('T')[0]}.csv`;
+        csvLink.click();
+        URL.revokeObjectURL(csvUrl);
+      }
+
+      showNotification.success(
+        "Export Complete",
+        "Fleet manager report exported successfully (JSON + CSV files downloaded)"
+      );
+    } catch (error) {
+      console.error("Export failed:", error);
+      showNotification.error(
+        "Export Failed",
+        "Could not export fleet manager data. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleResetToDefaults = () => {
