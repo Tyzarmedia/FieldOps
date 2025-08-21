@@ -321,6 +321,7 @@ function getNavigationForRole(role: string) {
           href: "/network-assessment",
           icon: Network,
         },
+        { name: "Request Overtime", href: "/overtime-requests", icon: Timer },
         { name: "Overtime List", href: "/overtime-list", icon: Timer },
         { name: "Settings", href: "/technician-settings", icon: Settings },
       ];
