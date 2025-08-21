@@ -827,10 +827,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.defaultDashboard}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          defaultDashboard: value,
-                        })
+                        updateFleetPreference("defaultDashboard", value)
                       }
                     >
                       <SelectTrigger>
@@ -856,10 +853,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.autoRefreshInterval}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          autoRefreshInterval: value,
-                        })
+                        updateFleetPreference("autoRefreshInterval", value)
                       }
                     >
                       <SelectTrigger>
@@ -879,10 +873,7 @@ export default function FleetManagerSettings() {
                     <Select
                       value={fleetPreferences.mapProvider}
                       onValueChange={(value) =>
-                        setFleetPreferences({
-                          ...fleetPreferences,
-                          mapProvider: value,
-                        })
+                        updateFleetPreference("mapProvider", value)
                       }
                     >
                       <SelectTrigger>
