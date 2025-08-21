@@ -669,25 +669,6 @@ export default function InspectionsScreen() {
                   </div>
                 )}
 
-                {selectedInspectionType && (
-                  <div>
-                    <Label htmlFor="specific-type">
-                      Specific Inspection Type
-                    </Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select specific type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {inspectionTypes[selectedInspectionType].map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
 
                 <div className="flex justify-end gap-2">
                   <Button
