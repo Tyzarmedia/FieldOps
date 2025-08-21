@@ -435,7 +435,17 @@ export default function ComplianceScreen() {
                                 ? " has expired"
                                 : ` expires in ${alert.daysUntilExpiry} days`}
                             </span>
-                            <Button size="sm" variant="outline">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() =>
+                                startEditing(
+                                  alert.vehicleId,
+                                  alert.documentType,
+                                  alert.expiryDate
+                                )
+                              }
+                            >
                               Renew Now
                             </Button>
                           </div>
