@@ -159,34 +159,34 @@ export default function PayrollDashboard() {
         navigate("/overtime-approval");
         break;
       case "bonuses":
-        alert("Opening Bonuses & Deductions...");
+        navigate("/bonuses-deductions");
         break;
       case "payslips":
-        alert("Opening Payslip Generation...");
+        navigate("/payslip-generation");
         break;
       case "approvals":
         navigate("/overtime-approval");
         break;
       case "employees":
-        alert("Opening Employee Management...");
+        navigate("/employee-management");
         break;
       case "reports":
-        alert("Opening Payroll Reports...");
+        navigate("/payroll-reports");
         break;
       case "bank-details":
-        alert("Opening Bank Details Management...");
+        navigate("/bank-details");
         break;
       case "sage-integration":
-        alert("Opening Sage 300 Integration...");
+        navigate("/sage300-export");
         break;
       case "tax-calculations":
-        alert("Opening Tax Calculations...");
+        navigate("/tax-calculations");
         break;
       case "bulk-actions":
-        alert("Opening Bulk Actions...");
+        navigate("/bulk-actions");
         break;
       case "audit-trail":
-        alert("Opening Audit Trail...");
+        navigate("/audit-trail");
         break;
       default:
         alert(`Opening ${cardId}...`);
