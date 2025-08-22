@@ -5,9 +5,28 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Calculator,
   DollarSign,
@@ -68,12 +87,48 @@ export default function TaxCalculationsScreen() {
 
   const [taxBrackets, setTaxBrackets] = useState<TaxBracket[]>([
     { id: "1", minIncome: 0, maxIncome: 237100, rate: 18, threshold: 0 },
-    { id: "2", minIncome: 237101, maxIncome: 370500, rate: 26, threshold: 42678 },
-    { id: "3", minIncome: 370501, maxIncome: 512800, rate: 31, threshold: 77362 },
-    { id: "4", minIncome: 512801, maxIncome: 673000, rate: 36, threshold: 121475 },
-    { id: "5", minIncome: 673001, maxIncome: 857900, rate: 39, threshold: 179147 },
-    { id: "6", minIncome: 857901, maxIncome: 1817000, rate: 41, threshold: 251258 },
-    { id: "7", minIncome: 1817001, maxIncome: Infinity, rate: 45, threshold: 644489 },
+    {
+      id: "2",
+      minIncome: 237101,
+      maxIncome: 370500,
+      rate: 26,
+      threshold: 42678,
+    },
+    {
+      id: "3",
+      minIncome: 370501,
+      maxIncome: 512800,
+      rate: 31,
+      threshold: 77362,
+    },
+    {
+      id: "4",
+      minIncome: 512801,
+      maxIncome: 673000,
+      rate: 36,
+      threshold: 121475,
+    },
+    {
+      id: "5",
+      minIncome: 673001,
+      maxIncome: 857900,
+      rate: 39,
+      threshold: 179147,
+    },
+    {
+      id: "6",
+      minIncome: 857901,
+      maxIncome: 1817000,
+      rate: 41,
+      threshold: 251258,
+    },
+    {
+      id: "7",
+      minIncome: 1817001,
+      maxIncome: Infinity,
+      rate: 45,
+      threshold: 644489,
+    },
   ]);
 
   const [employeeTaxData, setEmployeeTaxData] = useState<EmployeeTaxSummary[]>([
@@ -117,14 +172,17 @@ export default function TaxCalculationsScreen() {
     totalPAYE: employeeTaxData.reduce((sum, emp) => sum + emp.paye, 0),
     totalUIF: employeeTaxData.reduce((sum, emp) => sum + emp.uif, 0),
     totalSDL: employeeTaxData.reduce((sum, emp) => sum + emp.sdl, 0),
-    totalDeductions: employeeTaxData.reduce((sum, emp) => sum + emp.totalDeductions, 0),
+    totalDeductions: employeeTaxData.reduce(
+      (sum, emp) => sum + emp.totalDeductions,
+      0,
+    ),
     totalNet: employeeTaxData.reduce((sum, emp) => sum + emp.netPay, 0),
   };
 
   const calculateTax = async () => {
     setIsCalculating(true);
     // Simulate tax calculation
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsCalculating(false);
   };
 
@@ -137,31 +195,32 @@ export default function TaxCalculationsScreen() {
 
   const calculatePAYE = (annualIncome: number): number => {
     let tax = 0;
-    
+
     for (const bracket of taxBrackets) {
       if (annualIncome > bracket.minIncome) {
         const taxableInThisBracket = Math.min(
           annualIncome - bracket.minIncome + 1,
-          bracket.maxIncome - bracket.minIncome + 1
+          bracket.maxIncome - bracket.minIncome + 1,
         );
         tax = bracket.threshold + (taxableInThisBracket * bracket.rate) / 100;
       }
     }
-    
+
     return Math.max(0, tax / 12); // Monthly PAYE
   };
 
   const exportTaxReport = () => {
     const csvContent = [
       "Employee ID,Employee Name,Gross Pay,PAYE,UIF,SDL,Total Deductions,Net Pay",
-      ...employeeTaxData.map(emp => 
-        `${emp.employeeId},${emp.name},${emp.grossPay},${emp.paye},${emp.uif},${emp.sdl},${emp.totalDeductions},${emp.netPay}`
-      )
-    ].join('\n');
+      ...employeeTaxData.map(
+        (emp) =>
+          `${emp.employeeId},${emp.name},${emp.grossPay},${emp.paye},${emp.uif},${emp.sdl},${emp.totalDeductions},${emp.netPay}`,
+      ),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `tax_calculations_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
@@ -175,7 +234,10 @@ export default function TaxCalculationsScreen() {
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-4">
-          <Button variant="ghost" onClick={() => navigate("/payroll-dashboard")}>
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/payroll-dashboard")}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
@@ -184,7 +246,9 @@ export default function TaxCalculationsScreen() {
           <Calculator className="h-8 w-8 text-red-600" />
           <h1 className="text-3xl font-bold text-gray-800">Tax Calculations</h1>
         </div>
-        <p className="text-gray-600">Manage tax calculations, PAYE, UIF, and SDL deductions</p>
+        <p className="text-gray-600">
+          Manage tax calculations, PAYE, UIF, and SDL deductions
+        </p>
       </div>
 
       {/* Summary Cards */}
@@ -194,43 +258,53 @@ export default function TaxCalculationsScreen() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total PAYE</p>
-                <p className="text-2xl font-bold text-red-600">{formatCurrency(totalSummary.totalPAYE)}</p>
+                <p className="text-2xl font-bold text-red-600">
+                  {formatCurrency(totalSummary.totalPAYE)}
+                </p>
               </div>
               <DollarSign className="h-8 w-8 text-red-500" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total UIF</p>
-                <p className="text-2xl font-bold text-blue-600">{formatCurrency(totalSummary.totalUIF)}</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {formatCurrency(totalSummary.totalUIF)}
+                </p>
               </div>
               <Users className="h-8 w-8 text-blue-500" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total SDL</p>
-                <p className="text-2xl font-bold text-green-600">{formatCurrency(totalSummary.totalSDL)}</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {formatCurrency(totalSummary.totalSDL)}
+                </p>
               </div>
               <TrendingUp className="h-8 w-8 text-green-500" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Tax Deductions</p>
-                <p className="text-2xl font-bold text-purple-600">{formatCurrency(totalSummary.totalDeductions)}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Tax Deductions
+                </p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {formatCurrency(totalSummary.totalDeductions)}
+                </p>
               </div>
               <FileText className="h-8 w-8 text-purple-500" />
             </div>
@@ -255,27 +329,37 @@ export default function TaxCalculationsScreen() {
               <div className="grid grid-cols-4 gap-4">
                 <div>
                   <Label>Pay Period</Label>
-                  <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                  <Select
+                    value={selectedPeriod}
+                    onValueChange={setSelectedPeriod}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="current">Current Period (Jan 2024)</SelectItem>
-                      <SelectItem value="previous">Previous Period (Dec 2023)</SelectItem>
+                      <SelectItem value="current">
+                        Current Period (Jan 2024)
+                      </SelectItem>
+                      <SelectItem value="previous">
+                        Previous Period (Dec 2023)
+                      </SelectItem>
                       <SelectItem value="ytd">Year to Date</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label>Employee</Label>
-                  <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+                  <Select
+                    value={selectedEmployee}
+                    onValueChange={setSelectedEmployee}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Employees</SelectItem>
-                      {employeeTaxData.map(emp => (
+                      {employeeTaxData.map((emp) => (
                         <SelectItem key={emp.employeeId} value={emp.employeeId}>
                           {emp.name}
                         </SelectItem>
@@ -283,14 +367,14 @@ export default function TaxCalculationsScreen() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="flex items-end">
                   <Button onClick={calculateTax} disabled={isCalculating}>
                     <Calculator className="h-4 w-4 mr-2" />
                     {isCalculating ? "Calculating..." : "Recalculate"}
                   </Button>
                 </div>
-                
+
                 <div className="flex items-end">
                   <Button variant="outline" onClick={exportTaxReport}>
                     <Download className="h-4 w-4 mr-2" />
@@ -322,33 +406,51 @@ export default function TaxCalculationsScreen() {
                 </TableHeader>
                 <TableBody>
                   {employeeTaxData
-                    .filter(emp => selectedEmployee === "all" || emp.employeeId === selectedEmployee)
+                    .filter(
+                      (emp) =>
+                        selectedEmployee === "all" ||
+                        emp.employeeId === selectedEmployee,
+                    )
                     .map((employee) => (
-                    <TableRow key={employee.employeeId}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{employee.name}</p>
-                          <p className="text-sm text-gray-500">{employee.employeeId}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>{formatCurrency(employee.grossPay)}</TableCell>
-                      <TableCell className="text-red-600">{formatCurrency(employee.paye)}</TableCell>
-                      <TableCell className="text-blue-600">{formatCurrency(employee.uif)}</TableCell>
-                      <TableCell className="text-green-600">{formatCurrency(employee.sdl)}</TableCell>
-                      <TableCell className="font-medium">{formatCurrency(employee.totalDeductions)}</TableCell>
-                      <TableCell className="font-medium text-green-600">{formatCurrency(employee.netPay)}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                      <TableRow key={employee.employeeId}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{employee.name}</p>
+                            <p className="text-sm text-gray-500">
+                              {employee.employeeId}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {formatCurrency(employee.grossPay)}
+                        </TableCell>
+                        <TableCell className="text-red-600">
+                          {formatCurrency(employee.paye)}
+                        </TableCell>
+                        <TableCell className="text-blue-600">
+                          {formatCurrency(employee.uif)}
+                        </TableCell>
+                        <TableCell className="text-green-600">
+                          {formatCurrency(employee.sdl)}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {formatCurrency(employee.totalDeductions)}
+                        </TableCell>
+                        <TableCell className="font-medium text-green-600">
+                          {formatCurrency(employee.netPay)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="outline">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
@@ -360,7 +462,10 @@ export default function TaxCalculationsScreen() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 Tax Brackets (2024)
-                <Dialog open={showBracketDialog} onOpenChange={setShowBracketDialog}>
+                <Dialog
+                  open={showBracketDialog}
+                  onOpenChange={setShowBracketDialog}
+                >
                   <DialogTrigger asChild>
                     <Button>
                       <Plus className="h-4 w-4 mr-2" />
@@ -414,7 +519,10 @@ export default function TaxCalculationsScreen() {
                   {taxBrackets.map((bracket) => (
                     <TableRow key={bracket.id}>
                       <TableCell>
-                        {formatCurrency(bracket.minIncome)} - {bracket.maxIncome === Infinity ? "∞" : formatCurrency(bracket.maxIncome)}
+                        {formatCurrency(bracket.minIncome)} -{" "}
+                        {bracket.maxIncome === Infinity
+                          ? "∞"
+                          : formatCurrency(bracket.maxIncome)}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">{bracket.rate}%</Badge>
@@ -442,39 +550,64 @@ export default function TaxCalculationsScreen() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>UIF Rate (%)</Label>
-                  <Input 
-                    type="number" 
+                  <Input
+                    type="number"
                     value={taxSettings.uifRate}
-                    onChange={(e) => setTaxSettings(prev => ({ ...prev, uifRate: parseFloat(e.target.value) }))}
+                    onChange={(e) =>
+                      setTaxSettings((prev) => ({
+                        ...prev,
+                        uifRate: parseFloat(e.target.value),
+                      }))
+                    }
                   />
                 </div>
                 <div>
                   <Label>UIF Monthly Cap</Label>
-                  <Input 
-                    type="number" 
+                  <Input
+                    type="number"
                     value={taxSettings.uifCap}
-                    onChange={(e) => setTaxSettings(prev => ({ ...prev, uifCap: parseFloat(e.target.value) }))}
+                    onChange={(e) =>
+                      setTaxSettings((prev) => ({
+                        ...prev,
+                        uifCap: parseFloat(e.target.value),
+                      }))
+                    }
                   />
                 </div>
                 <div>
                   <Label>SDL Rate (%)</Label>
-                  <Input 
-                    type="number" 
+                  <Input
+                    type="number"
                     value={taxSettings.sdlRate}
-                    onChange={(e) => setTaxSettings(prev => ({ ...prev, sdlRate: parseFloat(e.target.value) }))}
+                    onChange={(e) =>
+                      setTaxSettings((prev) => ({
+                        ...prev,
+                        sdlRate: parseFloat(e.target.value),
+                      }))
+                    }
                   />
                 </div>
                 <div>
                   <Label>Medical Aid Credit</Label>
-                  <Input 
-                    type="number" 
+                  <Input
+                    type="number"
                     value={taxSettings.medicalAidCredit}
-                    onChange={(e) => setTaxSettings(prev => ({ ...prev, medicalAidCredit: parseFloat(e.target.value) }))}
+                    onChange={(e) =>
+                      setTaxSettings((prev) => ({
+                        ...prev,
+                        medicalAidCredit: parseFloat(e.target.value),
+                      }))
+                    }
                   />
                 </div>
                 <div>
                   <Label>Tax Year</Label>
-                  <Select value={taxSettings.taxYear} onValueChange={(value) => setTaxSettings(prev => ({ ...prev, taxYear: value }))}>
+                  <Select
+                    value={taxSettings.taxYear}
+                    onValueChange={(value) =>
+                      setTaxSettings((prev) => ({ ...prev, taxYear: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -486,7 +619,7 @@ export default function TaxCalculationsScreen() {
                   </Select>
                 </div>
               </div>
-              
+
               <div className="flex gap-2 pt-4">
                 <Button>Save Settings</Button>
                 <Button variant="outline">Reset to Defaults</Button>

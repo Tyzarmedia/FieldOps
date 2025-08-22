@@ -59,7 +59,9 @@ interface BankDetails {
 
 export default function BankDetailsScreen() {
   const [bankDetails, setBankDetails] = useState<BankDetails[]>([]);
-  const [selectedEmployee, setSelectedEmployee] = useState<BankDetails | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<BankDetails | null>(
+    null,
+  );
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDepartment, setFilterDepartment] = useState("all");
@@ -155,15 +157,18 @@ export default function BankDetailsScreen() {
     }
   };
 
-  const filteredDetails = bankDetails.filter(detail => {
-    const matchesSearch = searchTerm === "" || 
+  const filteredDetails = bankDetails.filter((detail) => {
+    const matchesSearch =
+      searchTerm === "" ||
       detail.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       detail.employeeNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       detail.accountNumber.includes(searchTerm);
-    
-    const matchesDepartment = filterDepartment === "all" || detail.department === filterDepartment;
-    const matchesStatus = filterStatus === "all" || detail.status === filterStatus;
-    
+
+    const matchesDepartment =
+      filterDepartment === "all" || detail.department === filterDepartment;
+    const matchesStatus =
+      filterStatus === "all" || detail.status === filterStatus;
+
     return matchesSearch && matchesDepartment && matchesStatus;
   });
 
@@ -185,9 +190,9 @@ export default function BankDetailsScreen() {
 
     try {
       // Update bank details
-      setBankDetails(prev => 
-        prev.map(detail => 
-          detail.id === selectedEmployee.id 
+      setBankDetails((prev) =>
+        prev.map((detail) =>
+          detail.id === selectedEmployee.id
             ? {
                 ...detail,
                 ...editForm,
@@ -195,8 +200,8 @@ export default function BankDetailsScreen() {
                 status: "pending" as const,
                 isVerified: false,
               }
-            : detail
-        )
+            : detail,
+        ),
       );
 
       setShowEditDialog(false);
@@ -210,17 +215,17 @@ export default function BankDetailsScreen() {
 
   const handleVerify = async (id: string) => {
     try {
-      setBankDetails(prev => 
-        prev.map(detail => 
-          detail.id === id 
+      setBankDetails((prev) =>
+        prev.map((detail) =>
+          detail.id === id
             ? {
                 ...detail,
                 isVerified: true,
                 verificationDate: new Date().toISOString(),
                 status: "active" as const,
               }
-            : detail
-        )
+            : detail,
+        ),
       );
 
       alert("Bank details verified successfully!");
@@ -241,22 +246,24 @@ export default function BankDetailsScreen() {
   const exportBankDetails = () => {
     const csvContent = [
       "Employee Name,Employee Number,Bank Name,Branch Code,Account Number,Account Type,Status",
-      ...filteredDetails.map(detail => [
-        detail.employeeName,
-        detail.employeeNumber,
-        detail.bankName,
-        detail.branchCode,
-        detail.accountNumber,
-        detail.accountType,
-        detail.status,
-      ].join(","))
+      ...filteredDetails.map((detail) =>
+        [
+          detail.employeeName,
+          detail.employeeNumber,
+          detail.bankName,
+          detail.branchCode,
+          detail.accountNumber,
+          detail.accountType,
+          detail.status,
+        ].join(","),
+      ),
     ].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `bank-details-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `bank-details-${new Date().toISOString().split("T")[0]}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -265,11 +272,16 @@ export default function BankDetailsScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active": return "bg-green-100 text-green-800";
-      case "pending": return "bg-yellow-100 text-yellow-800";
-      case "suspended": return "bg-red-100 text-red-800";
-      case "incomplete": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "suspended":
+        return "bg-red-100 text-red-800";
+      case "incomplete":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -283,9 +295,9 @@ export default function BankDetailsScreen() {
 
   const stats = {
     total: bankDetails.length,
-    verified: bankDetails.filter(d => d.isVerified).length,
-    pending: bankDetails.filter(d => d.status === "pending").length,
-    incomplete: bankDetails.filter(d => d.status === "incomplete").length,
+    verified: bankDetails.filter((d) => d.isVerified).length,
+    pending: bankDetails.filter((d) => d.status === "pending").length,
+    incomplete: bankDetails.filter((d) => d.status === "incomplete").length,
   };
 
   return (
@@ -294,8 +306,12 @@ export default function BankDetailsScreen() {
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Bank Details Management</h1>
-            <p className="text-gray-600 mt-1">Manage employee banking information and verification</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Bank Details Management
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Manage employee banking information and verification
+            </p>
           </div>
           <div className="flex gap-2">
             <Button onClick={exportBankDetails} variant="outline">
@@ -330,7 +346,9 @@ export default function BankDetailsScreen() {
               <CheckCircle className="w-8 h-8 text-green-600" />
               <div>
                 <p className="text-sm text-gray-600">Verified</p>
-                <p className="text-2xl font-bold text-green-600">{stats.verified}</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {stats.verified}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -342,7 +360,9 @@ export default function BankDetailsScreen() {
               <AlertTriangle className="w-8 h-8 text-yellow-600" />
               <div>
                 <p className="text-sm text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+                <p className="text-2xl font-bold text-yellow-600">
+                  {stats.pending}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -354,7 +374,9 @@ export default function BankDetailsScreen() {
               <AlertTriangle className="w-8 h-8 text-red-600" />
               <div>
                 <p className="text-sm text-gray-600">Incomplete</p>
-                <p className="text-2xl font-bold text-red-600">{stats.incomplete}</p>
+                <p className="text-2xl font-bold text-red-600">
+                  {stats.incomplete}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -374,13 +396,18 @@ export default function BankDetailsScreen() {
                 className="pl-10"
               />
             </div>
-            <Select value={filterDepartment} onValueChange={setFilterDepartment}>
+            <Select
+              value={filterDepartment}
+              onValueChange={setFilterDepartment}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Filter by department" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Departments</SelectItem>
-                <SelectItem value="Field Operations">Field Operations</SelectItem>
+                <SelectItem value="Field Operations">
+                  Field Operations
+                </SelectItem>
                 <SelectItem value="HR">HR</SelectItem>
                 <SelectItem value="IT">IT</SelectItem>
               </SelectContent>
@@ -430,28 +457,39 @@ export default function BankDetailsScreen() {
                   <TableCell>
                     <div>
                       <div className="font-medium">{detail.employeeName}</div>
-                      <div className="text-sm text-gray-600">{detail.employeeNumber}</div>
-                      <div className="text-sm text-gray-600">{detail.department}</div>
+                      <div className="text-sm text-gray-600">
+                        {detail.employeeNumber}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {detail.department}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-medium">{detail.bankName || "Not provided"}</div>
+                      <div className="font-medium">
+                        {detail.bankName || "Not provided"}
+                      </div>
                       <div className="text-sm text-gray-600">
-                        {detail.branchCode && detail.branchName ? 
-                          `${detail.branchCode} - ${detail.branchName}` : 
-                          "Branch not specified"
-                        }
+                        {detail.branchCode && detail.branchName
+                          ? `${detail.branchCode} - ${detail.branchName}`
+                          : "Branch not specified"}
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div>
                       <div className="font-mono text-sm">
-                        {detail.accountNumber ? `****${detail.accountNumber.slice(-4)}` : "Not provided"}
+                        {detail.accountNumber
+                          ? `****${detail.accountNumber.slice(-4)}`
+                          : "Not provided"}
                       </div>
-                      <div className="text-sm text-gray-600">{detail.accountType}</div>
-                      <div className="text-sm text-gray-600">{detail.accountHolderName}</div>
+                      <div className="text-sm text-gray-600">
+                        {detail.accountType}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {detail.accountHolderName}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -513,12 +551,19 @@ export default function BankDetailsScreen() {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Bank Details - {selectedEmployee?.employeeName}</DialogTitle>
+            <DialogTitle>
+              Edit Bank Details - {selectedEmployee?.employeeName}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <Label>Bank Name</Label>
-              <Select value={editForm.bankName} onValueChange={(value) => setEditForm(prev => ({ ...prev, bankName: value }))}>
+              <Select
+                value={editForm.bankName}
+                onValueChange={(value) =>
+                  setEditForm((prev) => ({ ...prev, bankName: value }))
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select bank" />
                 </SelectTrigger>
@@ -537,7 +582,12 @@ export default function BankDetailsScreen() {
                 <Label>Branch Code</Label>
                 <Input
                   value={editForm.branchCode}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, branchCode: e.target.value }))}
+                  onChange={(e) =>
+                    setEditForm((prev) => ({
+                      ...prev,
+                      branchCode: e.target.value,
+                    }))
+                  }
                   placeholder="e.g., 051001"
                   maxLength={6}
                 />
@@ -546,7 +596,12 @@ export default function BankDetailsScreen() {
                 <Label>Branch Name</Label>
                 <Input
                   value={editForm.branchName}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, branchName: e.target.value }))}
+                  onChange={(e) =>
+                    setEditForm((prev) => ({
+                      ...prev,
+                      branchName: e.target.value,
+                    }))
+                  }
                   placeholder="e.g., East London"
                 />
               </div>
@@ -556,21 +611,33 @@ export default function BankDetailsScreen() {
               <Label>Account Number</Label>
               <Input
                 value={editForm.accountNumber}
-                onChange={(e) => setEditForm(prev => ({ ...prev, accountNumber: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((prev) => ({
+                    ...prev,
+                    accountNumber: e.target.value,
+                  }))
+                }
                 placeholder="Account number"
               />
             </div>
 
             <div>
               <Label>Account Type</Label>
-              <Select value={editForm.accountType} onValueChange={(value) => setEditForm(prev => ({ ...prev, accountType: value }))}>
+              <Select
+                value={editForm.accountType}
+                onValueChange={(value) =>
+                  setEditForm((prev) => ({ ...prev, accountType: value }))
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select account type" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Current">Current Account</SelectItem>
                   <SelectItem value="Savings">Savings Account</SelectItem>
-                  <SelectItem value="Transmission">Transmission Account</SelectItem>
+                  <SelectItem value="Transmission">
+                    Transmission Account
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -579,7 +646,12 @@ export default function BankDetailsScreen() {
               <Label>Account Holder Name</Label>
               <Input
                 value={editForm.accountHolderName}
-                onChange={(e) => setEditForm(prev => ({ ...prev, accountHolderName: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((prev) => ({
+                    ...prev,
+                    accountHolderName: e.target.value,
+                  }))
+                }
                 placeholder="Full name as per bank records"
               />
             </div>
@@ -588,7 +660,10 @@ export default function BankDetailsScreen() {
               <Button onClick={handleSaveEdit} className="flex-1">
                 Save Changes
               </Button>
-              <Button variant="outline" onClick={() => setShowEditDialog(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowEditDialog(false)}
+              >
                 Cancel
               </Button>
             </div>
@@ -597,38 +672,50 @@ export default function BankDetailsScreen() {
       </Dialog>
 
       {/* View Details Dialog */}
-      <Dialog open={!!selectedEmployee && !showEditDialog} onOpenChange={() => setSelectedEmployee(null)}>
+      <Dialog
+        open={!!selectedEmployee && !showEditDialog}
+        onOpenChange={() => setSelectedEmployee(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Bank Details - {selectedEmployee?.employeeName}</DialogTitle>
+            <DialogTitle>
+              Bank Details - {selectedEmployee?.employeeName}
+            </DialogTitle>
           </DialogHeader>
-          
+
           {selectedEmployee && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Employee</Label>
-                  <p className="text-sm font-medium">{selectedEmployee.employeeName}</p>
-                  <p className="text-sm text-gray-600">{selectedEmployee.employeeNumber}</p>
+                  <p className="text-sm font-medium">
+                    {selectedEmployee.employeeName}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {selectedEmployee.employeeNumber}
+                  </p>
                 </div>
                 <div>
                   <Label>Department</Label>
-                  <p className="text-sm font-medium">{selectedEmployee.department}</p>
+                  <p className="text-sm font-medium">
+                    {selectedEmployee.department}
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Bank Name</Label>
-                  <p className="text-sm font-medium">{selectedEmployee.bankName || "Not provided"}</p>
+                  <p className="text-sm font-medium">
+                    {selectedEmployee.bankName || "Not provided"}
+                  </p>
                 </div>
                 <div>
                   <Label>Branch</Label>
                   <p className="text-sm font-medium">
-                    {selectedEmployee.branchCode && selectedEmployee.branchName ? 
-                      `${selectedEmployee.branchCode} - ${selectedEmployee.branchName}` : 
-                      "Not provided"
-                    }
+                    {selectedEmployee.branchCode && selectedEmployee.branchName
+                      ? `${selectedEmployee.branchCode} - ${selectedEmployee.branchName}`
+                      : "Not provided"}
                   </p>
                 </div>
               </div>
@@ -636,17 +723,23 @@ export default function BankDetailsScreen() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Account Number</Label>
-                  <p className="text-sm font-mono">{selectedEmployee.accountNumber || "Not provided"}</p>
+                  <p className="text-sm font-mono">
+                    {selectedEmployee.accountNumber || "Not provided"}
+                  </p>
                 </div>
                 <div>
                   <Label>Account Type</Label>
-                  <p className="text-sm font-medium">{selectedEmployee.accountType || "Not provided"}</p>
+                  <p className="text-sm font-medium">
+                    {selectedEmployee.accountType || "Not provided"}
+                  </p>
                 </div>
               </div>
 
               <div>
                 <Label>Account Holder Name</Label>
-                <p className="text-sm font-medium">{selectedEmployee.accountHolderName || "Not provided"}</p>
+                <p className="text-sm font-medium">
+                  {selectedEmployee.accountHolderName || "Not provided"}
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -654,7 +747,9 @@ export default function BankDetailsScreen() {
                   <Label>Verification Status</Label>
                   <div className="flex items-center gap-2 mt-1">
                     {getVerificationIcon(selectedEmployee.isVerified)}
-                    <span className={`text-sm ${selectedEmployee.isVerified ? 'text-green-600' : 'text-yellow-600'}`}>
+                    <span
+                      className={`text-sm ${selectedEmployee.isVerified ? "text-green-600" : "text-yellow-600"}`}
+                    >
                       {selectedEmployee.isVerified ? "Verified" : "Unverified"}
                     </span>
                   </div>
@@ -680,34 +775,40 @@ export default function BankDetailsScreen() {
                   <div>
                     <Label>Verification Date</Label>
                     <p className="text-sm text-gray-600">
-                      {new Date(selectedEmployee.verificationDate).toLocaleString()}
+                      {new Date(
+                        selectedEmployee.verificationDate,
+                      ).toLocaleString()}
                     </p>
                   </div>
                 )}
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button 
-                  onClick={() => handleEdit(selectedEmployee)} 
+                <Button
+                  onClick={() => handleEdit(selectedEmployee)}
                   className="flex-1"
                 >
                   <Edit className="w-4 h-4 mr-2" />
                   Edit Details
                 </Button>
-                {!selectedEmployee.isVerified && selectedEmployee.accountNumber && (
-                  <Button 
-                    onClick={() => {
-                      handleVerify(selectedEmployee.id);
-                      setSelectedEmployee(null);
-                    }}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    <Shield className="w-4 h-4 mr-2" />
-                    Verify
-                  </Button>
-                )}
-                <Button variant="outline" onClick={() => setSelectedEmployee(null)}>
+                {!selectedEmployee.isVerified &&
+                  selectedEmployee.accountNumber && (
+                    <Button
+                      onClick={() => {
+                        handleVerify(selectedEmployee.id);
+                        setSelectedEmployee(null);
+                      }}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      Verify
+                    </Button>
+                  )}
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedEmployee(null)}
+                >
                   Close
                 </Button>
               </div>

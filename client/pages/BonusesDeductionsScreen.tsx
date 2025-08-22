@@ -72,7 +72,9 @@ interface Summary {
 }
 
 export default function BonusesDeductionsScreen() {
-  const [bonusesDeductions, setBonusesDeductions] = useState<BonusDeduction[]>([]);
+  const [bonusesDeductions, setBonusesDeductions] = useState<BonusDeduction[]>(
+    [],
+  );
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState<BonusDeduction | null>(null);
@@ -90,7 +92,7 @@ export default function BonusesDeductionsScreen() {
     category: "",
     description: "",
     amount: "",
-    effectiveDate: new Date().toISOString().split('T')[0],
+    effectiveDate: new Date().toISOString().split("T")[0],
     notes: "",
   });
 
@@ -149,7 +151,8 @@ export default function BonusesDeductionsScreen() {
           status: "pending",
           createdBy: "Mike Thompson",
           createdAt: "2025-01-22T11:20:00Z",
-          notes: "Equipment damaged during installation - employee responsibility",
+          notes:
+            "Equipment damaged during installation - employee responsibility",
         },
         {
           id: "BD004",
@@ -195,31 +198,45 @@ export default function BonusesDeductionsScreen() {
   };
 
   const calculateSummary = (data: BonusDeduction[]) => {
-    const bonuses = data.filter(item => item.type === "bonus");
-    const deductions = data.filter(item => item.type === "deduction");
-    
+    const bonuses = data.filter((item) => item.type === "bonus");
+    const deductions = data.filter((item) => item.type === "deduction");
+
     const summary: Summary = {
       totalBonuses: bonuses.reduce((sum, item) => sum + item.amount, 0),
       totalDeductions: deductions.reduce((sum, item) => sum + item.amount, 0),
-      pendingBonuses: bonuses.filter(item => item.status === "pending").reduce((sum, item) => sum + item.amount, 0),
-      pendingDeductions: deductions.filter(item => item.status === "pending").reduce((sum, item) => sum + item.amount, 0),
-      employeesAffected: new Set(data.map(item => item.employeeId)).size,
-      averageBonus: bonuses.length > 0 ? bonuses.reduce((sum, item) => sum + item.amount, 0) / bonuses.length : 0,
-      averageDeduction: deductions.length > 0 ? deductions.reduce((sum, item) => sum + item.amount, 0) / deductions.length : 0,
+      pendingBonuses: bonuses
+        .filter((item) => item.status === "pending")
+        .reduce((sum, item) => sum + item.amount, 0),
+      pendingDeductions: deductions
+        .filter((item) => item.status === "pending")
+        .reduce((sum, item) => sum + item.amount, 0),
+      employeesAffected: new Set(data.map((item) => item.employeeId)).size,
+      averageBonus:
+        bonuses.length > 0
+          ? bonuses.reduce((sum, item) => sum + item.amount, 0) / bonuses.length
+          : 0,
+      averageDeduction:
+        deductions.length > 0
+          ? deductions.reduce((sum, item) => sum + item.amount, 0) /
+            deductions.length
+          : 0,
     };
-    
+
     setSummary(summary);
   };
 
-  const filteredItems = bonusesDeductions.filter(item => {
+  const filteredItems = bonusesDeductions.filter((item) => {
     const matchesType = filterType === "all" || item.type === filterType;
-    const matchesDepartment = filterDepartment === "all" || item.department === filterDepartment;
-    const matchesStatus = filterStatus === "all" || item.status === filterStatus;
-    const matchesSearch = searchTerm === "" || 
+    const matchesDepartment =
+      filterDepartment === "all" || item.department === filterDepartment;
+    const matchesStatus =
+      filterStatus === "all" || item.status === filterStatus;
+    const matchesSearch =
+      searchTerm === "" ||
       item.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.employeeNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     return matchesType && matchesDepartment && matchesStatus && matchesSearch;
   });
 
@@ -247,7 +264,7 @@ export default function BonusesDeductionsScreen() {
         notes: formData.notes,
       };
 
-      setBonusesDeductions(prev => [newItem, ...prev]);
+      setBonusesDeductions((prev) => [newItem, ...prev]);
       calculateSummary([newItem, ...bonusesDeductions]);
       setShowAddDialog(false);
       setFormData({
@@ -256,10 +273,10 @@ export default function BonusesDeductionsScreen() {
         category: "",
         description: "",
         amount: "",
-        effectiveDate: new Date().toISOString().split('T')[0],
+        effectiveDate: new Date().toISOString().split("T")[0],
         notes: "",
       });
-      
+
       alert("Bonus/Deduction added successfully!");
     } catch (error) {
       console.error("Error adding bonus/deduction:", error);
@@ -269,12 +286,16 @@ export default function BonusesDeductionsScreen() {
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
-      setBonusesDeductions(prev => 
-        prev.map(item => 
-          item.id === id 
-            ? { ...item, status: newStatus as any, processedAt: new Date().toISOString() }
-            : item
-        )
+      setBonusesDeductions((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                status: newStatus as any,
+                processedAt: new Date().toISOString(),
+              }
+            : item,
+        ),
       );
       alert(`Status updated to ${newStatus}`);
     } catch (error) {
@@ -285,16 +306,23 @@ export default function BonusesDeductionsScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "approved": return "bg-green-100 text-green-800";
-      case "processed": return "bg-blue-100 text-blue-800";
-      case "pending": return "bg-yellow-100 text-yellow-800";
-      case "rejected": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "approved":
+        return "bg-green-100 text-green-800";
+      case "processed":
+        return "bg-blue-100 text-blue-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getTypeColor = (type: string) => {
-    return type === "bonus" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+    return type === "bonus"
+      ? "bg-green-100 text-green-800"
+      : "bg-red-100 text-red-800";
   };
 
   const formatCurrency = (amount: number) => {
@@ -307,22 +335,24 @@ export default function BonusesDeductionsScreen() {
   const exportData = () => {
     const csvContent = [
       "Employee,Type,Category,Description,Amount,Status,Effective Date",
-      ...filteredItems.map(item => [
-        item.employeeName,
-        item.type,
-        item.category,
-        item.description,
-        item.amount.toString(),
-        item.status,
-        item.effectiveDate,
-      ].join(","))
+      ...filteredItems.map((item) =>
+        [
+          item.employeeName,
+          item.type,
+          item.category,
+          item.description,
+          item.amount.toString(),
+          item.status,
+          item.effectiveDate,
+        ].join(","),
+      ),
     ].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `bonuses-deductions-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `bonuses-deductions-${new Date().toISOString().split("T")[0]}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -335,11 +365,18 @@ export default function BonusesDeductionsScreen() {
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Bonuses & Deductions</h1>
-            <p className="text-gray-600 mt-1">Manage employee bonuses and deductions</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Bonuses & Deductions
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Manage employee bonuses and deductions
+            </p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => setShowAddDialog(true)} className="bg-blue-600 hover:bg-blue-700">
+            <Button
+              onClick={() => setShowAddDialog(true)}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add New
             </Button>
@@ -351,7 +388,11 @@ export default function BonusesDeductionsScreen() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="bonuses">Bonuses</TabsTrigger>
@@ -395,8 +436,12 @@ export default function BonusesDeductionsScreen() {
                   <div className="flex items-center gap-3">
                     <Users className="w-8 h-8 text-blue-600" />
                     <div>
-                      <p className="text-sm text-gray-600">Employees Affected</p>
-                      <p className="text-2xl font-bold">{summary.employeesAffected}</p>
+                      <p className="text-sm text-gray-600">
+                        Employees Affected
+                      </p>
+                      <p className="text-2xl font-bold">
+                        {summary.employeesAffected}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -409,7 +454,9 @@ export default function BonusesDeductionsScreen() {
                     <div>
                       <p className="text-sm text-gray-600">Net Impact</p>
                       <p className="text-xl font-bold">
-                        {formatCurrency(summary.totalBonuses - summary.totalDeductions)}
+                        {formatCurrency(
+                          summary.totalBonuses - summary.totalDeductions,
+                        )}
                       </p>
                     </div>
                   </div>
@@ -440,13 +487,18 @@ export default function BonusesDeductionsScreen() {
                     <SelectItem value="deduction">Deductions Only</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select value={filterDepartment} onValueChange={setFilterDepartment}>
+                <Select
+                  value={filterDepartment}
+                  onValueChange={setFilterDepartment}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by department" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
-                    <SelectItem value="Field Operations">Field Operations</SelectItem>
+                    <SelectItem value="Field Operations">
+                      Field Operations
+                    </SelectItem>
                     <SelectItem value="HR">HR</SelectItem>
                     <SelectItem value="IT">IT</SelectItem>
                   </SelectContent>
@@ -491,7 +543,9 @@ export default function BonusesDeductionsScreen() {
                       <TableCell>
                         <div>
                           <div className="font-medium">{item.employeeName}</div>
-                          <div className="text-sm text-gray-600">{item.employeeNumber}</div>
+                          <div className="text-sm text-gray-600">
+                            {item.employeeNumber}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -500,15 +554,20 @@ export default function BonusesDeductionsScreen() {
                         </Badge>
                       </TableCell>
                       <TableCell>{item.category}</TableCell>
-                      <TableCell className={`font-medium ${item.type === 'bonus' ? 'text-green-600' : 'text-red-600'}`}>
-                        {item.type === 'bonus' ? '+' : '-'}{formatCurrency(item.amount)}
+                      <TableCell
+                        className={`font-medium ${item.type === "bonus" ? "text-green-600" : "text-red-600"}`}
+                      >
+                        {item.type === "bonus" ? "+" : "-"}
+                        {formatCurrency(item.amount)}
                       </TableCell>
                       <TableCell>
                         <Badge className={getStatusColor(item.status)}>
                           {item.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>{new Date(item.effectiveDate).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        {new Date(item.effectiveDate).toLocaleDateString()}
+                      </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
                           <Button
@@ -523,14 +582,18 @@ export default function BonusesDeductionsScreen() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => handleUpdateStatus(item.id, "approved")}
+                                onClick={() =>
+                                  handleUpdateStatus(item.id, "approved")
+                                }
                               >
                                 <CheckCircle className="w-4 h-4 text-green-600" />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => handleUpdateStatus(item.id, "rejected")}
+                                onClick={() =>
+                                  handleUpdateStatus(item.id, "rejected")
+                                }
                               >
                                 <AlertTriangle className="w-4 h-4 text-red-600" />
                               </Button>
@@ -567,35 +630,41 @@ export default function BonusesDeductionsScreen() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredItems.filter(item => item.type === "bonus").map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{item.employeeName}</div>
-                          <div className="text-sm text-gray-600">{item.department}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{item.category}</TableCell>
-                      <TableCell>{item.description}</TableCell>
-                      <TableCell className="font-medium text-green-600">
-                        {formatCurrency(item.amount)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(item.status)}>
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedItem(item)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {filteredItems
+                    .filter((item) => item.type === "bonus")
+                    .map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">
+                              {item.employeeName}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              {item.department}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{item.category}</TableCell>
+                        <TableCell>{item.description}</TableCell>
+                        <TableCell className="font-medium text-green-600">
+                          {formatCurrency(item.amount)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(item.status)}>
+                            {item.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedItem(item)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
@@ -623,35 +692,41 @@ export default function BonusesDeductionsScreen() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredItems.filter(item => item.type === "deduction").map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{item.employeeName}</div>
-                          <div className="text-sm text-gray-600">{item.department}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{item.category}</TableCell>
-                      <TableCell>{item.description}</TableCell>
-                      <TableCell className="font-medium text-red-600">
-                        {formatCurrency(item.amount)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(item.status)}>
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedItem(item)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {filteredItems
+                    .filter((item) => item.type === "deduction")
+                    .map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">
+                              {item.employeeName}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              {item.department}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{item.category}</TableCell>
+                        <TableCell>{item.description}</TableCell>
+                        <TableCell className="font-medium text-red-600">
+                          {formatCurrency(item.amount)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(item.status)}>
+                            {item.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedItem(item)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
@@ -668,10 +743,10 @@ export default function BonusesDeductionsScreen() {
           <div className="space-y-4">
             <div>
               <Label>Type</Label>
-              <Select 
-                value={formData.type} 
-                onValueChange={(value: "bonus" | "deduction") => 
-                  setFormData(prev => ({ ...prev, type: value }))
+              <Select
+                value={formData.type}
+                onValueChange={(value: "bonus" | "deduction") =>
+                  setFormData((prev) => ({ ...prev, type: value }))
                 }
               >
                 <SelectTrigger>
@@ -688,16 +763,23 @@ export default function BonusesDeductionsScreen() {
               <Label>Employee ID</Label>
               <Input
                 value={formData.employeeId}
-                onChange={(e) => setFormData(prev => ({ ...prev, employeeId: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    employeeId: e.target.value,
+                  }))
+                }
                 placeholder="Enter employee ID"
               />
             </div>
 
             <div>
               <Label>Category</Label>
-              <Select 
-                value={formData.category} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+              <Select
+                value={formData.category}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, category: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
@@ -705,16 +787,26 @@ export default function BonusesDeductionsScreen() {
                 <SelectContent>
                   {formData.type === "bonus" ? (
                     <>
-                      <SelectItem value="Performance Bonus">Performance Bonus</SelectItem>
-                      <SelectItem value="Overtime Bonus">Overtime Bonus</SelectItem>
+                      <SelectItem value="Performance Bonus">
+                        Performance Bonus
+                      </SelectItem>
+                      <SelectItem value="Overtime Bonus">
+                        Overtime Bonus
+                      </SelectItem>
                       <SelectItem value="Safety Bonus">Safety Bonus</SelectItem>
                       <SelectItem value="Commission">Commission</SelectItem>
                     </>
                   ) : (
                     <>
-                      <SelectItem value="Equipment Damage">Equipment Damage</SelectItem>
-                      <SelectItem value="Advance Repayment">Advance Repayment</SelectItem>
-                      <SelectItem value="Loan Repayment">Loan Repayment</SelectItem>
+                      <SelectItem value="Equipment Damage">
+                        Equipment Damage
+                      </SelectItem>
+                      <SelectItem value="Advance Repayment">
+                        Advance Repayment
+                      </SelectItem>
+                      <SelectItem value="Loan Repayment">
+                        Loan Repayment
+                      </SelectItem>
                       <SelectItem value="Other">Other</SelectItem>
                     </>
                   )}
@@ -728,7 +820,9 @@ export default function BonusesDeductionsScreen() {
                 type="number"
                 step="0.01"
                 value={formData.amount}
-                onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, amount: e.target.value }))
+                }
                 placeholder="0.00"
               />
             </div>
@@ -737,7 +831,12 @@ export default function BonusesDeductionsScreen() {
               <Label>Description</Label>
               <Textarea
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 placeholder="Enter description..."
                 rows={3}
               />
@@ -748,7 +847,12 @@ export default function BonusesDeductionsScreen() {
               <Input
                 type="date"
                 value={formData.effectiveDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, effectiveDate: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    effectiveDate: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -772,18 +876,24 @@ export default function BonusesDeductionsScreen() {
               {selectedItem?.type === "bonus" ? "Bonus" : "Deduction"} Details
             </DialogTitle>
           </DialogHeader>
-          
+
           {selectedItem && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Employee</Label>
-                  <p className="text-sm font-medium">{selectedItem.employeeName}</p>
-                  <p className="text-sm text-gray-600">{selectedItem.employeeNumber}</p>
+                  <p className="text-sm font-medium">
+                    {selectedItem.employeeName}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {selectedItem.employeeNumber}
+                  </p>
                 </div>
                 <div>
                   <Label>Department</Label>
-                  <p className="text-sm font-medium">{selectedItem.department}</p>
+                  <p className="text-sm font-medium">
+                    {selectedItem.department}
+                  </p>
                 </div>
               </div>
 
@@ -802,14 +912,19 @@ export default function BonusesDeductionsScreen() {
 
               <div>
                 <Label>Description</Label>
-                <p className="text-sm bg-gray-50 p-3 rounded border">{selectedItem.description}</p>
+                <p className="text-sm bg-gray-50 p-3 rounded border">
+                  {selectedItem.description}
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Amount</Label>
-                  <p className={`text-lg font-bold ${selectedItem.type === 'bonus' ? 'text-green-600' : 'text-red-600'}`}>
-                    {selectedItem.type === 'bonus' ? '+' : '-'}{formatCurrency(selectedItem.amount)}
+                  <p
+                    className={`text-lg font-bold ${selectedItem.type === "bonus" ? "text-green-600" : "text-red-600"}`}
+                  >
+                    {selectedItem.type === "bonus" ? "+" : "-"}
+                    {formatCurrency(selectedItem.amount)}
                   </p>
                 </div>
                 <div>
@@ -829,21 +944,25 @@ export default function BonusesDeductionsScreen() {
                 </div>
                 <div>
                   <Label>Created By</Label>
-                  <p className="text-sm font-medium">{selectedItem.createdBy}</p>
+                  <p className="text-sm font-medium">
+                    {selectedItem.createdBy}
+                  </p>
                 </div>
               </div>
 
               {selectedItem.notes && (
                 <div>
                   <Label>Notes</Label>
-                  <p className="text-sm bg-gray-50 p-3 rounded border">{selectedItem.notes}</p>
+                  <p className="text-sm bg-gray-50 p-3 rounded border">
+                    {selectedItem.notes}
+                  </p>
                 </div>
               )}
 
               <div className="flex gap-3 pt-4">
                 {selectedItem.status === "pending" && (
                   <>
-                    <Button 
+                    <Button
                       onClick={() => {
                         handleUpdateStatus(selectedItem.id, "approved");
                         setSelectedItem(null);
@@ -853,7 +972,7 @@ export default function BonusesDeductionsScreen() {
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Approve
                     </Button>
-                    <Button 
+                    <Button
                       onClick={() => {
                         handleUpdateStatus(selectedItem.id, "rejected");
                         setSelectedItem(null);

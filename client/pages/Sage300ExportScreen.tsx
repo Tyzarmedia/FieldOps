@@ -7,7 +7,13 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Building,
   Upload,
@@ -47,19 +53,22 @@ export default function Sage300ExportScreen() {
   const navigate = useNavigate();
   const [exportProgress, setExportProgress] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<"connected" | "disconnected" | "testing">("disconnected");
+  const [connectionStatus, setConnectionStatus] = useState<
+    "connected" | "disconnected" | "testing"
+  >("disconnected");
   const [lastExport, setLastExport] = useState<string>("2024-01-15 14:30:00");
   const [selectedPeriod, setSelectedPeriod] = useState("current");
   const [exportType, setExportType] = useState("full");
-  
-  const [connectionSettings, setConnectionSettings] = useState<ConnectionSettings>({
-    server: "sage300-server.company.local",
-    database: "PAYROLL_DB",
-    username: "sage_user",
-    password: "",
-    port: 1433,
-    lastConnected: "2024-01-15 14:30:00",
-  });
+
+  const [connectionSettings, setConnectionSettings] =
+    useState<ConnectionSettings>({
+      server: "sage300-server.company.local",
+      database: "PAYROLL_DB",
+      username: "sage_user",
+      password: "",
+      port: 1433,
+      lastConnected: "2024-01-15 14:30:00",
+    });
 
   const [exportHistory, setExportHistory] = useState<ExportRecord[]>([
     {
@@ -106,13 +115,13 @@ export default function Sage300ExportScreen() {
 
   const testConnection = async () => {
     setConnectionStatus("testing");
-    
+
     // Simulate connection test
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     if (connectionSettings.server && connectionSettings.database) {
       setConnectionStatus("connected");
-      setConnectionSettings(prev => ({
+      setConnectionSettings((prev) => ({
         ...prev,
         lastConnected: new Date().toLocaleString(),
       }));
@@ -127,24 +136,27 @@ export default function Sage300ExportScreen() {
 
     // Simulate export progress
     const progressInterval = setInterval(() => {
-      setExportProgress(prev => {
+      setExportProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval);
           setIsExporting(false);
           setLastExport(new Date().toLocaleString());
-          
+
           // Add new export record
           const newRecord: ExportRecord = {
-            id: `EXP-${new Date().getFullYear()}-${String(exportHistory.length + 1).padStart(3, '0')}`,
+            id: `EXP-${new Date().getFullYear()}-${String(exportHistory.length + 1).padStart(3, "0")}`,
             timestamp: new Date().toLocaleString(),
-            type: exportType === "full" ? "Full Payroll Export" : "Incremental Export",
+            type:
+              exportType === "full"
+                ? "Full Payroll Export"
+                : "Incremental Export",
             status: "completed",
             records: 87,
             size: "2.3 MB",
             user: "current_user@company.com",
           };
-          
-          setExportHistory(prev => [newRecord, ...prev]);
+
+          setExportHistory((prev) => [newRecord, ...prev]);
           return 100;
         }
         return prev + Math.random() * 15;
@@ -154,9 +166,11 @@ export default function Sage300ExportScreen() {
 
   const downloadExportFile = (record: ExportRecord) => {
     // Simulate file download
-    const blob = new Blob([`Export data for ${record.id}`], { type: 'text/plain' });
+    const blob = new Blob([`Export data for ${record.id}`], {
+      type: "text/plain",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `sage300_export_${record.id}.txt`;
     document.body.appendChild(a);
@@ -196,16 +210,23 @@ export default function Sage300ExportScreen() {
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-4">
-          <Button variant="ghost" onClick={() => navigate("/payroll-dashboard")}>
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/payroll-dashboard")}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
         </div>
         <div className="flex items-center gap-3 mb-2">
           <Building className="h-8 w-8 text-emerald-600" />
-          <h1 className="text-3xl font-bold text-gray-800">Sage 300 Integration</h1>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Sage 300 Integration
+          </h1>
         </div>
-        <p className="text-gray-600">Export payroll data to Sage 300 ERP system</p>
+        <p className="text-gray-600">
+          Export payroll data to Sage 300 ERP system
+        </p>
       </div>
 
       <Tabs defaultValue="export" className="space-y-6">
@@ -221,12 +242,19 @@ export default function Sage300ExportScreen() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 Connection Status
-                <Badge 
-                  variant={connectionStatus === "connected" ? "default" : "destructive"}
-                  className={connectionStatus === "connected" ? "bg-green-500" : ""}
+                <Badge
+                  variant={
+                    connectionStatus === "connected" ? "default" : "destructive"
+                  }
+                  className={
+                    connectionStatus === "connected" ? "bg-green-500" : ""
+                  }
                 >
-                  {connectionStatus === "connected" ? "Connected" : 
-                   connectionStatus === "testing" ? "Testing..." : "Disconnected"}
+                  {connectionStatus === "connected"
+                    ? "Connected"
+                    : connectionStatus === "testing"
+                      ? "Testing..."
+                      : "Disconnected"}
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -245,8 +273,8 @@ export default function Sage300ExportScreen() {
                     </p>
                   )}
                 </div>
-                <Button 
-                  onClick={testConnection} 
+                <Button
+                  onClick={testConnection}
                   disabled={connectionStatus === "testing"}
                   variant="outline"
                 >
@@ -270,19 +298,26 @@ export default function Sage300ExportScreen() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="export-period">Pay Period</Label>
-                  <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                  <Select
+                    value={selectedPeriod}
+                    onValueChange={setSelectedPeriod}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select period" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="current">Current Period (Jan 2024)</SelectItem>
-                      <SelectItem value="previous">Previous Period (Dec 2023)</SelectItem>
+                      <SelectItem value="current">
+                        Current Period (Jan 2024)
+                      </SelectItem>
+                      <SelectItem value="previous">
+                        Previous Period (Dec 2023)
+                      </SelectItem>
                       <SelectItem value="ytd">Year to Date (2024)</SelectItem>
                       <SelectItem value="custom">Custom Date Range</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="export-type">Export Type</Label>
                   <Select value={exportType} onValueChange={setExportType}>
@@ -291,8 +326,12 @@ export default function Sage300ExportScreen() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="full">Full Payroll Export</SelectItem>
-                      <SelectItem value="incremental">Incremental Changes</SelectItem>
-                      <SelectItem value="employees">Employee Data Only</SelectItem>
+                      <SelectItem value="incremental">
+                        Incremental Changes
+                      </SelectItem>
+                      <SelectItem value="employees">
+                        Employee Data Only
+                      </SelectItem>
                       <SelectItem value="payroll">Payroll Data Only</SelectItem>
                     </SelectContent>
                   </Select>
@@ -332,7 +371,7 @@ export default function Sage300ExportScreen() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex gap-4">
-                <Button 
+                <Button
                   onClick={startExport}
                   disabled={isExporting || connectionStatus !== "connected"}
                   className="flex-1"
@@ -341,7 +380,7 @@ export default function Sage300ExportScreen() {
                   <Upload className="h-4 w-4 mr-2" />
                   {isExporting ? "Exporting..." : "Start Export"}
                 </Button>
-                
+
                 <Button variant="outline" size="lg">
                   <Download className="h-4 w-4 mr-2" />
                   Download Template
@@ -362,26 +401,32 @@ export default function Sage300ExportScreen() {
             <CardContent>
               <div className="space-y-4">
                 {exportHistory.map((record) => (
-                  <div key={record.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={record.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center gap-4">
                       {getStatusIcon(record.status)}
                       <div>
                         <h4 className="font-medium">{record.type}</h4>
                         <p className="text-sm text-gray-600">
-                          {record.timestamp} • {record.records} records • {record.size}
+                          {record.timestamp} • {record.records} records •{" "}
+                          {record.size}
                         </p>
-                        <p className="text-xs text-gray-500">by {record.user}</p>
+                        <p className="text-xs text-gray-500">
+                          by {record.user}
+                        </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       <Badge className={getStatusColor(record.status)}>
                         {record.status}
                       </Badge>
-                      
+
                       {record.status === "completed" && (
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => downloadExportFile(record)}
                         >
@@ -412,62 +457,85 @@ export default function Sage300ExportScreen() {
                   <Input
                     id="server"
                     value={connectionSettings.server}
-                    onChange={(e) => setConnectionSettings(prev => ({ ...prev, server: e.target.value }))}
+                    onChange={(e) =>
+                      setConnectionSettings((prev) => ({
+                        ...prev,
+                        server: e.target.value,
+                      }))
+                    }
                     placeholder="sage300-server.company.local"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="port">Port</Label>
                   <Input
                     id="port"
                     type="number"
                     value={connectionSettings.port}
-                    onChange={(e) => setConnectionSettings(prev => ({ ...prev, port: parseInt(e.target.value) }))}
+                    onChange={(e) =>
+                      setConnectionSettings((prev) => ({
+                        ...prev,
+                        port: parseInt(e.target.value),
+                      }))
+                    }
                     placeholder="1433"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="database">Database</Label>
                   <Input
                     id="database"
                     value={connectionSettings.database}
-                    onChange={(e) => setConnectionSettings(prev => ({ ...prev, database: e.target.value }))}
+                    onChange={(e) =>
+                      setConnectionSettings((prev) => ({
+                        ...prev,
+                        database: e.target.value,
+                      }))
+                    }
                     placeholder="PAYROLL_DB"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="username">Username</Label>
                   <Input
                     id="username"
                     value={connectionSettings.username}
-                    onChange={(e) => setConnectionSettings(prev => ({ ...prev, username: e.target.value }))}
+                    onChange={(e) =>
+                      setConnectionSettings((prev) => ({
+                        ...prev,
+                        username: e.target.value,
+                      }))
+                    }
                     placeholder="sage_user"
                   />
                 </div>
-                
+
                 <div className="col-span-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
                     id="password"
                     type="password"
                     value={connectionSettings.password}
-                    onChange={(e) => setConnectionSettings(prev => ({ ...prev, password: e.target.value }))}
+                    onChange={(e) =>
+                      setConnectionSettings((prev) => ({
+                        ...prev,
+                        password: e.target.value,
+                      }))
+                    }
                     placeholder="Enter password"
                   />
                 </div>
               </div>
-              
+
               <div className="flex gap-2 pt-4">
                 <Button onClick={testConnection}>
                   <Database className="h-4 w-4 mr-2" />
                   Test Connection
                 </Button>
-                <Button variant="outline">
-                  Save Settings
-                </Button>
+                <Button variant="outline">Save Settings</Button>
               </div>
             </CardContent>
           </Card>

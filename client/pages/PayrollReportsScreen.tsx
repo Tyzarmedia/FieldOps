@@ -106,7 +106,7 @@ export default function PayrollReportsScreen() {
   const loadReportData = async () => {
     try {
       setLoading(true);
-      
+
       // Mock data - would come from API
       const mockData: ReportData = {
         period: selectedPeriod,
@@ -162,10 +162,34 @@ export default function PayrollReportsScreen() {
           { month: "Jan 2025", hours: 160, cost: 47000, employees: 13 },
         ],
         monthlyTrends: [
-          { month: "Oct", grossPay: 920000, netPay: 650000, deductions: 270000, overtime: 35000 },
-          { month: "Nov", grossPay: 950000, netPay: 675000, deductions: 275000, overtime: 42000 },
-          { month: "Dec", grossPay: 980000, netPay: 690000, deductions: 290000, overtime: 52000 },
-          { month: "Jan", grossPay: 960000, netPay: 680000, deductions: 280000, overtime: 47000 },
+          {
+            month: "Oct",
+            grossPay: 920000,
+            netPay: 650000,
+            deductions: 270000,
+            overtime: 35000,
+          },
+          {
+            month: "Nov",
+            grossPay: 950000,
+            netPay: 675000,
+            deductions: 275000,
+            overtime: 42000,
+          },
+          {
+            month: "Dec",
+            grossPay: 980000,
+            netPay: 690000,
+            deductions: 290000,
+            overtime: 52000,
+          },
+          {
+            month: "Jan",
+            grossPay: 960000,
+            netPay: 680000,
+            deductions: 280000,
+            overtime: 47000,
+          },
         ],
         summary: {
           totalPayroll: 960000,
@@ -229,14 +253,15 @@ export default function PayrollReportsScreen() {
       "",
       "Department Costs",
       "Department,Total Cost,Employee Count,Average Salary,Overtime",
-      ...reportData.departmentCosts.map(dept => 
-        `${dept.department},${dept.totalCost},${dept.employeeCount},${dept.averageSalary},${dept.overtime}`
+      ...reportData.departmentCosts.map(
+        (dept) =>
+          `${dept.department},${dept.totalCost},${dept.employeeCount},${dept.averageSalary},${dept.overtime}`,
       ),
       "",
       "Deduction Breakdown",
       "Type,Amount,Percentage",
-      ...reportData.deductionBreakdown.map(ded => 
-        `${ded.type},${ded.amount},${ded.percentage}%`
+      ...reportData.deductionBreakdown.map(
+        (ded) => `${ded.type},${ded.amount},${ded.percentage}%`,
       ),
       "",
       "Summary Totals",
@@ -258,7 +283,14 @@ export default function PayrollReportsScreen() {
     }).format(amount);
   };
 
-  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4'];
+  const COLORS = [
+    "#3B82F6",
+    "#10B981",
+    "#F59E0B",
+    "#EF4444",
+    "#8B5CF6",
+    "#06B6D4",
+  ];
 
   if (loading) {
     return (
@@ -277,8 +309,12 @@ export default function PayrollReportsScreen() {
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Payroll Reports & Analytics</h1>
-            <p className="text-gray-600 mt-1">Comprehensive payroll insights and data analysis</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Payroll Reports & Analytics
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Comprehensive payroll insights and data analysis
+            </p>
           </div>
           <div className="flex gap-2">
             <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
@@ -312,10 +348,14 @@ export default function PayrollReportsScreen() {
                 <DollarSign className="w-8 h-8 text-green-600" />
                 <div>
                   <p className="text-sm text-gray-600">Total Payroll</p>
-                  <p className="text-2xl font-bold">{formatCurrency(reportData.summary.totalPayroll)}</p>
+                  <p className="text-2xl font-bold">
+                    {formatCurrency(reportData.summary.totalPayroll)}
+                  </p>
                   <div className="flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3 text-green-600" />
-                    <span className="text-xs text-green-600">+{reportData.summary.payrollGrowth}%</span>
+                    <span className="text-xs text-green-600">
+                      +{reportData.summary.payrollGrowth}%
+                    </span>
                   </div>
                 </div>
               </div>
@@ -328,8 +368,12 @@ export default function PayrollReportsScreen() {
                 <Users className="w-8 h-8 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-600">Total Employees</p>
-                  <p className="text-2xl font-bold">{reportData.summary.totalEmployees}</p>
-                  <p className="text-xs text-gray-600">Avg: {formatCurrency(reportData.summary.averageSalary)}</p>
+                  <p className="text-2xl font-bold">
+                    {reportData.summary.totalEmployees}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Avg: {formatCurrency(reportData.summary.averageSalary)}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -341,10 +385,14 @@ export default function PayrollReportsScreen() {
                 <Clock className="w-8 h-8 text-orange-600" />
                 <div>
                   <p className="text-sm text-gray-600">Overtime Hours</p>
-                  <p className="text-2xl font-bold">{reportData.summary.totalOvertimeHours}h</p>
+                  <p className="text-2xl font-bold">
+                    {reportData.summary.totalOvertimeHours}h
+                  </p>
                   <div className="flex items-center gap-1 mt-1">
                     <TrendingDown className="w-3 h-3 text-red-600" />
-                    <span className="text-xs text-red-600">{reportData.summary.overtimeGrowth}%</span>
+                    <span className="text-xs text-red-600">
+                      {reportData.summary.overtimeGrowth}%
+                    </span>
                   </div>
                 </div>
               </div>
@@ -357,9 +405,16 @@ export default function PayrollReportsScreen() {
                 <TrendingDown className="w-8 h-8 text-purple-600" />
                 <div>
                   <p className="text-sm text-gray-600">Total Deductions</p>
-                  <p className="text-2xl font-bold">{formatCurrency(reportData.summary.totalDeductions)}</p>
+                  <p className="text-2xl font-bold">
+                    {formatCurrency(reportData.summary.totalDeductions)}
+                  </p>
                   <p className="text-xs text-gray-600">
-                    {((reportData.summary.totalDeductions / reportData.summary.totalPayroll) * 100).toFixed(1)}% of gross
+                    {(
+                      (reportData.summary.totalDeductions /
+                        reportData.summary.totalPayroll) *
+                      100
+                    ).toFixed(1)}
+                    % of gross
                   </p>
                 </div>
               </div>
@@ -368,7 +423,11 @@ export default function PayrollReportsScreen() {
         </div>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="departments">Departments</TabsTrigger>
@@ -392,7 +451,9 @@ export default function PayrollReportsScreen() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="department" />
                     <YAxis />
-                    <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                    <Tooltip
+                      formatter={(value) => formatCurrency(Number(value))}
+                    />
                     <Bar dataKey="totalCost" fill="#3B82F6" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -415,16 +476,23 @@ export default function PayrollReportsScreen() {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ type, percentage }) => `${type}: ${percentage}%`}
+                      label={({ type, percentage }) =>
+                        `${type}: ${percentage}%`
+                      }
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="amount"
                     >
                       {reportData?.deductionBreakdown.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                    <Tooltip
+                      formatter={(value) => formatCurrency(Number(value))}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -445,12 +513,38 @@ export default function PayrollReportsScreen() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                  <Tooltip
+                    formatter={(value) => formatCurrency(Number(value))}
+                  />
                   <Legend />
-                  <Line type="monotone" dataKey="grossPay" stroke="#10B981" name="Gross Pay" strokeWidth={2} />
-                  <Line type="monotone" dataKey="netPay" stroke="#3B82F6" name="Net Pay" strokeWidth={2} />
-                  <Line type="monotone" dataKey="deductions" stroke="#EF4444" name="Deductions" strokeWidth={2} />
-                  <Line type="monotone" dataKey="overtime" stroke="#F59E0B" name="Overtime" strokeWidth={2} />
+                  <Line
+                    type="monotone"
+                    dataKey="grossPay"
+                    stroke="#10B981"
+                    name="Gross Pay"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="netPay"
+                    stroke="#3B82F6"
+                    name="Net Pay"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="deductions"
+                    stroke="#EF4444"
+                    name="Deductions"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="overtime"
+                    stroke="#F59E0B"
+                    name="Overtime"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -477,12 +571,22 @@ export default function PayrollReportsScreen() {
                 <TableBody>
                   {reportData?.departmentCosts.map((dept) => (
                     <TableRow key={dept.department}>
-                      <TableCell className="font-medium">{dept.department}</TableCell>
+                      <TableCell className="font-medium">
+                        {dept.department}
+                      </TableCell>
                       <TableCell>{dept.employeeCount}</TableCell>
-                      <TableCell className="font-medium">{formatCurrency(dept.totalCost)}</TableCell>
-                      <TableCell>{formatCurrency(dept.averageSalary)}</TableCell>
-                      <TableCell className="text-orange-600">{formatCurrency(dept.overtime)}</TableCell>
-                      <TableCell>{formatCurrency(dept.totalCost / dept.employeeCount)}</TableCell>
+                      <TableCell className="font-medium">
+                        {formatCurrency(dept.totalCost)}
+                      </TableCell>
+                      <TableCell>
+                        {formatCurrency(dept.averageSalary)}
+                      </TableCell>
+                      <TableCell className="text-orange-600">
+                        {formatCurrency(dept.overtime)}
+                      </TableCell>
+                      <TableCell>
+                        {formatCurrency(dept.totalCost / dept.employeeCount)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -526,10 +630,16 @@ export default function PayrollReportsScreen() {
                   <TableBody>
                     {reportData?.deductionBreakdown.map((deduction) => (
                       <TableRow key={deduction.type}>
-                        <TableCell className="font-medium">{deduction.type}</TableCell>
-                        <TableCell>{formatCurrency(deduction.amount)}</TableCell>
+                        <TableCell className="font-medium">
+                          {deduction.type}
+                        </TableCell>
                         <TableCell>
-                          <Badge variant="outline">{deduction.percentage}%</Badge>
+                          {formatCurrency(deduction.amount)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            {deduction.percentage}%
+                          </Badge>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -548,7 +658,9 @@ export default function PayrollReportsScreen() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="type" />
                     <YAxis />
-                    <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                    <Tooltip
+                      formatter={(value) => formatCurrency(Number(value))}
+                    />
                     <Bar dataKey="amount" fill="#EF4444" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -576,11 +688,17 @@ export default function PayrollReportsScreen() {
                 <TableBody>
                   {reportData?.overtimeAnalysis.map((overtime) => (
                     <TableRow key={overtime.month}>
-                      <TableCell className="font-medium">{overtime.month}</TableCell>
+                      <TableCell className="font-medium">
+                        {overtime.month}
+                      </TableCell>
                       <TableCell>{overtime.hours}h</TableCell>
-                      <TableCell className="font-medium">{formatCurrency(overtime.cost)}</TableCell>
+                      <TableCell className="font-medium">
+                        {formatCurrency(overtime.cost)}
+                      </TableCell>
                       <TableCell>{overtime.employees}</TableCell>
-                      <TableCell>{(overtime.hours / overtime.employees).toFixed(1)}h</TableCell>
+                      <TableCell>
+                        {(overtime.hours / overtime.employees).toFixed(1)}h
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -600,8 +718,20 @@ export default function PayrollReportsScreen() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="hours" stroke="#F59E0B" name="Hours" strokeWidth={2} />
-                  <Line type="monotone" dataKey="cost" stroke="#EF4444" name="Cost" strokeWidth={2} />
+                  <Line
+                    type="monotone"
+                    dataKey="hours"
+                    stroke="#F59E0B"
+                    name="Hours"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="cost"
+                    stroke="#EF4444"
+                    name="Cost"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -615,12 +745,16 @@ export default function PayrollReportsScreen() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center">
                   <Label>Payroll Growth</Label>
-                  <p className="text-3xl font-bold text-green-600">+{reportData?.summary.payrollGrowth}%</p>
+                  <p className="text-3xl font-bold text-green-600">
+                    +{reportData?.summary.payrollGrowth}%
+                  </p>
                   <p className="text-sm text-gray-600">vs previous period</p>
                 </div>
                 <div className="text-center">
                   <Label>Overtime Growth</Label>
-                  <p className="text-3xl font-bold text-red-600">{reportData?.summary.overtimeGrowth}%</p>
+                  <p className="text-3xl font-bold text-red-600">
+                    {reportData?.summary.overtimeGrowth}%
+                  </p>
                   <p className="text-sm text-gray-600">vs previous period</p>
                 </div>
               </div>

@@ -4,9 +4,28 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertTriangle,
@@ -83,7 +102,8 @@ export default function AuditTrailScreen() {
       entityId: "BA003",
       newValue: { type: "bonus", amount: 5000, targets: 12 },
       ipAddress: "192.168.1.100",
-      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      userAgent:
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
       severity: "high",
       module: "Bulk Actions",
       description: "Created bulk bonus operation affecting 12 employees",
@@ -143,7 +163,8 @@ export default function AuditTrailScreen() {
       entity: "UserSession",
       entityId: "SESSION-001",
       ipAddress: "192.168.1.100",
-      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      userAgent:
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
       severity: "low",
       module: "Authentication",
       description: "User logged into the system",
@@ -164,18 +185,44 @@ export default function AuditTrailScreen() {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const actions = ["all", "CREATE", "UPDATE", "DELETE", "LOGIN", "LOGOUT", "EXPORT", "IMPORT"];
-  const entities = ["all", "Employee", "BulkOperation", "Deduction", "TaxSettings", "PayrollData", "UserSession"];
+  const actions = [
+    "all",
+    "CREATE",
+    "UPDATE",
+    "DELETE",
+    "LOGIN",
+    "LOGOUT",
+    "EXPORT",
+    "IMPORT",
+  ];
+  const entities = [
+    "all",
+    "Employee",
+    "BulkOperation",
+    "Deduction",
+    "TaxSettings",
+    "PayrollData",
+    "UserSession",
+  ];
   const severityLevels = ["all", "low", "medium", "high", "critical"];
-  const modules = ["all", "Payroll", "Bulk Actions", "Tax Management", "Sage Integration", "Authentication", "HR Management"];
+  const modules = [
+    "all",
+    "Payroll",
+    "Bulk Actions",
+    "Tax Management",
+    "Sage Integration",
+    "Authentication",
+    "HR Management",
+  ];
   const users = ["all", "Siyanda Ngubane", "Admin User", "HR Manager"];
 
-  const filteredEntries = auditEntries.filter(entry => {
-    const matchesSearch = entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         entry.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         entry.entityId.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilters = 
+  const filteredEntries = auditEntries.filter((entry) => {
+    const matchesSearch =
+      entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      entry.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      entry.entityId.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesFilters =
       (filters.userId === "all" || entry.userName === filters.userId) &&
       (filters.action === "all" || entry.action === filters.action) &&
       (filters.entity === "all" || entry.entity === filters.entity) &&
@@ -235,14 +282,15 @@ export default function AuditTrailScreen() {
   const exportAuditLog = () => {
     const csvContent = [
       "Timestamp,User,Action,Entity,Entity ID,Module,Severity,Description,IP Address",
-      ...filteredEntries.map(entry => 
-        `${entry.timestamp},${entry.userName},${entry.action},${entry.entity},${entry.entityId},${entry.module},${entry.severity},"${entry.description}",${entry.ipAddress}`
-      )
-    ].join('\n');
+      ...filteredEntries.map(
+        (entry) =>
+          `${entry.timestamp},${entry.userName},${entry.action},${entry.entity},${entry.entityId},${entry.module},${entry.severity},"${entry.description}",${entry.ipAddress}`,
+      ),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `audit_trail_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
@@ -257,7 +305,7 @@ export default function AuditTrailScreen() {
   };
 
   const formatValue = (value: any) => {
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return String(value);
@@ -281,7 +329,10 @@ export default function AuditTrailScreen() {
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-4">
-          <Button variant="ghost" onClick={() => navigate("/payroll-dashboard")}>
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/payroll-dashboard")}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
@@ -290,7 +341,9 @@ export default function AuditTrailScreen() {
           <Shield className="h-8 w-8 text-teal-600" />
           <h1 className="text-3xl font-bold text-gray-800">Audit Trail</h1>
         </div>
-        <p className="text-gray-600">Track and monitor all payroll system changes and activities</p>
+        <p className="text-gray-600">
+          Track and monitor all payroll system changes and activities
+        </p>
       </div>
 
       <Tabs defaultValue="logs" className="space-y-6">
@@ -323,7 +376,12 @@ export default function AuditTrailScreen() {
                   <Input
                     type="date"
                     value={filters.dateFrom}
-                    onChange={(e) => setFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        dateFrom: e.target.value,
+                      }))
+                    }
                   />
                 </div>
                 <div>
@@ -331,17 +389,27 @@ export default function AuditTrailScreen() {
                   <Input
                     type="date"
                     value={filters.dateTo}
-                    onChange={(e) => setFilters(prev => ({ ...prev, dateTo: e.target.value }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        dateTo: e.target.value,
+                      }))
+                    }
                   />
                 </div>
                 <div>
                   <Label>User</Label>
-                  <Select value={filters.userId} onValueChange={(value) => setFilters(prev => ({ ...prev, userId: value }))}>
+                  <Select
+                    value={filters.userId}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, userId: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {users.map(user => (
+                      {users.map((user) => (
                         <SelectItem key={user} value={user}>
                           {user === "all" ? "All Users" : user}
                         </SelectItem>
@@ -351,12 +419,17 @@ export default function AuditTrailScreen() {
                 </div>
                 <div>
                   <Label>Action</Label>
-                  <Select value={filters.action} onValueChange={(value) => setFilters(prev => ({ ...prev, action: value }))}>
+                  <Select
+                    value={filters.action}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, action: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {actions.map(action => (
+                      {actions.map((action) => (
                         <SelectItem key={action} value={action}>
                           {action === "all" ? "All Actions" : action}
                         </SelectItem>
@@ -365,16 +438,21 @@ export default function AuditTrailScreen() {
                   </Select>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-4 gap-4">
                 <div>
                   <Label>Entity</Label>
-                  <Select value={filters.entity} onValueChange={(value) => setFilters(prev => ({ ...prev, entity: value }))}>
+                  <Select
+                    value={filters.entity}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, entity: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {entities.map(entity => (
+                      {entities.map((entity) => (
                         <SelectItem key={entity} value={entity}>
                           {entity === "all" ? "All Entities" : entity}
                         </SelectItem>
@@ -384,12 +462,17 @@ export default function AuditTrailScreen() {
                 </div>
                 <div>
                   <Label>Module</Label>
-                  <Select value={filters.module} onValueChange={(value) => setFilters(prev => ({ ...prev, module: value }))}>
+                  <Select
+                    value={filters.module}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, module: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {modules.map(module => (
+                      {modules.map((module) => (
                         <SelectItem key={module} value={module}>
                           {module === "all" ? "All Modules" : module}
                         </SelectItem>
@@ -399,14 +482,22 @@ export default function AuditTrailScreen() {
                 </div>
                 <div>
                   <Label>Severity</Label>
-                  <Select value={filters.severity} onValueChange={(value) => setFilters(prev => ({ ...prev, severity: value }))}>
+                  <Select
+                    value={filters.severity}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, severity: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {severityLevels.map(severity => (
+                      {severityLevels.map((severity) => (
                         <SelectItem key={severity} value={severity}>
-                          {severity === "all" ? "All Severities" : severity.charAt(0).toUpperCase() + severity.slice(1)}
+                          {severity === "all"
+                            ? "All Severities"
+                            : severity.charAt(0).toUpperCase() +
+                              severity.slice(1)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -473,7 +564,9 @@ export default function AuditTrailScreen() {
                       <TableCell>
                         <div>
                           <p className="font-medium">{entry.entity}</p>
-                          <p className="text-sm text-gray-500">{entry.entityId}</p>
+                          <p className="text-sm text-gray-500">
+                            {entry.entityId}
+                          </p>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -488,11 +581,13 @@ export default function AuditTrailScreen() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <p className="text-sm max-w-xs truncate">{entry.description}</p>
+                        <p className="text-sm max-w-xs truncate">
+                          {entry.description}
+                        </p>
                       </TableCell>
                       <TableCell>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => showEntryDetails(entry)}
                         >
@@ -514,49 +609,64 @@ export default function AuditTrailScreen() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Total Entries</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Entries
+                    </p>
                     <p className="text-2xl font-bold">{auditEntries.length}</p>
                   </div>
                   <FileText className="h-8 w-8 text-blue-500" />
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Critical Events</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Critical Events
+                    </p>
                     <p className="text-2xl font-bold text-red-600">
-                      {auditEntries.filter(e => e.severity === "critical").length}
+                      {
+                        auditEntries.filter((e) => e.severity === "critical")
+                          .length
+                      }
                     </p>
                   </div>
                   <AlertTriangle className="h-8 w-8 text-red-500" />
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Active Users</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Active Users
+                    </p>
                     <p className="text-2xl font-bold text-green-600">
-                      {new Set(auditEntries.map(e => e.userId)).size}
+                      {new Set(auditEntries.map((e) => e.userId)).size}
                     </p>
                   </div>
                   <User className="h-8 w-8 text-green-500" />
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Today's Events</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Today's Events
+                    </p>
                     <p className="text-2xl font-bold text-purple-600">
-                      {auditEntries.filter(e => e.timestamp.startsWith("2024-01-16")).length}
+                      {
+                        auditEntries.filter((e) =>
+                          e.timestamp.startsWith("2024-01-16"),
+                        ).length
+                      }
                     </p>
                   </div>
                   <Clock className="h-8 w-8 text-purple-500" />
@@ -572,25 +682,36 @@ export default function AuditTrailScreen() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {modules.filter(m => m !== "all").map(module => {
-                  const count = auditEntries.filter(e => e.module === module).length;
-                  const percentage = (count / auditEntries.length) * 100;
-                  
-                  return (
-                    <div key={module} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-32 text-sm font-medium">{module}</div>
-                        <div className="flex-1 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-500 h-2 rounded-full" 
-                            style={{ width: `${percentage}%` }}
-                          />
+                {modules
+                  .filter((m) => m !== "all")
+                  .map((module) => {
+                    const count = auditEntries.filter(
+                      (e) => e.module === module,
+                    ).length;
+                    const percentage = (count / auditEntries.length) * 100;
+
+                    return (
+                      <div
+                        key={module}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-32 text-sm font-medium">
+                            {module}
+                          </div>
+                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-blue-500 h-2 rounded-full"
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {count} events
                         </div>
                       </div>
-                      <div className="text-sm text-gray-600">{count} events</div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             </CardContent>
           </Card>
@@ -616,7 +737,9 @@ export default function AuditTrailScreen() {
                 </div>
                 <div>
                   <Label>User</Label>
-                  <p className="text-sm">{selectedEntry.userName} ({selectedEntry.userId})</p>
+                  <p className="text-sm">
+                    {selectedEntry.userName} ({selectedEntry.userId})
+                  </p>
                 </div>
                 <div>
                   <Label>IP Address</Label>
@@ -640,19 +763,21 @@ export default function AuditTrailScreen() {
                 </div>
                 <div>
                   <Label>Entity</Label>
-                  <p className="text-sm">{selectedEntry.entity} ({selectedEntry.entityId})</p>
+                  <p className="text-sm">
+                    {selectedEntry.entity} ({selectedEntry.entityId})
+                  </p>
                 </div>
                 <div>
                   <Label>Module</Label>
                   <Badge variant="outline">{selectedEntry.module}</Badge>
                 </div>
               </div>
-              
+
               <div>
                 <Label>Description</Label>
                 <p className="text-sm">{selectedEntry.description}</p>
               </div>
-              
+
               {selectedEntry.oldValue && (
                 <div>
                   <Label>Old Value</Label>
@@ -661,7 +786,7 @@ export default function AuditTrailScreen() {
                   </pre>
                 </div>
               )}
-              
+
               {selectedEntry.newValue && (
                 <div>
                   <Label>New Value</Label>
@@ -670,10 +795,12 @@ export default function AuditTrailScreen() {
                   </pre>
                 </div>
               )}
-              
+
               <div>
                 <Label>User Agent</Label>
-                <p className="text-xs text-gray-600 break-all">{selectedEntry.userAgent}</p>
+                <p className="text-xs text-gray-600 break-all">
+                  {selectedEntry.userAgent}
+                </p>
               </div>
             </div>
           )}

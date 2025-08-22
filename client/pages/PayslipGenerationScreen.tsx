@@ -86,7 +86,8 @@ export default function PayslipGenerationScreen() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDistributing, setIsDistributing] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
-  const [previewEmployee, setPreviewEmployee] = useState<PayslipEmployee | null>(null);
+  const [previewEmployee, setPreviewEmployee] =
+    useState<PayslipEmployee | null>(null);
   const [activeTab, setActiveTab] = useState("generation");
   const [filterDepartment, setFilterDepartment] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -102,7 +103,7 @@ export default function PayslipGenerationScreen() {
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
-    return `${year}-${month.toString().padStart(2, '0')}`;
+    return `${year}-${month.toString().padStart(2, "0")}`;
   };
 
   const loadEmployeesData = async () => {
@@ -232,19 +233,22 @@ export default function PayslipGenerationScreen() {
     }
   };
 
-  const filteredEmployees = employees.filter(emp => {
-    const matchesDepartment = filterDepartment === "all" || emp.department === filterDepartment;
-    const matchesStatus = filterStatus === "all" || emp.payslipStatus === filterStatus;
-    const matchesSearch = searchTerm === "" || 
+  const filteredEmployees = employees.filter((emp) => {
+    const matchesDepartment =
+      filterDepartment === "all" || emp.department === filterDepartment;
+    const matchesStatus =
+      filterStatus === "all" || emp.payslipStatus === filterStatus;
+    const matchesSearch =
+      searchTerm === "" ||
       emp.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.employeeNumber.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     return matchesDepartment && matchesStatus && matchesSearch;
   });
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedEmployees(filteredEmployees.map(emp => emp.id));
+      setSelectedEmployees(filteredEmployees.map((emp) => emp.id));
     } else {
       setSelectedEmployees([]);
     }
@@ -252,9 +256,9 @@ export default function PayslipGenerationScreen() {
 
   const handleEmployeeSelect = (employeeId: string, checked: boolean) => {
     if (checked) {
-      setSelectedEmployees(prev => [...prev, employeeId]);
+      setSelectedEmployees((prev) => [...prev, employeeId]);
     } else {
-      setSelectedEmployees(prev => prev.filter(id => id !== employeeId));
+      setSelectedEmployees((prev) => prev.filter((id) => id !== employeeId));
     }
   };
 
@@ -270,18 +274,22 @@ export default function PayslipGenerationScreen() {
 
       // Simulate payslip generation
       for (let i = 0; i < selectedEmployees.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         const progress = ((i + 1) / selectedEmployees.length) * 100;
         setGenerationProgress(progress);
-        
+
         // Update employee status
-        setEmployees(prev => 
-          prev.map(emp => 
-            selectedEmployees.includes(emp.id) 
-              ? { ...emp, payslipStatus: "generated", lastGenerated: new Date().toISOString() }
-              : emp
-          )
+        setEmployees((prev) =>
+          prev.map((emp) =>
+            selectedEmployees.includes(emp.id)
+              ? {
+                  ...emp,
+                  payslipStatus: "generated",
+                  lastGenerated: new Date().toISOString(),
+                }
+              : emp,
+          ),
         );
       }
 
@@ -297,8 +305,9 @@ export default function PayslipGenerationScreen() {
   };
 
   const distributePayslips = async () => {
-    const generatedEmployees = selectedEmployees.filter(id => 
-      employees.find(emp => emp.id === id)?.payslipStatus === "generated"
+    const generatedEmployees = selectedEmployees.filter(
+      (id) =>
+        employees.find((emp) => emp.id === id)?.payslipStatus === "generated",
     );
 
     if (generatedEmployees.length === 0) {
@@ -311,15 +320,19 @@ export default function PayslipGenerationScreen() {
 
       // Simulate email distribution
       for (let i = 0; i < generatedEmployees.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
         // Update employee status
-        setEmployees(prev => 
-          prev.map(emp => 
-            generatedEmployees.includes(emp.id) 
-              ? { ...emp, payslipStatus: "sent", lastSent: new Date().toISOString() }
-              : emp
-          )
+        setEmployees((prev) =>
+          prev.map((emp) =>
+            generatedEmployees.includes(emp.id)
+              ? {
+                  ...emp,
+                  payslipStatus: "sent",
+                  lastSent: new Date().toISOString(),
+                }
+              : emp,
+          ),
         );
       }
 
@@ -341,15 +354,17 @@ export default function PayslipGenerationScreen() {
 
     try {
       // Simulate ZIP file generation and download
-      alert(`Downloading payslips for ${selectedEmployees.length} employees...`);
-      
+      alert(
+        `Downloading payslips for ${selectedEmployees.length} employees...`,
+      );
+
       // Mark as downloaded
-      setEmployees(prev => 
-        prev.map(emp => 
-          selectedEmployees.includes(emp.id) 
+      setEmployees((prev) =>
+        prev.map((emp) =>
+          selectedEmployees.includes(emp.id)
             ? { ...emp, payslipStatus: "downloaded" }
-            : emp
-        )
+            : emp,
+        ),
       );
 
       setSelectedEmployees([]);
@@ -361,23 +376,35 @@ export default function PayslipGenerationScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "generated": return "bg-green-100 text-green-800";
-      case "sent": return "bg-blue-100 text-blue-800";
-      case "downloaded": return "bg-purple-100 text-purple-800";
-      case "pending": return "bg-yellow-100 text-yellow-800";
-      case "error": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "generated":
+        return "bg-green-100 text-green-800";
+      case "sent":
+        return "bg-blue-100 text-blue-800";
+      case "downloaded":
+        return "bg-purple-100 text-purple-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "error":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "generated": return <CheckCircle className="w-4 h-4" />;
-      case "sent": return <Mail className="w-4 h-4" />;
-      case "downloaded": return <Download className="w-4 h-4" />;
-      case "pending": return <Clock className="w-4 h-4" />;
-      case "error": return <AlertTriangle className="w-4 h-4" />;
-      default: return <Clock className="w-4 h-4" />;
+      case "generated":
+        return <CheckCircle className="w-4 h-4" />;
+      case "sent":
+        return <Mail className="w-4 h-4" />;
+      case "downloaded":
+        return <Download className="w-4 h-4" />;
+      case "pending":
+        return <Clock className="w-4 h-4" />;
+      case "error":
+        return <AlertTriangle className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
     }
   };
 
@@ -488,8 +515,12 @@ export default function PayslipGenerationScreen() {
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Payslip Generation</h1>
-            <p className="text-gray-600 mt-1">Generate and distribute employee payslips</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Payslip Generation
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Generate and distribute employee payslips
+            </p>
           </div>
           <div className="flex gap-2">
             <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
@@ -506,7 +537,11 @@ export default function PayslipGenerationScreen() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="generation">Generation</TabsTrigger>
           <TabsTrigger value="history">Batch History</TabsTrigger>
@@ -535,7 +570,11 @@ export default function PayslipGenerationScreen() {
                   <div>
                     <p className="text-sm text-gray-600">Generated</p>
                     <p className="text-2xl font-bold">
-                      {employees.filter(emp => emp.payslipStatus === "generated").length}
+                      {
+                        employees.filter(
+                          (emp) => emp.payslipStatus === "generated",
+                        ).length
+                      }
                     </p>
                   </div>
                 </div>
@@ -549,7 +588,10 @@ export default function PayslipGenerationScreen() {
                   <div>
                     <p className="text-sm text-gray-600">Sent</p>
                     <p className="text-2xl font-bold">
-                      {employees.filter(emp => emp.payslipStatus === "sent").length}
+                      {
+                        employees.filter((emp) => emp.payslipStatus === "sent")
+                          .length
+                      }
                     </p>
                   </div>
                 </div>
@@ -563,7 +605,11 @@ export default function PayslipGenerationScreen() {
                   <div>
                     <p className="text-sm text-gray-600">Pending</p>
                     <p className="text-2xl font-bold">
-                      {employees.filter(emp => emp.payslipStatus === "pending").length}
+                      {
+                        employees.filter(
+                          (emp) => emp.payslipStatus === "pending",
+                        ).length
+                      }
                     </p>
                   </div>
                 </div>
@@ -577,7 +623,10 @@ export default function PayslipGenerationScreen() {
                   <div>
                     <p className="text-sm text-gray-600">Errors</p>
                     <p className="text-2xl font-bold">
-                      {employees.filter(emp => emp.payslipStatus === "error").length}
+                      {
+                        employees.filter((emp) => emp.payslipStatus === "error")
+                          .length
+                      }
                     </p>
                   </div>
                 </div>
@@ -594,13 +643,20 @@ export default function PayslipGenerationScreen() {
                   <div className="flex-1">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium">
-                        {isGenerating ? "Generating Payslips..." : "Distributing Payslips..."}
+                        {isGenerating
+                          ? "Generating Payslips..."
+                          : "Distributing Payslips..."}
                       </span>
                       <span className="text-sm text-gray-600">
-                        {isGenerating ? Math.round(generationProgress) : "Processing"}%
+                        {isGenerating
+                          ? Math.round(generationProgress)
+                          : "Processing"}
+                        %
                       </span>
                     </div>
-                    {isGenerating && <Progress value={generationProgress} className="h-2" />}
+                    {isGenerating && (
+                      <Progress value={generationProgress} className="h-2" />
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -612,25 +668,37 @@ export default function PayslipGenerationScreen() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex gap-4">
-                  <Button 
-                    onClick={generatePayslips} 
-                    disabled={isGenerating || isDistributing || selectedEmployees.length === 0}
+                  <Button
+                    onClick={generatePayslips}
+                    disabled={
+                      isGenerating ||
+                      isDistributing ||
+                      selectedEmployees.length === 0
+                    }
                     className="bg-blue-600 hover:bg-blue-700"
                   >
                     <FileText className="w-4 h-4 mr-2" />
                     Generate Payslips ({selectedEmployees.length})
                   </Button>
-                  <Button 
-                    onClick={distributePayslips} 
-                    disabled={isGenerating || isDistributing || selectedEmployees.length === 0}
+                  <Button
+                    onClick={distributePayslips}
+                    disabled={
+                      isGenerating ||
+                      isDistributing ||
+                      selectedEmployees.length === 0
+                    }
                     variant="outline"
                   >
                     <Send className="w-4 h-4 mr-2" />
                     Distribute via Email
                   </Button>
-                  <Button 
-                    onClick={downloadPayslips} 
-                    disabled={isGenerating || isDistributing || selectedEmployees.length === 0}
+                  <Button
+                    onClick={downloadPayslips}
+                    disabled={
+                      isGenerating ||
+                      isDistributing ||
+                      selectedEmployees.length === 0
+                    }
                     variant="outline"
                   >
                     <Download className="w-4 h-4 mr-2" />
@@ -638,7 +706,8 @@ export default function PayslipGenerationScreen() {
                   </Button>
                 </div>
                 <div className="text-sm text-gray-600">
-                  {selectedEmployees.length} of {filteredEmployees.length} selected
+                  {selectedEmployees.length} of {filteredEmployees.length}{" "}
+                  selected
                 </div>
               </div>
             </CardContent>
@@ -653,13 +722,18 @@ export default function PayslipGenerationScreen() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Select value={filterDepartment} onValueChange={setFilterDepartment}>
+                <Select
+                  value={filterDepartment}
+                  onValueChange={setFilterDepartment}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by department" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
-                    <SelectItem value="Field Operations">Field Operations</SelectItem>
+                    <SelectItem value="Field Operations">
+                      Field Operations
+                    </SelectItem>
                     <SelectItem value="HR">HR</SelectItem>
                     <SelectItem value="IT">IT</SelectItem>
                   </SelectContent>
@@ -679,7 +753,10 @@ export default function PayslipGenerationScreen() {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="select-all"
-                    checked={selectedEmployees.length === filteredEmployees.length && filteredEmployees.length > 0}
+                    checked={
+                      selectedEmployees.length === filteredEmployees.length &&
+                      filteredEmployees.length > 0
+                    }
                     onCheckedChange={handleSelectAll}
                   />
                   <Label htmlFor="select-all" className="text-sm font-medium">
@@ -704,7 +781,11 @@ export default function PayslipGenerationScreen() {
                   <TableRow>
                     <TableHead className="w-12">
                       <Checkbox
-                        checked={selectedEmployees.length === filteredEmployees.length && filteredEmployees.length > 0}
+                        checked={
+                          selectedEmployees.length ===
+                            filteredEmployees.length &&
+                          filteredEmployees.length > 0
+                        }
                         onCheckedChange={handleSelectAll}
                       />
                     </TableHead>
@@ -722,20 +803,33 @@ export default function PayslipGenerationScreen() {
                       <TableCell>
                         <Checkbox
                           checked={selectedEmployees.includes(employee.id)}
-                          onCheckedChange={(checked) => handleEmployeeSelect(employee.id, checked as boolean)}
+                          onCheckedChange={(checked) =>
+                            handleEmployeeSelect(
+                              employee.id,
+                              checked as boolean,
+                            )
+                          }
                         />
                       </TableCell>
                       <TableCell>
                         <div>
                           <div className="font-medium">{employee.fullName}</div>
-                          <div className="text-sm text-gray-600">{employee.employeeNumber}</div>
+                          <div className="text-sm text-gray-600">
+                            {employee.employeeNumber}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>{employee.department}</TableCell>
-                      <TableCell className="font-medium">{formatCurrency(employee.grossPay)}</TableCell>
-                      <TableCell className="font-medium text-green-600">{formatCurrency(employee.netPay)}</TableCell>
+                      <TableCell className="font-medium">
+                        {formatCurrency(employee.grossPay)}
+                      </TableCell>
+                      <TableCell className="font-medium text-green-600">
+                        {formatCurrency(employee.netPay)}
+                      </TableCell>
                       <TableCell>
-                        <Badge className={getStatusColor(employee.payslipStatus)}>
+                        <Badge
+                          className={getStatusColor(employee.payslipStatus)}
+                        >
                           {getStatusIcon(employee.payslipStatus)}
                           <span className="ml-1">{employee.payslipStatus}</span>
                         </Badge>
@@ -792,7 +886,8 @@ export default function PayslipGenerationScreen() {
                         <div>
                           <div className="font-medium">{batch.period}</div>
                           <div className="text-sm text-gray-600">
-                            {new Date(batch.periodStart).toLocaleDateString()} - {new Date(batch.periodEnd).toLocaleDateString()}
+                            {new Date(batch.periodStart).toLocaleDateString()} -{" "}
+                            {new Date(batch.periodEnd).toLocaleDateString()}
                           </div>
                         </div>
                       </TableCell>
@@ -804,7 +899,9 @@ export default function PayslipGenerationScreen() {
                           {batch.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>{new Date(batch.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        {new Date(batch.createdAt).toLocaleDateString()}
+                      </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
                           <Button variant="ghost" size="sm">
@@ -833,7 +930,8 @@ export default function PayslipGenerationScreen() {
                 <Alert>
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
-                    Template management functionality coming soon. Currently using default template.
+                    Template management functionality coming soon. Currently
+                    using default template.
                   </AlertDescription>
                 </Alert>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -842,9 +940,13 @@ export default function PayslipGenerationScreen() {
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-medium">Standard Template</h4>
-                          <p className="text-sm text-gray-600">Default payslip layout</p>
+                          <p className="text-sm text-gray-600">
+                            Default payslip layout
+                          </p>
                         </div>
-                        <Badge className="bg-blue-100 text-blue-800">Active</Badge>
+                        <Badge className="bg-blue-100 text-blue-800">
+                          Active
+                        </Badge>
                       </div>
                     </CardContent>
                   </Card>
@@ -856,19 +958,26 @@ export default function PayslipGenerationScreen() {
       </Tabs>
 
       {/* Preview Dialog */}
-      <Dialog open={!!previewEmployee} onOpenChange={() => setPreviewEmployee(null)}>
+      <Dialog
+        open={!!previewEmployee}
+        onOpenChange={() => setPreviewEmployee(null)}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Payslip Preview - {previewEmployee?.fullName}</DialogTitle>
+            <DialogTitle>
+              Payslip Preview - {previewEmployee?.fullName}
+            </DialogTitle>
           </DialogHeader>
-          
+
           {previewEmployee && (
             <div className="space-y-4">
-              <div 
+              <div
                 className="border rounded p-4 bg-white"
-                dangerouslySetInnerHTML={{ __html: generatePreviewPayslip(previewEmployee) }}
+                dangerouslySetInnerHTML={{
+                  __html: generatePreviewPayslip(previewEmployee),
+                }}
               />
-              
+
               <div className="flex gap-3 pt-4">
                 <Button className="flex-1">
                   <Printer className="w-4 h-4 mr-2" />
