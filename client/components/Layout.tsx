@@ -321,6 +321,7 @@ function getNavigationForRole(role: string) {
           href: "/network-assessment",
           icon: Network,
         },
+        { name: "Request Overtime", href: "/overtime-requests", icon: Timer },
         { name: "Overtime List", href: "/overtime-list", icon: Timer },
         { name: "Settings", href: "/technician-settings", icon: Settings },
       ];
@@ -385,8 +386,10 @@ function getNavigationForRole(role: string) {
     case "Payroll":
       return [
         ...baseNavigation,
+        { name: "Payroll Processing", href: "/payroll-processing", icon: ClipboardList },
+        { name: "Overtime Approval", href: "/overtime-approval", icon: Clock },
+        { name: "Overtime Requests", href: "/overtime-requests", icon: Timer },
         { name: "Payroll", href: "/payroll", icon: Users },
-        { name: "Overtime", href: "/overtime", icon: Clock },
         { name: "Bonuses", href: "/bonuses", icon: Users },
         { name: "Payslips", href: "/payslips", icon: ClipboardList },
         { name: "Reports", href: "/payroll-reports", icon: ClipboardList },

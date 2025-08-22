@@ -23,6 +23,22 @@ import technicianStatusRouter from "./routes/technician-status";
 import networkAssessmentsRouter from "./routes/network-assessments";
 import overtimeRouter from "./routes/overtime";
 import { getOvertimeRate } from "./routes/payroll";
+import {
+  getPayrollPeriods,
+  createPayrollPeriod,
+  calculatePayroll,
+  getPayrollCalculations,
+  finalizePayroll,
+} from "./routes/payroll-processing";
+import {
+  submitOvertimeRequest,
+  getEmployeeOvertimeRequests,
+  getTeamOvertimeRequests,
+  reviewOvertimeRequest,
+  cancelOvertimeRequest,
+  getOvertimeRequestDetails,
+  getOvertimeAnalytics,
+} from "./routes/overtime-requests";
 import warehouseStockRouter from "./routes/warehouse-stock";
 import authRouter from "./routes/auth";
 import securityRouter from "./routes/security";
@@ -101,6 +117,22 @@ export function createServer() {
 
   // Payroll API
   app.get("/api/payroll/overtime-rate/:technicianId", getOvertimeRate);
+
+  // Payroll Processing API
+  app.get("/api/payroll/periods", getPayrollPeriods);
+  app.post("/api/payroll/periods", createPayrollPeriod);
+  app.post("/api/payroll/periods/:periodId/calculate", calculatePayroll);
+  app.get("/api/payroll/periods/:periodId/calculations", getPayrollCalculations);
+  app.post("/api/payroll/periods/:periodId/finalize", finalizePayroll);
+
+  // Overtime Request Management API
+  app.post("/api/overtime/requests", submitOvertimeRequest);
+  app.get("/api/overtime/requests/:employeeId", getEmployeeOvertimeRequests);
+  app.get("/api/overtime/requests/team/:supervisorId", getTeamOvertimeRequests);
+  app.put("/api/overtime/requests/:requestId/review", reviewOvertimeRequest);
+  app.put("/api/overtime/requests/:requestId/cancel", cancelOvertimeRequest);
+  app.get("/api/overtime/requests/details/:requestId", getOvertimeRequestDetails);
+  app.get("/api/overtime/analytics", getOvertimeAnalytics);
 
   // Warehouse Stock API
   app.use("/api/warehouse-stock", warehouseStockRouter);

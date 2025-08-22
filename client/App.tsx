@@ -33,6 +33,18 @@ import EnhancedHRDashboard from "./pages/EnhancedHRDashboard";
 import HRDashboardWithTab from "./pages/HRDashboardWithTab";
 import PayrollDashboard from "./pages/PayrollDashboard";
 import PayrollDashboardWithTab from "./pages/PayrollDashboardWithTab";
+import PayrollProcessingScreen from "./pages/PayrollProcessingScreen";
+import OvertimeRequestScreen from "./pages/OvertimeRequestScreen";
+import OvertimeApprovalScreen from "./pages/OvertimeApprovalScreen";
+import BonusesDeductionsScreen from "./pages/BonusesDeductionsScreen";
+import EmployeeManagementScreen from "./pages/EmployeeManagementScreen";
+import PayslipGenerationScreen from "./pages/PayslipGenerationScreen";
+import PayrollReportsScreen from "./pages/PayrollReportsScreen";
+import BankDetailsScreen from "./pages/BankDetailsScreen";
+import Sage300ExportScreen from "./pages/Sage300ExportScreen";
+import TaxCalculationsScreen from "./pages/TaxCalculationsScreen";
+import BulkActionsScreen from "./pages/BulkActionsScreen";
+import AuditTrailScreen from "./pages/AuditTrailScreen";
 import ITDashboard from "./pages/ITDashboard";
 import ITDashboardWithTab from "./pages/ITDashboardWithTab";
 import SystemAdminDashboard from "./pages/SystemAdminDashboard";
@@ -664,10 +676,106 @@ export default function App() {
                 }
               />
               <Route
+                path="/payroll-processing"
+                element={
+                  <ProtectedRoute>
+                    <PayrollProcessingScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/overtime"
                 element={
                   <ProtectedRoute>
                     <PayrollDashboardWithTab defaultTab="overtime" />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/overtime-requests"
+                element={
+                  <ProtectedRoute>
+                    <OvertimeRequestScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/overtime-approval"
+                element={
+                  <ProtectedRoute>
+                    <OvertimeApprovalScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/bonuses-deductions"
+                element={
+                  <ProtectedRoute>
+                    <BonusesDeductionsScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/employee-management"
+                element={
+                  <ProtectedRoute>
+                    <EmployeeManagementScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/payslip-generation"
+                element={
+                  <ProtectedRoute>
+                    <PayslipGenerationScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/payroll-reports"
+                element={
+                  <ProtectedRoute>
+                    <PayrollReportsScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/bank-details"
+                element={
+                  <ProtectedRoute>
+                    <BankDetailsScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/sage300-export"
+                element={
+                  <ProtectedRoute>
+                    <Sage300ExportScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tax-calculations"
+                element={
+                  <ProtectedRoute>
+                    <TaxCalculationsScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/bulk-actions"
+                element={
+                  <ProtectedRoute>
+                    <BulkActionsScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/audit-trail"
+                element={
+                  <ProtectedRoute>
+                    <AuditTrailScreen />
                   </ProtectedRoute>
                 }
               />

@@ -347,13 +347,43 @@ export default function Login() {
               </div>
               <div className="flex items-center justify-between">
                 <span>
-                  <strong>Stock Manager:</strong> siyanda@company.com
+                  <strong>Payroll Officer:</strong> siyanda@company.com
                 </span>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setEmail("siyanda@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong>Stock Manager:</strong> priya@company.com
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("priya@company.com")}
+                  disabled={isLoading}
+                  className="text-xs h-6 px-2 ml-2"
+                >
+                  Fill
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>
+                  <strong>Assistant Tech:</strong> mike@company.com
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEmail("mike@company.com")}
                   disabled={isLoading}
                   className="text-xs h-6 px-2 ml-2"
                 >

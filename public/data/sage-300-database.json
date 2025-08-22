@@ -178,7 +178,7 @@
         "Payroll"
       ],
       "IsActive": true,
-      "LastLogin": null
+      "LastLogin": "2025-08-21T21:12:31.169Z"
     },
     {
       "EmployeeID": "EMP007",
@@ -386,6 +386,36 @@
       "EmergencyContact": "Lisa Brown, 0812345682",
       "AccessRoles": [
         "AssistantTechnician"
+      ],
+      "IsActive": true,
+      "LastLogin": null
+    },
+    {
+      "EmployeeID": "EMP014",
+      "FullName": "Priya Naidoo",
+      "Email": "priya@company.com",
+      "Password": "$2b$10$8K1p.fhUWfnWNKf6XKzcyOOL3v3Z9jGmz5OZ8n9E0M8Wt1q2s3t4u5",
+      "Role": "Stock Manager",
+      "Department": "Stock Management",
+      "Phone": "0810000014",
+      "Manager": "Glassman Nkosi",
+      "EmploymentStatus": "Active",
+      "NationalID": "9407136253096",
+      "DateOfHire": "2021-07-20",
+      "ContractType": "Full-time",
+      "Location": "East London",
+      "Salary": 14000,
+      "PayrollNumber": "P014",
+      "BankAccount": "1000123469",
+      "AnnualLeaveBalance": 20,
+      "SickLeaveBalance": 10,
+      "FamilyLeaveBalance": 4,
+      "LeaveTaken": 3,
+      "OvertimeHours": 6,
+      "WorkSchedule": "08:00-17:00",
+      "EmergencyContact": "Raj Naidoo, 0812345683",
+      "AccessRoles": [
+        "StockManager"
       ],
       "IsActive": true,
       "LastLogin": null

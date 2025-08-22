@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +22,7 @@ import {
 
 export default function PayrollDashboard() {
   const [systemData, setSystemData] = useState<any>(null);
+  const navigate = useNavigate();
 
   const payrollStats = {
     totalPayroll: 487500,
@@ -151,40 +153,40 @@ export default function PayrollDashboard() {
   const handleCardAction = (cardId: string) => {
     switch (cardId) {
       case "payroll-processing":
-        alert("Opening Payroll Processing...");
+        navigate("/payroll-processing");
         break;
       case "overtime":
-        alert("Opening Overtime Management...");
+        navigate("/overtime-approval");
         break;
       case "bonuses":
-        alert("Opening Bonuses & Deductions...");
+        navigate("/bonuses-deductions");
         break;
       case "payslips":
-        alert("Opening Payslip Generation...");
+        navigate("/payslip-generation");
         break;
       case "approvals":
-        alert("Opening Pending Approvals...");
+        navigate("/overtime-approval");
         break;
       case "employees":
-        alert("Opening Employee Management...");
+        navigate("/employee-management");
         break;
       case "reports":
-        alert("Opening Payroll Reports...");
+        navigate("/payroll-reports");
         break;
       case "bank-details":
-        alert("Opening Bank Details Management...");
+        navigate("/bank-details");
         break;
       case "sage-integration":
-        alert("Opening Sage 300 Integration...");
+        navigate("/sage300-export");
         break;
       case "tax-calculations":
-        alert("Opening Tax Calculations...");
+        navigate("/tax-calculations");
         break;
       case "bulk-actions":
-        alert("Opening Bulk Actions...");
+        navigate("/bulk-actions");
         break;
       case "audit-trail":
-        alert("Opening Audit Trail...");
+        navigate("/audit-trail");
         break;
       default:
         alert(`Opening ${cardId}...`);
